@@ -1,0 +1,12 @@
+.claude/
+node_modules/
+dist/
+.DS_Store
+*.tsbuildinfo
+
+# stray scratch scripts agents sometimes drop at the root
+/.[a-z]*.mjs
+.vercel
+
+# Vercel project linkage and local build output
+.vercel/

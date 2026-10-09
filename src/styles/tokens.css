@@ -1,0 +1,108 @@
+/*
+ * Design tokens. This is the single place to apply Spark's final branding:
+ * swap the accent, fonts and surfaces here and every screen follows.
+ * The accent is a placeholder (electric blue from the shared references),
+ * not a Spark brand colour.
+ */
+:root {
+  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+  --font-display: 'Archivo', 'Inter', sans-serif;
+
+  --radius-xs: 6px;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+
+  --sidebar-w: 248px;
+  --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* Dark is the default direction (references). */
+:root,
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #07080b;
+  --surface-1: #15181f;
+  --surface-2: #1c2029;
+  --surface-3: #252a35;
+  --surface-hover: rgba(255, 255, 255, 0.04);
+  --surface-active: rgba(255, 255, 255, 0.07);
+  --overlay: rgba(3, 4, 7, 0.72);
+
+  --text: #eceef2;
+  --text-2: #a2a8b5;
+  --text-3: #8b92a0;
+  --text-inverse: #07080b;
+  --line: rgba(255, 255, 255, 0.06);
+  --line-strong: rgba(255, 255, 255, 0.11);
+
+  --accent: #3d7bff;
+  --accent-hover: #5a8fff;
+  --accent-text: #8fb2ff;
+  --accent-soft: rgba(61, 123, 255, 0.14);
+  --accent-softer: rgba(61, 123, 255, 0.07);
+  --on-accent: #ffffff;
+
+  --positive: #3ccf91;
+  --positive-soft: rgba(60, 207, 145, 0.13);
+  --warning: #f0b44c;
+  --warning-soft: rgba(240, 180, 76, 0.13);
+  --danger: #f2706d;
+  --danger-soft: rgba(242, 112, 109, 0.13);
+  --neutral-soft: rgba(255, 255, 255, 0.07);
+
+  --glow: 0 0 0 1px rgba(130, 170, 255, 0.55), 0 0 18px rgba(45, 105, 255, 0.45),
+    0 0 64px rgba(30, 85, 255, 0.28);
+  --glow-soft: 0 0 0 1px rgba(110, 155, 255, 0.28), 0 0 32px rgba(40, 95, 255, 0.18);
+  --shadow-pop: 0 16px 48px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --dot: rgba(220, 230, 255, 0.9);
+}
+
+:root[data-theme='light'] {
+  color-scheme: light;
+  --bg: #f4f4f2;
+  --surface-1: #ffffff;
+  --surface-2: #efefec;
+  --surface-3: #e6e6e2;
+  --surface-hover: rgba(10, 12, 18, 0.04);
+  --surface-active: rgba(10, 12, 18, 0.07);
+  --overlay: rgba(20, 22, 28, 0.38);
+
+  --text: #0c0e13;
+  --text-2: #4d5361;
+  --text-3: #858b97;
+  --text-inverse: #ffffff;
+  --line: rgba(10, 12, 18, 0.07);
+  --line-strong: rgba(10, 12, 18, 0.13);
+
+  --accent: #2458f0;
+  --accent-hover: #1b47cc;
+  --accent-text: #1f4fd8;
+  --accent-soft: rgba(36, 88, 240, 0.1);
+  --accent-softer: rgba(36, 88, 240, 0.05);
+  --on-accent: #ffffff;
+
+  --positive: #138a5a;
+  --positive-soft: rgba(19, 138, 90, 0.1);
+  --warning: #a86a06;
+  --warning-soft: rgba(200, 130, 10, 0.12);
+  --danger: #c93a37;
+  --danger-soft: rgba(201, 58, 55, 0.1);
+  --neutral-soft: rgba(10, 12, 18, 0.06);
+
+  --glow: 0 0 0 1px rgba(36, 88, 240, 0.55), 0 0 20px rgba(36, 88, 240, 0.22);
+  --glow-soft: 0 0 0 1px rgba(36, 88, 240, 0.25), 0 0 24px rgba(36, 88, 240, 0.1);
+  --shadow-pop: 0 16px 40px rgba(20, 24, 40, 0.14), 0 0 0 1px rgba(10, 12, 18, 0.07);
+  --dot: rgba(20, 50, 160, 0.85);
+}

@@ -1,0 +1,204 @@
+import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
+import { X } from 'lucide-react';
+import type { LucideIcon } from 'lucide-react';
+import { cx } from './primitives';
+
+// ---- Dialog --------------------------------------------------------------
+
+interface DialogProps {
+  open: boolean;
+  onClose: () => void;
+  title?: ReactNode;
+  description?: ReactNode;
+  children: ReactNode;
+  footer?: ReactNode;
+  size?: 'sm' | 'md' | 'lg' | 'xl';
+  bare?: boolean;
+}
+
+export function Dialog({ open, onClose, title, description, children, footer, size = 'md', bare }: DialogProps) {
+  const ref = useRef<HTMLDivElement>(null);
+  const closeRef = useRef(onClose);
+  closeRef.current = onClose;
+
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.activeElement as HTMLElement | null;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.stopPropagation();
+        closeRef.current();
+      }
+      if (e.key === 'Tab' && ref.current) {
+        const f = ref.current.querySelectorAll<HTMLElement>('button:not([disabled]), [href], input:not([disabled]), select, textarea, [tabindex]:not([tabindex="-1"])');
+        if (!f.length) return;
+        const first = f[0];
+        const last = f[f.length - 1];
+        if (e.shiftKey && document.activeElement === first) {
+          e.preventDefault();
+          last.focus();
+        } else if (!e.shiftKey && document.activeElement === last) {
+          e.preventDefault();
+          first.focus();
+        }
+      }
+    };
+    document.addEventListener('keydown', onKey);
+    document.body.classList.add('no-scroll');
+    requestAnimationFrame(() => {
+      const target = ref.current?.querySelector<HTMLElement>('[data-autofocus]') ?? ref.current?.querySelector<HTMLElement>('input, textarea, select');
+      (target ?? ref.current)?.focus();
+    });
+    return () => {
+      document.removeEventListener('keydown', onKey);
+      document.body.classList.remove('no-scroll');
+      prev?.focus?.();
+    };
+  }, [open]);
+
+  if (!open) return null;
+  return createPortal(
+    <div className="dialog-root">
+      <div className="dialog-overlay" onClick={onClose} />
+      <div ref={ref} className={cx('dialog', `dialog--${size}`, bare && 'dialog--bare')} role="dialog" aria-modal="true" tabIndex={-1}>
+        {!bare && (title || description) && (
+          <div className="dialog__head">
+            <div>
+              {title && <h2 className="dialog__title">{title}</h2>}
+              {description && <p className="dialog__desc">{description}</p>}
+            </div>
+            <button className="btn btn--ghost btn--sm btn--icon" onClick={onClose} aria-label="Close">
+              <X size={16} />
+            </button>
+          </div>
+        )}
+        <div className={cx(!bare && 'dialog__body')}>{children}</div>
+        {footer && <div className="dialog__foot">{footer}</div>}
+      </div>
+    </div>,
+    document.body,
+  );
+}
+
+// ---- Popover (anchored) ---------------------------------------------------------
+
+interface PopoverProps {
+  trigger: (p: { open: boolean; toggle: () => void; ref: (el: HTMLElement | null) => void }) => ReactNode;
+  children: (close: () => void) => ReactNode;
+  align?: 'start' | 'end';
+  side?: 'bottom' | 'top';
+  width?: number;
+  className?: string;
+}
+
+export function Popover({ trigger, children, align = 'end', side = 'bottom', width = 240, className }: PopoverProps) {
+  const [open, setOpen] = useState(false);
+  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  const [pos, setPos] = useState<{ top: number; left: number } | null>(null);
+  const panel = useRef<HTMLDivElement>(null);
+
+  useLayoutEffect(() => {
+    if (!open || !anchor) return;
+    const place = () => {
+      const r = anchor.getBoundingClientRect();
+      const ph = panel.current?.offsetHeight ?? 0;
+      const w = Math.min(width, window.innerWidth - 16);
+      let left = align === 'end' ? r.right - w : r.left;
+      left = Math.max(8, Math.min(left, window.innerWidth - w - 8));
+      let top = side === 'bottom' ? r.bottom + 6 : r.top - ph - 6;
+      if (side === 'bottom' && top + ph > window.innerHeight - 8 && r.top - ph - 6 > 8) top = r.top - ph - 6;
+      if (side === 'top' && top < 8) top = r.bottom + 6;
+      setPos({ top, left });
+    };
+    place();
+    window.addEventListener('resize', place);
+    window.addEventListener('scroll', place, true);
+    return () => {
+      window.removeEventListener('resize', place);
+      window.removeEventListener('scroll', place, true);
+    };
+  }, [open, anchor, align, side, width]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onDown = (e: MouseEvent) => {
+      const t = e.target as Node;
+      if (panel.current?.contains(t) || anchor?.contains(t)) return;
+      setOpen(false);
+    };
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        setOpen(false);
+        anchor?.focus();
+      }
+    };
+    document.addEventListener('mousedown', onDown);
+    document.addEventListener('keydown', onKey);
+    return () => {
+      document.removeEventListener('mousedown', onDown);
+      document.removeEventListener('keydown', onKey);
+    };
+  }, [open, anchor]);
+
+  const close = () => setOpen(false);
+  return (
+    <>
+      {trigger({ open, toggle: () => setOpen((o) => !o), ref: setAnchor })}
+      {open &&
+        createPortal(
+          <div
+            ref={panel}
+            className={cx('popover', className)}
+            style={{ top: pos?.top ?? -9999, left: pos?.left ?? -9999, width: Math.min(width, window.innerWidth - 16) }}
+          >
+            {children(close)}
+          </div>,
+          document.body,
+        )}
+    </>
+  );
+}
+
+// ---- Menu ------------------------------------------------------------------------
+
+export interface MenuItem {
+  label: string;
+  icon?: LucideIcon;
+  onSelect: () => void;
+  danger?: boolean;
+  disabled?: boolean;
+  hint?: string;
+}
+
+export function Menu({ trigger, items, align = 'end', width = 220, header }: { trigger: PopoverProps['trigger']; items: (MenuItem | 'divider')[]; align?: 'start' | 'end'; width?: number; header?: ReactNode }) {
+  return (
+    <Popover trigger={trigger} align={align} width={width}>
+      {(close) => (
+        <div className="menu" role="menu">
+          {header}
+          {items.map((it, i) =>
+            it === 'divider' ? (
+              <div key={i} className="menu__divider" />
+            ) : (
+              <button
+                key={it.label}
+                role="menuitem"
+                className={cx('menu__item', it.danger && 'menu__item--danger')}
+                disabled={it.disabled}
+                onClick={() => {
+                  close();
+                  it.onSelect();
+                }}
+              >
+                {it.icon && <it.icon size={15} strokeWidth={1.8} />}
+                <span>{it.label}</span>
+                {it.hint && <span className="menu__hint">{it.hint}</span>}
+              </button>
+            ),
+          )}
+        </div>
+      )}
+    </Popover>
+  );
+}
