@@ -2,6 +2,7 @@
 import { FileArchive, FileImage, FileSpreadsheet, FileText, Presentation } from 'lucide-react';
 import type { Doc, DocKind, DocPreview, ProposalStatus, RequestStatus } from '../data/types';
 import { Badge, cx, type Tone } from './ui/primitives';
+export { kindOf } from '../lib/files';
 
 export const requestStatusMeta: Record<RequestStatus, { label: string; tone: Tone; client: string }> = {
   submitted: { label: 'Submitted', tone: 'neutral', client: 'Waiting for Spark' },

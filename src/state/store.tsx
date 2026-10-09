@@ -5,10 +5,10 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useRef, use
 import * as seed from '../data/mock';
 import { composeAnswer, titleFromPrompt } from '../data/assistant';
 import type {
+  Attachment,
   ClientRole,
   Conversation,
   Doc,
-  DocKind,
   Excerpt,
   ID,
   Invitation,
@@ -22,6 +22,7 @@ import type {
   WorkRequest,
 } from '../data/types';
 import { addDays, nowIso } from '../lib/format';
+import { kindOf } from '../lib/files';
 
 export type Theme = 'dark' | 'light' | 'system';
 /** Prototype: which of the 5 request-page layouts is shown (switcher on the page). */
@@ -47,6 +48,9 @@ export interface State {
 }
 
 const STORAGE_KEY = 'spark-portal-v5';
+
+// Files attached to a message are read like a workspace document.
+const attachedContext = (files?: Attachment[]) => (files?.length ? (files.length === 1 ? files[0].name : `${files.length} attached files`) : undefined);
 
 const initial = (): State => ({
   theme: 'dark',
@@ -186,12 +190,13 @@ function useStoreValue() {
   );
 
   const ask = useCallback(
-    (convId: ID | null, prompt: string, opts: { docId?: ID } = {}): ID => {
+    (convId: ID | null, prompt: string, opts: { docId?: ID; attachments?: Attachment[] } = {}): ID => {
       const s = stateRef.current;
       const meId = 'u-layla';
       const id = convId ?? uid('c');
       const at = nowIso();
-      const userMsg: Message = { id: uid('m'), role: 'user', by: meId, at, text: prompt };
+      const files = opts.attachments?.length ? opts.attachments : undefined;
+      const userMsg: Message = { id: uid('m'), role: 'user', by: meId, at, text: prompt, attachments: files };
       const aiMsg: Message = { id: uid('m'), role: 'assistant', at, text: '', steps: [], state: 'thinking' };
       const doc = opts.docId ? s.docs.find((d) => d.id === opts.docId) : undefined;
       setState((st) => {
@@ -201,7 +206,7 @@ function useStoreValue() {
           : [
               {
                 id,
-                title: doc ? `About ${doc.name.replace(/\.[a-z]+$/i, '')}` : titleFromPrompt(prompt),
+                title: doc ? `About ${doc.name.replace(/\.[a-z]+$/i, '')}` : prompt ? titleFromPrompt(prompt) : `About ${files![0].name.replace(/\.[a-z0-9]+$/i, '')}`,
                 createdBy: meId,
                 createdAt: at,
                 updatedAt: at,
@@ -212,7 +217,8 @@ function useStoreValue() {
             ];
         return { ...st, conversations };
       });
-      void runAnswer(id, aiMsg.id, prompt, doc?.name);
+      const context = doc?.name ?? attachedContext(files);
+      void runAnswer(id, aiMsg.id, prompt, context);
       return id;
     },
     [runAnswer],
@@ -223,9 +229,9 @@ function useStoreValue() {
       const conv = stateRef.current.conversations.find((c) => c.id === convId);
       if (!conv) return;
       const idx = conv.messages.findIndex((m) => m.id === msgId);
-      const prompt = [...conv.messages.slice(0, idx)].reverse().find((m) => m.role === 'user')?.text ?? '';
+      const question = [...conv.messages.slice(0, idx)].reverse().find((m) => m.role === 'user');
       updateMessage(convId, msgId, { state: 'thinking', steps: [], text: '', findings: [], sources: [] });
-      void runAnswer(convId, msgId, prompt);
+      void runAnswer(convId, msgId, question?.text ?? '', attachedContext(question?.attachments));
     },
     [runAnswer, updateMessage],
   );
@@ -392,14 +398,6 @@ function useStoreValue() {
   const uploadFiles = useCallback(
     (files: { name: string; sizeKb: number }[], folderId: ID) => {
       const meId = 'u-layla';
-      const kindOf = (n: string): DocKind => {
-        const ext = n.split('.').pop()?.toLowerCase() ?? '';
-        if (['png', 'jpg', 'jpeg', 'gif', 'webp', 'svg', 'heic'].includes(ext)) return 'image';
-        if (['ppt', 'pptx', 'key'].includes(ext)) return 'deck';
-        if (['xls', 'xlsx', 'csv', 'numbers'].includes(ext)) return 'sheet';
-        if (['zip', 'rar', '7z'].includes(ext)) return 'archive';
-        return 'pdf';
-      };
       const at = nowIso();
       const docs: Doc[] = files.map((f) => ({
         id: uid('d'),

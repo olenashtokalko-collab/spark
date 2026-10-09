@@ -105,24 +105,20 @@ export function ProposalView({ requestId, version }: { requestId: string; versio
       <div className="proposal__layout">
         <article className="proposal__doc">
           <header className="proposal__head">
-            {versions.length > 1 && (
-              <div className="proposal__eyebrow">
+            <div className="proposal__eyebrow">
+              <span className="mono faint">Proposal v{p.version}</span>
+              <ProposalStatus status={p.status} />
+              <span className="faint">· sent {fmtDate(p.sentAt, { year: true })}</span>
+              {versions.length > 1 && (
                 <Segmented
                   label="Version"
                   value={String(p.version)}
                   onChange={(v) => navigate(withQuery(`/requests/${req.id}/proposal`, { v: v === String(latest.version) ? null : v }), { replace: true })}
                   items={versions.map((v) => ({ value: String(v.version), label: `v${v.version}` }))}
                 />
-              </div>
-            )}
-            <h1 className="proposal__title">{p.title}</h1>
-            <div className="proposal__by">
-              <Avatar person={sender} size={22} />
-              <span>
-                {sender.name}, {sender.title} · Spark Studios · sent {fmtDate(p.sentAt, { year: true })}
-              </span>
-              <ProposalStatus status={p.status} />
+              )}
             </div>
+            <h1 className="proposal__title">{p.title}</h1>
           </header>
 
           <StatusBanner p={p} latestVersion={latest.version} requestId={req.id} />

@@ -1,9 +1,9 @@
-// Chat history in the main sidebar, like Waldo. It lists every chat in the
-// workspace (teammates see each other's conversations, Hassan, 9 Oct), with
-// the author shown on other people's chats, and a search on top.
+// Chat history in the main sidebar, like Waldo, with a search on top. For now
+// it lists only your own chats; teammates' chats stay private (decided 9 Oct,
+// replacing the earlier shared history).
 import { useMemo, useState } from 'react';
 import { MoreHorizontal, Pencil, Search, Trash2 } from 'lucide-react';
-import { personById, useStore } from '../../state/store';
+import { useStore } from '../../state/store';
 import { navigate, useRoute } from '../../lib/router';
 import { Button, Input, cx } from '../../components/ui/primitives';
 import { Dialog, Menu } from '../../components/ui/overlay';
@@ -40,10 +40,10 @@ export function ChatHistory() {
   const list = useMemo(
     () =>
       [...state.conversations]
-        .filter((c) => c.messages.some((m) => m.role === 'user'))
+        .filter((c) => c.createdBy === me.id && c.messages.some((m) => m.role === 'user'))
         .filter((c) => c.title.toLowerCase().includes(q.trim().toLowerCase()))
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
-    [state.conversations, q],
+    [state.conversations, q, me.id],
   );
   const toDelete = state.conversations.find((c) => c.id === confirm);
 
@@ -56,44 +56,38 @@ export function ChatHistory() {
         {group(list).map((g) => (
           <div key={g.label} className="history__group">
             <div className="history__label">{g.label}</div>
-            {g.items.map((c) => {
-              const author = personById(state, c.createdBy);
-              return (
-                <div key={c.id} className={cx('hitem', c.id === activeId && 'is-active')}>
-                  {renaming === c.id ? (
-                    <form
-                      className="hitem__rename"
-                      onSubmit={(e) => {
-                        e.preventDefault();
-                        if (draft.trim()) actions.renameConversation(c.id, draft.trim());
-                        setRenaming(null);
-                      }}
-                    >
-                      <Input autoFocus value={draft} onChange={(e) => setDraft(e.target.value)} onBlur={() => setRenaming(null)} onKeyDown={(e) => e.key === 'Escape' && setRenaming(null)} aria-label="Chat name" />
-                    </form>
-                  ) : (
-                    <a className="hitem__link" href={`#/assistant/${c.id}`} title={`${c.title} · ${author.id === me.id ? 'You' : author.name}, ${fmtRelative(c.updatedAt)}`}>
-                      <span className="hitem__title">{c.title}</span>
-                      {author.id !== me.id && <span className="hitem__meta">{author.name.split(' ')[0]}</span>}
-                    </a>
+            {g.items.map((c) => (
+              <div key={c.id} className={cx('hitem', c.id === activeId && 'is-active')}>
+                {renaming === c.id ? (
+                  <form
+                    className="hitem__rename"
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      if (draft.trim()) actions.renameConversation(c.id, draft.trim());
+                      setRenaming(null);
+                    }}
+                  >
+                    <Input autoFocus value={draft} onChange={(e) => setDraft(e.target.value)} onBlur={() => setRenaming(null)} onKeyDown={(e) => e.key === 'Escape' && setRenaming(null)} aria-label="Chat name" />
+                  </form>
+                ) : (
+                  <a className="hitem__link" href={`#/assistant/${c.id}`} title={`${c.title} · ${fmtRelative(c.updatedAt)}`}>
+                    <span className="hitem__title">{c.title}</span>
+                  </a>
+                )}
+                <Menu
+                  width={170}
+                  trigger={({ toggle, ref }) => (
+                    <button ref={ref} className="hitem__more" onClick={toggle} aria-label={`Options for ${c.title}`}>
+                      <MoreHorizontal size={15} />
+                    </button>
                   )}
-                  {c.createdBy === me.id && (
-                    <Menu
-                      width={170}
-                      trigger={({ toggle, ref }) => (
-                        <button ref={ref} className="hitem__more" onClick={toggle} aria-label={`Options for ${c.title}`}>
-                          <MoreHorizontal size={15} />
-                        </button>
-                      )}
-                      items={[
-                        { label: 'Rename', icon: Pencil, onSelect: () => (setDraft(c.title), setRenaming(c.id)) },
-                        { label: 'Delete', icon: Trash2, danger: true, onSelect: () => setConfirm(c.id) },
-                      ]}
-                    />
-                  )}
-                </div>
-              );
-            })}
+                  items={[
+                    { label: 'Rename', icon: Pencil, onSelect: () => (setDraft(c.title), setRenaming(c.id)) },
+                    { label: 'Delete', icon: Trash2, danger: true, onSelect: () => setConfirm(c.id) },
+                  ]}
+                />
+              </div>
+            ))}
           </div>
         ))}
       </div>
@@ -103,7 +97,7 @@ export function ChatHistory() {
         onClose={() => setConfirm(null)}
         size="sm"
         title="Delete this chat?"
-        description={toDelete?.requestIds.length ? 'Requests created from it stay in Requests, with their excerpt.' : 'Your teammates will no longer see it.'}
+        description={toDelete?.requestIds.length ? 'Requests created from it stay in Requests, with their excerpt.' : 'This can’t be undone.'}
         footer={
           <>
             <Button variant="ghost" onClick={() => setConfirm(null)}>

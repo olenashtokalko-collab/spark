@@ -16,7 +16,7 @@ export const ROLE_INFO: Record<ClientRole, { label: string; desc: string }> = {
 export function TeamPage() {
   return (
     <div>
-      <PageHeader title="Team" sub="Invite colleagues to this workspace. They see conversations, requests, proposals and documents." />
+      <PageHeader title="Team" sub="Invite colleagues to this workspace. They see requests, proposals and documents. Chats stay private." />
       <Team />
     </div>
   );
@@ -64,7 +64,6 @@ function Team() {
                   {p.title} · {p.email}
                 </div>
               </div>
-              <span className="member__active faint hide-sm">{p.lastActive ? `Active ${fmtRelative(p.lastActive)}` : ''}</span>
               {isOwner && p.id !== me.id ? (
                 <Select
                   aria-label={`Role for ${p.name}`}
@@ -251,7 +250,7 @@ function InviteDialog({ open, onClose }: { open: boolean; onClose: () => void })
       open={open}
       onClose={onClose}
       title="Invite people to Brand Co."
-      description="They'll see this workspace: conversations, requests, proposals and documents."
+      description="They'll see this workspace: requests, proposals and documents. Chats stay private."
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>

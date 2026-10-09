@@ -183,12 +183,18 @@ export interface Finding {
   sourceIds: ID[];
 }
 
+export interface Attachment {
+  name: string;
+  sizeKb: number;
+}
+
 export interface Message {
   id: ID;
   role: 'user' | 'assistant' | 'system';
   by?: ID;
   at: ISODate;
   text: string;
+  attachments?: Attachment[]; // files the client added to their message
   steps?: string[];
   findings?: Finding[];
   sources?: Source[];

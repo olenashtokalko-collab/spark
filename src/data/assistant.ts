@@ -10,11 +10,15 @@ export interface AnswerContext {
 
 export type Answer = Pick<Message, 'steps' | 'text' | 'findings' | 'sources' | 'followUps' | 'suggestedRequest'>;
 
+// Landing prompts. Clients often "don't know what they want" (Hassan, 31 Jul),
+// so the first card starts the main job: an idea shaped into a brief for Spark.
+// The other three are the checks Hassan named on 9 Oct ("background checks on
+// your brand", "what others think") plus the audience question behind REQ-110.
 export const suggestedPrompts: { label: string; prompt: string; hint: string }[] = [
+  { label: 'Shape an idea', prompt: 'I have an idea for the Riyadh launch. Help me turn it into a brief for Spark', hint: 'A few questions, then a brief to send' },
   { label: 'Background check', prompt: 'Run a background check on our brand before the Riyadh launch', hint: 'Name risks, reviews and press' },
-  { label: 'This week on social', prompt: 'How is our brand being talked about this week?', hint: 'From the social listening digest' },
-  { label: 'Riyadh audience', prompt: 'What do Riyadh shoppers care about?', hint: 'From strategy and personas' },
-  { label: 'Proposal summary', prompt: 'Summarize the Riyadh launch proposal', hint: 'Scope, cost and what changed' },
+  { label: 'What people say', prompt: 'What are people saying about our brand right now?', hint: 'Social posts, reviews and press' },
+  { label: 'Know the audience', prompt: 'What do Riyadh shoppers care about?', hint: 'From your strategy and personas' },
 ];
 
 interface Script extends Answer {
@@ -25,6 +29,25 @@ interface Script extends Answer {
 }
 
 const scripts: Script[] = [
+  {
+    // Must stay first: the prompt also mentions Riyadh.
+    match: /\bidea\b|\bbrief\b|shape/i,
+    steps: ['Read the brand profile', 'Read KSA market entry strategy', 'Checked open requests and Q4 budget'],
+    text:
+      'Happy to. A brief Spark can price needs four things: **what you want to make**, **who it is for**, **what success looks like**, and **budget and timing**. Some of it is already in your workspace, so let\'s start with the idea itself. What do you have in mind, in a sentence or two? Rough is fine.',
+    findings: [
+      { title: 'Opening is set for 11 January', body: 'Anything for the launch needs to be ready by early January.', tone: 'neutral', sourceIds: ['ws-prop'] },
+      { title: 'AED 4,000 left in the Q4 launch line', body: 'If proposal v2 is approved, a new idea likely needs Q1 2027 budget.', tone: 'attention', sourceIds: ['ws-budget'] },
+      { title: 'Audience is already defined', body: 'Riyadh shoppers aged 24–35, evening visits, found through creators.', tone: 'positive', sourceIds: ['ws-pers'] },
+    ],
+    sources: [
+      { id: 'ws-prop', kind: 'workspace', title: 'Proposal v2 · Riyadh launch campaign', route: '/requests/REQ-104/proposal', snippet: 'Launch 11 January 2027.' },
+      { id: 'ws-budget', kind: 'workspace', title: 'Q4 marketing budget.xlsx', docId: 'd-budget', snippet: 'Riyadh launch: 190,000 remaining.' },
+      { id: 'ws-pers', kind: 'workspace', title: 'Audience personas — GCC.pdf', docId: 'd-personas', snippet: 'Noura, 29 · visits 4× a week, mostly after 7 pm.' },
+    ],
+    followUps: ['A signature product made only for Riyadh', 'An opening-night event in Riyadh with local creators'],
+    suggestedRequest: { title: 'New idea for the Riyadh launch', type: 'Strategy' },
+  },
   {
     match: /respond|reply|post from/i,
     steps: ['Read the post and its comments', 'Checked tone of voice in Brand Guidelines v3.2', 'Looked for similar posts in W40'],
@@ -67,7 +90,7 @@ const scripts: Script[] = [
     suggestedRequest: { title: 'Trademark and naming check for Riyadh', type: 'Research' },
   },
   {
-    match: /talked|social|week|mention|sentiment|monitor/i,
+    match: /talked|saying|social|week|mention|sentiment|monitor/i,
     steps: ['Read the W40 social listening digest', 'Compared with W39', 'Pulled notable posts'],
     webSteps: ['Checked public posts from the last 48 hours'],
     text:
@@ -167,18 +190,21 @@ const fallback = (prompt: string): Answer => ({
     `I couldn't find anything in your workspace that answers "${prompt.trim()}" with confidence, and I'd rather not guess.\n\nYou can rephrase the question, or send it to Spark as a request so the team can research it properly.`,
   findings: [],
   sources: [],
-  followUps: ['How is our brand being talked about this week?', 'Run a background check on our brand before the Riyadh launch'],
+  followUps: ['What are people saying about our brand right now?', 'Run a background check on our brand before the Riyadh launch'],
   suggestedRequest: { title: prompt.length > 60 ? prompt.slice(0, 57) + '…' : prompt, type: 'Research' as RequestType },
 });
 
 export function composeAnswer(prompt: string, ctx: AnswerContext, contextDocName?: string): Answer {
   if (contextDocName) {
+    const many = /^\d+ attached files$/.test(contextDocName);
     return {
       steps: [`Opened ${contextDocName}`, 'Read the brand profile'],
-      text: `Here's what **${contextDocName}** covers and how it relates to your current work. Ask a follow-up to go deeper into any section.`,
+      text: many
+        ? `Here's what the **${contextDocName}** cover and how they relate to your current work. Ask a follow-up to go deeper into any of them.`
+        : `Here's what **${contextDocName}** covers and how it relates to your current work. Ask a follow-up to go deeper into any section.`,
       findings: [],
       sources: [],
-      followUps: ['What are the key decisions in this file?', 'What has changed since the last version?'],
+      followUps: many ? ['What are the key decisions in these files?', 'How do these files fit our Riyadh plans?'] : ['What are the key decisions in this file?', 'What has changed since the last version?'],
     };
   }
   const s = scripts.find((x) => x.match.test(prompt));

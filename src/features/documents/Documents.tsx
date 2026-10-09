@@ -109,8 +109,8 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
       }}
     >
       <PageHeader
-        title={folder ? folder.name : 'Documents'}
-        sub={folder ? folder.description ?? `In ${state.folders.find((f) => f.id === folder.parentId)?.name ?? 'Documents'}` : 'Guidelines, strategy, proposals and creative from Spark, and files your team shares back.'}
+        title="Documents"
+        sub="Guidelines, strategy, proposals, creative and the files your team shares."
         actions={
           <>
             <input ref={fileInput} type="file" multiple hidden onChange={(e) => onFiles(e.target.files)} />
@@ -135,19 +135,24 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
 
         <div className="docs__main">
           <div className="toolbar">
-            {crumbs.length > 0 && !searching ? (
-              <div className="crumbs">
-                <a href="#/documents">Documents</a>
-                {crumbs.map((c, i) => (
-                  <span key={c.id}>
-                    <ChevronRight size={13} />
-                    {i === crumbs.length - 1 ? <span>{c.name}</span> : <a href={`#/documents/${c.id}`}>{c.name}</a>}
-                  </span>
-                ))}
-              </div>
-            ) : (
-              <div className="crumbs">{searching ? <span>Results across all folders</span> : <span>All folders</span>}</div>
-            )}
+            {/* The page title stays "Documents"; the open folder is named here. */}
+            <div className="docs__section">
+              {searching ? (
+                <h2 className="docs__section-title">Results across all folders</h2>
+              ) : folder ? (
+                <h2 className="docs__section-title">
+                  {crumbs.slice(0, -1).map((c) => (
+                    <a key={c.id} href={`#/documents/${c.id}`} className="docs__section-parent">
+                      {c.name}
+                      <ChevronRight size={15} />
+                    </a>
+                  ))}
+                  {folder.name}
+                </h2>
+              ) : (
+                <h2 className="docs__section-title">All folders</h2>
+              )}
+            </div>
             <div className="toolbar__right">
               <Input icon={Search} placeholder="Search all files" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search files" className="toolbar__search" />
               <Segmented

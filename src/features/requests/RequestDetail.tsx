@@ -53,7 +53,8 @@ export function RequestDetail({ id }: { id: string }) {
   const sources = (r.sourceIds ?? []).map((d) => state.docs.find((x) => x.id === d)).filter(Boolean);
   const files = state.docs.filter((d) => d.requestId === r.id && !d.name.startsWith('Proposal —'));
   const allFiles = [...new Map([...sources, ...files].map((d) => [d!.id, d!])).values()];
-  const conversation = r.excerpt && state.conversations.find((c) => c.id === r.excerpt!.conversationId);
+  // Only your own chats can be opened; a teammate's request keeps its excerpt.
+  const conversation = r.excerpt && state.conversations.find((c) => c.id === r.excerpt!.conversationId && c.createdBy === me.id);
   const findings = r.excerpt ? (r.excerpt.findings ?? findingsFromConversation(r, conversation)) : undefined;
   const question = r.excerpt?.messages.find((m) => m.role === 'user')?.text;
   const ask = askOf(r.description);
@@ -93,11 +94,6 @@ export function RequestDetail({ id }: { id: string }) {
               <RequestStatus status={r.status} />
             </div>
             <h1 className="req-head__title">{r.title}</h1>
-            <div className="req-head__meta">
-              <span>
-                <Avatar person={creator} size={18} /> {creator.name} · {fmtDate(r.createdAt, { year: true })}
-              </span>
-            </div>
           </header>
 
           <Tabs className="tabs--underline" value={tab} onChange={setTab} items={tabs} />

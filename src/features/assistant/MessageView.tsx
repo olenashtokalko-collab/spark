@@ -3,6 +3,7 @@ import { AlertCircle, ArrowRight, Check, ChevronDown, Copy, Globe, Inbox, Loader
 import type { Message, Source } from '../../data/types';
 import { Button, cx } from '../../components/ui/primitives';
 import { DotSphere } from '../../components/ui/DotSphere';
+import { FileIcon, kindOf } from '../../components/domain';
 import { personById, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { useToast } from '../../components/ui/toast';
@@ -32,7 +33,7 @@ interface Props {
 }
 
 export function MessageView({ msg, convId, onFollowUp, isLast }: Props) {
-  const { state } = useStore();
+  const { state, me } = useStore();
   if (msg.role === 'system')
     return (
       <div className="msg-system">
@@ -49,10 +50,20 @@ export function MessageView({ msg, convId, onFollowUp, isLast }: Props) {
     const by = msg.by ? personById(state, msg.by) : undefined;
     return (
       <div className="msg-user">
-        <div className="msg-user__bubble">{msg.text}</div>
+        {msg.attachments && (
+          <ul className="msg-user__files" aria-label="Attached files">
+            {msg.attachments.map((f) => (
+              <li key={f.name} className="attach-chip">
+                <FileIcon kind={kindOf(f.name)} size={15} />
+                <span className="attach-chip__name">{f.name}</span>
+              </li>
+            ))}
+          </ul>
+        )}
+        {msg.text && <div className="msg-user__bubble">{msg.text}</div>}
         {by && (
           <div className="msg-user__meta">
-            {by.name.split(' ')[0]} · {fmtTime(msg.at)}
+            {by.id === me.id ? 'You' : by.name.split(' ')[0]} · {fmtTime(msg.at)}
           </div>
         )}
       </div>
