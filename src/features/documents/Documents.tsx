@@ -1,16 +1,21 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ChevronRight, Folder as FolderIcon, FolderOpen, LayoutGrid, List, Search, Upload, X, Download, Sparkles, FileQuestion } from 'lucide-react';
+import { ArrowLeft, Calendar, FileText, Folder as FolderIcon, LayoutGrid, List, Search, Upload, UserRound, X, Download } from 'lucide-react';
+import { SphereGlyph } from '../../components/ui/SphereGlyph';
 import { personById, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
-import { Badge, Button, EmptyState, Input, PageHeader, Progress, Segmented, Skeleton, cx } from '../../components/ui/primitives';
+import { Badge, Button, EmptyState, Input, PageHeader, Progress, Segmented, Skeleton } from '../../components/ui/primitives';
 import { DocThumb, FileIcon, kindLabel } from '../../components/domain';
 import { useToast } from '../../components/ui/toast';
-import { fmtDate, fmtRelative, fmtSize } from '../../lib/format';
+import { FilterMenu } from '../../components/ui/overlay';
+import { fmtRelative, fmtSize } from '../../lib/format';
 import { navigate } from '../../lib/router';
 import type { Doc, DocKind, Folder } from '../../data/types';
 import { downloadDoc } from './DocPreview';
 
 type KindFilter = 'all' | DocKind;
+type ByFilter = 'anyone' | 'spark' | 'team';
+type DateFilter = 'any' | 'week' | 'month';
+const DATE_DAYS: Record<Exclude<DateFilter, 'any'>, number> = { week: 7, month: 30 };
 const MAX_MB = 25;
 
 export function Documents({ folderId, docId }: { folderId?: string; docId?: string | null }) {
@@ -19,6 +24,8 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
   const toast = useToast();
   const [q, setQ] = useState('');
   const [kind, setKind] = useState<KindFilter>('all');
+  const [by, setBy] = useState<ByFilter>('anyone');
+  const [date, setDate] = useState<DateFilter>('any');
   const [view, setView] = useState<'grid' | 'list'>(() => {
     try {
       return (localStorage.getItem('spark-docs-view') as 'grid' | 'list') || 'grid';
@@ -58,10 +65,22 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
   }, [view]);
 
   const searching = q.trim().length > 0;
+  const filtered = kind !== 'all' || by !== 'anyone' || date !== 'any';
+  const clearFilters = () => {
+    setQ('');
+    setKind('all');
+    setBy('anyone');
+    setDate('any');
+  };
   const files = useMemo(() => {
     const base = searching ? state.docs.filter((d) => d.name.toLowerCase().includes(q.toLowerCase())) : state.docs.filter((d) => d.folderId === (folder?.id ?? '__root'));
-    return base.filter((d) => kind === 'all' || d.kind === kind).sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt));
-  }, [state.docs, folder, q, kind, searching]);
+    const fromSpark = (d: Doc) => state.people.find((p) => p.id === d.uploadedBy)?.org === 'spark';
+    return base
+      .filter((d) => kind === 'all' || d.kind === kind)
+      .filter((d) => by === 'anyone' || (by === 'spark') === fromSpark(d))
+      .filter((d) => date === 'any' || Date.now() - new Date(d.uploadedAt).getTime() <= DATE_DAYS[date] * 86400000)
+      .sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt));
+  }, [state.docs, state.people, folder, q, kind, by, date, searching]);
 
   const countIn = (fid: string): number => state.docs.filter((d) => d.folderId === fid).length + state.folders.filter((f) => f.parentId === fid).reduce((a, f) => a + countIn(f.id), 0);
   const reviewIn = (fid: string): number =>
@@ -122,17 +141,6 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
       />
 
       <div className="docs__layout">
-        <nav className="folder-nav" aria-label="Folders">
-          <a className={cx('folder-nav__item', !folder && !searching && 'is-active')} href="#/documents">
-            <LayoutGrid size={15} /> All folders
-          </a>
-          {state.folders
-            .filter((f) => f.parentId === null)
-            .map((f) => (
-              <FolderNavItem key={f.id} f={f} active={folder?.id} countIn={countIn} reviewIn={reviewIn} />
-            ))}
-        </nav>
-
         <div className="docs__main">
           <div className="toolbar">
             {/* The page title stays "Documents"; the open folder is named here. */}
@@ -140,21 +148,55 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
               {searching ? (
                 <h2 className="docs__section-title">Results across all folders</h2>
               ) : folder ? (
-                <h2 className="docs__section-title">
-                  {crumbs.slice(0, -1).map((c) => (
-                    <a key={c.id} href={`#/documents/${c.id}`} className="docs__section-parent">
-                      {c.name}
-                      <ChevronRight size={15} />
-                    </a>
-                  ))}
-                  {folder.name}
-                </h2>
+                <>
+                  {/* No folder menu: a back link leads one level up. */}
+                  <a className="back docs__back" href={folder.parentId ? `#/documents/${folder.parentId}` : '#/documents'}>
+                    <ArrowLeft size={15} /> {crumbs.length > 1 ? crumbs[crumbs.length - 2].name : 'All folders'}
+                  </a>
+                  <h2 className="docs__section-title">{folder.name}</h2>
+                </>
               ) : (
                 <h2 className="docs__section-title">All folders</h2>
               )}
             </div>
-            <div className="toolbar__right">
-              <Input icon={Search} placeholder="Search all files" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search files" className="toolbar__search" />
+          </div>
+          <div className="filter-bar">
+            <Input icon={Search} placeholder="Search all files" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search files" className="filter-bar__search" />
+            <FilterMenu
+              icon={FileText}
+              label="Type"
+              value={kind}
+              onChange={setKind}
+              options={[{ value: 'all', label: 'Any type' }, ...(['pdf', 'deck', 'image', 'sheet', 'archive'] as DocKind[]).map((k) => ({ value: k, label: kindLabel[k] }))]}
+            />
+            <FilterMenu
+              icon={UserRound}
+              label="Uploaded by"
+              value={by}
+              onChange={setBy}
+              options={[
+                { value: 'anyone', label: 'Anyone' },
+                { value: 'spark', label: 'Spark' },
+                { value: 'team', label: 'Your team' },
+              ]}
+            />
+            <FilterMenu
+              icon={Calendar}
+              label="Date"
+              value={date}
+              onChange={setDate}
+              options={[
+                { value: 'any', label: 'Any time' },
+                { value: 'week', label: 'Past 7 days' },
+                { value: 'month', label: 'Past 30 days' },
+              ]}
+            />
+            {(searching || filtered) && (
+              <button className="link-btn filter-bar__clear" onClick={clearFilters}>
+                <X size={13} /> Clear
+              </button>
+            )}
+            <span className="filter-bar__end">
               <Segmented
                 label="View"
                 value={view}
@@ -164,25 +206,7 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
                   { value: 'list', icon: List, title: 'List' },
                 ]}
               />
-            </div>
-          </div>
-          <div className="kind-filter">
-            {(['all', 'pdf', 'deck', 'image', 'sheet', 'archive'] as KindFilter[]).map((k) => (
-              <button key={k} className={cx('chip', kind === k && 'is-active')} onClick={() => setKind(k)}>
-                {k === 'all' ? 'All types' : kindLabel[k as DocKind]}
-              </button>
-            ))}
-            {(searching || kind !== 'all') && (
-              <button
-                className="link-btn"
-                onClick={() => {
-                  setQ('');
-                  setKind('all');
-                }}
-              >
-                <X size={13} /> Clear
-              </button>
-            )}
+            </span>
           </div>
 
           {uploads.length > 0 && (
@@ -206,7 +230,7 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
                   <span className="folder-card__name">{f.name}</span>
                   <span className="folder-card__meta">
                     {countIn(f.id)} items
-                    {reviewIn(f.id) > 0 && <Badge tone="accent">{reviewIn(f.id)} to review</Badge>}
+                    {reviewIn(f.id) > 0 && <Badge tone="warning">{reviewIn(f.id)} to review</Badge>}
                   </span>
                 </a>
               ))}
@@ -227,13 +251,18 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
               )}
             </div>
           ) : files.length === 0 ? (
-            folder || searching ? (
+            folder || searching || filtered ? (
               <EmptyState
-                compact
-                icon={searching || kind !== 'all' ? FileQuestion : FolderOpen}
-                title={searching ? `No files match “${q}”` : kind !== 'all' ? `No ${kindLabel[kind as DocKind].toLowerCase()} files here` : 'This folder is empty'}
-                body={searching ? 'Search covers every folder. Try part of the name.' : 'Drop files here or use Upload to share them with Spark.'}
-                action={!searching && <Button icon={Upload} onClick={() => fileInput.current?.click()}>Upload</Button>}
+                panel
+                title={searching || filtered ? 'No files match these filters.' : 'No files added.'}
+                body={searching || filtered ? 'Search covers every folder. Try part of the name or clear the filters above.' : 'Drop files here or use Upload to share them.'}
+                action={
+                  !(searching || filtered) && (
+                    <Button size="sm" icon={Upload} onClick={() => fileInput.current?.click()}>
+                      Upload
+                    </Button>
+                  )
+                }
               />
             ) : null
           ) : view === 'grid' ? (
@@ -249,7 +278,6 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
               ))}
             </div>
           )}
-          {!folder && !searching && <p className="drop-hint faint">Tip: drag files anywhere on this page to share them with Spark.</p>}
         </div>
       </div>
     </div>
@@ -261,14 +289,14 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
       <button className="file-card" onClick={() => openDoc(d.id)}>
         <span className="file-card__thumb">
           <DocThumb doc={d} />
-          {d.review?.status === 'open' && <Badge tone="accent" className="file-card__badge">Feedback requested</Badge>}
+          {d.review?.status === 'open' && <Badge tone="warning" className="file-card__badge">Feedback requested</Badge>}
         </span>
         <span className="file-card__name">
           <FileIcon kind={d.kind} size={14} />
           <span>{d.name}</span>
         </span>
         <span className="file-card__meta">
-          {showFolder ? state.folders.find((f) => f.id === d.folderId)?.name : by.org === 'spark' ? 'Spark' : by.name.split(' ')[0]} · {fmtRelative(d.uploadedAt)}
+          {showFolder ? state.folders.find((f) => f.id === d.folderId)?.name : by.name.split(' ')[0]} · {fmtRelative(d.uploadedAt)}
         </span>
       </button>
     );
@@ -281,13 +309,13 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
         <button className="file-line__main" onClick={() => openDoc(d.id)} role="cell">
           <FileIcon kind={d.kind} />
           <span className="file-line__name">{d.name}</span>
-          {d.review?.status === 'open' && <Badge tone="accent">Feedback</Badge>}
+          {d.review?.status === 'open' && <Badge tone="warning">Feedback</Badge>}
         </button>
         <span className="faint hide-sm" role="cell">
-          {showFolder ? state.folders.find((f) => f.id === d.folderId)?.name : by.name}
+          {showFolder ? state.folders.find((f) => f.id === d.folderId)?.name : by.name.split(' ')[0]}
         </span>
-        <span className="faint hide-sm mono" role="cell">
-          {fmtDate(d.uploadedAt)}
+        <span className="faint hide-sm" role="cell">
+          {fmtRelative(d.uploadedAt)}
         </span>
         <span className="faint hide-md mono" role="cell">
           {fmtSize(d.sizeKb)}
@@ -295,9 +323,11 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
         <span className="file-line__acts" role="cell">
           <Button
             size="sm"
-            variant="ghost"
-            icon={Sparkles}
+            variant="ai"
+            lead={<SphereGlyph size={18} />}
+            className="file-act-ai"
             aria-label={`Ask about ${d.name}`}
+            data-tip="Ask about this file"
             onClick={() => {
               const id = actions.ask(null, `What should I know about ${d.name}?`, { docId: d.id });
               navigate(`/assistant/${id}`);
@@ -307,7 +337,9 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
             size="sm"
             variant="ghost"
             icon={Download}
+            className="file-act"
             aria-label={`Download ${d.name}`}
+            data-tip="Download"
             onClick={() => {
               const n = downloadDoc(d);
               toast({ title: 'Download started', body: n });
@@ -317,28 +349,4 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
       </div>
     );
   }
-}
-
-function FolderNavItem({ f, active, countIn, reviewIn }: { f: Folder; active?: string; countIn: (id: string) => number; reviewIn: (id: string) => number }) {
-  const { state } = useStore();
-  const kids = state.folders.filter((x) => x.parentId === f.id);
-  const isActive = active === f.id;
-  const inBranch = isActive || kids.some((k) => k.id === active);
-  return (
-    <>
-      <a className={cx('folder-nav__item', isActive && 'is-active')} href={`#/documents/${f.id}`}>
-        {inBranch ? <FolderOpen size={15} /> : <FolderIcon size={15} />}
-        <span>{f.name}</span>
-        {reviewIn(f.id) > 0 ? <span className="folder-nav__dot" aria-label="Has files to review" /> : <span className="folder-nav__n">{countIn(f.id)}</span>}
-      </a>
-      {inBranch &&
-        kids.map((k) => (
-          <a key={k.id} className={cx('folder-nav__item folder-nav__item--child', active === k.id && 'is-active')} href={`#/documents/${k.id}`}>
-            <FolderIcon size={14} />
-            <span>{k.name}</span>
-            {reviewIn(k.id) > 0 ? <span className="folder-nav__dot" /> : <span className="folder-nav__n">{countIn(k.id)}</span>}
-          </a>
-        ))}
-    </>
-  );
 }

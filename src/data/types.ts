@@ -127,7 +127,7 @@ export interface WorkRequest {
   createdAt: ISODate;
   updatedAt: ISODate;
   ownerId: ID; // Spark owner
-  nextStep?: { label: string; date: ISODate };
+  nextStep?: { label: string; date: ISODate; onClient?: boolean }; // onClient: the step waits on the client
   excerpt?: Excerpt;
   sourceIds?: ID[];
   proposalIds: ID[];

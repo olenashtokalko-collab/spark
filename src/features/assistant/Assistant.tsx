@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import { Search } from 'lucide-react';
+import { Lightbulb, MessageSquareQuote, ShieldCheck, UsersRound, type LucideIcon } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { navigate } from '../../lib/router';
 import { suggestedPrompts } from '../../data/assistant';
@@ -8,6 +8,14 @@ import { DotSphere } from '../../components/ui/DotSphere';
 import { Composer } from './Composer';
 import { MessageView } from './MessageView';
 import type { Attachment } from '../../data/types';
+
+// Landing chips: a coloured icon each, keyed by the prompt's label.
+const CHIP: Record<string, { icon: LucideIcon; tone: 'warning' | 'positive' | 'danger' | 'accent' }> = {
+  'Shape an idea': { icon: Lightbulb, tone: 'warning' },
+  'Background check': { icon: ShieldCheck, tone: 'positive' },
+  'What people say': { icon: MessageSquareQuote, tone: 'danger' },
+  'Know the audience': { icon: UsersRound, tone: 'accent' },
+};
 
 export function Assistant({ convId }: { convId?: string }) {
   const { state, me, actions } = useStore();
@@ -50,23 +58,30 @@ export function Assistant({ convId }: { convId?: string }) {
       <section className="assistant__main">
         {missing ? (
           <EmptyState
-            icon={Search}
-            title="Conversation not found"
+            title="Chat not found"
             body="It may have been deleted. Start a new one or pick one from history."
-            action={<Button onClick={() => navigate('/assistant')}>New conversation</Button>}
+            action={<Button onClick={() => navigate('/assistant')}>New chat</Button>}
           />
         ) : !conv ? (
           <div className="assistant__empty">
             <DotSphere size={150} />
-            <h1 className="assistant__hello">Let’s get started</h1>
-            <div className="prompt-grid">
-              {suggestedPrompts.map((p) => (
-                <button key={p.label} className="prompt-card" onClick={() => send(p.prompt)}>
-                  <span className="prompt-card__label">{p.label}</span>
-                  <span className="prompt-card__text">{p.prompt}</span>
-                  <span className="prompt-card__hint">{p.hint}</span>
-                </button>
-              ))}
+            <h1 className="assistant__hello">Welcome {me.name.split(' ')[0]}</h1>
+            {/* An empty chat starts with the input up here; it moves to the
+                bottom once the thread has messages. */}
+            <div className="assistant__start">
+              <Composer onSubmit={send} autoFocus size="lg" />
+              <div className="start-chips">
+                {suggestedPrompts.map((p) => {
+                  const c = CHIP[p.label] ?? { icon: Lightbulb, tone: 'accent' };
+                  const I = c.icon;
+                  return (
+                    <button key={p.label} className={`start-chip start-chip--${c.tone}`} onClick={() => send(p.prompt)} title={p.prompt}>
+                      <I size={16} strokeWidth={1.8} />
+                      {p.label}
+                    </button>
+                  );
+                })}
+              </div>
             </div>
           </div>
         ) : (
@@ -83,9 +98,9 @@ export function Assistant({ convId }: { convId?: string }) {
           </div>
         )}
 
-        {!missing && (
+        {conv && (
           <div className="assistant__composer">
-            <Composer onSubmit={send} busy={busy} autoFocus={!conv} size="lg" />
+            <Composer onSubmit={send} busy={busy} size="lg" />
           </div>
         )}
       </section>

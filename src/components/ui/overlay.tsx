@@ -1,6 +1,6 @@
 import { useEffect, useLayoutEffect, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { X } from 'lucide-react';
+import { Check, ChevronDown, X } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { cx } from './primitives';
 
@@ -87,7 +87,7 @@ interface PopoverProps {
   trigger: (p: { open: boolean; toggle: () => void; ref: (el: HTMLElement | null) => void }) => ReactNode;
   children: (close: () => void) => ReactNode;
   align?: 'start' | 'end';
-  side?: 'bottom' | 'top';
+  side?: 'bottom' | 'top' | 'right'; // right: beside the anchor, bottoms aligned (rail items)
   width?: number;
   className?: string;
 }
@@ -104,6 +104,12 @@ export function Popover({ trigger, children, align = 'end', side = 'bottom', wid
       const r = anchor.getBoundingClientRect();
       const ph = panel.current?.offsetHeight ?? 0;
       const w = Math.min(width, window.innerWidth - 16);
+      if (side === 'right') {
+        const left = Math.min(r.right + 10, window.innerWidth - w - 8);
+        const top = Math.max(8, Math.min(r.bottom - ph, window.innerHeight - ph - 8));
+        setPos({ top, left });
+        return;
+      }
       let left = align === 'end' ? r.right - w : r.left;
       left = Math.max(8, Math.min(left, window.innerWidth - w - 8));
       let top = side === 'bottom' ? r.bottom + 6 : r.top - ph - 6;
@@ -169,6 +175,7 @@ export interface MenuItem {
   danger?: boolean;
   disabled?: boolean;
   hint?: string;
+  selected?: boolean; // single-choice menus mark the current option
 }
 
 export function Menu({ trigger, items, align = 'end', width = 220, header }: { trigger: PopoverProps['trigger']; items: (MenuItem | 'divider')[]; align?: 'start' | 'end'; width?: number; header?: ReactNode }) {
@@ -194,11 +201,48 @@ export function Menu({ trigger, items, align = 'end', width = 220, header }: { t
                 {it.icon && <it.icon size={15} strokeWidth={1.8} />}
                 <span>{it.label}</span>
                 {it.hint && <span className="menu__hint">{it.hint}</span>}
+                {it.selected && <Check size={14} className="menu__check" />}
               </button>
             ),
           )}
         </div>
       )}
     </Popover>
+  );
+}
+
+// ---- Filter button ---------------------------------------------------------
+
+/** A filled filter button with an icon ("Type", "Date"…). The first option
+ *  means "any"; picking another shows it on the button. */
+export function FilterMenu<T extends string>({
+  icon: Icon,
+  label,
+  value,
+  options,
+  onChange,
+}: {
+  icon: LucideIcon;
+  label: string;
+  value: T;
+  options: { value: T; label: string }[];
+  onChange: (v: T) => void;
+}) {
+  const current = options.find((o) => o.value === value);
+  const set = value !== options[0].value;
+  return (
+    <Menu
+      align="start"
+      width={200}
+      trigger={({ toggle, ref }) => (
+        <button ref={ref} className={cx('filter-btn', set && 'is-set')} onClick={toggle} aria-haspopup="menu" aria-label={`${label}: ${current?.label}`}>
+          <Icon size={16} strokeWidth={1.8} />
+          <span>{label}</span>
+          {set && <span className="filter-btn__value">{current?.label}</span>}
+          <ChevronDown size={14} className="filter-btn__chev" />
+        </button>
+      )}
+      items={options.map((o) => ({ label: o.label, selected: o.value === value, onSelect: () => onChange(o.value) }))}
+    />
   );
 }

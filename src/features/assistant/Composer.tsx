@@ -91,7 +91,7 @@ export function Composer({ onSubmit, busy, placeholder = 'Ask about your brand, 
         rows={1}
         value={value}
         placeholder={placeholder}
-        aria-label="Message the assistant"
+        aria-label="Message Spark AI"
         onFocus={() => setFocus(true)}
         onBlur={() => setFocus(false)}
         onChange={(e) => setValue(e.target.value)}
@@ -126,7 +126,7 @@ export function Composer({ onSubmit, busy, placeholder = 'Ask about your brand, 
             }}
           />
         </div>
-        <button className="composer__send" onClick={send} disabled={!canSend} aria-label={busy ? 'Assistant is answering' : 'Send'}>
+        <button className="composer__send" onClick={send} disabled={!canSend} aria-label={busy ? 'Spark AI is answering' : 'Send'}>
           {busy ? <Square size={12} fill="currentColor" /> : <ArrowUp size={17} strokeWidth={2.2} />}
         </button>
       </div>

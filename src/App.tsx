@@ -10,7 +10,7 @@ import { ProposalView } from './features/requests/ProposalView';
 import { Documents } from './features/documents/Documents';
 import { Settings, TeamPage } from './features/team/Settings';
 import { EmptyState, Button } from './components/ui/primitives';
-import { Compass } from 'lucide-react';
+
 import { navigate } from './lib/router';
 
 function Screen() {
@@ -22,7 +22,7 @@ function Screen() {
     case 'assistant':
       return <Assistant convId={a} />;
     case 'requests':
-      if (a && b === 'proposal') return <ProposalView requestId={a} version={query.get('v') ? Number(query.get('v')) : undefined} />;
+      if (a && b === 'proposal') return <ProposalView requestId={a} />;
       if (a) return <RequestDetail id={a} />;
       return <Requests />;
     case 'documents':
@@ -35,7 +35,7 @@ function Screen() {
       return <Settings />;
   }
   return (
-    <EmptyState icon={Compass} title="Page not found" body="This link doesn't match anything in the workspace." action={<Button onClick={() => navigate('/')}>Go to chats</Button>} />
+    <EmptyState title="Page not found" body="This link doesn't match anything in the workspace." action={<Button onClick={() => navigate('/')}>Go to chats</Button>} />
   );
 }
 

@@ -37,11 +37,11 @@ const scripts: Script[] = [
       'Happy to. A brief Spark can price needs four things: **what you want to make**, **who it is for**, **what success looks like**, and **budget and timing**. Some of it is already in your workspace, so let\'s start with the idea itself. What do you have in mind, in a sentence or two? Rough is fine.',
     findings: [
       { title: 'Opening is set for 11 January', body: 'Anything for the launch needs to be ready by early January.', tone: 'neutral', sourceIds: ['ws-prop'] },
-      { title: 'AED 4,000 left in the Q4 launch line', body: 'If proposal v2 is approved, a new idea likely needs Q1 2027 budget.', tone: 'attention', sourceIds: ['ws-budget'] },
+      { title: 'AED 4,000 left in the Q4 launch line', body: 'If the proposal is approved, a new idea likely needs Q1 2027 budget.', tone: 'attention', sourceIds: ['ws-budget'] },
       { title: 'Audience is already defined', body: 'Riyadh shoppers aged 24–35, evening visits, found through creators.', tone: 'positive', sourceIds: ['ws-pers'] },
     ],
     sources: [
-      { id: 'ws-prop', kind: 'workspace', title: 'Proposal v2 · Riyadh launch campaign', route: '/requests/REQ-104/proposal', snippet: 'Launch 11 January 2027.' },
+      { id: 'ws-prop', kind: 'workspace', title: 'Proposal · Riyadh launch campaign', route: '/requests/REQ-104/proposal', snippet: 'Launch 11 January 2027.' },
       { id: 'ws-budget', kind: 'workspace', title: 'Q4 marketing budget.xlsx', docId: 'd-budget', snippet: 'Riyadh launch: 190,000 remaining.' },
       { id: 'ws-pers', kind: 'workspace', title: 'Audience personas — GCC.pdf', docId: 'd-personas', snippet: 'Noura, 29 · visits 4× a week, mostly after 7 pm.' },
     ],
@@ -103,7 +103,7 @@ const scripts: Script[] = [
     ],
     sources: [
       { id: 'ws-w40', kind: 'workspace', title: 'Social listening digest — W40.pdf', docId: 'd-digest-w40', snippet: 'Mentions 2,430 (+18%) · positive 64% (−4 pts).' },
-      { id: 'ws-req', kind: 'workspace', title: 'REQ-105 · Delivery fee response plan', route: '/requests/REQ-105', snippet: 'In review with Mira Chen.' },
+      { id: 'ws-req', kind: 'workspace', title: 'REQ-105 · Delivery fee response plan', route: '/requests/REQ-105', snippet: 'In review with Spark.' },
     ],
     webSources: [
       { id: 'w-post', kind: 'web', title: '@dxb.style.diaries on Instagram', domain: 'instagram.com', snippet: '"The new signature collection at Brand Co. is the best thing I\'ve bought this month." (sample)' },
@@ -136,16 +136,16 @@ const scripts: Script[] = [
   },
   {
     match: /proposal|summar|cost|budget|quote/i,
-    steps: ['Read proposal v2 for REQ-104', 'Compared with v1', 'Checked Q4 marketing budget.xlsx'],
+    steps: ['Read the proposal for REQ-104', 'Checked Q4 marketing budget.xlsx'],
     text:
-      'Proposal v2 for the **Riyadh launch campaign** covers positioning, a campaign idea, opening content and the launch event identity over **10 weeks for AED 186,000**. Compared with v1, the two launch films moved to a second wave around Ramadan, which saves AED 28,000 and two weeks. It fits the AED 190,000 Q4 line with AED 4,000 to spare. It is waiting for your decision by 14 October.',
+      'The proposal for the **Riyadh launch campaign** covers positioning, a campaign idea, opening content and the launch event identity over **10 weeks for AED 186,000**. The two launch films are planned as a second wave around Ramadan and quoted separately. It fits the AED 190,000 Q4 line with AED 4,000 to spare. It is waiting for your decision by 14 October.',
     findings: [
       { title: 'Within budget', body: 'AED 186,000 vs AED 190,000 available in Q4.', tone: 'positive', sourceIds: ['ws-prop', 'ws-budget'] },
       { title: 'Films now quoted separately', body: 'The second wave will need its own budget in Q1 2027.', tone: 'attention', sourceIds: ['ws-prop'] },
       { title: 'Starts 9 November, launches 11 January', body: 'A decision after 14 October puts the opening-week content at risk.', tone: 'neutral', sourceIds: ['ws-prop'] },
     ],
     sources: [
-      { id: 'ws-prop', kind: 'workspace', title: 'Proposal v2 · Riyadh launch campaign', route: '/requests/REQ-104/proposal', snippet: 'AED 186,000 · 10 weeks · valid until 14 Oct.' },
+      { id: 'ws-prop', kind: 'workspace', title: 'Proposal · Riyadh launch campaign', route: '/requests/REQ-104/proposal', snippet: 'AED 186,000 · 10 weeks · valid until 14 Oct.' },
       { id: 'ws-budget', kind: 'workspace', title: 'Q4 marketing budget.xlsx', docId: 'd-budget', snippet: 'Riyadh launch: 190,000 remaining.' },
     ],
     followUps: ['What would the films cost in a second wave?', 'What happens if we start in November?'],
@@ -154,7 +154,7 @@ const scripts: Script[] = [
     match: /packag|ramadan|concept/i,
     steps: ['Read REQ-103 and its proposal', 'Opened Packaging concepts — round 1'],
     text:
-      'The Ramadan 2027 packaging is **in progress**. Round 1 has three routes: **Night Market**, **Desert Bloom** and **Lantern**. Youssef asked for your pick (or two) by **15 October**, so artwork can go to print on 14 November.',
+      'The Ramadan 2027 packaging is **in progress**. Round 1 has three routes: **Night Market**, **Desert Bloom** and **Lantern**. Spark asked for your pick (or two) by **15 October**, so artwork can go to print on 14 November.',
     findings: [
       { title: 'Feedback needed by 15 Oct', body: 'Pick a favourite route and say what to push further.', tone: 'attention', sourceIds: ['ws-pack'] },
       { title: 'Approved budget: AED 96,000', body: 'Concepts, development and print production.', tone: 'neutral', sourceIds: ['ws-req103'] },

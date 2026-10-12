@@ -2,13 +2,13 @@
 // it came from is attached automatically (the focused answer and the question
 // before it) and shown back to the client once the request is sent.
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, CheckCircle2, FileText, Sparkles } from 'lucide-react';
+import { ArrowRight, CheckCircle2, FileText } from 'lucide-react';
 import { Dialog } from '../../components/ui/overlay';
 import { Button, Field, Input, Select, Textarea, cx } from '../../components/ui/primitives';
 import { useStore } from '../../state/store';
 import type { Conversation, Message, RequestType, Source, Timing } from '../../data/types';
 import { navigate } from '../../lib/router';
-import { RichText } from '../assistant/MessageView';
+import { ChatCut } from '../assistant/ChatCut';
 
 export interface RequestPrefill {
   title?: string;
@@ -74,7 +74,7 @@ export function defaultFields(prefill: RequestPrefill | undefined, basis: Basis 
 function validate(f: Fields): Errors {
   const e: Errors = {};
   if (f.title.trim().length < 4) e.title = 'Give the request a short, specific title.';
-  if (f.description.trim().length < 12) e.description = 'Tell Spark what you need, in a sentence or two.';
+  if (f.description.trim().length < 12) e.description = 'Describe what you need, in a sentence or two.';
   return e;
 }
 
@@ -137,24 +137,10 @@ export function RequestFields({ value, onChange, errors, idPrefix = 'rq', compac
 /** "Based on": the question, answer and sources attached to the request,
  *  shown as a glass card with the accent glow (style 3, chosen 9 Oct). */
 export function BasedOn({ basis }: { basis: Basis }) {
-  const q = basis.messages.find((m) => m.role === 'user');
-  const a = basis.messages.find((m) => m.role === 'assistant');
+  const msgs = basis.messages.map((m) => ({ role: m.role as 'user' | 'assistant', text: m.text }));
   return (
-    <div className="bo bo--glass">
-      {q && (
-        <div className="bo-glass__q">
-          <span className="bo-tag">Prompt</span>
-          <p>{q.text}</p>
-        </div>
-      )}
-      {a && (
-        <div className="bo-glass__a">
-          <span className="bo-tag bo-tag--ai">
-            <Sparkles size={11} /> Spark AI
-          </span>
-          <RichText text={a.text} />
-        </div>
-      )}
+    <div className="sent-with">
+      <ChatCut messages={msgs} author="You" compact />
       {basis.sources.length > 0 && (
         <div className="based-on__sources">
           {basis.sources.map((s) => (
@@ -168,7 +154,7 @@ export function BasedOn({ basis }: { basis: Basis }) {
   );
 }
 
-export function RequestSent({ id, basis, onClose, closeLabel }: { id: string; title?: string; basis?: Basis; onClose: () => void; closeLabel: string }) {
+export function RequestSent({ basis, onClose, closeLabel }: { id?: string; title?: string; basis?: Basis; onClose: () => void; closeLabel: string }) {
   return (
     <div className="req-done">
       <span className="req-done__icon">
@@ -176,7 +162,7 @@ export function RequestSent({ id, basis, onClose, closeLabel }: { id: string; ti
       </span>
       <h2>Request sent to Spark</h2>
       <p className="req-done__reply">
-        You'll hear back from Spark within <strong>2 business days</strong>.
+        You'll usually get a reply within <strong>2 business days</strong>.
       </p>
       {basis && <BasedOn basis={basis} />}
       <div className="req-done__actions">
@@ -188,11 +174,11 @@ export function RequestSent({ id, basis, onClose, closeLabel }: { id: string; ti
           iconRight={ArrowRight}
           onClick={() => {
             onClose();
-            navigate(`/requests/${id}`);
+            navigate('/requests');
           }}
           data-autofocus
         >
-          View request
+          Go to requests
         </Button>
       </div>
     </div>
@@ -243,12 +229,11 @@ export function CreateRequestDialog({ open, onClose, prefill }: { open: boolean;
       open={open}
       onClose={onClose}
       size="md"
-      title="New request for Spark"
-      description={basis ? 'Tell Spark what you need. The chat is attached automatically.' : 'Tell Spark what you need. They reply with questions or a proposal.'}
+      title="New request"
+      description={basis ? 'Describe what you need.' : 'Describe what you need. You’ll get questions or a proposal back.'}
       footer={
         <>
-          <span className="spacer" />
-          <Button variant="ghost" onClick={onClose}>
+          <Button variant="secondary" onClick={onClose}>
             Cancel
           </Button>
           <Button variant="primary" onClick={send} loading={busy}>

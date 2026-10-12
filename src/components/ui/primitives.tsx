@@ -9,18 +9,19 @@ export { cx };
 
 // ---- Button --------------------------------------------------------------
 
-type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'quiet';
+type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'quiet' | 'ai';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
   size?: 'sm' | 'md' | 'lg';
   icon?: LucideIcon;
   iconRight?: LucideIcon;
+  lead?: ReactNode; // any leading graphic, e.g. the Spark AI glyph
   loading?: boolean;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = 'secondary', size = 'md', icon: Icon, iconRight: IconR, loading, className, children, disabled, type = 'button', ...rest },
+  { variant = 'secondary', size = 'md', icon: Icon, iconRight: IconR, lead, loading, className, children, disabled, type = 'button', ...rest },
   ref,
 ) {
   return (
@@ -31,7 +32,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
       disabled={disabled || loading}
       {...rest}
     >
-      {loading ? <Loader2 className="spin" size={15} /> : Icon && <Icon size={size === 'sm' ? 14 : 16} strokeWidth={1.8} />}
+      {loading ? <Loader2 className="spin" size={15} /> : Icon ? <Icon size={size === 'sm' ? 14 : 16} strokeWidth={1.8} /> : lead}
       {children && <span>{children}</span>}
       {IconR && <IconR size={size === 'sm' ? 14 : 16} strokeWidth={1.8} />}
     </button>
@@ -61,7 +62,7 @@ export function Count({ n, tone = 'neutral' }: { n: number; tone?: Tone }) {
 export function Avatar({ person, size = 28, ring }: { person: Pick<Person, 'name' | 'hue' | 'org'>; size?: number; ring?: boolean }) {
   return (
     <span
-      className={cx('avatar', person.org === 'spark' && 'avatar--spark', ring && 'avatar--ring')}
+      className={cx('avatar', ring && 'avatar--ring')}
       style={{ width: size, height: size, fontSize: Math.round(size * 0.38), ['--hue' as string]: person.hue }}
       title={person.name}
       aria-hidden
@@ -165,7 +166,7 @@ export function Segmented<T extends string>({ value, onChange, items, label }: {
   return (
     <div className="segmented" role="radiogroup" aria-label={label}>
       {items.map((it) => (
-        <button key={it.value} role="radio" aria-checked={value === it.value} title={it.title ?? it.label} className={cx('segmented__item', value === it.value && 'is-active')} onClick={() => onChange(it.value)}>
+        <button key={it.value} role="radio" aria-checked={value === it.value} data-tip={it.label ? undefined : it.title} aria-label={it.title ?? it.label} className={cx('segmented__item', value === it.value && 'is-active')} onClick={() => onChange(it.value)}>
           {it.icon && <it.icon size={15} strokeWidth={1.8} />}
           {it.label && <span>{it.label}</span>}
         </button>
@@ -180,12 +181,11 @@ export function Skeleton({ w = '100%', h = 14, r = 6, className }: { w?: number 
   return <span className={cx('skeleton', className)} style={{ width: w, height: h, borderRadius: r }} />;
 }
 
-export function EmptyState({ icon: Icon, title, body, action, compact }: { icon: LucideIcon; title: string; body?: ReactNode; action?: ReactNode; compact?: boolean }) {
+/** Quiet by design: a short line of muted text, an optional hint and action.
+ *  `panel` sets it in a filled card, for empty sections inside a page. */
+export function EmptyState({ title, body, action, panel }: { title: string; body?: ReactNode; action?: ReactNode; panel?: boolean }) {
   return (
-    <div className={cx('empty', compact && 'empty--compact')}>
-      <span className="empty__icon">
-        <Icon size={20} strokeWidth={1.6} />
-      </span>
+    <div className={cx('empty', panel && 'empty--panel')}>
       <div className="empty__title">{title}</div>
       {body && <div className="empty__body">{body}</div>}
       {action && <div className="empty__action">{action}</div>}

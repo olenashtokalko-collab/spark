@@ -106,10 +106,10 @@ ol {
   }
 }
 
+/* One typeface: IDs, amounts and counts stay Inter, with even-width digits
+   so columns still line up. (The class name predates the switch from mono.) */
 .mono {
-  font-family: var(--font-mono);
-  font-size: 12px;
-  letter-spacing: 0.01em;
+  font-variant-numeric: tabular-nums;
 }
 .muted {
   color: var(--text-2);
@@ -117,11 +117,11 @@ ol {
 .faint {
   color: var(--text-3);
 }
+/* Small labels are Inter in sentence case; the mono face is kept for IDs,
+   amounts and counters, where even-width digits help. */
 .eyebrow {
-  font-family: var(--font-mono);
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+  font-size: 13px;
+  font-weight: 500;
   color: var(--text-3);
 }
 .display {
@@ -156,108 +156,129 @@ ol {
 /* ---- Shell ------------------------------------------------------------------ */
 
 .shell {
+  --rail-w: 72px;
+  --top-h: 64px;
   display: grid;
-  grid-template-columns: var(--sidebar-w) 1fr;
-  grid-template-rows: auto 1fr;
+  grid-template-columns: var(--rail-w) minmax(0, 1fr);
+  grid-template-rows: var(--top-h) 1fr;
   min-height: 100%;
 }
-.shell .sidebar,
-.shell .main {
-  grid-row: 1 / -1;
-}
-
-.sidebar {
+.rail {
   position: sticky;
-  top: 0;
-  height: 100vh;
+  top: var(--top-h);
+  height: calc(100vh - var(--top-h));
   display: flex;
   flex-direction: column;
-  padding: 16px 12px 14px;
-  background: var(--surface-1);
-  overflow-y: auto;
-}
-.sidebar__brand {
-  display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 6px 8px 18px;
+  gap: 6px;
+  padding-top: 20px;
 }
-.brand-mark {
-  width: 34px;
-  height: 34px;
-  border-radius: 10px;
+.rail__btn {
+  --ring: var(--bg);
+  position: relative;
+  width: 42px;
+  height: 42px;
   display: grid;
   place-items: center;
-  background: var(--text);
-  color: var(--text-inverse);
+  border-radius: var(--radius-sm);
+  color: var(--text-3);
+  transition: background 0.15s, color 0.15s;
+}
+.rail__btn:hover {
+  --ring: var(--surface-1);
+  background: var(--surface-1);
+  color: var(--text);
+}
+.rail__btn.is-active {
+  --ring: var(--surface-2);
+  background: var(--surface-2);
+  color: var(--text);
+}
+.rail__end {
+  margin-top: auto;
+}
+.rail > :last-child {
+  margin-bottom: 16px;
+}
+.rail__dot {
+  position: absolute;
+  top: 9px;
+  right: 9px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--warning);
+  box-shadow: 0 0 0 2px var(--ring);
+  transition: box-shadow 0.15s;
+}
+/* Rail tooltips open to the right. */
+.rail [data-tip]::after {
+  bottom: auto;
+  top: 50%;
+  left: calc(100% + 10px);
+  transform: translate(3px, -50%);
+}
+.rail [data-tip]:hover::after,
+.rail [data-tip]:focus-visible::after {
+  transform: translate(0, -50%);
+}
+.topbar__logo {
   font-family: var(--font-display);
   font-stretch: 125%;
   font-weight: 800;
-  font-size: 15px;
-  flex: none;
+  font-size: 18px;
+  letter-spacing: 0.02em;
+  padding: 0 4px;
 }
-.sidebar__brand-text {
-  min-width: 0;
+.topbar [data-tip]::after {
+  bottom: auto;
+  top: calc(100% + 8px);
+}
+.team-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 10px;
+  margin-right: 6px;
+  border-radius: var(--radius-sm);
+  font-size: 14px;
+  color: var(--text-2);
+  transition: background 0.15s, color 0.15s;
+}
+.team-btn:hover,
+.team-btn.is-open {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+.team-menu__row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 6px 10px;
+  font-size: 14px;
+}
+.team-menu__name {
   flex: 1;
-}
-.sidebar__brand-name {
-  font-weight: 600;
-  font-size: 14.5px;
+  min-width: 0;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.sidebar__brand-sub {
-  font-size: 12px;
-  color: var(--text-3);
-}
-.nav {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-.nav__item {
-  display: flex;
-  align-items: center;
-  gap: 11px;
-  height: 36px;
-  padding: 0 10px;
-  border-radius: var(--radius-sm);
-  color: var(--text-2);
-  font-weight: 500;
-  font-size: 13.5px;
-  transition: background 0.15s, color 0.15s;
-}
-.nav__item:hover {
-  background: var(--surface-hover);
-  color: var(--text);
-}
-.nav__item.is-active {
-  background: var(--surface-active);
-  color: var(--text);
-}
-.nav__item .count {
-  margin-left: auto;
-}
-.sidebar__spacer {
-  flex: 1;
-  min-height: 24px;
+.team-menu__role {
+  font-size: 13px;
 }
 
-.main {
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-}
 .topbar {
+  grid-column: 1 / -1;
   position: sticky;
   top: 0;
   z-index: 20;
-  height: 56px;
+  height: var(--top-h);
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 0 24px;
+  padding: 0 24px 0 20px;
   background: color-mix(in srgb, var(--bg) 82%, transparent);
   backdrop-filter: blur(12px);
 }
@@ -265,7 +286,7 @@ ol {
   flex: 1;
 }
 kbd {
-  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   font-size: 11px;
   padding: 1px 6px;
   border-radius: 5px;
@@ -277,8 +298,8 @@ kbd {
 }
 .bell__dot {
   position: absolute;
-  top: 3px;
-  right: 2px;
+  top: 4px;
+  right: 3px;
   min-width: 16px;
   height: 16px;
   padding: 0 4px;
@@ -289,7 +310,7 @@ kbd {
   font-weight: 600;
   display: grid;
   place-items: center;
-  box-shadow: 0 0 0 2px var(--bg);
+  box-shadow: 0 0 0 2px var(--ring, var(--bg));
 }
 .user-btn {
   border-radius: 999px;
@@ -318,19 +339,16 @@ kbd {
   flex-wrap: wrap;
 }
 .page-head__title {
-  font-family: var(--font-display);
-  font-stretch: 125%;
-  font-weight: 800;
   font-size: 30px;
-  line-height: 1.05;
-  letter-spacing: -0.005em;
-  text-transform: uppercase;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
   margin-top: 8px;
 }
 .page-head__sub {
   margin-top: 10px;
   color: var(--text-2);
-  font-size: 14.5px;
+  font-size: 14px;
   max-width: 640px;
 }
 .page-head__actions {
@@ -352,10 +370,11 @@ kbd {
   align-items: baseline;
   gap: 8px;
 }
-.section-head__meta {
-  font-family: var(--font-mono);
+/* Counts next to a title read "Title · 3 things": muted Inter, same size.
+   Mono is kept for tab counters only. */
+.section-head__meta,
+.block__count {
   font-weight: 400;
-  font-size: 11.5px;
   color: var(--text-3);
 }
 .back {
@@ -381,7 +400,7 @@ kbd {
   padding: 0 14px;
   border-radius: var(--radius-sm);
   font-weight: 500;
-  font-size: 13.5px;
+  font-size: 14px;
   white-space: nowrap;
   transition: background 0.15s, color 0.15s, box-shadow 0.2s, opacity 0.15s;
 }
@@ -430,12 +449,27 @@ kbd {
 .btn--quiet:hover:not(:disabled) {
   background: var(--accent-softer);
 }
+/* AI button: dark glass with a thin blue edge that brightens and glows on hover.
+   Used for actions that go to Spark AI, with the sphere glyph in front. */
+.btn--ai {
+  background: linear-gradient(160deg, color-mix(in srgb, var(--accent) 16%, transparent), transparent 70%), var(--surface-2);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+  color: var(--text);
+  transition: box-shadow 0.25s var(--ease), background 0.2s;
+}
+.btn--ai:hover:not(:disabled) {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 70%, transparent), var(--glow-soft);
+}
+.sphere-glyph {
+  flex: none;
+  display: block;
+}
 .btn--danger {
-  background: var(--danger-soft);
-  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 82%, #000);
+  color: #fff;
 }
 .btn--danger:hover:not(:disabled) {
-  background: color-mix(in srgb, var(--danger) 22%, transparent);
+  background: color-mix(in srgb, var(--danger) 92%, #000);
 }
 .btn:disabled {
   opacity: 0.45;
@@ -483,7 +517,7 @@ kbd {
   height: 20px;
   padding: 0 6px;
   border-radius: 999px;
-  font-size: 11.5px;
+  font-size: 12px;
   font-weight: 600;
   display: inline-grid;
   place-items: center;
@@ -512,9 +546,6 @@ kbd {
 :root[data-theme='light'] .avatar {
   background: hsl(var(--hue) 55% 88%);
   color: hsl(var(--hue) 45% 28%);
-}
-.avatar--spark {
-  border-radius: 30%;
 }
 .avatar--ring {
   box-shadow: 0 0 0 2px var(--bg);
@@ -549,11 +580,11 @@ kbd {
   font-size: 12px;
 }
 .field__hint {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--text-3);
 }
 .field__error {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--danger);
 }
 .input {
@@ -699,7 +730,7 @@ kbd {
   outline-offset: 2px;
 }
 .checkbox__label {
-  font-size: 13.5px;
+  font-size: 14px;
 }
 
 /* ---- Tabs & segmented ------------------------------------------------------------- */
@@ -718,7 +749,7 @@ kbd {
   padding: 0 12px;
   border-radius: var(--radius-sm);
   font-weight: 500;
-  font-size: 13.5px;
+  font-size: 14px;
   color: var(--text-2);
   white-space: nowrap;
 }
@@ -731,7 +762,7 @@ kbd {
   background: var(--surface-2);
 }
 .tabs__count {
-  font-family: var(--font-mono);
+  font-variant-numeric: tabular-nums;
   font-size: 11px;
   color: var(--text-3);
 }
@@ -769,37 +800,36 @@ kbd {
   background-size: 200% 100%;
   animation: shimmer 1.4s linear infinite;
 }
+/* Empty states stay quiet: one muted line, centred on the page, or set in a
+   filled panel inside a section. */
 .empty {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 56px 24px;
+  padding: 120px 24px;
   gap: 6px;
 }
-.empty--compact {
-  padding: 28px 16px;
-}
-.empty__icon {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  display: grid;
-  place-items: center;
-  background: var(--surface-2);
-  color: var(--text-2);
-  margin-bottom: 8px;
-}
 .empty__title {
-  font-weight: 600;
+  font-size: 17px;
+  color: var(--text-3);
 }
 .empty__body {
-  color: var(--text-2);
-  max-width: 380px;
-  font-size: 13.5px;
+  color: var(--text-3);
+  max-width: 400px;
+  font-size: 14px;
+  opacity: 0.85;
 }
 .empty__action {
-  margin-top: 12px;
+  margin-top: 14px;
+}
+.empty--panel {
+  padding: 32px 28px;
+  border-radius: var(--radius-xl);
+  background: var(--surface-1);
+}
+.empty--panel .empty__title {
+  font-size: 15px;
 }
 .progress {
   display: block;
@@ -852,7 +882,7 @@ kbd {
   outline: none;
 }
 .dialog--sm {
-  max-width: 420px;
+  max-width: 480px;
 }
 .dialog--md {
   max-width: 560px;
@@ -868,27 +898,30 @@ kbd {
   justify-content: space-between;
   align-items: flex-start;
   gap: 16px;
-  padding: 20px 20px 0 24px;
+  padding: 24px 20px 0 28px;
 }
 .dialog__title {
-  font-size: 17px;
+  font-size: 24px;
   font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.015em;
 }
 .dialog__desc {
-  margin-top: 4px;
+  margin-top: 6px;
   color: var(--text-2);
-  font-size: 13.5px;
+  font-size: 14px;
 }
 .dialog__body {
-  padding: 20px 24px;
+  padding: 24px 28px;
   overflow-y: auto;
 }
+/* Secondary action on the left, primary on the right, everywhere. */
 .dialog__foot {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
   gap: 8px;
-  padding: 14px 24px 20px;
+  padding: 4px 28px 28px;
 }
 .dialog__foot .spacer {
   flex: 1;
@@ -921,6 +954,10 @@ kbd {
   display: flex;
   flex-direction: column;
 }
+.menu__check {
+  margin-left: auto;
+  color: var(--accent-text);
+}
 .menu__item {
   display: flex;
   align-items: center;
@@ -928,7 +965,7 @@ kbd {
   height: 34px;
   padding: 0 10px;
   border-radius: 7px;
-  font-size: 13.5px;
+  font-size: 14px;
   color: var(--text);
   text-align: left;
   cursor: pointer;
@@ -965,10 +1002,8 @@ kbd {
   align-items: center;
   gap: 6px;
   padding: 8px 10px 4px;
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  letter-spacing: 0.06em;
-  text-transform: uppercase;
+  font-size: 12px;
+  font-weight: 500;
   color: var(--text-3);
 }
 .user-menu__who {
@@ -981,7 +1016,7 @@ kbd {
   font-weight: 600;
 }
 .user-menu__mail {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--text-3);
 }
 .theme-pick {
@@ -997,7 +1032,7 @@ kbd {
   gap: 6px;
   height: 30px;
   border-radius: 7px;
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--text-2);
   background: var(--surface-2);
 }
@@ -1056,15 +1091,15 @@ kbd {
   flex: 1;
 }
 .notif__title {
-  font-size: 13.5px;
+  font-size: 14px;
   font-weight: 500;
 }
 .notif__body {
-  font-size: 12.5px;
+  font-size: 13px;
   color: var(--text-2);
 }
 .notif__time {
-  font-size: 11.5px;
+  font-size: 12px;
   color: var(--text-3);
   margin-top: 2px;
 }
@@ -1114,11 +1149,11 @@ kbd {
 }
 .toast__title {
   font-weight: 500;
-  font-size: 13.5px;
+  font-size: 14px;
 }
 .toast__body {
   color: var(--text-2);
-  font-size: 12.5px;
+  font-size: 13px;
   margin-top: 1px;
 }
 .toast__action {
@@ -1134,34 +1169,12 @@ kbd {
 
 /* ---- Files ------------------------------------------------------------------------------ */
 
+/* One muted colour for every file type: the shape and the extension tell
+   the type, and colour stays for meaning (amber = waits on you, red = destructive). */
 .file-icon {
   display: inline-grid;
   place-items: center;
-  color: var(--text-2);
-}
-.file-icon--pdf {
-  color: #f08a7e;
-}
-.file-icon--image {
-  color: #7fc8a9;
-}
-.file-icon--deck {
-  color: #f0b44c;
-}
-.file-icon--sheet {
-  color: #6fb8f0;
-}
-:root[data-theme='light'] .file-icon--pdf {
-  color: #c4473a;
-}
-:root[data-theme='light'] .file-icon--image {
-  color: #2b8a62;
-}
-:root[data-theme='light'] .file-icon--deck {
-  color: #b37a0e;
-}
-:root[data-theme='light'] .file-icon--sheet {
-  color: #2a76b5;
+  color: var(--text-3);
 }
 .art {
   display: block;
@@ -1171,34 +1184,9 @@ kbd {
 
 /* ---- Responsive shell ------------------------------------------------------------------------ */
 
-/* Narrow screens: the sidebar collapses to an icon rail instead of a drawer. */
 @media (max-width: 900px) {
   .shell {
-    grid-template-columns: 64px minmax(0, 1fr);
-  }
-  .sidebar {
-    padding: 14px 10px;
-    align-items: center;
-  }
-  .sidebar__brand {
-    padding: 4px 0 18px;
-  }
-  .sidebar__brand-text,
-  .nav__item span,
-  .nav__item {
-    position: relative;
-    width: 44px;
-    justify-content: center;
-    padding: 0;
-  }
-  .nav__item .count {
-    position: absolute;
-    top: 2px;
-    right: 0;
-    min-width: 16px;
-    height: 16px;
-    padding: 0 4px;
-    font-size: 10px;
+    --rail-w: 56px;
   }
   .topbar {
     padding: 0 12px;
@@ -1232,4 +1220,37 @@ kbd {
   .btn.preview__close-m {
     display: inline-flex;
   }
+}
+
+/* ---- Tooltip ------------------------------------------------------------------ */
+
+/* Styled hint for icon-only controls: add data-tip="…" to the element. Shows
+   above it on hover and on keyboard focus, after a short delay. */
+[data-tip] {
+  position: relative;
+}
+[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute;
+  bottom: calc(100% + 8px);
+  left: 50%;
+  z-index: 30;
+  padding: 6px 9px;
+  border-radius: var(--radius-xs);
+  background: var(--text);
+  color: var(--text-inverse);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  transform: translate(-50%, 3px);
+  transition: opacity 0.12s, transform 0.12s var(--ease);
+}
+[data-tip]:hover::after,
+[data-tip]:focus-visible::after {
+  opacity: 1;
+  transform: translate(-50%, 0);
+  transition-delay: 0.25s;
 }

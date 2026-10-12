@@ -1,40 +1,36 @@
-import { useMemo, useState } from 'react';
-import { ArrowLeft, Check, CheckCircle2, Download, MessageSquare, RotateCcw, Search, ShieldCheck, X, XCircle, GitCompare } from 'lucide-react';
-import { canApprove, personById, proposalTotal, proposalWeeks, proposalsFor, useStore } from '../../state/store';
-import { Avatar, Badge, Button, Checkbox, EmptyState, Field, Segmented, Select, Textarea, cx } from '../../components/ui/primitives';
+import { useEffect, useState } from 'react';
+import { ArrowLeft, CircleAlert, Download, MessageSquare, RotateCcw, ShieldCheck } from 'lucide-react';
+import { canApprove, latestProposal, personById, proposalTotal, proposalWeeks, useStore } from '../../state/store';
+import { Avatar, Button, Checkbox, EmptyState, Field, Select, Textarea, cx } from '../../components/ui/primitives';
 import { Dialog } from '../../components/ui/overlay';
 import { ProposalStatus } from '../../components/domain';
 import { useToast } from '../../components/ui/toast';
 import { aed, addDays, dueLabel, fmtDate, fmtDateTime, fmtRelative } from '../../lib/format';
-import { navigate, withQuery } from '../../lib/router';
+import { navigate } from '../../lib/router';
 import type { Proposal } from '../../data/types';
 
 const SECTIONS = ['Summary', 'Objectives', 'Scope & deliverables', 'Timeline', 'Investment', 'Terms'] as const;
 type Section = (typeof SECTIONS)[number];
 type Decision = 'approved' | 'changes_requested' | 'declined';
 
-export function ProposalView({ requestId, version }: { requestId: string; version?: number }) {
+export function ProposalView({ requestId }: { requestId: string }) {
   const { state, me, actions } = useStore();
   const toast = useToast();
-  const versions = proposalsFor(state, requestId);
+  // One proposal per request for now: the client always sees the latest.
   const req = state.requests.find((r) => r.id === requestId);
-  const p = versions.find((v) => v.version === version) ?? versions[versions.length - 1];
+  const p = latestProposal(state, requestId);
   const [commentFor, setCommentFor] = useState<Section | null>(null);
-  const [filter, setFilter] = useState<Section | 'all'>('all');
   const [decision, setDecision] = useState<Decision | null>(null);
 
   if (!req || !p)
     return (
       <EmptyState
-        icon={Search}
         title="No proposal yet"
         body="Spark hasn't sent a proposal for this request."
         action={<Button onClick={() => navigate(req ? `/requests/${req.id}` : '/requests')}>Back to request</Button>}
       />
     );
 
-  const latest = versions[versions.length - 1];
-  const prev = versions.find((v) => v.version === p.version - 1);
   const total = proposalTotal(p);
   const weeks = proposalWeeks(p);
   const sender = personById(state, p.sentBy);
@@ -45,8 +41,8 @@ export function ProposalView({ requestId, version }: { requestId: string; versio
 
   const exportProposal = () => {
     const lines = [
-      `${p.title} · Proposal v${p.version}`,
-      `Sent ${fmtDate(p.sentAt, { year: true })} by ${sender.name}, Spark Studios`,
+      `${p.title} · Proposal`,
+      `Sent ${fmtDate(p.sentAt, { year: true })} by Spark Studios`,
       '',
       p.summary,
       '',
@@ -65,7 +61,7 @@ export function ProposalView({ requestId, version }: { requestId: string; versio
     const url = URL.createObjectURL(new Blob([lines], { type: 'text/plain' }));
     const a = document.createElement('a');
     a.href = url;
-    a.download = `Proposal — ${p.title} v${p.version}.txt`;
+    a.download = `Proposal — ${p.title}.txt`;
     a.click();
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     toast({ title: 'Proposal downloaded', body: 'A plain-text copy for sharing internally.' });
@@ -88,7 +84,6 @@ export function ProposalView({ requestId, version }: { requestId: string; versio
         onPost={(t) => {
           actions.commentOnProposal(p.id, t, s);
           setCommentFor(null);
-          setFilter(s);
           toast({ title: 'Comment added', body: `${sender.name} will see it on the proposal.` });
         }}
       />
@@ -99,54 +94,36 @@ export function ProposalView({ requestId, version }: { requestId: string; versio
   return (
     <div className="proposal">
       <a className="back" href={`#/requests/${req.id}`}>
-        <ArrowLeft size={15} /> {req.id} · {req.title}
+        <ArrowLeft size={15} /> Request
       </a>
 
       <div className="proposal__layout">
         <article className="proposal__doc">
           <header className="proposal__head">
             <div className="proposal__eyebrow">
-              <span className="mono faint">Proposal v{p.version}</span>
+              <span className="faint">Proposal</span>
               <ProposalStatus status={p.status} />
-              <span className="faint">· sent {fmtDate(p.sentAt, { year: true })}</span>
-              {versions.length > 1 && (
-                <Segmented
-                  label="Version"
-                  value={String(p.version)}
-                  onChange={(v) => navigate(withQuery(`/requests/${req.id}/proposal`, { v: v === String(latest.version) ? null : v }), { replace: true })}
-                  items={versions.map((v) => ({ value: String(v.version), label: `v${v.version}` }))}
-                />
-              )}
+              <span className="faint">· sent {fmtRelative(p.sentAt)}</span>
             </div>
             <h1 className="proposal__title">{p.title}</h1>
           </header>
 
-          <StatusBanner p={p} latestVersion={latest.version} requestId={req.id} />
+          <StatusBanner p={p} />
 
-          {prev && (
-            <div className="diff">
-              <GitCompare size={15} />
-              <span>
-                <strong>Changed from v{prev.version}:</strong> {total === proposalTotal(prev) ? 'same investment' : `${aed(Math.abs(total - proposalTotal(prev)))} ${total < proposalTotal(prev) ? 'less' : 'more'}`},{' '}
-                {weeks - proposalWeeks(prev) === 0 ? 'same duration' : `${Math.abs(weeks - proposalWeeks(prev))} weeks ${weeks < proposalWeeks(prev) ? 'shorter' : 'longer'}`}
-                {prev.decision?.note && <> · responds to “{prev.decision.note}”</>}
-              </span>
-            </div>
-          )}
 
-          <section className="psec">
+          <section className="psec" id="sec-summary">
             {sectionHead('Summary')}
             <p className="psec__lead">{p.summary}</p>
             {sectionComposer('Summary')}
           </section>
 
           {p.objectives.length > 0 && (
-            <section className="psec">
+            <section className="psec" id="sec-objectives">
               {sectionHead('Objectives')}
               <ol className="objectives">
                 {p.objectives.map((o, i) => (
                   <li key={i}>
-                    <span className="mono faint">0{i + 1}</span>
+                    <span className="list-num">{i + 1}.</span>
                     {o}
                   </li>
                 ))}
@@ -155,20 +132,16 @@ export function ProposalView({ requestId, version }: { requestId: string; versio
             </section>
           )}
 
-          <section className="psec">
+          <section className="psec" id="sec-scope">
             {sectionHead('Scope & deliverables')}
             <div className="scope">
               {p.scope.map((s, i) => (
                 <div key={i} className="scope__item">
-                  <div className="scope__num mono">{String(i + 1).padStart(2, '0')}</div>
+                  <div className="scope__num">{i + 1}.</div>
                   <div>
                     <div className="scope__title">{s.title}</div>
                     {s.detail && <p className="muted">{s.detail}</p>}
-                    <ul className="scope__list">
-                      {s.deliverables.filter(Boolean).map((d) => (
-                        <li key={d}>{d}</li>
-                      ))}
-                    </ul>
+                    <div className="scope__del">{s.deliverables.filter(Boolean).join(' · ')}</div>
                   </div>
                 </div>
               ))}
@@ -176,7 +149,7 @@ export function ProposalView({ requestId, version }: { requestId: string; versio
             {sectionComposer('Scope & deliverables')}
           </section>
 
-          <section className="psec">
+          <section className="psec" id="sec-timeline">
             {sectionHead('Timeline')}
             <div className="gantt" role="list">
               {p.phases.map((ph) => {
@@ -186,25 +159,25 @@ export function ProposalView({ requestId, version }: { requestId: string; versio
                   <div key={ph.name} className="gantt__row" role="listitem">
                     <div className="gantt__label">
                       <span>{ph.name}</span>
-                      <span className="faint mono">{ph.weeks}w</span>
+                      <span className="faint">{ph.weeks} wk</span>
                     </div>
                     <div className="gantt__track">
                       <span className="gantt__bar" style={{ left: `${(start / weeks) * 100}%`, width: `${(ph.weeks / weeks) * 100}%` }}>
-                        <span className="mono">{fmtDate(addDays(p.startDate, start * 7))}</span>
+                        <span>{fmtDate(addDays(p.startDate, start * 7))}</span>
                       </span>
                     </div>
                   </div>
                 );
               })}
               <div className="gantt__foot faint">
-                <span className="mono">Start {fmtDate(p.startDate, { year: true })}</span>
-                <span className="mono">End {fmtDate(addDays(p.startDate, weeks * 7), { year: true })}</span>
+                <span>Start {fmtDate(p.startDate, { year: true })}</span>
+                <span>End {fmtDate(addDays(p.startDate, weeks * 7), { year: true })}</span>
               </div>
             </div>
             {sectionComposer('Timeline')}
           </section>
 
-          <section className="psec">
+          <section className="psec" id="sec-investment">
             {sectionHead('Investment')}
             <table className="table invest">
               <tbody>
@@ -225,7 +198,7 @@ export function ProposalView({ requestId, version }: { requestId: string; versio
             {sectionComposer('Investment')}
           </section>
 
-          <section className="psec">
+          <section className="psec" id="sec-terms">
             {sectionHead('Terms')}
             <ul className="terms">
               {p.terms.map((t) => (
@@ -235,25 +208,40 @@ export function ProposalView({ requestId, version }: { requestId: string; versio
             </ul>
             {sectionComposer('Terms')}
           </section>
+
+          <section className="psec pcomments" id="sec-comments">
+            <h2 className="psec__title">Comments · {p.comments.length}</h2>
+            <CommentList p={p} />
+            <GeneralComment
+              onPost={(t) => {
+                actions.commentOnProposal(p.id, t);
+                toast({ title: 'Comment added' });
+              }}
+            />
+          </section>
         </article>
 
         <aside className="proposal__side">
           <section className="decision">
-            <div className="decision__total">{aed(total)}</div>
+            {/* The three decisions stay visible; the download is an icon by the total. */}
+            <div className="decision__head">
+              <div className="decision__total">{aed(total)}</div>
+              <Button variant="ghost" size="sm" icon={Download} onClick={exportProposal} aria-label="Download a copy" data-tip="Download a copy" />
+            </div>
             <div className="decision__meta">
               {weeks} weeks · starts {fmtDate(p.startDate)}
               {awaiting && <> · {dueLabel(p.validUntil)}</>}
             </div>
             {mayDecide && (
               <div className="decision__btns">
-                <Button variant="primary" size="lg" icon={Check} onClick={() => setDecision('approved')}>
+                <Button variant="primary" size="lg" onClick={() => setDecision('approved')}>
                   Approve proposal
                 </Button>
                 <div className="decision__row">
-                  <Button icon={RotateCcw} onClick={() => setDecision('changes_requested')}>
+                  <Button onClick={() => setDecision('changes_requested')}>
                     Request changes
                   </Button>
-                  <Button variant="ghost" icon={X} onClick={() => setDecision('declined')}>
+                  <Button onClick={() => setDecision('declined')}>
                     Decline
                   </Button>
                 </div>
@@ -269,38 +257,24 @@ export function ProposalView({ requestId, version }: { requestId: string; versio
                 <Avatar person={decider} size={22} />
                 <span>
                   {p.status === 'approved' ? 'Approved' : p.status === 'declined' ? 'Declined' : 'Changes requested'} by {decider.name}
+                  {p.decision.reason && <> ({p.decision.reason.toLowerCase()})</>}
                   <span className="faint"> · {fmtDateTime(p.decision.at)}</span>
+                  {p.decision.note && <span className="decision__quote">“{p.decision.note}”</span>}
                 </span>
               </div>
             )}
-            <button className="link-btn decision__dl" onClick={exportProposal}>
-              <Download size={14} /> Download a copy
-            </button>
           </section>
-
-          <section className="pcomments">
-            <div className="pcomments__head">
-              <h3>Comments</h3>
-              <span className="faint mono">{p.comments.length}</span>
-            </div>
-            <div className="pcomments__filters">
-              <button className={cx('chip', filter === 'all' && 'is-active')} onClick={() => setFilter('all')}>
-                All
-              </button>
-              {SECTIONS.filter((s) => countFor(s) > 0).map((s) => (
-                <button key={s} className={cx('chip', filter === s && 'is-active')} onClick={() => setFilter(s)}>
-                  {s} · {countFor(s)}
-                </button>
-              ))}
-            </div>
-            <CommentList p={p} filter={filter} />
-            <GeneralComment
-              onPost={(t) => {
-                actions.commentOnProposal(p.id, t);
-                toast({ title: 'Comment added' });
-              }}
-            />
-          </section>
+          <ProposalToc
+            items={[
+              { id: 'summary', label: 'Summary' },
+              ...(p.objectives.length ? [{ id: 'objectives', label: 'Objectives' }] : []),
+              { id: 'scope', label: 'Scope & deliverables' },
+              { id: 'timeline', label: 'Timeline' },
+              { id: 'investment', label: 'Investment' },
+              { id: 'terms', label: 'Terms' },
+              { id: 'comments', label: 'Comments', count: p.comments.length },
+            ]}
+          />
         </aside>
       </div>
 
@@ -322,56 +296,61 @@ export function ProposalView({ requestId, version }: { requestId: string; versio
   );
 }
 
-function StatusBanner({ p, latestVersion, requestId }: { p: Proposal; latestVersion: number; requestId: string }) {
-  const { state } = useStore();
-  const who = p.decision ? personById(state, p.decision.by) : undefined;
-  if (p.status === 'approved')
-    return (
-      <div className="pbanner pbanner--positive">
-        <CheckCircle2 size={16} />
-        <span>
-          Approved by {who?.name} on {fmtDate(p.decision!.at, { year: true })}.{p.decision?.note && <> “{p.decision.note}”</>}
-        </span>
-      </div>
+// The decision itself shows in the side card; the banner only says a revised
+// proposal is on its way after the client asked for changes.
+/** In-page contents for the proposal: jumps to a section and marks the one
+ *  in view, so the document stays whole while still easy to move around. */
+function ProposalToc({ items }: { items: { id: string; label: string; count?: number }[] }) {
+  const [active, setActive] = useState(items[0]?.id);
+  useEffect(() => {
+    const els = items.map((i) => document.getElementById(`sec-${i.id}`)).filter((e): e is HTMLElement => !!e);
+    const io = new IntersectionObserver(
+      (entries) => {
+        const top = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
+        if (top) setActive(top.target.id.replace('sec-', ''));
+      },
+      { rootMargin: '-80px 0px -60% 0px' },
     );
-  if (p.status === 'declined')
-    return (
-      <div className="pbanner pbanner--danger">
-        <XCircle size={16} />
-        <span>
-          Declined by {who?.name}
-          {p.decision?.reason && <> ({p.decision.reason.toLowerCase()})</>}.{p.decision?.note && <> “{p.decision.note}”</>}
-        </span>
-      </div>
-    );
-  if (p.version < latestVersion)
-    return (
-      <div className="pbanner">
-        <RotateCcw size={16} />
-        <span>
-          {p.status === 'changes_requested' && who ? <>{who.name} requested changes: “{p.decision?.note}”. </> : null}
-          This is an older version.
-        </span>
-        <a className="link" href={`#/requests/${requestId}/proposal`}>
-          See v{latestVersion}
+    els.forEach((e) => io.observe(e));
+    return () => io.disconnect();
+  }, [items.map((i) => i.id).join()]); // eslint-disable-line react-hooks/exhaustive-deps
+
+  return (
+    <nav className="ptoc" aria-label="Proposal sections">
+      {items.map((i) => (
+        <a
+          key={i.id}
+          href={`#sec-${i.id}`}
+          className={cx('ptoc__item', active === i.id && 'is-active')}
+          aria-current={active === i.id ? 'location' : undefined}
+          onClick={(e) => {
+            // Hash routing owns the URL hash, so scroll instead of following the link.
+            e.preventDefault();
+            setActive(i.id);
+            document.getElementById(`sec-${i.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          }}
+        >
+          {i.label}
+          {i.count ? <span className="ptoc__count">{i.count}</span> : null}
         </a>
-      </div>
-    );
-  if (p.status === 'changes_requested')
-    return (
-      <div className="pbanner">
-        <RotateCcw size={16} />
-        <span>
-          {who?.name} requested changes: “{p.decision?.note}”. Spark is preparing a revised version.
-        </span>
-      </div>
-    );
-  return null;
+      ))}
+    </nav>
+  );
 }
 
-function CommentList({ p, filter }: { p: Proposal; filter: Section | 'all' }) {
+function StatusBanner({ p }: { p: Proposal }) {
+  if (p.status !== 'changes_requested') return null;
+  return (
+    <div className="pbanner">
+      <RotateCcw size={16} />
+      <span>Spark is preparing a revised proposal.</span>
+    </div>
+  );
+}
+
+function CommentList({ p }: { p: Proposal }) {
   const { state } = useStore();
-  const list = useMemo(() => p.comments.filter((c) => filter === 'all' || c.section === filter), [p.comments, filter]);
+  const list = p.comments;
   if (list.length === 0) return <div className="pcomments__empty faint">No comments yet. Use “Comment” on any section to point at something specific.</div>;
   return (
     <div className="pcomments__list">
@@ -382,10 +361,10 @@ function CommentList({ p, filter }: { p: Proposal; filter: Section | 'all' }) {
             <Avatar person={who} size={24} />
             <div>
               <div className="pcomment__who">
-                {who.name} {who.org === 'spark' && <Badge>Spark</Badge>}
+                {who.name}
                 <span className="faint"> · {fmtRelative(c.at)}</span>
               </div>
-              {c.section && <div className="pcomment__section mono">on {c.section}</div>}
+              {c.section && <div className="pcomment__section">on {c.section}</div>}
               <p>{c.text}</p>
             </div>
           </div>
@@ -464,9 +443,9 @@ function DecisionDialog({ p, kind, onClose, onConfirm }: { p: Proposal; kind: De
   };
 
   const copy = {
-    approved: { title: `Approve proposal v${p.version}?`, desc: `${p.title} · ${aed(total)} excl. VAT · ${proposalWeeks(p)} weeks`, cta: 'Approve', variant: 'primary' as const },
-    changes_requested: { title: 'Request changes', desc: 'Spark will send a revised version. Be specific about what should change.', cta: 'Send to Spark', variant: 'primary' as const },
-    declined: { title: `Decline proposal v${p.version}?`, desc: 'The request will be closed. You can always start a new one.', cta: 'Decline proposal', variant: 'danger' as const },
+    approved: { title: 'Approve this proposal?', cta: 'Approve', variant: 'primary' as const },
+    changes_requested: { title: 'Request changes', cta: 'Send changes', variant: 'primary' as const },
+    declined: { title: 'Decline this proposal?', cta: 'Decline proposal', variant: 'danger' as const },
   };
   if (!kind) return null;
   const c = copy[kind];
@@ -477,10 +456,9 @@ function DecisionDialog({ p, kind, onClose, onConfirm }: { p: Proposal; kind: De
       onClose={close}
       size="sm"
       title={c.title}
-      description={c.desc}
       footer={
         <>
-          <Button variant="ghost" onClick={close}>
+          <Button variant="secondary" onClick={close}>
             Cancel
           </Button>
           <Button variant={c.variant} onClick={confirm} loading={busy}>
@@ -490,10 +468,28 @@ function DecisionDialog({ p, kind, onClose, onConfirm }: { p: Proposal; kind: De
       }
     >
       <div className="stack">
+        {/* What this decision means, in one box (the dialogs have no subtitle). */}
         {kind === 'approved' && (
           <div className="approve-sum">
             <ShieldCheck size={18} />
-            <span>Approving confirms scope, timeline and investment. Spark will invoice 50% on approval, per the terms.</span>
+            <span>
+              <strong>
+                {aed(total)} excl. VAT · {proposalWeeks(p)} weeks
+              </strong>
+              Approving confirms scope, timeline and investment. Spark will invoice 50% on approval, per the terms.
+            </span>
+          </div>
+        )}
+        {kind === 'changes_requested' && (
+          <div className="approve-sum approve-sum--neutral">
+            <RotateCcw size={18} />
+            <span>Spark will send a revised proposal. Be specific about what should change.</span>
+          </div>
+        )}
+        {kind === 'declined' && (
+          <div className="approve-sum approve-sum--danger">
+            <CircleAlert size={18} />
+            <span>The request will be closed. You can always start a new one.</span>
           </div>
         )}
         {kind === 'declined' && (
@@ -505,7 +501,7 @@ function DecisionDialog({ p, kind, onClose, onConfirm }: { p: Proposal; kind: De
             </Select>
           </Field>
         )}
-        <Field label={kind === 'changes_requested' ? 'What should change?' : 'Note for Spark'} htmlFor="dc-note" optional={kind !== 'changes_requested'}>
+        <Field label={kind === 'changes_requested' ? 'What should change?' : 'Note (optional)'} htmlFor="dc-note">
           <Textarea
             id="dc-note"
             rows={3}
@@ -523,7 +519,7 @@ function DecisionDialog({ p, kind, onClose, onConfirm }: { p: Proposal; kind: De
               setError(null);
             }}
           >
-            I'm authorised to approve spend of {aed(total)} for Brand Co..
+            I'm authorised to approve spend of {aed(total)} for Brand Co.
           </Checkbox>
         )}
         {error && <div className="field__error">{error}</div>}

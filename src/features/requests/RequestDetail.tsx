@@ -1,14 +1,14 @@
 import { useState } from 'react';
-import { ArrowLeft, ArrowRight, Check, CircleDot, Eye, FileText, Lightbulb, MessageSquare, PenLine, Send, Sparkles, Search, TrendingUp, TriangleAlert } from 'lucide-react';
-import { latestProposal, personById, proposalTotal, proposalWeeks, proposalsFor, useStore } from '../../state/store';
+import { ArrowLeft, Check, Lock, CircleDot, Clock, Eye, FileText, Lightbulb, MessageSquare, PenLine, Send, TrendingUp, TriangleAlert } from 'lucide-react';
+import { latestProposal, personById, proposalTotal, proposalWeeks, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { Avatar, Badge, Button, EmptyState, Tabs, Textarea, cx } from '../../components/ui/primitives';
-import { FileIcon, ProposalStatus, RequestStatus, STAGES, STAGE_INFO, requestStatusMeta, stageIndex } from '../../components/domain';
+import { FileIcon, ProposalStatus, RequestStatus, STAGES, STAGE_INFO, stageIndex } from '../../components/domain';
 import { useToast } from '../../components/ui/toast';
 import { aed, dueLabel, fmtDate, fmtDateTime, fmtRelative } from '../../lib/format';
 import { navigate } from '../../lib/router';
 import type { Activity, Finding, WorkRequest } from '../../data/types';
-import { RichText } from '../assistant/MessageView';
+import { ChatCut } from '../assistant/ChatCut';
 
 type Tab = 'overview' | 'context' | 'files' | 'activity';
 
@@ -40,7 +40,6 @@ export function RequestDetail({ id }: { id: string }) {
   if (!r)
     return (
       <EmptyState
-        icon={Search}
         title={`Request ${id} not found`}
         body="It may have been removed, or the link is wrong."
         action={<Button onClick={() => navigate('/requests')}>All requests</Button>}
@@ -48,7 +47,6 @@ export function RequestDetail({ id }: { id: string }) {
     );
 
   const p = latestProposal(state, r.id);
-  const versions = proposalsFor(state, r.id);
   const creator = personById(state, r.createdBy);
   const sources = (r.sourceIds ?? []).map((d) => state.docs.find((x) => x.id === d)).filter(Boolean);
   const files = state.docs.filter((d) => d.requestId === r.id && !d.name.startsWith('Proposal —'));
@@ -56,7 +54,6 @@ export function RequestDetail({ id }: { id: string }) {
   // Only your own chats can be opened; a teammate's request keeps its excerpt.
   const conversation = r.excerpt && state.conversations.find((c) => c.id === r.excerpt!.conversationId && c.createdBy === me.id);
   const findings = r.excerpt ? (r.excerpt.findings ?? findingsFromConversation(r, conversation)) : undefined;
-  const question = r.excerpt?.messages.find((m) => m.role === 'user')?.text;
   const ask = askOf(r.description);
   const canEditBrief = r.status === 'submitted' || r.status === 'in_review';
 
@@ -101,11 +98,12 @@ export function RequestDetail({ id }: { id: string }) {
           {tab === 'overview' && (
             <div className="req-tab">
               {p && (
-                <a className={cx('prop-card', p.status === 'awaiting' && 'is-awaiting')} href={`#/requests/${r.id}/proposal`}>
+                <a className="prop-card" href={`#/requests/${r.id}/proposal`}>
                   <div className="prop-card__head">
-                    <span className="eyebrow">Proposal v{p.version}</span>
-                    <ProposalStatus status={p.status} />
-                    {versions.length > 1 && <span className="faint mono">{versions.length} versions</span>}
+                    <span className="eyebrow">Proposal</span>
+                    {/* Shown only when it adds something: "awaiting" and "declined"
+                        already read in the header badge. */}
+                    {p.status !== 'awaiting' && p.status !== 'declined' && <ProposalStatus status={p.status} />}
                   </div>
                   <div className="prop-card__nums">
                     <div>
@@ -123,12 +121,11 @@ export function RequestDetail({ id }: { id: string }) {
                   </div>
                   <p className="prop-card__summary">{p.summary}</p>
                   <div className="prop-card__foot">
-                    <span className="faint">
-                      Sent by {personById(state, p.sentBy).name} · {fmtRelative(p.sentAt)}
-                      {p.status === 'awaiting' && <> · {dueLabel(p.validUntil)}</>}
-                    </span>
-                    <span className="prop-card__cta">
-                      {p.status === 'awaiting' ? 'Review & decide' : 'Open proposal'} <ArrowRight size={14} />
+                    {/* The deadline lives in the Stages card, next to the step it belongs to. */}
+                    {/* The whole card is the link; this just looks like its button. Primary while
+                        the proposal waits on the client, secondary once decided. */}
+                    <span className={cx('btn btn--md prop-card__cta', p.status === 'awaiting' ? 'btn--primary' : 'btn--secondary')}>
+                      {p.status === 'awaiting' ? 'Review & decide' : 'Open proposal'}
                     </span>
                   </div>
                 </a>
@@ -152,7 +149,6 @@ export function RequestDetail({ id }: { id: string }) {
                       }}
                     />
                     <div className="comment-box__bar">
-                      <span className="faint">⌘ Enter to save</span>
                       <div className="brief-edit__actions">
                         <Button size="sm" variant="ghost" onClick={() => setDraft(null)}>
                           Cancel
@@ -169,7 +165,7 @@ export function RequestDetail({ id }: { id: string }) {
                   <div className="block__head">
                     <h2 className="block__title">Your request</h2>
                     {canEditBrief && (
-                      <button className="link-btn" onClick={() => setDraft(ask)}>
+                      <button className="link-btn link-btn--quiet" onClick={() => setDraft(ask)}>
                         <PenLine size={13} /> Edit
                       </button>
                     )}
@@ -181,7 +177,7 @@ export function RequestDetail({ id }: { id: string }) {
                   <div className="ask-empty">
                     <PenLine size={15} />
                     <div>
-                      <div className="ask-empty__title">Tell Spark what you need</div>
+                      <div className="ask-empty__title">Tell us what you need</div>
                       <div className="faint">
                         The deliverable, audience and any must-haves
                         {r.nextStep ? `, so the review on ${fmtDate(r.nextStep.date, { weekday: true })} has what it needs.` : '.'}
@@ -198,9 +194,8 @@ export function RequestDetail({ id }: { id: string }) {
                 <section className="block">
                   <div className="block__head">
                     <h2 className="block__title">
-                      <Lightbulb size={14} /> {findings.length} insights to build on
+                      <Lightbulb size={14} /> Insights to build on <span className="block__count">· {findings.length}</span>
                     </h2>
-                    {question && <span className="faint insights__from">From the assistant · {question}</span>}
                   </div>
                   <div className="insights">
                     {findings.map((f) => {
@@ -224,24 +219,24 @@ export function RequestDetail({ id }: { id: string }) {
           {tab === 'context' && r.excerpt && (
             <div className="req-tab">
               <section className="block">
-                <div className="block__head">
-                  <h2 className="block__title">From the conversation</h2>
-                  {conversation && (
-                    <a className="link-btn" href={`#/assistant/${conversation.id}`}>
-                      <Sparkles size={13} /> Open conversation
-                    </a>
+                {/* Same pill as the "request created" marker in the chat. */}
+                <div className="msg-system chat-cut__pill">
+                  {conversation ? (
+                    <>
+                      <MessageSquare size={14} />
+                      <span>Created from your chat</span>
+                      <a className="link" href={`#/assistant/${conversation.id}`}>
+                        {conversation.title}
+                      </a>
+                    </>
+                  ) : (
+                    <>
+                      <Lock size={14} />
+                      <span>Created from {creator.name.split(' ')[0]}'s chat. Chats are private, so only {creator.name.split(' ')[0]} can open it.</span>
+                    </>
                   )}
                 </div>
-                <div className="excerpt">
-                  {r.excerpt.messages.map((m, i) => (
-                    <div key={i} className={`excerpt__msg excerpt__msg--${m.role}`}>
-                      <span className="excerpt__who">{m.role === 'user' ? 'Question' : 'Assistant'}</span>
-                      <div className="excerpt__text">
-                        <RichText text={m.text} />
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <ChatCut messages={r.excerpt.messages} author={creator.id === me.id ? 'You' : creator.name.split(' ')[0]} />
               </section>
             </div>
           )}
@@ -254,12 +249,12 @@ export function RequestDetail({ id }: { id: string }) {
                     <button key={d!.id} className="file-row" onClick={() => openDoc(d!.id)}>
                       <FileIcon kind={d!.kind} />
                       <span className="file-row__name">{d!.name}</span>
-                      <span className="faint">{personById(state, d!.uploadedBy).name.split(' ')[0]} · {fmtDate(d!.uploadedAt)}</span>
+                      <span className="faint">{personById(state, d!.uploadedBy).name.split(' ')[0]} · {fmtRelative(d!.uploadedAt)}</span>
                     </button>
                   ))}
                 </div>
               ) : (
-                <EmptyState icon={FileText} title="No files yet" body="Files you or Spark attach to this request show up here." compact />
+                <EmptyState panel title="No files yet." body="Files you or Spark attach to this request show up here." />
               )}
             </div>
           )}
@@ -285,7 +280,6 @@ export function RequestDetail({ id }: { id: string }) {
                     }}
                   />
                   <div className="comment-box__bar">
-                    <span className="faint">⌘ Enter to post</span>
                     <Button size="sm" variant="primary" icon={Send} disabled={!comment.trim()} onClick={postComment}>
                       Comment
                     </Button>
@@ -344,10 +338,11 @@ function StatusCard({ r }: { r: WorkRequest }) {
   const since = [...r.activity].reverse().find((a) => a.kind !== 'comment' && a.kind !== 'file')?.at ?? r.createdAt;
 
   return (
-    <section className="side-card status-card">
-      <span className="eyebrow">Status</span>
-      <div className="status-card__state">{requestStatusMeta[r.status].client}</div>
-      <div className="faint">{declined ? 'Closed at proposal' : done ? 'All stages complete' : `Step ${idx + 1} of ${STAGES.length}`}</div>
+    <section className="side-card status-card" aria-label="Stages">
+      {/* The status is named once, in the page header; this card shows the path. */}
+      <h3 className="side-card__title">
+        Stages <span className="block__count status-card__step">{declined ? 'Closed at proposal' : done ? 'All stages complete' : `Step ${idx + 1} of ${STAGES.length}`}</span>
+      </h3>
       <hr className="status-card__rule" />
       <ol className="stages">
         {STAGES.map((s, i) => {
@@ -364,12 +359,18 @@ function StatusCard({ r }: { r: WorkRequest }) {
                 <div className="stages__info">{st === 'declined' ? 'The proposal was declined and the request closed.' : STAGE_INFO[s]}</div>
                 {st === 'current' && (
                   <>
-                    <div className="stages__when mono">Since {fmtDate(since)}</div>
+                    <div className="stages__when">Started {fmtRelative(since)}</div>
                     {r.nextStep && (
-                      <div className="stages__step">
-                        <CircleDot size={13} />
+                      // The one place a deadline shows: amber when it waits on the client.
+                      <div className={cx('due-chip stages__step', r.nextStep.onClient && 'is-on-you')}>
+                        <Clock size={14} />
                         <span>
-                          {r.nextStep.label} <span className="mono">· by {fmtDate(r.nextStep.date, { weekday: true })}</span>
+                          <span className="due-chip__what">{r.nextStep.label}</span>
+                          <span className="due-chip__when">
+                            {r.nextStep.onClient
+                              ? `Due ${fmtDate(r.nextStep.date, { weekday: true })} · ${dueLabel(r.nextStep.date).replace(/^due /, '')}`
+                              : `Expected by ${fmtDate(r.nextStep.date, { weekday: true })}`}
+                          </span>
                         </span>
                       </div>
                     )}
@@ -385,7 +386,7 @@ function StatusCard({ r }: { r: WorkRequest }) {
 }
 
 const activityIcon: Record<Activity['kind'], typeof Check> = {
-  created: Sparkles,
+  created: MessageSquare,
   status: CircleDot,
   comment: MessageSquare,
   proposal: FileText,
@@ -403,7 +404,7 @@ function ActivityItem({ a }: { a: Activity }) {
         <Avatar person={p} size={26} />
         <div className="timeline__comment">
           <div className="timeline__who">
-            {p.name} {p.org === 'spark' && <span className="faint">· Spark</span>} <span className="faint">· {fmtRelative(a.at)}</span>
+            {p.name} <span className="faint">· {fmtRelative(a.at)}</span>
           </div>
           <p>{a.text}</p>
         </div>
@@ -411,7 +412,7 @@ function ActivityItem({ a }: { a: Activity }) {
     );
   return (
     <li className="timeline__item">
-      <span className={cx('timeline__icon', a.kind === 'decision' && 'is-decision', a.kind === 'proposal' && 'is-proposal')}>
+      <span className="timeline__icon">
         <I size={13} />
       </span>
       <div className="timeline__line">

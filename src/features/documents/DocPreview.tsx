@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Check, Download, Inbox, Link2, MessageSquareText, Sparkles, X } from 'lucide-react';
+import { Check, Download, Inbox, Link2, MessageSquareText, X } from 'lucide-react';
+import { SphereGlyph } from '../../components/ui/SphereGlyph';
 import { Dialog } from '../../components/ui/overlay';
 import { Avatar, Badge, Button, Textarea } from '../../components/ui/primitives';
 import { Art, FileIcon, kindLabel } from '../../components/domain';
@@ -103,7 +104,7 @@ export function DocPreviewDialog({ docId, onClose }: { docId: string | null; onC
             >
               Download
             </Button>
-            <Button icon={Sparkles} onClick={ask}>
+            <Button variant="ai" lead={<SphereGlyph size={20} />} onClick={ask}>
               Ask about this file
             </Button>
             <Button

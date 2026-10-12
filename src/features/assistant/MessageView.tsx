@@ -1,5 +1,5 @@
-import { Fragment, useState, type ReactNode } from 'react';
-import { AlertCircle, ArrowRight, Check, ChevronDown, Copy, Globe, Inbox, Loader2, RotateCcw, FileText, LayoutGrid } from 'lucide-react';
+import { Fragment, useState } from 'react';
+import { AlertCircle, ArrowRight, Check, ChevronDown, Copy, Globe, Inbox, Loader2, RotateCcw, FileText } from 'lucide-react';
 import type { Message, Source } from '../../data/types';
 import { Button, cx } from '../../components/ui/primitives';
 import { DotSphere } from '../../components/ui/DotSphere';
@@ -77,25 +77,13 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
   const { openRequest, openDoc } = useUI();
   const toast = useToast();
   const [stepsOpen, setStepsOpen] = useState(false);
-  const [flash, setFlash] = useState<string | null>(null);
   const working = msg.state === 'thinking' || msg.state === 'streaming';
   const sources = msg.sources ?? [];
-  const num = (id: string) => sources.findIndex((s) => s.id === id) + 1;
 
+  // Workspace sources open in place; web sources are sample data, so the chip's tooltip is all there is.
   const openSource = (s: Source) => {
     if (s.docId) openDoc(s.docId);
     else if (s.route) navigate(s.route);
-    else {
-      setFlash(s.id);
-      setTimeout(() => setFlash(null), 1200);
-    }
-  };
-  const cite = (id: string) => {
-    const s = sources.find((x) => x.id === id);
-    if (!s) return;
-    document.getElementById(`src-${msg.id}-${id}`)?.scrollIntoView({ block: 'nearest', behavior: 'smooth' });
-    setFlash(id);
-    setTimeout(() => setFlash(null), 1200);
   };
 
   return (
@@ -145,7 +133,7 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
           <div className="msg-error" role="alert">
             <AlertCircle size={16} />
             <div>
-              <div className="msg-error__title">The assistant couldn't finish this answer</div>
+              <div className="msg-error__title">Spark AI couldn't finish this answer</div>
               <div className="muted">The research service didn't respond. Your question is saved; try again.</div>
             </div>
             <Button size="sm" icon={RotateCcw} onClick={() => actions.retry(convId, msg.id)}>
@@ -160,46 +148,32 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
           </div>
         )}
 
+        {/* Key findings as a plain list: bold lead, then the detail. */}
         {msg.state === 'done' && (msg.findings?.length ?? 0) > 0 && (
-          <div className="findings">
+          <ul className="findings-list">
             {msg.findings!.map((f, i) => (
-              <div key={i} className={cx('finding', `finding--${f.tone}`)} style={{ animationDelay: `${i * 60}ms` }}>
-                <span className="finding__mark" />
-                <div className="finding__body">
-                  <div className="finding__title">{f.title}</div>
-                  <div className="finding__text">
-                    {f.body}
-                    {f.sourceIds
-                      .filter((id) => num(id) > 0)
-                      .map((id) => (
-                        <button key={id} className="cite" onClick={() => cite(id)} aria-label={`Source ${num(id)}`}>
-                          {num(id)}
-                        </button>
-                      ))}
-                  </div>
-                </div>
-              </div>
+              <li key={i}>
+                <strong>{f.title}.</strong> {f.body}
+              </li>
             ))}
-          </div>
-        )}
-
-        {msg.state === 'done' && sources.length > 0 && (
-          <div className="sources">
-            <div className="sources__head">
-              <span className="eyebrow">Sources</span>
-              <span className="faint mono">
-                {sources.filter((s) => s.kind === 'workspace').length} workspace · {sources.filter((s) => s.kind === 'web').length} web
-              </span>
-            </div>
-            <div className="sources__list">
-              {sources.map((s, i) => (
-                <SourceCard key={s.id} s={s} n={i + 1} id={`src-${msg.id}-${s.id}`} flash={flash === s.id} onOpen={() => openSource(s)} />
-              ))}
-            </div>
-          </div>
+          </ul>
         )}
 
         {msg.state === 'done' && (
+          <>
+          {/* Sources as small file chips; the excerpt shows on hover. */}
+          {sources.length > 0 && (
+            <div className="src-chips">
+              {sources.map((s) => {
+                const I = s.kind === 'web' ? Globe : FileText;
+                return (
+                  <button key={s.id} className="src-chip" onClick={() => openSource(s)} data-tip={s.kind === 'web' ? `${s.domain} · ${s.snippet}` : s.snippet}>
+                    <I size={13} /> {s.title}
+                  </button>
+                );
+              })}
+            </div>
+          )}
           <div className="msg-actions">
             <Button
               size="sm"
@@ -220,6 +194,8 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
               size="sm"
               variant="ghost"
               icon={Copy}
+              aria-label="Copy answer"
+              data-tip="Copy"
               onClick={async () => {
                 try {
                   await navigator.clipboard.writeText(msg.text.replace(/\*\*/g, ''));
@@ -228,10 +204,9 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
                   toast({ title: "Couldn't copy", tone: 'error' });
                 }
               }}
-            >
-              Copy
-            </Button>
+            />
           </div>
+          </>
         )}
 
         {msg.state === 'done' && isLast && msg.followUps && msg.followUps.length > 0 && (
@@ -246,27 +221,5 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
         )}
       </div>
     </div>
-  );
-}
-
-function SourceCard({ s, n, id, flash, onOpen }: { s: Source; n: number; id: string; flash: boolean; onOpen: () => void }) {
-  const Icon = s.kind === 'web' ? Globe : s.docId ? FileText : LayoutGrid;
-  const body: ReactNode = (
-    <>
-      <span className="source__n">{n}</span>
-      <span className="source__main">
-        <span className="source__title">
-          <Icon size={12} />
-          {s.title}
-        </span>
-        <span className="source__snippet">{s.snippet}</span>
-        <span className="source__kind">{s.kind === 'web' ? s.domain : 'Your workspace'}</span>
-      </span>
-    </>
-  );
-  return (
-    <button id={id} className={cx('source', `source--${s.kind}`, flash && 'is-flash')} onClick={onOpen} title={s.kind === 'web' ? 'Web source (sample data in this prototype)' : 'Open in workspace'}>
-      {body}
-    </button>
   );
 }

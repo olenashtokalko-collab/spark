@@ -1,6 +1,7 @@
 // The assistant's presence: a rotating sphere of dots (from the shared
-// references, and a nod to Spark's dot-matrix type). It speeds up and
-// brightens while the assistant is working. Pure canvas, no dependencies.
+// references, and a nod to Spark's dot-matrix type). A band of blue drifts
+// slowly across the neutral white dots; it spins faster while the assistant
+// works. Pure canvas, no dependencies.
 import { useEffect, useRef } from 'react';
 
 interface Props {
@@ -8,9 +9,11 @@ interface Props {
   active?: boolean;
   density?: number;
   className?: string;
+  /** Draw one frame and stop: for static illustrations (e.g. chat excerpts). */
+  still?: boolean;
 }
 
-export function DotSphere({ size = 120, active = false, density = 260, className }: Props) {
+export function DotSphere({ size = 120, active = false, density = 260, className, still = false }: Props) {
   const canvas = useRef<HTMLCanvasElement>(null);
   const activeRef = useRef(active);
   activeRef.current = active;
@@ -44,18 +47,15 @@ export function DotSphere({ size = 120, active = false, density = 260, className
     let speed = 0.004;
     let energy = 0;
     let raf = 0;
-    let color = '';
-    let accent = '';
+    let light = false;
     let frame = 0;
-    const readColors = () => {
-      const cs = getComputedStyle(el);
-      color = cs.getPropertyValue('--dot').trim() || 'rgba(220,230,255,0.9)';
-      accent = cs.getPropertyValue('--accent').trim() || '#3d7bff';
+    const readTheme = () => {
+      light = document.documentElement.dataset.theme === 'light';
     };
-    readColors();
+    readTheme();
 
     const draw = (t: number) => {
-      if (++frame % 45 === 0) readColors(); // follow theme switches
+      if (++frame % 45 === 0) readTheme(); // follow theme switches
       const target = activeRef.current ? 1 : 0;
       energy += (target - energy) * 0.05;
       speed = 0.003 + energy * 0.022;
@@ -79,17 +79,23 @@ export function DotSphere({ size = 120, active = false, density = 260, className
         const py = cy + y2 * R;
         const rad = Math.max(0.35, (size / 150) * p.s * (0.55 + depth * 0.9));
         ctx.globalAlpha = 0.12 + depth * 0.85;
-        ctx.fillStyle = energy > 0.05 && depth > 0.7 && p.s > 1.25 ? accent : color;
+        // Neutral flowing into blue: a gradient band drifts across the surface.
+        // Dark theme: white to blue. Light theme: slate to blue.
+        const f = (Math.sin(x1 * 1.4 + y2 * 0.9 + t / 2400) + 1) / 2;
+        ctx.fillStyle = light ? `hsl(222 ${20 + f * 75}% ${28 + f * 22}%)` : `hsl(222 ${f * 95}% ${92 - f * 26 + depth * 4}%)`;
+        ctx.shadowColor = 'hsl(222 90% 60%)';
+        ctx.shadowBlur = depth > 0.75 ? size / 60 : 0;
         ctx.beginPath();
         ctx.arc(px, py, rad, 0, Math.PI * 2);
         ctx.fill();
       }
       ctx.globalAlpha = 1;
-      raf = requestAnimationFrame(draw);
+      ctx.shadowBlur = 0;
+      if (!still) raf = requestAnimationFrame(draw);
     };
     raf = requestAnimationFrame(draw);
     return () => cancelAnimationFrame(raf);
-  }, [size, density]);
+  }, [size, density, still]);
 
   return (
     <canvas

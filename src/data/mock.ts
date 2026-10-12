@@ -61,7 +61,7 @@ export const brand: Brand = {
 export const folders: Folder[] = [
   { id: 'f-guidelines', name: 'Brand guidelines', parentId: null, description: 'Approved identity, logo and tone of voice.' },
   { id: 'f-strategy', name: 'Strategy', parentId: null, description: 'Positioning, market entry and audience work.' },
-  { id: 'f-proposals', name: 'Proposals', parentId: null, description: 'Every proposal Spark has sent, all versions.' },
+  { id: 'f-proposals', name: 'Proposals', parentId: null, description: 'Every proposal Spark has sent.' },
   { id: 'f-creative', name: 'Creative', parentId: null, description: 'Concepts, moodboards and photography.' },
   { id: 'f-ramadan', name: 'Ramadan 2027 packaging', parentId: 'f-creative' },
   { id: 'f-research', name: 'Research reports', parentId: null, description: 'Audits, background checks and social listening digests.' },
@@ -122,13 +122,9 @@ export const docs: Doc[] = [
     ),
   },
   {
-    id: 'd-prop-104-v2', name: 'Proposal — Riyadh launch campaign v2.pdf', kind: 'pdf', folderId: 'f-proposals', sizeKb: 1800, uploadedBy: 's-dana', uploadedAt: '2026-10-06T15:30:00', version: 2, requestId: 'REQ-104',
-    summary: 'Revised scope: films moved to a second wave, AED 186,000 over 10 weeks.',
-    preview: pages(['Riyadh launch campaign', 'Proposal v2 · 6 Oct 2026', 'Open the interactive proposal in Requests to comment and decide.']),
-  },
-  {
-    id: 'd-prop-104-v1', name: 'Proposal — Riyadh launch campaign v1.pdf', kind: 'pdf', folderId: 'f-proposals', sizeKb: 1700, uploadedBy: 's-dana', uploadedAt: '2026-09-26T12:00:00', version: 1, requestId: 'REQ-104',
-    preview: pages(['Riyadh launch campaign', 'Proposal v1 · 26 Sep 2026 · superseded by v2']),
+    id: 'd-prop-104', name: 'Proposal — Riyadh launch campaign.pdf', kind: 'pdf', folderId: 'f-proposals', sizeKb: 1800, uploadedBy: 's-dana', uploadedAt: '2026-10-06T15:30:00', version: 2, requestId: 'REQ-104',
+    summary: 'Films in a second wave around Ramadan, AED 186,000 over 10 weeks.',
+    preview: pages(['Riyadh launch campaign', 'Proposal · 6 Oct 2026', 'Open the interactive proposal in Requests to comment and decide.']),
   },
   {
     id: 'd-prop-103', name: 'Proposal — Ramadan 2027 packaging.pdf', kind: 'pdf', folderId: 'f-proposals', sizeKb: 1200, uploadedBy: 's-dana', uploadedAt: '2026-09-04T11:00:00', version: 1, requestId: 'REQ-103',
@@ -165,7 +161,7 @@ export const docs: Doc[] = [
     id: 'd-digest-w40', name: 'Social listening digest — W40.pdf', kind: 'pdf', folderId: 'f-research', sizeKb: 1400, uploadedBy: 's-mira', uploadedAt: '2026-10-06T08:30:00',
     summary: 'Week of 28 Sep – 4 Oct: mentions up 18%, delivery fee complaints rising.',
     preview: pages(
-      ['Social listening digest · W40', '28 Sep – 4 Oct 2026 · curated by Mira Chen'],
+      ['Social listening digest · W40', '28 Sep – 4 Oct 2026 · curated by Spark'],
       ['In one line', 'The signature collection keeps carrying the conversation; complaints about the AED 15 delivery fee tripled.'],
     ),
   },
@@ -199,7 +195,7 @@ export const requests: WorkRequest[] = [
     ] },
     proposalIds: [],
     activity: [
-      { id: 'a1', at: '2026-10-07T11:20:00', by: 'u-omar', kind: 'created', text: 'created this request from a conversation' },
+      { id: 'a1', at: '2026-10-07T11:20:00', by: 'u-omar', kind: 'created', text: 'created this request from a chat' },
       { id: 'a2', at: '2026-10-08T09:10:00', by: 's-mira', kind: 'status', text: 'started reviewing' },
       { id: 'a3', at: '2026-10-08T09:12:00', by: 's-mira', kind: 'comment', text: 'Thanks Omar. I\'ll pull the full comment set and come back with a short plan and cost on Friday.' },
     ],
@@ -208,32 +204,30 @@ export const requests: WorkRequest[] = [
     id: 'REQ-104', title: 'Riyadh launch campaign', type: 'Strategy',
     description: 'Launch campaign for the Al Olaya flagship opening on 15 January 2027: positioning for Saudi audiences, a campaign idea, opening content and the launch event identity. Budget available in Q4: up to AED 190,000.',
     timing: 'This quarter', budget: 'Up to AED 190,000', status: 'proposal', createdBy: 'u-layla', createdAt: '2026-09-16T10:05:00', updatedAt: '2026-10-06T15:30:00', ownerId: 's-dana',
-    nextStep: { label: 'Your decision on proposal v2', date: '2026-10-14' },
+    nextStep: { label: 'Your decision on the proposal', date: '2026-10-14', onClient: true },
     excerpt: { conversationId: 'c-riyadh', messages: [
       { role: 'user', text: 'What should we know about Riyadh shoppers before we open?' },
       { role: 'assistant', text: 'Riyadh target shoppers skew young (24–35), shop after 7 pm, and discover brands through creators. They respond to craft and a signature product, and they are sensitive to extra fees.' },
     ] },
     sourceIds: ['d-ksa', 'd-personas'],
-    proposalIds: ['P-104-1', 'P-104-2'],
+    proposalIds: ['P-104-2'],
     activity: [
-      { id: 'b1', at: '2026-09-16T10:05:00', by: 'u-layla', kind: 'created', text: 'created this request from a conversation' },
+      { id: 'b1', at: '2026-09-16T10:05:00', by: 'u-layla', kind: 'created', text: 'created this request from a chat' },
       { id: 'b2', at: '2026-09-17T09:00:00', by: 's-dana', kind: 'status', text: 'started reviewing' },
       { id: 'b3', at: '2026-09-17T09:05:00', by: 'u-omar', kind: 'file', text: 'attached Riyadh site plan — Al Olaya.pdf' },
-      { id: 'b4', at: '2026-09-26T12:00:00', by: 's-dana', kind: 'proposal', text: 'sent proposal v1 · AED 214,000 · 12 weeks' },
-      { id: 'b5', at: '2026-09-30T16:40:00', by: 'u-layla', kind: 'decision', text: 'requested changes on v1: "Can we phase the films into a second wave? Q4 cap is AED 190k."' },
-      { id: 'b6', at: '2026-10-06T15:30:00', by: 's-dana', kind: 'proposal', text: 'sent proposal v2 · AED 186,000 · 10 weeks' },
+      { id: 'b6', at: '2026-10-06T15:30:00', by: 's-dana', kind: 'proposal', text: 'sent a proposal · AED 186,000 · 10 weeks' },
     ],
   },
   {
     id: 'REQ-103', title: 'Ramadan 2027 packaging', type: 'Creative',
     description: 'Limited-edition bag, gift box and gift card for Ramadan 2027, across UAE stores and the Riyadh flagship.',
     timing: 'This quarter', status: 'in_progress', createdBy: 'u-layla', createdAt: '2026-08-25T09:00:00', updatedAt: '2026-10-07T18:00:00', ownerId: 's-youssef',
-    nextStep: { label: 'Your feedback on round 1 concepts', date: '2026-10-15' },
+    nextStep: { label: 'Your feedback on round 1 concepts', date: '2026-10-15', onClient: true },
     proposalIds: ['P-103-1'],
     activity: [
       { id: 'c1', at: '2026-08-25T09:00:00', by: 'u-layla', kind: 'created', text: 'created this request' },
-      { id: 'c2', at: '2026-09-04T11:00:00', by: 's-dana', kind: 'proposal', text: 'sent proposal v1 · AED 96,000 · 8 weeks' },
-      { id: 'c3', at: '2026-09-10T10:20:00', by: 'u-layla', kind: 'decision', text: 'approved proposal v1' },
+      { id: 'c2', at: '2026-09-04T11:00:00', by: 's-dana', kind: 'proposal', text: 'sent a proposal · AED 96,000 · 8 weeks' },
+      { id: 'c3', at: '2026-09-10T10:20:00', by: 'u-layla', kind: 'decision', text: 'approved the proposal' },
       { id: 'c4', at: '2026-09-11T09:00:00', by: 's-youssef', kind: 'status', text: 'started work' },
       { id: 'c5', at: '2026-10-07T18:00:00', by: 's-youssef', kind: 'file', text: 'shared Packaging concepts — round 1.pdf for your review' },
     ],
@@ -245,7 +239,7 @@ export const requests: WorkRequest[] = [
     proposalIds: ['P-102-1'],
     activity: [
       { id: 'e1', at: '2026-06-30T12:00:00', by: 'u-layla', kind: 'created', text: 'created this request' },
-      { id: 'e2', at: '2026-07-08T10:00:00', by: 'u-layla', kind: 'decision', text: 'approved proposal v1' },
+      { id: 'e2', at: '2026-07-08T10:00:00', by: 'u-layla', kind: 'decision', text: 'approved the proposal' },
       { id: 'e3', at: '2026-08-28T16:00:00', by: 's-youssef', kind: 'status', text: 'delivered Brand Guidelines v3.2.pdf' },
     ],
   },
@@ -256,7 +250,7 @@ export const requests: WorkRequest[] = [
     proposalIds: ['P-101-1'],
     activity: [
       { id: 'f1', at: '2026-06-02T09:00:00', by: 'u-omar', kind: 'created', text: 'created this request' },
-      { id: 'f2', at: '2026-06-12T12:00:00', by: 's-dana', kind: 'proposal', text: 'sent proposal v1 · AED 42,000 · 4 weeks' },
+      { id: 'f2', at: '2026-06-12T12:00:00', by: 's-dana', kind: 'proposal', text: 'sent a proposal · AED 42,000 · 4 weeks' },
       { id: 'f3', at: '2026-06-20T14:00:00', by: 'u-layla', kind: 'decision', text: 'declined: "Loyalty app postponed to 2027."' },
     ],
   },
@@ -280,33 +274,10 @@ const riyadhBase = {
 export const proposals: Proposal[] = [
   {
     ...riyadhBase,
-    id: 'P-104-1', version: 1, sentBy: 's-dana', sentAt: '2026-09-26T12:00:00', validUntil: '2026-10-10', startDate: '2026-10-13',
-    summary: 'A 12-week programme from positioning to opening week, including two launch films.',
-    scope: [
-      { title: 'KSA positioning', detail: 'Adapt the Brand Co. platform for Riyadh.', deliverables: ['Positioning and message house', 'Arabic naming check'] },
-      { title: 'Campaign idea and key visual', detail: 'One campaign idea for opening.', deliverables: ['Campaign idea', 'Key visual', 'OOH and digital toolkit'] },
-      { title: 'Launch content', detail: 'Content for opening month.', deliverables: ['12 social assets', '2 launch films (45s)', 'Creator brief'] },
-      { title: 'Launch event identity', detail: 'Identity for the opening night.', deliverables: ['Invitation', 'On-site signage', 'Merch'] },
-    ],
-    phases: [{ name: 'Discovery', weeks: 2 }, { name: 'Concept', weeks: 3 }, { name: 'Production', weeks: 6 }, { name: 'Launch', weeks: 1 }],
-    investment: [
-      { item: 'KSA positioning', amount: 38000 }, { item: 'Campaign idea and key visual', amount: 52000 },
-      { item: 'Launch content incl. 2 films', amount: 92000 }, { item: 'Launch event identity', amount: 22000 },
-      { item: 'Project management', amount: 10000 },
-    ],
-    status: 'changes_requested',
-    decision: { by: 'u-layla', at: '2026-09-30T16:40:00', note: 'Can we phase the films into a second wave? Q4 cap is AED 190k.' },
-    comments: [
-      { id: 'pc1', by: 'u-rania', at: '2026-09-29T10:00:00', text: 'Q4 budget for the launch is 190k. This is 24k over.', section: 'Investment' },
-      { id: 'pc2', by: 'u-layla', at: '2026-09-30T16:38:00', text: 'Films could come in a second wave around Ramadan.', section: 'Scope & deliverables' },
-    ],
-  },
-  {
-    ...riyadhBase,
     id: 'P-104-2', version: 2, sentBy: 's-dana', sentAt: '2026-10-06T15:30:00', validUntil: '2026-10-14', startDate: '2026-11-09',
     summary: 'A 10-week programme from positioning to opening week. Films move to a second wave around Ramadan and are quoted separately, which brings this phase within the Q4 budget.',
     scope: [
-      { title: 'KSA positioning', detail: 'Adapt the Brand Co. platform for Riyadh, based on the KSA market entry strategy.', deliverables: ['Positioning and message house', 'Arabic naming and trademark-risk check', 'Pricing message for deliverys'] },
+      { title: 'KSA positioning', detail: 'Adapt the Brand Co. platform for Riyadh, based on the KSA market entry strategy.', deliverables: ['Positioning and message house', 'Arabic naming and trademark-risk check', 'Pricing message for delivery'] },
       { title: 'Campaign idea and key visual', detail: 'One campaign idea that works in-store, outdoor and on social.', deliverables: ['Campaign idea (2 routes → 1)', 'Key visual', 'OOH and digital toolkit'] },
       { title: 'Launch content', detail: 'Content for the opening month, made for Instagram and TikTok.', deliverables: ['12 social assets', 'Creator brief and shortlist (10 creators)', '3 short-form edits from event footage'] },
       { title: 'Launch event identity', detail: 'Identity and materials for the opening night on 15 January.', deliverables: ['Invitation', 'On-site signage', 'Merch (tote, notebook)'] },
@@ -436,7 +407,7 @@ export const conversations: Conversation[] = [
         ],
         suggestedRequest: { title: 'Response plan for delivery fee complaints', type: 'Social' },
       },
-      { id: 'm3', role: 'system', at: '2026-10-07T11:20:00', text: 'Omar created request REQ-105 from this conversation.', link: { label: 'View REQ-105', route: '/requests/REQ-105' } },
+      { id: 'm3', role: 'system', at: '2026-10-07T11:20:00', text: 'Omar created request REQ-105 from this chat.', link: { label: 'View REQ-105', route: '/requests/REQ-105' } },
     ],
   },
   {
@@ -457,7 +428,7 @@ export const conversations: Conversation[] = [
         ],
         suggestedRequest: { title: 'Riyadh launch campaign', type: 'Strategy' },
       },
-      { id: 'n3', role: 'system', at: '2026-09-16T10:05:00', text: 'Layla created request REQ-104 from this conversation.', link: { label: 'View REQ-104', route: '/requests/REQ-104' } },
+      { id: 'n3', role: 'system', at: '2026-09-16T10:05:00', text: 'Layla created request REQ-104 from this chat.', link: { label: 'View REQ-104', route: '/requests/REQ-104' } },
     ],
   },
 ];
@@ -465,10 +436,10 @@ export const conversations: Conversation[] = [
 // ---- Notifications ------------------------------------------------------------
 
 export const notifications: Notification[] = [
-  { id: 'nt1', audience: 'client', at: '2026-10-08T09:10:00', title: 'Mira started reviewing REQ-105', body: 'Response plan for delivery fee complaints', route: '/requests/REQ-105', kind: 'request', read: false },
-  { id: 'nt2', audience: 'client', at: '2026-10-07T18:00:00', title: 'Feedback requested on packaging concepts', body: 'Youssef shared round 1 for Ramadan 2027 · due 15 Oct', route: '/documents/f-ramadan?doc=d-pack-r1', kind: 'file', read: false },
-  { id: 'nt3', audience: 'client', at: '2026-10-06T15:30:00', title: 'Proposal v2 is ready: Riyadh launch campaign', body: 'AED 186,000 · 10 weeks · decision by 14 Oct', route: '/requests/REQ-104/proposal', kind: 'proposal', read: false },
+  { id: 'nt1', audience: 'client', at: '2026-10-08T09:10:00', title: 'Spark started reviewing REQ-105', body: 'Response plan for delivery fee complaints', route: '/requests/REQ-105', kind: 'request', read: false },
+  { id: 'nt2', audience: 'client', at: '2026-10-07T18:00:00', title: 'Feedback requested on packaging concepts', body: 'Spark shared round 1 for Ramadan 2027 · due 15 Oct', route: '/documents/f-ramadan?doc=d-pack-r1', kind: 'file', read: false },
+  { id: 'nt3', audience: 'client', at: '2026-10-06T15:30:00', title: 'Proposal ready: Riyadh launch campaign', body: 'AED 186,000 · 10 weeks · decision by 14 Oct', route: '/requests/REQ-104/proposal', kind: 'proposal', read: false },
   { id: 'nt4', audience: 'client', at: '2026-10-06T08:30:00', title: 'Social listening digest · W40 shared', body: 'Mentions up 18%; delivery fee complaints rising', route: '/documents/f-research?doc=d-digest-w40', kind: 'file', read: true },
   { id: 'nt5', audience: 'spark', at: '2026-10-07T11:20:00', title: 'New request from Brand Co.', body: 'REQ-105 · Response plan for delivery fee complaints', route: '/requests/REQ-105', kind: 'request', read: false },
-  { id: 'nt6', audience: 'spark', at: '2026-10-07T09:20:00', title: 'Omar commented on proposal v2', body: 'Riyadh launch campaign · Scope & deliverables', route: '/requests/REQ-104/proposal', kind: 'proposal', read: true },
+  { id: 'nt6', audience: 'spark', at: '2026-10-07T09:20:00', title: 'Omar commented on the proposal', body: 'Riyadh launch campaign · Scope & deliverables', route: '/requests/REQ-104/proposal', kind: 'proposal', read: true },
 ];

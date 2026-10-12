@@ -47,7 +47,7 @@ export interface State {
   prefs: Record<NotifKey, { inApp: boolean; email: boolean }>;
 }
 
-const STORAGE_KEY = 'spark-portal-v5';
+const STORAGE_KEY = 'spark-portal-v9';
 
 // Files attached to a message are read like a workspace document.
 const attachedContext = (files?: Attachment[]) => (files?.length ? (files.length === 1 ? files[0].name : `${files.length} attached files`) : undefined);
@@ -267,7 +267,7 @@ function useStoreValue() {
         ownerId: 's-dana',
         nextStep: { label: 'Spark reviews your request', date: addDays(at.slice(0, 10), 2) },
         proposalIds: [],
-        activity: [activity(meId, 'created', input.excerpt ? 'created this request from a conversation' : 'created this request')],
+        activity: [activity(meId, 'created', input.excerpt ? 'created this request from a chat' : 'created this request')],
       };
       set((st) => ({
         requests: [req, ...st.requests],
@@ -283,7 +283,7 @@ function useStoreValue() {
                         id: uid('m'),
                         role: 'system',
                         at,
-                        text: `${me.name.split(' ')[0]} created request ${id} from this conversation.`,
+                        text: `${me.name.split(' ')[0]} created request ${id} from this chat.`,
                         link: { label: `View ${id}`, route: `/requests/${id}` },
                       },
                     ],
@@ -350,10 +350,10 @@ function useStoreValue() {
       const meId = 'u-layla';
       const label =
         decision === 'approved'
-          ? `approved proposal v${p.version}`
+          ? 'approved the proposal'
           : decision === 'declined'
-            ? `declined proposal v${p.version}${reason ? ` (${reason.toLowerCase()})` : ''}`
-            : `requested changes on v${p.version}`;
+            ? `declined the proposal${reason ? ` (${reason.toLowerCase()})` : ''}`
+            : 'requested changes to the proposal';
       const reqStatus: RequestStatus = decision;
       set((st) => ({
         proposals: st.proposals.map((x) => (x.id === id ? { ...x, status: decision, decision: { by: meId, at, note, reason } } : x)),
@@ -371,7 +371,7 @@ function useStoreValue() {
         })),
         notifications: notify(st, {
           audience: 'spark',
-          title: `Brand Co. ${decision === 'approved' ? 'approved' : decision === 'declined' ? 'declined' : 'requested changes on'} proposal v${p.version}`,
+          title: `Brand Co. ${decision === 'approved' ? 'approved' : decision === 'declined' ? 'declined' : 'requested changes on'} the proposal`,
           body: p.title,
           route: `/requests/${p.requestId}/proposal`,
           kind: 'decision',
@@ -569,8 +569,13 @@ export function useStore() {
 
 // ---- Selectors ----------------------------------------------------------------
 
-export const personById = (s: State, id: ID) =>
-  s.people.find((p) => p.id === id) ?? { id, name: 'Former member', email: '', title: '', org: 'client' as const, hue: 0 };
+// The client sees Spark as one team, not individuals: they don't know who
+// picks up their work, so anyone on Spark's side is shown as "Spark".
+export const personById = (s: State, id: ID): Person => {
+  const p = s.people.find((x) => x.id === id);
+  if (!p) return { id, name: 'Former member', email: '', title: '', org: 'client', hue: 0 };
+  return p.org === 'spark' ? { ...p, name: 'Spark', title: 'Spark Studios', email: '' } : p;
+};
 
 export const proposalsFor = (s: State, requestId: ID) =>
   s.proposals.filter((p) => p.requestId === requestId).sort((a, b) => a.version - b.version);

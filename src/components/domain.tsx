@@ -4,15 +4,17 @@ import type { Doc, DocKind, DocPreview, ProposalStatus, RequestStatus } from '..
 import { Badge, cx, type Tone } from './ui/primitives';
 export { kindOf } from '../lib/files';
 
-export const requestStatusMeta: Record<RequestStatus, { label: string; tone: Tone; client: string }> = {
-  submitted: { label: 'Submitted', tone: 'neutral', client: 'Waiting for Spark' },
-  in_review: { label: 'In review', tone: 'accent', client: 'Spark is scoping it' },
-  proposal: { label: 'Proposal ready', tone: 'warning', client: 'Needs your decision' },
-  changes_requested: { label: 'Changes requested', tone: 'neutral', client: 'Spark is revising' },
-  approved: { label: 'Approved', tone: 'positive', client: 'Kick-off coming up' },
-  in_progress: { label: 'In progress', tone: 'accent', client: 'Spark is working on it' },
-  delivered: { label: 'Delivered', tone: 'positive', client: 'Done' },
-  declined: { label: 'Declined', tone: 'neutral', client: 'Closed' },
+// One name per state everywhere (badges, filters, status card). Whatever waits
+// on the client reads "Needs your decision", for requests and proposals alike.
+export const requestStatusMeta: Record<RequestStatus, { label: string; tone: Tone }> = {
+  submitted: { label: 'Submitted', tone: 'neutral' },
+  in_review: { label: 'In review', tone: 'accent' },
+  proposal: { label: 'Needs your decision', tone: 'warning' },
+  changes_requested: { label: 'Changes requested', tone: 'neutral' },
+  approved: { label: 'Approved', tone: 'positive' },
+  in_progress: { label: 'In progress', tone: 'accent' },
+  delivered: { label: 'Delivered', tone: 'positive' },
+  declined: { label: 'Declined', tone: 'neutral' },
 };
 
 export const STAGES = ['Submitted', 'In review', 'Proposal', 'Approved', 'In progress', 'Delivered'] as const;
@@ -59,7 +61,7 @@ export function RequestStatus({ status }: { status: RequestStatus }) {
 }
 
 export const proposalStatusMeta: Record<ProposalStatus, { label: string; tone: Tone }> = {
-  awaiting: { label: 'Awaiting decision', tone: 'warning' },
+  awaiting: { label: 'Needs your decision', tone: 'warning' },
   changes_requested: { label: 'Changes requested', tone: 'neutral' },
   approved: { label: 'Approved', tone: 'positive' },
   declined: { label: 'Declined', tone: 'danger' },

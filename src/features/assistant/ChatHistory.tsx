@@ -1,4 +1,4 @@
-// Chat history in the main sidebar, like Waldo, with a search on top. For now
+// Chat history, opened from the rail as a panel, with a search on top. For now
 // it lists only your own chats; teammates' chats stay private (decided 9 Oct,
 // replacing the earlier shared history).
 import { useMemo, useState } from 'react';
@@ -100,7 +100,7 @@ export function ChatHistory() {
         description={toDelete?.requestIds.length ? 'Requests created from it stay in Requests, with their excerpt.' : 'This can’t be undone.'}
         footer={
           <>
-            <Button variant="ghost" onClick={() => setConfirm(null)}>
+            <Button variant="secondary" onClick={() => setConfirm(null)}>
               Cancel
             </Button>
             <Button

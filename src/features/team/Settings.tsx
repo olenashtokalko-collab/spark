@@ -44,7 +44,7 @@ function Team() {
       <section>
         <div className="section-head">
           <h2 className="section-head__title">
-            {state.brand.name} <span className="section-head__meta">{clients.length} members</span>
+            {state.brand.name} <span className="section-head__meta">· {clients.length} members</span>
           </h2>
           {isOwner && (
             <Button variant="primary" icon={UserPlus} onClick={() => setInviting(true)}>
@@ -157,7 +157,7 @@ function Team() {
         description="They lose access straight away. Their comments and requests stay."
         footer={
           <>
-            <Button variant="ghost" onClick={() => setRemoving(null)}>
+            <Button variant="secondary" onClick={() => setRemoving(null)}>
               Cancel
             </Button>
             <Button
@@ -253,7 +253,7 @@ function InviteDialog({ open, onClose }: { open: boolean; onClose: () => void })
       description="They'll see this workspace: requests, proposals and documents. Chats stay private."
       footer={
         <>
-          <Button variant="ghost" onClick={onClose}>
+          <Button variant="secondary" onClick={onClose}>
             Cancel
           </Button>
           <Button variant="primary" onClick={send} loading={busy}>

@@ -10,6 +10,7 @@ import {
   Moon,
   SquarePen,
   History,
+  ChevronDown,
   Sun,
   Users,
   Settings,
@@ -18,7 +19,7 @@ import {
 import { useStore } from '../../state/store';
 import { navigate, useRoute } from '../../lib/router';
 import { ChatHistory } from '../../features/assistant/ChatHistory';
-import { Avatar, Count, cx } from '../ui/primitives';
+import { Avatar, cx } from '../ui/primitives';
 import { Popover } from '../ui/overlay';
 import { fmtRelative } from '../../lib/format';
 import type { Notification } from '../../data/types';
@@ -59,53 +60,54 @@ export function AppShell({ children }: { children: ReactNode }) {
     return { requests: decisions, documents: reviews };
   }, [state.requests, state.docs]);
 
+  const team = state.people.filter((p) => p.org === 'client');
+  const onChat = route.path === '/' || route.path === '/assistant';
+
+  // Layout after the Waldo home: logo and account in a top bar, sections in a
+  // slim icon rail. Chat history opens from the rail as a panel.
   return (
     <div className="shell">
-      <aside className="sidebar" aria-label="Main">
-        {/* Like Waldo: the logo starts a new chat. */}
-        <a className="sidebar__brand sidebar__brand--link" href="#/assistant" title="New chat">
-          <span className="brand-mark" aria-hidden>
-            B
-          </span>
-          <div className="sidebar__brand-text">
-            <div className="sidebar__brand-name">{state.brand.name}</div>
-          </div>
+      <header className="topbar">
+        <a className="topbar__logo" href="#/assistant" aria-label="Spark, new chat">
+          SPARK
         </a>
-        <a className={cx('new-chat', (route.path === '/' || route.path === '/assistant') && 'is-active')} href="#/assistant" title="New chat" aria-current={route.path === '/' || route.path === '/assistant' ? 'page' : undefined}>
-          <SquarePen size={16} strokeWidth={1.8} />
-          <span>New chat</span>
+        <div className="topbar__spacer" />
+        <TeamMenu team={team} />
+        <UserMenu />
+      </header>
+
+      <nav className="rail" aria-label="Main">
+        <a className={cx('rail__btn', onChat && !historyOpen && 'is-active')} href="#/assistant" aria-label="New chat" data-tip="New chat" aria-current={onChat ? 'page' : undefined}>
+          <SquarePen size={18} strokeWidth={1.7} />
         </a>
-
-        <nav className="nav">
-          {NAV.map((n) => {
-            const active = n.match(route.path);
-            const count = n.path === '/requests' ? counts.requests : n.path === '/documents' ? counts.documents : 0;
-            return (
-              <a key={n.path} href={'#' + n.path} title={n.label} className={cx('nav__item', active && 'is-active')} aria-current={active ? 'page' : undefined}>
-                <n.icon size={17} strokeWidth={1.7} />
-                <span>{n.label}</span>
-                <Count n={count} tone="warning" />
-              </a>
-            );
-          })}
-        </nav>
-
-        {/* Narrow screens: the list is hidden in the icon rail, so it opens as a panel. */}
-        <button
-          className={cx('nav__item history-toggle', historyOpen && 'is-active')}
-          onClick={() => setHistoryOpen((o) => !o)}
-          aria-expanded={historyOpen}
-          aria-label="Chat history"
-          title="Chat history"
-        >
-          <History size={17} strokeWidth={1.7} />
+        <button className={cx('rail__btn', historyOpen && 'is-active')} onClick={() => setHistoryOpen((o) => !o)} aria-expanded={historyOpen} aria-label="Chats" data-tip="Chats">
+          <History size={18} strokeWidth={1.7} />
         </button>
+        {NAV.map((n) => {
+          const active = n.match(route.path) && !historyOpen;
+          const count = n.path === '/requests' ? counts.requests : n.path === '/documents' ? counts.documents : 0;
+          return (
+            <a key={n.path} href={'#' + n.path} className={cx('rail__btn', active && 'is-active')} aria-current={active ? 'page' : undefined} aria-label={count ? `${n.label}, ${count} need you` : n.label} data-tip={n.label}>
+              <n.icon size={18} strokeWidth={1.7} />
+              {count > 0 && <span className="rail__dot" aria-hidden />}
+            </a>
+          );
+        })}
+        {/* Notifications and settings sit at the foot of the rail, away from the daily sections. */}
+        <span className="rail__end">
+          <Notifications />
+        </span>
+        <a
+          className={cx('rail__btn', route.path.startsWith('/settings') && 'is-active')}
+          href="#/settings"
+          aria-label="Settings"
+          data-tip="Settings"
+          aria-current={route.path.startsWith('/settings') ? 'page' : undefined}
+        >
+          <Settings size={18} strokeWidth={1.7} />
+        </a>
+      </nav>
 
-        <div className="sidebar__history">
-          <ChatHistory />
-        </div>
-
-      </aside>
       {historyOpen && (
         <>
           <div className="history-scrim" onClick={() => setHistoryOpen(false)} />
@@ -115,23 +117,53 @@ export function AppShell({ children }: { children: ReactNode }) {
         </>
       )}
 
-      <div className="main">
-        <header className="topbar">
-          <div className="topbar__spacer" />
-          <Notifications />
-          <a className={cx('btn btn--ghost btn--icon', route.path.startsWith('/settings') && 'is-pressed')} href="#/settings" aria-label="Settings" title="Settings">
-            <Settings size={18} strokeWidth={1.7} />
-          </a>
-          <UserMenu />
-        </header>
-        <main className="content" id="content">
-          {children}
-        </main>
-      </div>
+      <main className="content" id="content">
+        {children}
+      </main>
       <Shortcuts />
       {/* keep me in scope for screen readers */}
       <span className="sr-only">Signed in as {me.name}</span>
     </div>
+  );
+}
+
+/** "Brand Co. · My team": who shares this workspace, with a way to manage it. */
+function TeamMenu({ team }: { team: ReturnType<typeof useStore>['state']['people'] }) {
+  const { state } = useStore();
+  return (
+    <Popover
+      width={280}
+      trigger={({ toggle, ref, open }) => (
+        <button ref={ref} className={cx('team-btn', open && 'is-open')} onClick={toggle} aria-haspopup="dialog">
+          {state.brand.name} · My team
+          <ChevronDown size={14} />
+        </button>
+      )}
+    >
+      {(close) => (
+        <div className="menu team-menu">
+          <div className="menu__label">{state.brand.name} · {team.length} people</div>
+          {team.map((p) => (
+            <div key={p.id} className="team-menu__row">
+              <Avatar person={p} size={26} />
+              <span className="team-menu__name">{p.name}</span>
+              <span className="faint team-menu__role">{p.role === 'owner' ? 'Owner' : p.role === 'viewer' ? 'Viewer' : 'Member'}</span>
+            </div>
+          ))}
+          <div className="menu__divider" />
+          <button
+            className="menu__item"
+            onClick={() => {
+              close();
+              navigate('/team');
+            }}
+          >
+            <Users size={15} />
+            <span>Manage team</span>
+          </button>
+        </div>
+      )}
+    </Popover>
   );
 }
 
@@ -166,8 +198,15 @@ function Notifications() {
   return (
     <Popover
       width={380}
+      side="right"
       trigger={({ toggle, ref, open }) => (
-        <button ref={ref} className={cx('btn btn--ghost btn--icon bell', open && 'is-pressed')} onClick={toggle} aria-label={`Notifications${unread ? `, ${unread} unread` : ''}`}>
+        <button
+          ref={ref}
+          className={cx('rail__btn bell', open && 'is-active')}
+          onClick={toggle}
+          aria-label={`Notifications${unread ? `, ${unread} unread` : ''}`}
+          data-tip={open ? undefined : 'Notifications'}
+        >
           <Bell size={18} strokeWidth={1.7} />
           {unread > 0 && <span className="bell__dot">{unread}</span>}
         </button>
@@ -244,18 +283,6 @@ function UserMenu() {
               </div>
             </div>
           </div>
-          <button
-            className="menu__item"
-            onClick={() => {
-              close();
-              navigate('/team');
-            }}
-          >
-            <Users size={15} />
-            <span>Team</span>
-            <span className="menu__hint">{state.people.filter((p) => p.org === 'client').length} members</span>
-          </button>
-          <div className="menu__divider" />
           <div className="menu__label">Appearance</div>
           <div className="theme-pick">
             {themes.map((t) => (
