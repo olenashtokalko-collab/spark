@@ -116,30 +116,36 @@ function Team() {
                     </div>
                   </div>
                   <Badge tone="warning">Pending</Badge>
-                  {isOwner && (
-                    <span className="member__acts">
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        icon={RefreshCw}
-                        onClick={() => {
-                          actions.resendInvite(inv.id);
-                          toast({ title: 'Invitation resent', body: inv.email });
-                        }}
-                      >
-                        Resend
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        icon={X}
-                        aria-label={`Revoke invitation for ${inv.email}`}
-                        onClick={() => {
-                          actions.revokeInvite(inv.id);
-                          toast({ title: 'Invitation revoked', body: inv.email });
-                        }}
-                      />
-                    </span>
+                  {isOwner ? (
+                    <Menu
+                      width={200}
+                      trigger={({ toggle, ref }) => (
+                        <button ref={ref} className="btn btn--ghost btn--sm btn--icon" onClick={toggle} aria-label={`More for ${inv.email}`}>
+                          <MoreHorizontal size={16} />
+                        </button>
+                      )}
+                      items={[
+                        {
+                          label: 'Resend invitation',
+                          icon: RefreshCw,
+                          onSelect: () => {
+                            actions.resendInvite(inv.id);
+                            toast({ title: 'Invitation resent', body: inv.email });
+                          },
+                        },
+                        {
+                          label: 'Revoke invitation',
+                          icon: Trash2,
+                          danger: true,
+                          onSelect: () => {
+                            actions.revokeInvite(inv.id);
+                            toast({ title: 'Invitation revoked', body: inv.email });
+                          },
+                        },
+                      ]}
+                    />
+                  ) : (
+                    <span className="member__spacer" />
                   )}
                 </div>
               ))}
@@ -153,6 +159,8 @@ function Team() {
         open={!!removing}
         onClose={() => setRemoving(null)}
         size="sm"
+        icon={UserMinus}
+        tone="danger"
         title={`Remove ${removing?.name}?`}
         description="They lose access straight away. Their comments and requests stay."
         footer={
@@ -249,6 +257,7 @@ function InviteDialog({ open, onClose }: { open: boolean; onClose: () => void })
     <Dialog
       open={open}
       onClose={onClose}
+      icon={UserPlus}
       title="Invite people to Brand Co."
       description="They'll see this workspace: requests, proposals and documents. Chats stay private."
       footer={

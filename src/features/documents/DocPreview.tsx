@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
-import { Download, X } from 'lucide-react';
-import { SphereGlyph } from '../../components/ui/SphereGlyph';
+import { Fragment, useEffect, useState } from 'react';
+import { Download, X, PenLine } from 'lucide-react';
+import { FluidOrb } from '../../components/ui/FluidOrb';
 import { Dialog } from '../../components/ui/overlay';
 import { Avatar, Badge, Button, Textarea } from '../../components/ui/primitives';
 import { Art, FileIcon, kindLabel } from '../../components/domain';
@@ -107,7 +107,7 @@ export function DocPreviewDialog({ docId, onClose }: { docId: string | null; onC
           <h2 className="preview__title">{doc.name}</h2>
           {doc.summary && <p className="preview__summary">{doc.summary}</p>}
           <div className="preview__actions">
-            <Button variant="ai" lead={<SphereGlyph size={20} />} onClick={ask}>
+            <Button variant="ai" lead={<FluidOrb size={20} />} onClick={ask}>
               Ask about this file
             </Button>
           </div>
@@ -178,21 +178,12 @@ function ReviewPanel({ doc }: { doc: Doc }) {
 
   return (
     <section className="decision review-card">
-      <div className="review-card__title">Approval requested</div>
-      <div className="decision__meta">
-        {r.status === 'open' ? (
-          <>
-            From {asker.name} · <span className="review__due">{dueLabel(r.due)}</span>
-          </>
-        ) : r.status === 'approved' ? (
-          <>Approved by {decider?.name} · {fmtRelative(r.decision!.at)}</>
-        ) : (
-          <>Changes requested by {decider?.name} · {fmtRelative(r.decision!.at)}</>
-        )}
-      </div>
-      {/* Spark's ask and the replies use the same comment component as the
-          request Activity tab. */}
+      <div className="review-card__title">Comments</div>
+      {/* A small history: each event label sits above the comment it belongs to. */}
       <ul className="review__thread">
+        <li className="review__event">
+          Approval requested{r.status === 'open' && <span className="review__due"> · {dueLabel(r.due)}</span>}
+        </li>
         <li className="timeline__item timeline__item--comment">
           <Avatar person={asker} size={26} />
           <div className="timeline__comment">
@@ -204,18 +195,32 @@ function ReviewPanel({ doc }: { doc: Doc }) {
         </li>
         {r.feedback.map((f) => {
           const p = personById(state, f.by);
+          const isDecision = r.decision && f.at === r.decision.at;
           return (
-            <li key={f.id} className="timeline__item timeline__item--comment">
-              <Avatar person={p} size={26} />
-              <div className="timeline__comment">
-                <div className="timeline__who">
-                  {p.name} <span className="faint">· {fmtRelative(f.at)}</span>
+            <Fragment key={f.id}>
+              {isDecision && (
+                <li className="review__event">
+                  {r.status === 'approved' ? 'Approved' : 'Changes requested'}
+                </li>
+              )}
+              <li className="timeline__item timeline__item--comment">
+                <Avatar person={p} size={26} />
+                <div className="timeline__comment">
+                  <div className="timeline__who">
+                    {p.name} <span className="faint">· {fmtRelative(f.at)}</span>
+                  </div>
+                  <p>{f.text}</p>
                 </div>
-                <p>{f.text}</p>
-              </div>
-            </li>
+              </li>
+            </Fragment>
           );
         })}
+        {/* An approval without a comment still shows up as an event. */}
+        {r.decision && decider && !r.feedback.some((f) => f.at === r.decision!.at) && (
+          <li className="review__event">
+            {r.status === 'approved' ? 'Approved' : 'Changes requested'}
+          </li>
+        )}
       </ul>
       {me.org === 'client' && r.status === 'open' && (
         <div className="decision__btns">
@@ -234,6 +239,7 @@ function ReviewPanel({ doc }: { doc: Doc }) {
           setError(null);
         }}
         size="sm"
+        icon={PenLine}
         title="Request changes"
         description={`Tell ${asker.name} what should change in ${doc.name.replace(/\.[a-z0-9]+$/i, '')}.`}
         footer={

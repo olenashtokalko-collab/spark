@@ -6,6 +6,11 @@ import { useStore } from './state/store';
 import { Assistant } from './features/assistant/Assistant';
 import { Requests } from './features/requests/Requests';
 import { Monitoring } from './features/monitoring/Monitoring';
+import { ChatDemo } from './features/demo/ChatDemo';
+import { ThreadDemo } from './features/demo/ThreadDemo';
+import { DocsDemo } from './features/demo/DocsDemo';
+import { ButtonsDemo } from './features/demo/ButtonsDemo';
+import { ComposerDemo } from './features/demo/ComposerDemo';
 import { RequestDetail } from './features/requests/RequestDetail';
 import { ProposalView } from './features/requests/ProposalView';
 import { Documents } from './features/documents/Documents';
@@ -28,6 +33,13 @@ function Screen() {
       return <Requests />;
     case 'documents':
       return <Documents folderId={a} docId={query.get('doc')} />;
+    case 'demo':
+      if (a === 'chat') return <ChatDemo />;
+      if (a === 'thread') return <ThreadDemo />;
+      if (a === 'docs') return <DocsDemo />;
+      if (a === 'buttons') return <ButtonsDemo />;
+      if (a === 'composer') return <ComposerDemo />;
+      break;
     case 'monitoring':
       return <Monitoring />;
     case 'team':

@@ -17,8 +17,8 @@ The profile menu (top right) has *Team*, theme and *Log out* (opens a mock sign-
 ## Demo script (≈5 minutes)
 
 1. The portal opens on the **Assistant**. Sidebar badges show what needs attention (proposal v2 in Requests, a feedback request in Documents).
-2. Click **Background check**: the assistant shows research steps, streams an answer, then findings with numbered citations and sources (workspace files open a preview; web sources are labelled sample data).
-3. **Create request**: the form only (title, type, timing, brief, budget); the question and answer it came from are attached automatically. After sending, the success screen shows the reply time and a glass card with the question, answer and sources that went with the request; no Spark person is named. (Chosen 9 Oct over a review step, a side panel and an in-chat draft.)
+2. Click **Explore a look** to get three rough visual directions (palette + mark); **Like** the ones you prefer and they go into the request brief. Or click **Background check**: the assistant shows research steps, streams an answer, then findings with numbered citations and sources (workspace files open a preview; web sources are labelled sample data).
+3. **Request proposal**: the form only (title, type, timing, brief, budget); the question and answer it came from are attached automatically. After sending, the success screen shows the reply time and a glass card with the question, answer and sources that went with the request; no Spark person is named. (Chosen 9 Oct over a review step, a side panel and an in-chat draft.)
 4. The new request stays *Submitted*: Spark handles it outside the portal for now (see below).
 5. Open **Requests → REQ-104** (proposal v2 is waiting) → comment on a section → **Approve** (with authorisation check), **Request changes** (note required) or **Decline** (reason).
 6. **Requests → REQ-104** shows a two-version history; the proposal page has a v1/v2 switch and a "Changed from v1" summary.
@@ -45,7 +45,7 @@ src/
   data/        types.ts (domain model) · mock.ts (seed) · assistant.ts (scripted AI)
   state/       store.tsx (workspace state + actions) · ui.tsx (global dialogs)
   lib/         router.ts (hash router) · format.ts (dates, money, sizes)
-  components/  ui/ (Button, Badge, Avatar, Field, Tabs, Dialog, Popover, Menu, Toast, DotSphere…)
+  components/  ui/ (Button, Badge, Avatar, Field, Tabs, Dialog, Popover, Menu, Toast, DotSphere, FluidOrb…)
                domain.tsx (status pills, stages, file icons, generated artwork)
                layout/AppShell.tsx (sidebar, top bar, notifications, prototype controls)
   features/    home · assistant · requests (list, detail, proposal, dialogs) · documents · brand · team
@@ -54,7 +54,10 @@ src/
 
 - **One state module.** Every user action is a named function in `store.tsx` (`ask`, `createRequest`, `sendProposal`, `decideProposal`, `uploadFiles`, `invite`…). These are the seams where API calls go.
 - **Design tokens.** All colour, type and radius come from `tokens.css`. The accent (`--accent`) is a placeholder blue from the visual references, *not* a Spark brand colour. Swapping in the rebrand means editing that file (and the three font families).
-- **Glow is reserved for AI.** It appears only on the focused/working composer, the AI's dot sphere, suggested-prompt hover and the current request stage.
+- **Glow is reserved for AI.** It appears only on the composer with text or while the AI works, the AI's fluid orb and the current request stage.
+- **Visual system (13 Oct):** all colours live in `tokens.css`: near-black `--bg`, navy-tinted surfaces, cream `--text-display` for page titles and greetings, `--cream` send button, `--field-*` composer and `--chip-*` suggestion colours (light-theme values included). The fluid orb (`FluidOrb`) is the AI's mark everywhere: chat, answers, AI buttons (Start a chat, Ask about this file), sign-in.
+- **Background = Spotlight on every page** (`#/demo/thread`, variant 8; `.app-bg` in the app shell): near-black, a soft blue light breathing from above, dark edges and light grain; full strength on the chat, quieter on work pages, hidden in the light theme. The client's messages are outlined pills, answers are plain text beside the orb.
+- **Chat start screen = demo variant 6** (`#/demo/chat`): a grainy fluid orb whose light keeps shifting, "Nice to see you, {name}. What's new?", a Copilot-style composer (orb · Quick answer · + attach · mic) and plain suggestion chips. While the client types, the edge lights up, the box grows, the mic turns into Send, the orb speeds up and the chips fade. The same orb is the AI avatar in answers, chat excerpts and sign-in.
 - **Dependencies:** React 18, lucide-react (icons), Vite, TypeScript. No UI kit, router or state library.
 
 ## Data the backend must provide

@@ -1,7 +1,8 @@
 // Social media monitoring (Hassan, 8 Oct: "a section about social media
 // results"). Shown as the weekly summaries Spark shares, without charts, until
 // Spark confirms its data source and metrics (see docs, open questions).
-import { FileText, Inbox, Sparkles } from 'lucide-react';
+import { FileText, Inbox } from 'lucide-react';
+import { FluidOrb } from '../../components/ui/FluidOrb';
 import { useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { digests } from '../../data/mock';
@@ -47,7 +48,7 @@ export function Monitoring() {
               <Button size="sm" icon={FileText} onClick={() => openDoc(d.docId)}>
                 Full digest
               </Button>
-              <Button size="sm" variant="ghost" icon={Sparkles} onClick={() => ask(d.prompt)}>
+              <Button size="sm" variant="ai" lead={<FluidOrb size={16} />} onClick={() => ask(d.prompt)}>
                 Ask about this
               </Button>
               <Button
@@ -56,7 +57,7 @@ export function Monitoring() {
                 icon={Inbox}
                 onClick={() => openRequest({ type: 'Social', title: '', description: `${d.week} (${d.range}): ${d.summary}\n\nWhat we'd like from Spark: ` })}
               >
-                Create request
+                Request proposal
               </Button>
             </div>
           </article>

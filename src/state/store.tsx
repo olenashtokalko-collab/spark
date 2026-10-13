@@ -78,7 +78,13 @@ const initial = (): State => ({
 function load(): State {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return { ...initial(), ...JSON.parse(raw) };
+    if (raw) {
+      const seed = initial();
+      const saved = JSON.parse(raw) as Partial<State>;
+      // Folder copy comes from the seed, so edits to it reach saved demos too.
+      const folders = saved.folders?.map((f) => ({ ...f, description: seed.folders.find((x) => x.id === f.id)?.description ?? f.description }));
+      return { ...seed, ...saved, ...(folders && { folders }) };
+    }
   } catch {
     /* storage unavailable: fall back to seed */
   }
@@ -244,6 +250,24 @@ function useStoreValue() {
   const renameConversation = useCallback(
     (id: ID, title: string) =>
       set((s) => ({ conversations: s.conversations.map((c) => (c.id === id ? { ...c, title } : c)) })),
+    [set],
+  );
+
+  /** "I like this colour, this direction": mark a sample visual. */
+  const toggleVisualLike = useCallback(
+    (convId: ID, msgId: ID, visualId: ID) =>
+      set((s) => ({
+        conversations: s.conversations.map((c) =>
+          c.id !== convId
+            ? c
+            : {
+                ...c,
+                messages: c.messages.map((m) =>
+                  m.id !== msgId ? m : { ...m, visuals: m.visuals?.map((v) => (v.id === visualId ? { ...v, liked: !v.liked } : v)) },
+                ),
+              },
+        ),
+      })),
     [set],
   );
 
@@ -537,6 +561,7 @@ function useStoreValue() {
       retry,
       deleteConversation,
       renameConversation,
+      toggleVisualLike,
       createRequest,
       commentOnRequest,
       updateBrief,

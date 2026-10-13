@@ -1,8 +1,8 @@
 import { Fragment, useState } from 'react';
-import { AlertCircle, ArrowRight, Check, ChevronDown, Copy, Globe, Inbox, Loader2, RotateCcw, FileText } from 'lucide-react';
-import type { Message, Source } from '../../data/types';
+import { AlertCircle, ArrowRight, Check, Heart, ChevronDown, Copy, Globe, Inbox, Loader2, RotateCcw, FileText } from 'lucide-react';
+import type { Message, Source, Visual } from '../../data/types';
 import { Button, cx } from '../../components/ui/primitives';
-import { DotSphere } from '../../components/ui/DotSphere';
+import { FluidOrb } from '../../components/ui/FluidOrb';
 import { FileIcon, kindOf } from '../../components/domain';
 import { personById, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
@@ -78,6 +78,7 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
   const { openRequest, openDoc } = useUI();
   const toast = useToast();
   const [stepsOpen, setStepsOpen] = useState(false);
+  const [sourcesOpen, setSourcesOpen] = useState(false);
   const working = msg.state === 'thinking' || msg.state === 'streaming';
   const sources = msg.sources ?? [];
 
@@ -90,7 +91,7 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
   return (
     <div className="msg-ai">
       <div className="msg-ai__avatar">
-        <DotSphere size={30} density={90} active={working} />
+        <FluidOrb size={30} active={working} />
       </div>
       <div className="msg-ai__body">
         {/* Research steps: live while working, collapsible once done */}
@@ -160,19 +161,30 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
           </ul>
         )}
 
+        {msg.state === 'done' && msg.visuals && msg.visuals.length > 0 && <Visuals convId={convId} msg={msg} readOnly={!onFollowUp} />}
+
         {msg.state === 'done' && (
           <>
-          {/* Sources as small file chips; the excerpt shows on hover. */}
+          {/* Sources grouped behind one "Sources" button; the list opens on click,
+              each source shows its excerpt on hover. */}
           {sources.length > 0 && (
-            <div className="src-chips">
-              {sources.map((s) => {
-                const I = s.kind === 'web' ? Globe : FileText;
-                return (
-                  <button key={s.id} className="src-chip" onClick={() => openSource(s)} data-tip={s.kind === 'web' ? `${s.domain} · ${s.snippet}` : s.snippet}>
-                    <I size={13} /> {s.title}
-                  </button>
-                );
-              })}
+            <div className="sources">
+              <button className="sources__toggle" onClick={() => setSourcesOpen((o) => !o)} aria-expanded={sourcesOpen}>
+                Sources · {sources.length}
+                <ChevronDown size={13} className={cx(sourcesOpen && 'rot')} />
+              </button>
+              {sourcesOpen && (
+                <div className="src-chips">
+                  {sources.map((s) => {
+                    const I = s.kind === 'web' ? Globe : FileText;
+                    return (
+                      <button key={s.id} className="src-chip" onClick={() => openSource(s)} data-tip={s.kind === 'web' ? `${s.domain} · ${s.snippet}` : s.snippet}>
+                        <I size={13} /> {s.title}
+                      </button>
+                    );
+                  })}
+                </div>
+              )}
             </div>
           )}
           <div className="msg-actions">
@@ -189,7 +201,7 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
                 })
               }
             >
-              Create request
+              Request proposal
             </Button>
             <Button
               size="sm"
@@ -214,7 +226,7 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
           <div className="followups">
             {msg.followUps.map((q) => (
               <button key={q} className="followup" onClick={() => onFollowUp(q)}>
-                <ArrowRight size={13} />
+                <ArrowRight size={12} />
                 {q}
               </button>
             ))}
@@ -222,5 +234,69 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
         )}
       </div>
     </div>
+  );
+}
+
+/** Sample visual directions: a rough mark on the palette, the swatches, and
+ *  a "Like" toggle so the client can say which direction they prefer. */
+function Visuals({ convId, msg, readOnly }: { convId: string; msg: Message; readOnly: boolean }) {
+  const { actions } = useStore();
+  return (
+    <div className="visuals">
+      {msg.visuals!.map((v) => (
+        <div key={v.id} className="visual-wrap">
+          <figure className={cx('visual', v.liked && 'is-liked')}>
+            <VisualArt v={v} />
+            <figcaption className="visual__body">
+              <span className="visual__name">{v.name}</span>
+              <p className="visual__note">{v.note}</p>
+              <div className="visual__swatches">
+                {v.colors.map((c) => (
+                  <span key={c.hex} className="visual__swatch" data-tip={`${c.name} ${c.hex}`}>
+                    <i style={{ background: c.hex }} />
+                    {c.name}
+                  </span>
+                ))}
+              </div>
+            </figcaption>
+          </figure>
+          <button
+            className={cx('visual__like', v.liked && 'is-on')}
+            onClick={() => actions.toggleVisualLike(convId, msg.id, v.id)}
+            aria-pressed={!!v.liked}
+            aria-label={v.liked ? `Unlike ${v.name}` : `Like ${v.name}`}
+            data-tip={v.liked ? 'Liked' : 'Like'}
+            disabled={readOnly}
+          >
+            <Heart size={16} fill={v.liked ? 'currentColor' : 'none'} />
+          </button>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function VisualArt({ v }: { v: Visual }) {
+  const [bg, accent, detail] = v.colors.map((c) => c.hex);
+  const mark =
+    v.shape === 'circle' ? (
+      <circle cx="160" cy="92" r="46" fill={accent} />
+    ) : v.shape === 'arch' ? (
+      <path d="M114 138 V92 a46 46 0 0 1 92 0 V138 Z" fill={accent} />
+    ) : (
+      <path d="M160 40 L212 92 L160 144 L108 92 Z" fill={accent} />
+    );
+  return (
+    <svg className="visual__art" viewBox="0 0 320 200" role="img" aria-label={`${v.name} sketch`}>
+      <rect width="320" height="200" fill={bg} />
+      <rect y="168" width="320" height="32" fill={detail} opacity="0.9" />
+      {mark}
+      <text x="160" y="104" textAnchor="middle" fontFamily="Archivo, Inter, sans-serif" fontWeight="800" fontSize="34" fill={bg}>
+        B
+      </text>
+      <text x="160" y="160" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="11" letterSpacing="3" fill={accent}>
+        BRAND CO. · RIYADH
+      </text>
+    </svg>
   );
 }

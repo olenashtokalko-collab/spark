@@ -1,6 +1,7 @@
 // Small domain-aware building blocks shared by several screens.
 import { FileArchive, FileImage, FileSpreadsheet, FileText, Presentation } from 'lucide-react';
-import type { Doc, DocKind, DocPreview, ProposalStatus, RequestStatus } from '../data/types';
+import type { CSSProperties, ReactNode } from 'react';
+import type { Doc, DocKind, DocPreview, Folder, ProposalStatus, RequestStatus } from '../data/types';
 import { Badge, cx, type Tone } from './ui/primitives';
 export { kindOf } from '../lib/files';
 
@@ -198,5 +199,53 @@ export function DocThumb({ doc }: { doc: Doc }) {
     <div className="doc-thumb__icon">
       <FileIcon kind={doc.kind} size={26} />
     </div>
+  );
+}
+
+// ---- Folders ----------------------------------------------------------------------------
+
+/** One muted hue per top-level folder, in list order: low saturation so the
+ *  folders sit in the dark UI next to the blue accent. */
+export const FOLDER_HUES = ['#b0846a', '#7f78b0', '#5f7fb4', '#a87487', '#64917f', '#5f8f9c'];
+
+/** Subfolders take the hue of the top-level folder they live in. */
+export function folderHue(folders: Folder[], id: string): string {
+  let f = folders.find((x) => x.id === id);
+  while (f?.parentId) f = folders.find((x) => x.id === f!.parentId);
+  const i = folders.filter((x) => x.parentId === null).findIndex((x) => x.id === f?.id);
+  return FOLDER_HUES[Math.max(0, i) % FOLDER_HUES.length];
+}
+
+/** A folder drawn as a folder: sheets peek out of the back, the frosted,
+ *  tabbed front carries the name and one line about what's inside. */
+export function FolderTile({ name, sub, hue, href, onClick, badge }: { name: string; sub: string; hue: string; href?: string; onClick?: () => void; badge?: ReactNode }) {
+  const body = (
+    <>
+      <span className="tile__sheets" aria-hidden>
+        <span />
+        <span />
+        <span>
+          <i />
+          <i />
+        </span>
+      </span>
+      {badge && <span className="tile__badge">{badge}</span>}
+      <span className="tile__front">
+        <span className="tile__text">
+          <span className="tile__name">{name}</span>
+          <span className="tile__desc">{sub}</span>
+        </span>
+      </span>
+    </>
+  );
+  const props = { className: 'tile tile--tab', style: { '--hue': hue } as CSSProperties };
+  return href ? (
+    <a href={href} {...props}>
+      {body}
+    </a>
+  ) : (
+    <button onClick={onClick} {...props}>
+      {body}
+    </button>
   );
 }

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ArrowRight, Mail } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { Button, Field, Input } from '../../components/ui/primitives';
-import { DotSphere } from '../../components/ui/DotSphere';
+import { FluidOrb } from '../../components/ui/FluidOrb';
 import { navigate } from '../../lib/router';
 
 export function SignIn() {
@@ -26,7 +26,7 @@ export function SignIn() {
   return (
     <div className="signin">
       <form className="signin__card" onSubmit={submit} noValidate>
-        <DotSphere size={72} density={160} />
+        <FluidOrb size={72} />
         <h1 className="signin__title">Sign in</h1>
         <p className="muted">to the {state.brand.name} workspace by Spark</p>
         <div className="signin__form">

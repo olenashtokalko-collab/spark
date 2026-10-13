@@ -59,13 +59,13 @@ export const brand: Brand = {
 // ---- Documents ------------------------------------------------------------
 
 export const folders: Folder[] = [
-  { id: 'f-guidelines', name: 'Brand guidelines', parentId: null, description: 'Approved identity, logo and tone of voice.' },
-  { id: 'f-strategy', name: 'Strategy', parentId: null, description: 'Positioning, market entry and audience work.' },
-  { id: 'f-proposals', name: 'Proposals', parentId: null, description: 'Every proposal Spark has sent.' },
-  { id: 'f-creative', name: 'Creative', parentId: null, description: 'Concepts, moodboards and photography.' },
+  { id: 'f-guidelines', name: 'Brand guidelines', parentId: null, description: 'Logo, colour and voice' },
+  { id: 'f-strategy', name: 'Strategy', parentId: null, description: 'Positioning and audience' },
+  { id: 'f-proposals', name: 'Proposals', parentId: null, description: 'Every proposal from Spark' },
+  { id: 'f-creative', name: 'Creative', parentId: null, description: 'Concepts and photography' },
   { id: 'f-ramadan', name: 'Ramadan 2027 packaging', parentId: 'f-creative' },
-  { id: 'f-research', name: 'Research reports', parentId: null, description: 'Audits, background checks and social listening digests.' },
-  { id: 'f-uploads', name: 'From your team', parentId: null, description: 'Files your team shared with Spark.' },
+  { id: 'f-research', name: 'Research reports', parentId: null, description: 'Audits and social digests' },
+  { id: 'f-uploads', name: 'From your team', parentId: null, description: 'Shared with Spark' },
 ];
 
 const pages = (...p: [string, ...string[]][]) => ({

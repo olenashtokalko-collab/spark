@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react';
 import { Calendar, Plus, Search, Tag, X } from 'lucide-react';
-import { SphereGlyph } from '../../components/ui/SphereGlyph';
+import { FluidOrb } from '../../components/ui/FluidOrb';
 import { latestProposal, proposalTotal, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { Button, EmptyState, Input, PageHeader, Tabs } from '../../components/ui/primitives';
@@ -56,7 +56,7 @@ export function Requests() {
         sub="Ask Spark for new work and follow it to delivery. Each request shows its current status, and when Spark sends a proposal, you review and approve it here."
         actions={
           <>
-            <Button variant="ai" lead={<SphereGlyph size={20} />} onClick={() => navigate('/assistant')}>
+            <Button variant="ai" lead={<FluidOrb size={20} />} onClick={() => navigate('/assistant')}>
               Start a chat
             </Button>
             <Button variant="primary" icon={Plus} onClick={() => openRequest()}>

@@ -8,7 +8,7 @@ export interface AnswerContext {
   web: boolean;
 }
 
-export type Answer = Pick<Message, 'steps' | 'text' | 'findings' | 'sources' | 'followUps' | 'suggestedRequest'>;
+export type Answer = Pick<Message, 'steps' | 'text' | 'findings' | 'sources' | 'followUps' | 'suggestedRequest' | 'visuals'>;
 
 // Landing prompts. Clients often "don't know what they want" (Hassan, 31 Jul),
 // so the first card starts the main job: an idea shaped into a brief for Spark.
@@ -19,6 +19,7 @@ export const suggestedPrompts: { label: string; prompt: string; hint: string }[]
   { label: 'Background check', prompt: 'Run a background check on our brand before the Riyadh launch', hint: 'Name risks, reviews and press' },
   { label: 'What people say', prompt: 'What are people saying about our brand right now?', hint: 'Social posts, reviews and press' },
   { label: 'Know the audience', prompt: 'What do Riyadh shoppers care about?', hint: 'From your strategy and personas' },
+  { label: 'Explore a look', prompt: 'Show me a few visual directions for the Riyadh opening', hint: 'Rough sketches to react to' },
 ];
 
 interface Script extends Answer {
@@ -47,6 +48,26 @@ const scripts: Script[] = [
     ],
     followUps: ['A signature product made only for Riyadh', 'An opening-night event in Riyadh with local creators'],
     suggestedRequest: { title: 'New idea for the Riyadh launch', type: 'Strategy' },
+  },
+  {
+    // Sample visuals (Hassan, 31 Jul: the agent gives "sample logos, sample
+    // things"; clients say "I like this colour, this direction").
+    match: /visual|\blook\b|logo|colou?r|palette|moodboard|direction|style/i,
+    steps: ['Read Brand Guidelines v3.2', 'Read KSA market entry strategy', 'Sketched three directions'],
+    text:
+      'Here are three rough directions for the Riyadh opening, built from your guidelines and the KSA strategy. They are sketches to react to, not final design. **Mark the ones you like**: they go into your request, and Spark\'s designers take it from there.',
+    findings: [],
+    sources: [
+      { id: 'ws-guide', kind: 'workspace', title: 'Brand Guidelines v3.2.pdf', docId: 'd-guidelines', snippet: 'Sand · Ink · Olive · Night.' },
+      { id: 'ws-ksa', kind: 'workspace', title: 'KSA market entry strategy.pdf', docId: 'd-ksa', snippet: 'Lead with craft, not with Dubai.' },
+    ],
+    visuals: [
+      { id: 'v-night', name: 'Night Market', note: 'Evening energy for after-7pm shoppers; gold on deep ink.', shape: 'arch', colors: [{ name: 'Ink', hex: '#101418' }, { name: 'Gold', hex: '#C9A15B' }, { name: 'Clay', hex: '#7A2E2E' }] },
+      { id: 'v-bloom', name: 'Desert Bloom', note: 'Warm and calm; closest to your current identity.', shape: 'circle', colors: [{ name: 'Sand', hex: '#E9DCC6' }, { name: 'Terracotta', hex: '#D6845E' }, { name: 'Olive', hex: '#5E6B3A' }] },
+      { id: 'v-lantern', name: 'Lantern', note: 'A bolder mark that works on hoardings and merch.', shape: 'diamond', colors: [{ name: 'Midnight', hex: '#0E1220' }, { name: 'Amber', hex: '#E0A43A' }, { name: 'Sand', hex: '#E9DCC6' }] },
+    ],
+    followUps: ['Make Desert Bloom feel more premium', 'Show packaging in the Night Market direction'],
+    suggestedRequest: { title: 'Visual direction for the Riyadh opening', type: 'Creative' },
   },
   {
     match: /respond|reply|post from/i,
@@ -217,6 +238,7 @@ export function composeAnswer(prompt: string, ctx: AnswerContext, contextDocName
     findings,
     sources: [...(s.sources ?? []), ...(ctx.web ? s.webSources ?? [] : [])],
     followUps: s.followUps,
+    visuals: s.visuals?.map((v) => ({ ...v })),
     suggestedRequest: s.suggestedRequest,
   };
 }

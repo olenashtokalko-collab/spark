@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { ArrowLeft, CircleAlert, Download, MessageSquare, RotateCcw, ShieldCheck } from 'lucide-react';
+import { ArrowLeft, CircleAlert, Download, MessageSquare, RotateCcw, ShieldCheck, Check, PenLine, X } from 'lucide-react';
 import { canApprove, latestProposal, personById, proposalTotal, proposalWeeks, useStore } from '../../state/store';
 import { Avatar, Button, Checkbox, EmptyState, Field, Select, Textarea, cx } from '../../components/ui/primitives';
 import { Dialog } from '../../components/ui/overlay';
@@ -443,9 +443,9 @@ function DecisionDialog({ p, kind, onClose, onConfirm }: { p: Proposal; kind: De
   };
 
   const copy = {
-    approved: { title: 'Approve this proposal?', cta: 'Approve', variant: 'primary' as const },
-    changes_requested: { title: 'Request changes', cta: 'Send changes', variant: 'primary' as const },
-    declined: { title: 'Decline this proposal?', cta: 'Decline proposal', variant: 'danger' as const },
+    approved: { title: 'Approve this proposal?', cta: 'Approve', variant: 'primary' as const, icon: Check, tone: 'accent' as const },
+    changes_requested: { title: 'Request changes', cta: 'Send changes', variant: 'primary' as const, icon: PenLine, tone: 'accent' as const },
+    declined: { title: 'Decline this proposal?', cta: 'Decline proposal', variant: 'danger' as const, icon: X, tone: 'danger' as const },
   };
   if (!kind) return null;
   const c = copy[kind];
@@ -455,6 +455,8 @@ function DecisionDialog({ p, kind, onClose, onConfirm }: { p: Proposal; kind: De
       open={!!kind}
       onClose={close}
       size="sm"
+      icon={c.icon}
+      tone={c.tone}
       title={c.title}
       footer={
         <>

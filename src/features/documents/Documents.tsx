@@ -1,10 +1,10 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, Calendar, FileText, Folder as FolderIcon, LayoutGrid, List, Search, Upload, UserRound, X, Download } from 'lucide-react';
-import { SphereGlyph } from '../../components/ui/SphereGlyph';
+import { ArrowLeft, Calendar, FileText, LayoutGrid, List, Search, Upload, UserRound, X, Download } from 'lucide-react';
+import { FluidOrb } from '../../components/ui/FluidOrb';
 import { personById, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { Badge, Button, EmptyState, Input, PageHeader, Progress, Segmented, Skeleton } from '../../components/ui/primitives';
-import { DocThumb, FileIcon, kindLabel } from '../../components/domain';
+import { DocThumb, FileIcon, FolderTile, folderHue, kindLabel } from '../../components/domain';
 import { useToast } from '../../components/ui/toast';
 import { FilterMenu } from '../../components/ui/overlay';
 import { fmtRelative, fmtSize } from '../../lib/format';
@@ -127,9 +127,16 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
         onFiles(e.dataTransfer.files);
       }}
     >
+      {/* Inside a folder the page becomes the folder: a back link one level up,
+          then the folder's name and what it holds, as on a request page. */}
+      {folder && (
+        <a className="back" href={folder.parentId ? `#/documents/${folder.parentId}` : '#/documents'}>
+          <ArrowLeft size={15} /> {crumbs.length > 1 ? crumbs[crumbs.length - 2].name : 'Documents'}
+        </a>
+      )}
       <PageHeader
-        title="Documents"
-        sub="Guidelines, strategy, proposals, creative and the files your team shares."
+        title={folder ? folder.name : 'Documents'}
+        sub={folder ? folder.description : 'Guidelines, strategy, proposals, creative and the files your team shares.'}
         actions={
           <>
             <input ref={fileInput} type="file" multiple hidden onChange={(e) => onFiles(e.target.files)} />
@@ -142,24 +149,13 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
 
       <div className="docs__layout">
         <div className="docs__main">
-          <div className="toolbar">
-            {/* The page title stays "Documents"; the open folder is named here. */}
-            <div className="docs__section">
-              {searching ? (
+          {searching && (
+            <div className="toolbar">
+              <div className="docs__section">
                 <h2 className="docs__section-title">Results across all folders</h2>
-              ) : folder ? (
-                <>
-                  {/* No folder menu: a back link leads one level up. */}
-                  <a className="back docs__back" href={folder.parentId ? `#/documents/${folder.parentId}` : '#/documents'}>
-                    <ArrowLeft size={15} /> {crumbs.length > 1 ? crumbs[crumbs.length - 2].name : 'All folders'}
-                  </a>
-                  <h2 className="docs__section-title">{folder.name}</h2>
-                </>
-              ) : (
-                <h2 className="docs__section-title">All folders</h2>
-              )}
+              </div>
             </div>
-          </div>
+          )}
           <div className="filter-bar">
             <Input icon={Search} placeholder="Search all files" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search files" className="filter-bar__search" />
             <FilterMenu
@@ -224,16 +220,20 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
 
           {!searching && children.length > 0 && (
             <div className="folder-grid">
-              {children.map((f) => (
-                <a key={f.id} className="folder-card" href={`#/documents/${f.id}`}>
-                  <FolderIcon size={20} strokeWidth={1.6} />
-                  <span className="folder-card__name">{f.name}</span>
-                  <span className="folder-card__meta">
-                    {countIn(f.id)} items
-                    {reviewIn(f.id) > 0 && <Badge tone="warning">{reviewIn(f.id)} to review</Badge>}
-                  </span>
-                </a>
-              ))}
+              {children.map((f) => {
+                const n = countIn(f.id);
+                const review = reviewIn(f.id);
+                return (
+                  <FolderTile
+                    key={f.id}
+                    href={`#/documents/${f.id}`}
+                    name={f.name}
+                    sub={f.description ?? `${n} ${n === 1 ? 'item' : 'items'}`}
+                    hue={folderHue(state.folders, f.id)}
+                    badge={review > 0 && `${review} to review`}
+                  />
+                );
+              })}
             </div>
           )}
 
@@ -324,7 +324,7 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
           <Button
             size="sm"
             variant="ai"
-            lead={<SphereGlyph size={18} />}
+            lead={<FluidOrb size={18} />}
             className="file-act-ai"
             aria-label={`Ask about ${d.name}`}
             data-tip="Ask about this file"

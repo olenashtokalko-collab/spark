@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowUp, Paperclip, Square, X } from 'lucide-react';
+import { ArrowUp, Mic, Plus, Square, X } from 'lucide-react';
 import { cx } from '../../components/ui/primitives';
 import { FileIcon, kindOf } from '../../components/domain';
+import { FluidOrb } from '../../components/ui/FluidOrb';
 import type { Attachment } from '../../data/types';
 
 interface Props {
@@ -11,16 +12,21 @@ interface Props {
   autoFocus?: boolean;
   size?: 'md' | 'lg';
   initial?: string;
+  /** Tells the page when there is text, so the orb above can react. */
+  onTyping?: (typing: boolean) => void;
+  className?: string;
 }
 
 const ACCEPT = '.pdf,.doc,.docx,.ppt,.pptx,.key,.xls,.xlsx,.csv,.txt,.png,.jpg,.jpeg,.webp,.svg,.zip';
 
 const sizeLabel = (kb: number) => (kb >= 1024 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`);
 
-/** The prompt box. It glows only while focused or while the assistant works:
- *  the accent glow is reserved for AI moments. Files can be attached with the
- *  paperclip or dropped onto the box; the prototype keeps only name and size. */
-export function Composer({ onSubmit, busy, placeholder = 'Ask about your brand, or attach files to work with…', autoFocus, size = 'md', initial = '' }: Props) {
+/** The prompt box (after the Copilot reference). The orb sits in front of
+ *  the text. Empty: attach + mic. With text: the edge
+ *  lights up, the box grows (up to ~8 lines), the mic turns into a send button
+ *  and the orb speeds up. Files can be attached with the plus or dropped onto
+ *  the box; the prototype keeps only name and size. */
+export function Composer({ onSubmit, busy, placeholder = 'Message Spark AI', autoFocus, size = 'md', initial = '', onTyping, className }: Props) {
   const [value, setValue] = useState(initial);
   const [files, setFiles] = useState<Attachment[]>([]);
   const [focus, setFocus] = useState(false);
@@ -47,7 +53,10 @@ export function Composer({ onSubmit, busy, placeholder = 'Ask about your brand, 
     ref.current?.focus();
   };
 
-  const canSend = (!!value.trim() || files.length > 0) && !busy;
+  const typing = !!value.trim();
+  useEffect(() => onTyping?.(typing), [typing, onTyping]);
+
+  const canSend = (typing || files.length > 0) && !busy;
   const send = () => {
     if (!canSend) return;
     onSubmit(value.trim(), files);
@@ -57,7 +66,7 @@ export function Composer({ onSubmit, busy, placeholder = 'Ask about your brand, 
 
   return (
     <div
-      className={cx('composer', `composer--${size}`, (focus || busy) && 'is-lit', focus && !!value.trim() && 'is-typing', busy && 'is-busy', drag && 'is-drag')}
+      className={cx('composer', `composer--${size}`, className, focus && 'is-focus', (typing || files.length > 0) && 'is-typing', busy && 'is-busy', drag && 'is-drag')}
       onDragOver={(e) => {
         if (!e.dataTransfer.types.includes('Files')) return;
         e.preventDefault();
@@ -86,49 +95,62 @@ export function Composer({ onSubmit, busy, placeholder = 'Ask about your brand, 
           ))}
         </ul>
       )}
-      <textarea
-        ref={ref}
-        rows={1}
-        value={value}
-        placeholder={placeholder}
-        aria-label="Message Spark AI"
-        onFocus={() => setFocus(true)}
-        onBlur={() => setFocus(false)}
-        onChange={(e) => setValue(e.target.value)}
-        onPaste={(e) => {
-          if (e.clipboardData.files.length) {
-            e.preventDefault();
-            add(e.clipboardData.files);
-          }
-        }}
-        onKeyDown={(e) => {
-          if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
-            e.preventDefault();
-            send();
-          }
-        }}
-      />
-      <div className="composer__bar">
-        <div className="composer__footer">
-          <button className="composer__attach" onClick={() => picker.current?.click()} aria-label="Attach files" title="Attach documents or images">
-            <Paperclip size={16} />
-            <span>Attach</span>
-          </button>
-          <input
-            ref={picker}
-            type="file"
-            multiple
-            accept={ACCEPT}
-            hidden
-            onChange={(e) => {
-              add(e.target.files);
-              e.target.value = '';
+      <div className="composer__row">
+        <FluidOrb size={26} active={typing || busy} className="composer__orb" />
+        <div className="composer__field">
+          <textarea
+            ref={ref}
+            rows={1}
+            value={value}
+            placeholder={placeholder}
+            aria-label="Message Spark AI"
+            onFocus={() => setFocus(true)}
+            onBlur={() => setFocus(false)}
+            onChange={(e) => setValue(e.target.value)}
+            onPaste={(e) => {
+              if (e.clipboardData.files.length) {
+                e.preventDefault();
+                add(e.clipboardData.files);
+              }
+            }}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' && !e.shiftKey && !e.nativeEvent.isComposing) {
+                e.preventDefault();
+                send();
+              }
             }}
           />
         </div>
-        <button className="composer__send" onClick={send} disabled={!canSend} aria-label={busy ? 'Spark AI is answering' : 'Send'}>
-          {busy ? <Square size={12} fill="currentColor" /> : <ArrowUp size={17} strokeWidth={2.2} />}
+      </div>
+      <div className="composer__bar">
+        <span className="composer__spacer" />
+        <button className="composer__icon" onClick={() => picker.current?.click()} aria-label="Attach files" title="Attach documents or images">
+          <Plus size={22} strokeWidth={1.6} />
         </button>
+        <input
+          ref={picker}
+          type="file"
+          multiple
+          accept={ACCEPT}
+          hidden
+          onChange={(e) => {
+            add(e.target.files);
+            e.target.value = '';
+          }}
+        />
+        {busy ? (
+          <button className="composer__send is-busy" disabled aria-label="Spark AI is answering">
+            <Square size={12} fill="currentColor" />
+          </button>
+        ) : canSend ? (
+          <button className="composer__send" onClick={send} aria-label="Send">
+            <ArrowUp size={18} strokeWidth={2.2} />
+          </button>
+        ) : (
+          <button className="composer__icon" aria-label="Voice input" title="Voice input">
+            <Mic size={21} strokeWidth={1.6} />
+          </button>
+        )}
       </div>
       {drag && <div className="composer__drop">Drop files to attach</div>}
     </div>

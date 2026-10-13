@@ -1,21 +1,13 @@
-import { useEffect, useRef } from 'react';
-import { Eye, Lightbulb, MessageSquareQuote, ShieldCheck, UsersRound, type LucideIcon } from 'lucide-react';
+import { Fragment, useEffect, useRef, useState } from 'react';
+import { Eye } from 'lucide-react';
 import { personById, useStore } from '../../state/store';
 import { navigate } from '../../lib/router';
 import { suggestedPrompts } from '../../data/assistant';
-import { Button, EmptyState } from '../../components/ui/primitives';
-import { DotSphere } from '../../components/ui/DotSphere';
+import { Button, EmptyState, cx } from '../../components/ui/primitives';
+import { FluidOrb } from '../../components/ui/FluidOrb';
 import { Composer } from './Composer';
 import { MessageView } from './MessageView';
 import type { Attachment } from '../../data/types';
-
-// Landing chips: a coloured icon each, keyed by the prompt's label.
-const CHIP: Record<string, { icon: LucideIcon; tone: 'warning' | 'positive' | 'danger' | 'accent' }> = {
-  'Shape an idea': { icon: Lightbulb, tone: 'warning' },
-  'Background check': { icon: ShieldCheck, tone: 'positive' },
-  'What people say': { icon: MessageSquareQuote, tone: 'danger' },
-  'Know the audience': { icon: UsersRound, tone: 'accent' },
-};
 
 export function Assistant({ convId }: { convId?: string }) {
   const { state, me, actions } = useStore();
@@ -25,6 +17,7 @@ export function Assistant({ convId }: { convId?: string }) {
   const author = conv ? personById(state, conv.createdBy) : undefined;
   const readOnly = !!conv && conv.createdBy !== me.id;
   const threadRef = useRef<HTMLDivElement>(null);
+  const [typing, setTyping] = useState(false);
   const busy = !!conv?.messages.some((m) => m.state === 'thinking' || m.state === 'streaming');
 
   // Follow the answer as it streams, unless the reader scrolled up.
@@ -67,23 +60,26 @@ export function Assistant({ convId }: { convId?: string }) {
           />
         ) : !conv ? (
           <div className="assistant__empty">
-            <DotSphere size={150} />
-            <h1 className="assistant__hello">Welcome {me.name.split(' ')[0]}</h1>
+            <FluidOrb size={170} active={typing} />
+            <h1 className="assistant__hello">
+              Nice to see you, {me.name.split(' ')[0]}.
+              <br />
+              What’s new?
+            </h1>
             {/* An empty chat starts with the input up here; it moves to the
                 bottom once the thread has messages. */}
             <div className="assistant__start">
-              <Composer onSubmit={send} autoFocus size="lg" />
-              <div className="start-chips">
-                {suggestedPrompts.map((p) => {
-                  const c = CHIP[p.label] ?? { icon: Lightbulb, tone: 'accent' };
-                  const I = c.icon;
-                  return (
-                    <button key={p.label} className={`start-chip start-chip--${c.tone}`} onClick={() => send(p.prompt)} title={p.prompt}>
-                      <I size={16} strokeWidth={1.8} />
+              <Composer onSubmit={send} autoFocus size="lg" onTyping={setTyping} />
+              <div className={cx('start-chips', typing && 'is-dim')}>
+                {/* Three on top, the rest centred below. */}
+                {suggestedPrompts.map((p, i) => (
+                  <Fragment key={p.label}>
+                    {i === 3 && <span className="start-chips__break" aria-hidden />}
+                    <button className="start-chip" onClick={() => send(p.prompt)} title={p.prompt}>
                       {p.label}
                     </button>
-                  );
-                })}
+                  </Fragment>
+                ))}
               </div>
             </div>
           </div>

@@ -44,7 +44,7 @@ Sources: the 8 Oct dossier (Waldo first-hand, competitors, Mobbin patterns); [As
 ### Recommended for the MVP (in the prototype)
 - **Assistant as the landing page**; sidebar badges and notifications show what needs the client (Home was removed after review, 9 Oct). **[UX]**
 - **AI Assistant** with suggested prompts, visible research steps, findings, and citations split into workspace and web. **[UX]**
-- **Create request from chat**: pick the messages to include, and the request is prefilled. **[UX]**
+- **Request proposal from chat** (was "Create request"): pick the messages to include, and the request is prefilled. **[UX]**
 - **Requests** as one lifecycle: Submitted → In review → Proposal → Approved → In progress → Delivered. **[UX]**
 - **Proposal** as a web page with section comments, versions, and Approve / Request changes / Decline. **[UX]**
 - **Documents** with folders, search, type filter, preview, download, upload, and "Ask about this file". **[UX]**
@@ -104,7 +104,7 @@ Decisions:
 | 1 | Understand status | Sidebar badges + notifications → Requests "Needs your decision" (proposal v2) and request stages |
 | 2 | Ask about the brand | Assistant (landing page) → suggested prompt "How is our Riyadh launch being talked about?" |
 | 3 | Answer with findings | Research steps → streamed answer → finding cards → numbered sources (workspace doc opens preview, web shows domain) |
-| 4 | Turn it into a request | "Create request" under the answer → pick messages → title, type, timing → Submit → Request REQ-108 (Submitted) |
+| 4 | Turn it into a request | "Request proposal" under the answer → pick messages → title, type, timing → Submit → Request REQ-108 (Submitted) |
 | 5 | Spark prepares a proposal | Not in the prototype: happens on Spark's side (possibly another system). The portal shows the result: status changes and the proposal |
 | 6 | Review and decide | Back as client → notification → Proposal → comment on a section → Approve / Request changes / Decline |
 | 7 | Find a document | Documents → folder → search/filter → preview → Download; or Ask about this file |

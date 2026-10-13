@@ -2,8 +2,8 @@
 // it came from is attached automatically (the focused answer and the question
 // before it) and shown back to the client once the request is sent.
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, CheckCircle2, FileText } from 'lucide-react';
-import { Dialog } from '../../components/ui/overlay';
+import { ArrowRight, Bell, Check, Send } from 'lucide-react';
+import { Dialog, IconTile } from '../../components/ui/overlay';
 import { Button, Field, Input, Select, Textarea, cx } from '../../components/ui/primitives';
 import { useStore } from '../../state/store';
 import type { Conversation, Message, RequestType, Source, Timing } from '../../data/types';
@@ -56,6 +56,9 @@ export function useBasis(conversationId?: string, focusMessageId?: string): Basi
 
 export function defaultFields(prefill: RequestPrefill | undefined, basis: Basis | undefined): Fields {
   const answer = basis?.messages.find((m) => m.role === 'assistant');
+  // Liked sample visuals become the start of the client's own ask.
+  const liked = answer?.visuals?.filter((v) => v.liked).map((v) => v.name) ?? [];
+  const likedLine = liked.length ? `We like the ${liked.join(' and ')} direction${liked.length > 1 ? 's' : ''}. ` : '';
   return {
     title: prefill?.title ?? '',
     type: prefill?.type ?? 'Strategy',
@@ -65,8 +68,8 @@ export function defaultFields(prefill: RequestPrefill | undefined, basis: Basis 
       prefill?.description ??
       (answer
         ? answer.findings?.length
-          ? `Key findings from the assistant:\n${answer.findings.map((f) => `• ${f.title}`).join('\n')}\n\nWhat we'd like from Spark: `
-          : `From the assistant: ${plain(answer.text).split('\n')[0]}\n\nWhat we'd like from Spark: `
+          ? `Key findings from the assistant:\n${answer.findings.map((f) => `• ${f.title}`).join('\n')}\n\nWhat we'd like from Spark: ${likedLine}`
+          : `From the assistant: ${plain(answer.text).split('\n')[0]}\n\nWhat we'd like from Spark: ${likedLine}`
         : ''),
   };
 }
@@ -134,37 +137,34 @@ export function RequestFields({ value, onChange, errors, idPrefix = 'rq', compac
   );
 }
 
-/** "Based on": the question, answer and sources attached to the request,
- *  shown as a glass card with the accent glow (style 3, chosen 9 Oct). */
+/** "Based on": the question and answer the request came from, as a chat cut. */
 export function BasedOn({ basis }: { basis: Basis }) {
   const msgs = basis.messages.map((m) => ({ role: m.role as 'user' | 'assistant', text: m.text }));
   return (
     <div className="sent-with">
       <ChatCut messages={msgs} author="You" compact />
-      {basis.sources.length > 0 && (
-        <div className="based-on__sources">
-          {basis.sources.map((s) => (
-            <span key={s.id} className="based-on__src" title={s.snippet}>
-              <FileText size={12} /> {s.title}
-            </span>
-          ))}
-        </div>
-      )}
     </div>
   );
 }
 
+/** Success screen, after the "autopilot is on" reference: a lit icon tile,
+ *  a clear title, the chat excerpt it came from, then the way on. */
 export function RequestSent({ basis, onClose, closeLabel }: { id?: string; title?: string; basis?: Basis; onClose: () => void; closeLabel: string }) {
   return (
     <div className="req-done">
-      <span className="req-done__icon">
-        <CheckCircle2 size={26} />
-      </span>
-      <h2>Request sent to Spark</h2>
+      <IconTile icon={Check} />
+      <h2 className="req-done__title">Request sent to Spark</h2>
       <p className="req-done__reply">
-        You'll usually get a reply within <strong>2 business days</strong>.
+        You’ll usually get a reply within <strong>2 business days</strong>.
       </p>
-      {basis && <BasedOn basis={basis} />}
+      {/* From a chat: the excerpt that went with the request. Otherwise a bell that rings once. */}
+      {basis ? (
+        <BasedOn basis={basis} />
+      ) : (
+        <p className="req-done__hint">
+          <Bell size={15} className="req-done__bell" /> We’ll notify you as soon as Spark replies.
+        </p>
+      )}
       <div className="req-done__actions">
         <Button variant="secondary" onClick={onClose}>
           {closeLabel}
@@ -229,6 +229,7 @@ export function CreateRequestDialog({ open, onClose, prefill }: { open: boolean;
       open={open}
       onClose={onClose}
       size="md"
+      icon={Send}
       title="New request"
       description={basis ? 'Describe what you need.' : 'Describe what you need. You’ll get questions or a proposal back.'}
       footer={

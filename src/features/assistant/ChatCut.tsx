@@ -2,7 +2,7 @@
 // a small chat window with faded edges so it reads as part of a longer
 // conversation. Used on the request page and after sending a request. The
 // Spark AI sphere is static here: it's an illustration, not a live answer.
-import { DotSphere } from '../../components/ui/DotSphere';
+import { FluidOrb } from '../../components/ui/FluidOrb';
 import { cx } from '../../components/ui/primitives';
 import { RichText } from './MessageView';
 
@@ -25,7 +25,7 @@ export function ChatCut({ messages, author, compact }: { messages: CutMessage[];
           ) : (
             <div key={i} className="msg-ai">
               <div className="msg-ai__avatar">
-                <DotSphere size={30} density={90} still />
+                <FluidOrb size={30} still />
               </div>
               <div className="msg-ai__body">
                 <div className="chat-cut__ai">Spark AI</div>

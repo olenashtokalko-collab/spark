@@ -201,10 +201,21 @@ export interface Message {
   findings?: Finding[];
   sources?: Source[];
   followUps?: string[];
+  /** Sample visual directions the assistant sketched (Hassan, 31 Jul: "sample logos"). */
+  visuals?: Visual[];
   suggestedRequest?: { title: string; type: RequestType };
   link?: { label: string; route: string };
   state?: 'thinking' | 'streaming' | 'done' | 'error';
   durationMs?: number;
+}
+
+export interface Visual {
+  id: ID;
+  name: string;
+  note: string;
+  colors: { name: string; hex: string }[]; // background, accent, detail
+  shape: 'circle' | 'arch' | 'diamond';
+  liked?: boolean;
 }
 
 export interface Conversation {

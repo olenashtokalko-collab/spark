@@ -27,24 +27,29 @@
   --ease: cubic-bezier(0.2, 0.7, 0.2, 1);
 }
 
-/* Dark is the default direction (references). */
+/* Dark is the default direction: near-black with navy-tinted surfaces, light-grey
+   headings and the Spotlight light behind every page (see .app-bg). */
 :root,
 :root[data-theme='dark'] {
   color-scheme: dark;
-  --bg: #07080b;
-  --surface-1: #15181f;
-  --surface-2: #1c2029;
-  --surface-3: #252a35;
+  --bg: #08090e;
+  --surface-1: #121522;
+  --surface-2: #1a1e2e;
+  --surface-3: #232a3d;
   --surface-hover: rgba(255, 255, 255, 0.04);
   --surface-active: rgba(255, 255, 255, 0.07);
-  --overlay: rgba(3, 4, 7, 0.72);
+  --overlay: rgba(3, 4, 9, 0.72);
+  /* Translucent fill for search fields and filters, tinted navy like the surfaces. */
+  --control-fill: rgba(170, 185, 255, 0.11);
+  --control-fill-hover: rgba(170, 185, 255, 0.17);
 
   --text: #eceef2;
-  --text-2: #a2a8b5;
-  --text-3: #8b92a0;
-  --text-inverse: #07080b;
-  --line: rgba(255, 255, 255, 0.06);
-  --line-strong: rgba(255, 255, 255, 0.11);
+  --text-2: #a6abbd;
+  --text-3: #8a8fa6;
+  --text-display: var(--text); /* page titles and greetings, same as body text */
+  --text-inverse: #08090e;
+  --line: rgba(170, 185, 255, 0.07);
+  --line-strong: rgba(170, 185, 255, 0.13);
 
   --accent: #3d7bff;
   --accent-hover: #5a8fff;
@@ -52,6 +57,17 @@
   --accent-soft: rgba(61, 123, 255, 0.14);
   --accent-softer: rgba(61, 123, 255, 0.07);
   --on-accent: #ffffff;
+
+  /* The composer, its send button and the suggestion chips. */
+  --cream: var(--text);
+  --on-cream: #121522;
+  --field-top: #0b0d18;
+  --field-bottom: #151a2b;
+  --field-text: var(--text);
+  /* Chips are translucent too, so they pick up the glow behind them. */
+  --chip: rgba(170, 185, 255, 0.16);
+  --chip-hover: rgba(170, 185, 255, 0.22);
+  --chip-text: #e3dfd8;
 
   --positive: #3ccf91;
   --positive-soft: rgba(60, 207, 145, 0.13);
@@ -64,7 +80,7 @@
   --glow: 0 0 0 1px rgba(130, 170, 255, 0.55), 0 0 18px rgba(45, 105, 255, 0.45),
     0 0 64px rgba(30, 85, 255, 0.28);
   --glow-soft: 0 0 0 1px rgba(110, 155, 255, 0.28), 0 0 32px rgba(40, 95, 255, 0.18);
-  --shadow-pop: 0 16px 48px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(255, 255, 255, 0.06);
+  --shadow-pop: 0 16px 48px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(170, 185, 255, 0.08);
 }
 
 :root[data-theme='light'] {
@@ -76,10 +92,13 @@
   --surface-hover: rgba(10, 12, 18, 0.04);
   --surface-active: rgba(10, 12, 18, 0.07);
   --overlay: rgba(20, 22, 28, 0.38);
+  --control-fill: rgba(12, 14, 19, 0.05);
+  --control-fill-hover: rgba(12, 14, 19, 0.08);
 
   --text: #0c0e13;
   --text-2: #4d5361;
   --text-3: #858b97;
+  --text-display: #0c0e13;
   --text-inverse: #ffffff;
   --line: rgba(10, 12, 18, 0.07);
   --line-strong: rgba(10, 12, 18, 0.13);
@@ -90,6 +109,15 @@
   --accent-soft: rgba(36, 88, 240, 0.1);
   --accent-softer: rgba(36, 88, 240, 0.05);
   --on-accent: #ffffff;
+
+  --cream: #0c0e13;
+  --on-cream: #ffffff;
+  --field-top: #ffffff;
+  --field-bottom: #f7f7f4;
+  --field-text: #0c0e13;
+  --chip: rgba(12, 14, 19, 0.06);
+  --chip-hover: rgba(12, 14, 19, 0.09);
+  --chip-text: #2a2d36;
 
   --positive: #138a5a;
   --positive-soft: rgba(19, 138, 90, 0.1);

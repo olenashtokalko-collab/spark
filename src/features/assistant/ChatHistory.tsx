@@ -100,6 +100,8 @@ export function ChatHistory() {
         open={!!toDelete}
         onClose={() => setConfirm(null)}
         size="sm"
+        icon={Trash2}
+        tone="danger"
         title="Delete this chat?"
         description={toDelete?.requestIds.length ? 'Requests created from it stay in Requests, with their excerpt.' : 'This can’t be undone.'}
         footer={

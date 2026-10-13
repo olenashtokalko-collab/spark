@@ -15,9 +15,24 @@ interface DialogProps {
   footer?: ReactNode;
   size?: 'sm' | 'md' | 'lg' | 'xl';
   bare?: boolean;
+  /** With an icon the dialog takes the success-screen head: a lit icon tile
+   *  above a centred title. */
+  icon?: LucideIcon;
+  tone?: IconTileTone;
 }
 
-export function Dialog({ open, onClose, title, description, children, footer, size = 'md', bare }: DialogProps) {
+export type IconTileTone = 'accent' | 'danger' | 'neutral';
+
+/** A small rounded tile built like the primary button: lit top edge, soft drop. */
+export function IconTile({ icon: Icon, tone = 'accent', className }: { icon: LucideIcon; tone?: IconTileTone; className?: string }) {
+  return (
+    <span className={cx('icon-tile', `icon-tile--${tone}`, className)} aria-hidden>
+      <Icon size={26} strokeWidth={2.2} />
+    </span>
+  );
+}
+
+export function Dialog({ open, onClose, title, description, children, footer, size = 'md', bare, icon, tone }: DialogProps) {
   const ref = useRef<HTMLDivElement>(null);
   const closeRef = useRef(onClose);
   closeRef.current = onClose;
@@ -64,10 +79,11 @@ export function Dialog({ open, onClose, title, description, children, footer, si
   return createPortal(
     <div className="dialog-root">
       <div className="dialog-overlay" onClick={onClose} />
-      <div ref={ref} className={cx('dialog', `dialog--${size}`, bare && 'dialog--bare')} role="dialog" aria-modal="true" tabIndex={-1}>
+      <div ref={ref} className={cx('dialog', `dialog--${size}`, bare && 'dialog--bare', icon && 'dialog--hero')} role="dialog" aria-modal="true" tabIndex={-1}>
         {!bare && (title || description) && (
           <div className="dialog__head">
             <div>
+              {icon && <IconTile icon={icon} tone={tone} />}
               {title && <h2 className="dialog__title">{title}</h2>}
               {description && <p className="dialog__desc">{description}</p>}
             </div>
