@@ -28,7 +28,8 @@ export function RichText({ text }: { text: string }) {
 interface Props {
   msg: Message;
   convId: string;
-  onFollowUp: (q: string) => void;
+  /** Omitted for read-only chats (a teammate's), which hides follow-ups. */
+  onFollowUp?: (q: string) => void;
   isLast: boolean;
 }
 
@@ -209,7 +210,7 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
           </>
         )}
 
-        {msg.state === 'done' && isLast && msg.followUps && msg.followUps.length > 0 && (
+        {msg.state === 'done' && isLast && onFollowUp && msg.followUps && msg.followUps.length > 0 && (
           <div className="followups">
             {msg.followUps.map((q) => (
               <button key={q} className="followup" onClick={() => onFollowUp(q)}>

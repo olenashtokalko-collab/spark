@@ -5,6 +5,7 @@ import { SignIn } from './features/auth/SignIn';
 import { useStore } from './state/store';
 import { Assistant } from './features/assistant/Assistant';
 import { Requests } from './features/requests/Requests';
+import { Monitoring } from './features/monitoring/Monitoring';
 import { RequestDetail } from './features/requests/RequestDetail';
 import { ProposalView } from './features/requests/ProposalView';
 import { Documents } from './features/documents/Documents';
@@ -27,6 +28,8 @@ function Screen() {
       return <Requests />;
     case 'documents':
       return <Documents folderId={a} docId={query.get('doc')} />;
+    case 'monitoring':
+      return <Monitoring />;
     case 'team':
       return <TeamPage />;
     case 'settings':

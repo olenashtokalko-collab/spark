@@ -1,9 +1,10 @@
-// Chat history, opened from the rail as a panel, with a search on top. For now
-// it lists only your own chats; teammates' chats stay private (decided 9 Oct,
-// replacing the earlier shared history).
+// Chat history, opened from the rail as a panel, with a search on top. It lists
+// every chat in the brand workspace: Hassan wants invited teammates "to see the
+// conversation going on" (call, 8 Oct). Teammates' chats show the author and
+// can be read, not renamed or deleted.
 import { useMemo, useState } from 'react';
 import { MoreHorizontal, Pencil, Search, Trash2 } from 'lucide-react';
-import { useStore } from '../../state/store';
+import { personById, useStore } from '../../state/store';
 import { navigate, useRoute } from '../../lib/router';
 import { Button, Input, cx } from '../../components/ui/primitives';
 import { Dialog, Menu } from '../../components/ui/overlay';
@@ -40,10 +41,10 @@ export function ChatHistory() {
   const list = useMemo(
     () =>
       [...state.conversations]
-        .filter((c) => c.createdBy === me.id && c.messages.some((m) => m.role === 'user'))
+        .filter((c) => c.messages.some((m) => m.role === 'user'))
         .filter((c) => c.title.toLowerCase().includes(q.trim().toLowerCase()))
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
-    [state.conversations, q, me.id],
+    [state.conversations, q],
   );
   const toDelete = state.conversations.find((c) => c.id === confirm);
 
@@ -72,8 +73,10 @@ export function ChatHistory() {
                 ) : (
                   <a className="hitem__link" href={`#/assistant/${c.id}`} title={`${c.title} · ${fmtRelative(c.updatedAt)}`}>
                     <span className="hitem__title">{c.title}</span>
+                    {c.createdBy !== me.id && <span className="hitem__meta">{personById(state, c.createdBy).name.split(' ')[0]}</span>}
                   </a>
                 )}
+                {c.createdBy === me.id && (
                 <Menu
                   width={170}
                   trigger={({ toggle, ref }) => (
@@ -86,6 +89,7 @@ export function ChatHistory() {
                     { label: 'Delete', icon: Trash2, danger: true, onSelect: () => setConfirm(c.id) },
                   ]}
                 />
+                )}
               </div>
             ))}
           </div>

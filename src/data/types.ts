@@ -81,7 +81,9 @@ export interface Doc {
     requestedBy: ID;
     due: ISODate;
     note: string;
-    status: 'open' | 'done';
+    /** open = waiting for the client; then approved or changes requested. */
+    status: 'open' | 'approved' | 'changes_requested';
+    decision?: { by: ID; at: ISODate };
     feedback: Comment[];
   };
 }

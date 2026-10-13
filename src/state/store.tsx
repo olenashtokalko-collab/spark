@@ -47,7 +47,7 @@ export interface State {
   prefs: Record<NotifKey, { inApp: boolean; email: boolean }>;
 }
 
-const STORAGE_KEY = 'spark-portal-v9';
+const STORAGE_KEY = 'spark-portal-v10';
 
 // Files attached to a message are read like a workspace document.
 const attachedContext = (files?: Attachment[]) => (files?.length ? (files.length === 1 ? files[0].name : `${files.length} attached files`) : undefined);
@@ -424,9 +424,15 @@ function useStoreValue() {
     [set],
   );
 
-  const sendDocFeedback = useCallback(
-    (docId: ID, text: string, complete: boolean) => {
+  /** Comment on a file Spark shared for review, and optionally decide:
+   *  approve it or request changes ("share folders, approvals", 8 Oct). */
+  const reviewDoc = useCallback(
+    (docId: ID, decision: 'approved' | 'changes_requested' | null, text: string) => {
       const meId = 'u-layla';
+      const at = nowIso();
+      const doc = stateRef.current.docs.find((d) => d.id === docId);
+      if (!doc?.review) return;
+      const verb = decision === 'approved' ? 'approved' : decision === 'changes_requested' ? 'requested changes on' : 'commented on';
       set((s) => ({
         docs: s.docs.map((d) =>
           d.id === docId && d.review
@@ -434,27 +440,31 @@ function useStoreValue() {
                 ...d,
                 review: {
                   ...d.review,
-                  status: complete ? 'done' : d.review.status,
-                  feedback: [...d.review.feedback, { id: uid('fb'), by: meId, at: nowIso(), text }],
+                  status: decision ?? d.review.status,
+                  decision: decision ? { by: meId, at } : d.review.decision,
+                  feedback: text ? [...d.review.feedback, { id: uid('fb'), by: meId, at, text }] : d.review.feedback,
                 },
               }
             : d,
         ),
-        requests: (() => {
-          const doc = s.docs.find((d) => d.id === docId);
-          if (!doc?.requestId) return s.requests;
-          return patchRequest(s, doc.requestId, (r) => ({
-            ...r,
-            updatedAt: nowIso(),
-            nextStep: complete ? { label: 'Spark develops the chosen route', date: addDays(nowIso().slice(0, 10), 10) } : r.nextStep,
-            activity: [...r.activity, activity(meId, 'comment', `gave feedback on ${doc.name}: "${text}"`)],
-          }));
-        })(),
+        requests: doc.requestId
+          ? patchRequest(s, doc.requestId, (r) => ({
+              ...r,
+              updatedAt: at,
+              nextStep:
+                decision === 'approved'
+                  ? { label: 'Spark moves to the next stage', date: addDays(at.slice(0, 10), 7) }
+                  : decision === 'changes_requested'
+                    ? { label: 'Spark sends a revised version', date: addDays(at.slice(0, 10), 5) }
+                    : r.nextStep,
+              activity: [...r.activity, activity(meId, decision ? 'decision' : 'comment', `${verb} ${doc.name}${text ? `: "${text}"` : ''}`)],
+            }))
+          : s.requests,
         notifications: notify(s, {
           audience: 'spark',
-          title: 'Brand Co. sent feedback on a file',
-          body: s.docs.find((d) => d.id === docId)?.name ?? '',
-          route: `/documents/${s.docs.find((d) => d.id === docId)?.folderId}?doc=${docId}`,
+          title: `Brand Co. ${verb} a file`,
+          body: doc.name,
+          route: `/documents/${doc.folderId}?doc=${docId}`,
           kind: 'file',
         }),
       }));
@@ -533,7 +543,7 @@ function useStoreValue() {
       decideProposal,
       commentOnProposal,
       uploadFiles,
-      sendDocFeedback,
+      reviewDoc,
       invite,
       revokeInvite,
       resendInvite,

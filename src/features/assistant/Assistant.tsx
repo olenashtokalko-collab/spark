@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
-import { Lightbulb, MessageSquareQuote, ShieldCheck, UsersRound, type LucideIcon } from 'lucide-react';
-import { useStore } from '../../state/store';
+import { Eye, Lightbulb, MessageSquareQuote, ShieldCheck, UsersRound, type LucideIcon } from 'lucide-react';
+import { personById, useStore } from '../../state/store';
 import { navigate } from '../../lib/router';
 import { suggestedPrompts } from '../../data/assistant';
 import { Button, EmptyState } from '../../components/ui/primitives';
@@ -19,8 +19,11 @@ const CHIP: Record<string, { icon: LucideIcon; tone: 'warning' | 'positive' | 'd
 
 export function Assistant({ convId }: { convId?: string }) {
   const { state, me, actions } = useStore();
-  // Chats are private for now: someone else's chat reads as not found.
-  const conv = convId ? state.conversations.find((c) => c.id === convId && c.createdBy === me.id) : undefined;
+  // Every chat in the brand is visible to the team; only its author can
+  // continue it, so a teammate's chat opens read-only.
+  const conv = convId ? state.conversations.find((c) => c.id === convId) : undefined;
+  const author = conv ? personById(state, conv.createdBy) : undefined;
+  const readOnly = !!conv && conv.createdBy !== me.id;
   const threadRef = useRef<HTMLDivElement>(null);
   const busy = !!conv?.messages.some((m) => m.state === 'thinking' || m.state === 'streaming');
 
@@ -86,21 +89,35 @@ export function Assistant({ convId }: { convId?: string }) {
           </div>
         ) : (
           <div className="thread" ref={threadRef}>
+            {readOnly && (
+              <div className="msg-system thread__owner">
+                <Eye size={14} />
+                <span>{author!.name}'s chat. You can read it and create a request from it.</span>
+              </div>
+            )}
             {conv.messages.map((m, i) => (
               <MessageView
                 key={m.id}
                 msg={m}
                 convId={conv.id}
-                onFollowUp={send}
+                onFollowUp={readOnly ? undefined : send}
                 isLast={i === conv.messages.length - 1 || (i === conv.messages.length - 2 && conv.messages[i + 1].role === 'system')}
               />
             ))}
           </div>
         )}
 
-        {conv && (
+        {conv && !readOnly && (
           <div className="assistant__composer">
             <Composer onSubmit={send} busy={busy} size="lg" />
+          </div>
+        )}
+        {readOnly && (
+          <div className="assistant__composer readonly-bar">
+            <span className="muted">Only {author!.name.split(' ')[0]} can continue this chat.</span>
+            <Button variant="primary" onClick={() => navigate('/assistant')}>
+              Start your own chat
+            </Button>
           </div>
         )}
       </section>

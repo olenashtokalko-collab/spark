@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Check, Download, Inbox, Link2, MessageSquareText, X } from 'lucide-react';
+import { Download, X } from 'lucide-react';
 import { SphereGlyph } from '../../components/ui/SphereGlyph';
 import { Dialog } from '../../components/ui/overlay';
 import { Avatar, Badge, Button, Textarea } from '../../components/ui/primitives';
@@ -7,7 +7,7 @@ import { Art, FileIcon, kindLabel } from '../../components/domain';
 import { useToast } from '../../components/ui/toast';
 import { personById, useStore } from '../../state/store';
 import type { Doc } from '../../data/types';
-import { dueLabel, fmtDate, fmtDateTime, fmtRelative, fmtSize } from '../../lib/format';
+import { dueLabel, fmtDateTime, fmtRelative, fmtSize } from '../../lib/format';
 import { navigate } from '../../lib/router';
 
 export function downloadDoc(doc: Doc) {
@@ -87,46 +87,34 @@ export function DocPreviewDialog({ docId, onClose }: { docId: string | null; onC
         <aside className="preview__side">
           <div className="preview__side-head">
             <Badge>{kindLabel[doc.kind]}</Badge>
+            <span className="preview__head-acts">
+              <Button
+                variant="ghost"
+                size="sm"
+                icon={Download}
+                aria-label="Download"
+                data-tip="Download"
+                onClick={() => {
+                  const n = downloadDoc(doc);
+                  toast({ title: 'Download started', body: `${n} (a preview copy in this prototype)` });
+                }}
+              />
             <button className="btn btn--ghost btn--sm btn--icon" onClick={onClose} aria-label="Close preview">
               <X size={16} />
             </button>
+            </span>
           </div>
           <h2 className="preview__title">{doc.name}</h2>
           {doc.summary && <p className="preview__summary">{doc.summary}</p>}
           <div className="preview__actions">
-            <Button
-              variant="primary"
-              icon={Download}
-              onClick={() => {
-                const n = downloadDoc(doc);
-                toast({ title: 'Download started', body: `${n} (a preview copy in this prototype)` });
-              }}
-            >
-              Download
-            </Button>
             <Button variant="ai" lead={<SphereGlyph size={20} />} onClick={ask}>
               Ask about this file
             </Button>
-            <Button
-              variant="ghost"
-              icon={Link2}
-              aria-label="Copy link"
-              onClick={async () => {
-                const url = `${location.origin}${location.pathname}#/documents/${doc.folderId}?doc=${doc.id}`;
-                try {
-                  await navigator.clipboard.writeText(url);
-                  toast({ title: 'Link copied', body: 'Only workspace members can open it.' });
-                } catch {
-                  toast({ title: "Couldn't copy the link", body: 'Your browser blocked clipboard access.', tone: 'error' });
-                }
-              }}
-            />
           </div>
           <dl className="meta-list">
             <dt>Shared by</dt>
             <dd>
               <Avatar person={by} size={20} /> {by.name}
-              {by.org === 'spark' && <span className="faint"> · Spark</span>}
             </dd>
             <dt>Date</dt>
             <dd>{fmtDateTime(doc.uploadedAt)}</dd>
@@ -153,7 +141,7 @@ export function DocPreviewDialog({ docId, onClose }: { docId: string | null; onC
                 <dt>Request</dt>
                 <dd>
                   <a className="link" href={`#/requests/${req.id}`} onClick={() => onClose()}>
-                    <Inbox size={13} /> {req.id} · {req.title}
+                    {req.id} · {req.title}
                   </a>
                 </dd>
               </>
@@ -169,57 +157,109 @@ export function DocPreviewDialog({ docId, onClose }: { docId: string | null; onC
 function ReviewPanel({ doc }: { doc: Doc }) {
   const { state, me, actions } = useStore();
   const toast = useToast();
+  const [changesOpen, setChangesOpen] = useState(false);
   const [text, setText] = useState('');
+  const [error, setError] = useState<string | null>(null);
   const r = doc.review!;
   const asker = personById(state, r.requestedBy);
-  const send = (complete: boolean) => {
-    if (!text.trim()) return;
-    actions.sendDocFeedback(doc.id, text.trim(), complete);
-    setText('');
-    toast({ title: complete ? 'Feedback sent and marked as reviewed' : 'Feedback sent', body: `${asker.name} has been notified.` });
+  const decider = r.decision ? personById(state, r.decision.by) : undefined;
+
+  const approve = () => {
+    actions.reviewDoc(doc.id, 'approved', '');
+    toast({ title: 'File approved', body: `${asker.name} has been notified.` });
   };
+  const requestChanges = () => {
+    if (!text.trim()) return setError('Say what should change.');
+    actions.reviewDoc(doc.id, 'changes_requested', text.trim());
+    setChangesOpen(false);
+    setText('');
+    toast({ title: 'Changes requested', body: `${asker.name} has been notified.` });
+  };
+
   return (
-    <section className="review">
-      <div className="review__head">
-        <MessageSquareText size={15} />
-        <span>Feedback requested</span>
-        {r.status === 'open' ? <Badge tone="warning">{dueLabel(r.due)}</Badge> : <Badge tone="positive">Reviewed</Badge>}
+    <section className="decision review-card">
+      <div className="review-card__title">Approval requested</div>
+      <div className="decision__meta">
+        {r.status === 'open' ? (
+          <>
+            From {asker.name} · <span className="review__due">{dueLabel(r.due)}</span>
+          </>
+        ) : r.status === 'approved' ? (
+          <>Approved by {decider?.name} · {fmtRelative(r.decision!.at)}</>
+        ) : (
+          <>Changes requested by {decider?.name} · {fmtRelative(r.decision!.at)}</>
+        )}
       </div>
-      <div className="review__note">
-        <Avatar person={asker} size={22} />
-        <div>
-          <span className="review__who">{asker.name}</span>
-          <p>{r.note}</p>
-        </div>
-      </div>
-      {r.feedback.map((f) => {
-        const p = personById(state, f.by);
-        return (
-          <div key={f.id} className="review__note">
-            <Avatar person={p} size={22} />
-            <div>
-              <span className="review__who">
-                {p.name} <span className="faint">· {fmtRelative(f.at)}</span>
-              </span>
-              <p>{f.text}</p>
+      {/* Spark's ask and the replies use the same comment component as the
+          request Activity tab. */}
+      <ul className="review__thread">
+        <li className="timeline__item timeline__item--comment">
+          <Avatar person={asker} size={26} />
+          <div className="timeline__comment">
+            <div className="timeline__who">
+              {asker.name} <span className="faint">· {fmtRelative(doc.uploadedAt)}</span>
             </div>
+            <p>{r.note}</p>
           </div>
-        );
-      })}
+        </li>
+        {r.feedback.map((f) => {
+          const p = personById(state, f.by);
+          return (
+            <li key={f.id} className="timeline__item timeline__item--comment">
+              <Avatar person={p} size={26} />
+              <div className="timeline__comment">
+                <div className="timeline__who">
+                  {p.name} <span className="faint">· {fmtRelative(f.at)}</span>
+                </div>
+                <p>{f.text}</p>
+              </div>
+            </li>
+          );
+        })}
+      </ul>
       {me.org === 'client' && r.status === 'open' && (
-        <div className="review__form">
-          <Textarea rows={3} value={text} onChange={(e) => setText(e.target.value)} placeholder="e.g. Desert Bloom, but with the Night Market lanterns on the gift box." aria-label="Your feedback" />
-          <div className="review__btns">
-            <Button size="sm" variant="ghost" onClick={() => send(false)} disabled={!text.trim()}>
-              Send
-            </Button>
-            <Button size="sm" variant="primary" icon={Check} onClick={() => send(true)} disabled={!text.trim()}>
-              Send & mark reviewed
-            </Button>
-          </div>
+        <div className="decision__btns">
+          <Button variant="primary" size="lg" onClick={approve}>
+            Approve
+          </Button>
+          <Button onClick={() => setChangesOpen(true)}>
+            Request changes
+          </Button>
         </div>
       )}
-      {r.status === 'open' && <div className="faint review__due">Due {fmtDate(r.due, { weekday: true })}</div>}
+      <Dialog
+        open={changesOpen}
+        onClose={() => {
+          setChangesOpen(false);
+          setError(null);
+        }}
+        size="sm"
+        title="Request changes"
+        description={`Tell ${asker.name} what should change in ${doc.name.replace(/\.[a-z0-9]+$/i, '')}.`}
+        footer={
+          <>
+            <Button variant="secondary" onClick={() => setChangesOpen(false)}>
+              Cancel
+            </Button>
+            <Button variant="primary" onClick={requestChanges}>
+              Send changes
+            </Button>
+          </>
+        }
+      >
+        <Textarea
+          rows={4}
+          value={text}
+          onChange={(e) => {
+            setText(e.target.value);
+            setError(null);
+          }}
+          placeholder="e.g. Desert Bloom, but with the Night Market lanterns on the gift box."
+          aria-label="What should change"
+          data-autofocus
+        />
+        {error && <div className="field__error review__err">{error}</div>}
+      </Dialog>
     </section>
   );
 }

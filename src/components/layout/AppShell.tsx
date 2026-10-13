@@ -6,6 +6,7 @@ import {
   FileText,
   Folder,
   Inbox,
+  Radar,
   Monitor,
   Moon,
   SquarePen,
@@ -27,6 +28,7 @@ import type { Notification } from '../../data/types';
 const NAV = [
   { path: '/requests', label: 'Requests', icon: Inbox, match: (p: string) => p.startsWith('/requests') },
   { path: '/documents', label: 'Documents', icon: Folder, match: (p: string) => p.startsWith('/documents') },
+  { path: '/monitoring', label: 'Monitoring', icon: Radar, match: (p: string) => p.startsWith('/monitoring') },
 ];
 
 export function AppShell({ children }: { children: ReactNode }) {

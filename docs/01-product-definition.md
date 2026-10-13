@@ -48,7 +48,7 @@ Sources: the 8 Oct dossier (Waldo first-hand, competitors, Mobbin patterns); [As
 - **Requests** as one lifecycle: Submitted → In review → Proposal → Approved → In progress → Delivered. **[UX]**
 - **Proposal** as a web page with section comments, versions, and Approve / Request changes / Decline. **[UX]**
 - **Documents** with folders, search, type filter, preview, download, upload, and "Ask about this file". **[UX]**
-- **Monitoring**: discussed by Spark, but **removed from the prototype for now** (9 Oct) until the open questions below are answered. Brand profile and research pages were also removed; research reports stay in Documents.
+- **Monitoring**: a simple list of Spark's weekly summaries (no charts) until the open questions below are answered. **[Spark]** Brand profile and research pages were also removed; research reports stay in Documents.
 - **Team**: client members, roles and invitations. **[Spark]** (roles are **[UX]**)
 - **Notifications**: approvals, new proposals, new files, request updates. **[UX]**
 

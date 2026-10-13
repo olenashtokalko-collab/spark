@@ -26,6 +26,9 @@ export function Dialog({ open, onClose, title, description, children, footer, si
     if (!open) return;
     const prev = document.activeElement as HTMLElement | null;
     const onKey = (e: KeyboardEvent) => {
+      // With stacked dialogs only the topmost one reacts to keys.
+      const all = document.querySelectorAll('.dialog');
+      if (all[all.length - 1] !== ref.current) return;
       if (e.key === 'Escape') {
         e.stopPropagation();
         closeRef.current();

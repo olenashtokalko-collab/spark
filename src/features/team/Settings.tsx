@@ -330,7 +330,7 @@ function InviteDialog({ open, onClose }: { open: boolean; onClose: () => void })
 const PREF_ROWS: { key: NotifKey; label: string; desc: string }[] = [
   { key: 'proposals', label: 'Proposals and decisions', desc: 'New proposals, revisions and approvals.' },
   { key: 'requests', label: 'Request updates', desc: 'Status changes and comments on requests.' },
-  { key: 'files', label: 'Files and feedback', desc: 'New documents and feedback requests.' },
+  { key: 'files', label: 'Files and approvals', desc: 'New documents and files waiting for your approval.' },
   { key: 'team', label: 'Team', desc: 'People joining or leaving the workspace.' },
 ];
 

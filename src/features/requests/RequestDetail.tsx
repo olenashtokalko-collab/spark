@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, Check, Lock, CircleDot, Clock, Eye, FileText, Lightbulb, MessageSquare, PenLine, Send, TrendingUp, TriangleAlert } from 'lucide-react';
+import { ArrowLeft, Check, CircleDot, Clock, Eye, FileText, Lightbulb, MessageSquare, PenLine, Send, TrendingUp, TriangleAlert } from 'lucide-react';
 import { latestProposal, personById, proposalTotal, proposalWeeks, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { Avatar, Badge, Button, EmptyState, Tabs, Textarea, cx } from '../../components/ui/primitives';
@@ -51,8 +51,8 @@ export function RequestDetail({ id }: { id: string }) {
   const sources = (r.sourceIds ?? []).map((d) => state.docs.find((x) => x.id === d)).filter(Boolean);
   const files = state.docs.filter((d) => d.requestId === r.id && !d.name.startsWith('Proposal —'));
   const allFiles = [...new Map([...sources, ...files].map((d) => [d!.id, d!])).values()];
-  // Only your own chats can be opened; a teammate's request keeps its excerpt.
-  const conversation = r.excerpt && state.conversations.find((c) => c.id === r.excerpt!.conversationId && c.createdBy === me.id);
+  // Chats are shared within the brand, so a teammate's chat opens too.
+  const conversation = r.excerpt && state.conversations.find((c) => c.id === r.excerpt!.conversationId);
   const findings = r.excerpt ? (r.excerpt.findings ?? findingsFromConversation(r, conversation)) : undefined;
   const ask = askOf(r.description);
   const canEditBrief = r.status === 'submitted' || r.status === 'in_review';
@@ -221,19 +221,14 @@ export function RequestDetail({ id }: { id: string }) {
               <section className="block">
                 {/* Same pill as the "request created" marker in the chat. */}
                 <div className="msg-system chat-cut__pill">
+                  <MessageSquare size={14} />
+                  <span>Created from {creator.id === me.id ? 'your' : `${creator.name.split(' ')[0]}'s`} chat</span>
                   {conversation ? (
-                    <>
-                      <MessageSquare size={14} />
-                      <span>Created from your chat</span>
-                      <a className="link" href={`#/assistant/${conversation.id}`}>
-                        {conversation.title}
-                      </a>
-                    </>
+                    <a className="link" href={`#/assistant/${conversation.id}`}>
+                      {conversation.title}
+                    </a>
                   ) : (
-                    <>
-                      <Lock size={14} />
-                      <span>Created from {creator.name.split(' ')[0]}'s chat. Chats are private, so only {creator.name.split(' ')[0]} can open it.</span>
-                    </>
+                    <span className="faint">(deleted)</span>
                   )}
                 </div>
                 <ChatCut messages={r.excerpt.messages} author={creator.id === me.id ? 'You' : creator.name.split(' ')[0]} />

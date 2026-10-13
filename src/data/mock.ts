@@ -166,6 +166,14 @@ export const docs: Doc[] = [
     ),
   },
   {
+    id: 'd-digest-w39', name: 'Social listening digest — W39.pdf', kind: 'pdf', folderId: 'f-research', sizeKb: 1300, uploadedBy: 's-mira', uploadedAt: '2026-09-29T08:30:00',
+    summary: 'Week of 21 – 27 Sep: a steady week; recyclable packaging praised, first Riyadh mentions.',
+    preview: pages(
+      ['Social listening digest · W39', '21 – 27 Sep 2026 · curated by Spark'],
+      ['In one line', 'A steady week. Recyclable packaging earned positive comments; the first Riyadh mentions came from job listings.'],
+    ),
+  },
+  {
     id: 'd-siteplan', name: 'Riyadh site plan — Al Olaya.pdf', kind: 'pdf', folderId: 'f-uploads', sizeKb: 9600, uploadedBy: 'u-omar', uploadedAt: '2026-09-15T13:00:00', requestId: 'REQ-104',
     preview: pages(['Al Olaya flagship · site plan', '182 m² · 46 seats · terrace 30 m² · opening target 15 Jan 2027']),
   },
@@ -437,9 +445,45 @@ export const conversations: Conversation[] = [
 
 export const notifications: Notification[] = [
   { id: 'nt1', audience: 'client', at: '2026-10-08T09:10:00', title: 'Spark started reviewing REQ-105', body: 'Response plan for delivery fee complaints', route: '/requests/REQ-105', kind: 'request', read: false },
-  { id: 'nt2', audience: 'client', at: '2026-10-07T18:00:00', title: 'Feedback requested on packaging concepts', body: 'Spark shared round 1 for Ramadan 2027 · due 15 Oct', route: '/documents/f-ramadan?doc=d-pack-r1', kind: 'file', read: false },
+  { id: 'nt2', audience: 'client', at: '2026-10-07T18:00:00', title: 'Approval requested on packaging concepts', body: 'Spark shared round 1 for Ramadan 2027 · due 15 Oct', route: '/documents/f-ramadan?doc=d-pack-r1', kind: 'file', read: false },
   { id: 'nt3', audience: 'client', at: '2026-10-06T15:30:00', title: 'Proposal ready: Riyadh launch campaign', body: 'AED 186,000 · 10 weeks · decision by 14 Oct', route: '/requests/REQ-104/proposal', kind: 'proposal', read: false },
   { id: 'nt4', audience: 'client', at: '2026-10-06T08:30:00', title: 'Social listening digest · W40 shared', body: 'Mentions up 18%; delivery fee complaints rising', route: '/documents/f-research?doc=d-digest-w40', kind: 'file', read: true },
   { id: 'nt5', audience: 'spark', at: '2026-10-07T11:20:00', title: 'New request from Brand Co.', body: 'REQ-105 · Response plan for delivery fee complaints', route: '/requests/REQ-105', kind: 'request', read: false },
   { id: 'nt6', audience: 'spark', at: '2026-10-07T09:20:00', title: 'Omar commented on the proposal', body: 'Riyadh launch campaign · Scope & deliverables', route: '/requests/REQ-104/proposal', kind: 'proposal', read: true },
+];
+
+// ---- Social media monitoring: weekly summaries from Spark ---------------------
+// Kept deliberately simple (no charts) until Spark confirms what it reports.
+
+export interface Digest {
+  id: string;
+  week: string;
+  range: string;
+  sharedAt: string;
+  summary: string;
+  highlights: { tone: 'positive' | 'negative' | 'neutral'; text: string }[];
+  docId: string;
+  prompt: string;
+}
+
+export const digests: Digest[] = [
+  {
+    id: 'W40', week: 'Week 40', range: '28 Sep – 4 Oct 2026', sharedAt: '2026-10-06T08:30:00', docId: 'd-digest-w40',
+    summary: 'More people talked about the brand this week, mostly about the signature collection and the Riyadh opening. Complaints about the delivery fee tripled.',
+    highlights: [
+      { tone: 'positive', text: 'The signature collection got the most positive posts, helped by a creator video.' },
+      { tone: 'positive', text: 'People noticed the Riyadh hoarding; most comments are excited.' },
+      { tone: 'negative', text: 'Complaints about the AED 15 delivery fee tripled, mostly in comments and reviews.' },
+    ],
+    prompt: 'What are people saying about our brand right now?',
+  },
+  {
+    id: 'W39', week: 'Week 39', range: '21 – 27 Sep 2026', sharedAt: '2026-09-29T08:30:00', docId: 'd-digest-w39',
+    summary: 'A steady week with mostly positive comments.',
+    highlights: [
+      { tone: 'positive', text: 'Recyclable packaging earned positive comments.' },
+      { tone: 'neutral', text: 'First mentions of Riyadh came from job listings.' },
+    ],
+    prompt: 'What changed in how people talk about us since last week?',
+  },
 ];

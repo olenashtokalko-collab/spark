@@ -289,7 +289,7 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
       <button className="file-card" onClick={() => openDoc(d.id)}>
         <span className="file-card__thumb">
           <DocThumb doc={d} />
-          {d.review?.status === 'open' && <Badge tone="warning" className="file-card__badge">Feedback requested</Badge>}
+          <ReviewBadge doc={d} className="file-card__badge" />
         </span>
         <span className="file-card__name">
           <FileIcon kind={d.kind} size={14} />
@@ -309,7 +309,7 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
         <button className="file-line__main" onClick={() => openDoc(d.id)} role="cell">
           <FileIcon kind={d.kind} />
           <span className="file-line__name">{d.name}</span>
-          {d.review?.status === 'open' && <Badge tone="warning">Feedback</Badge>}
+          <ReviewBadge doc={d} />
         </button>
         <span className="faint hide-sm" role="cell">
           {showFolder ? state.folders.find((f) => f.id === d.folderId)?.name : by.name.split(' ')[0]}
@@ -349,4 +349,23 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
       </div>
     );
   }
+}
+
+/** Approval state of a file Spark shared for review. */
+function ReviewBadge({ doc, className }: { doc: Doc; className?: string }) {
+  const st = doc.review?.status;
+  if (!st) return null;
+  if (st === 'open')
+    return (
+      <Badge tone="warning" className={className}>
+        Needs approval
+      </Badge>
+    );
+  if (st === 'approved')
+    return (
+      <Badge tone="positive" className={className}>
+        Approved
+      </Badge>
+    );
+  return <Badge className={className}>Changes requested</Badge>;
 }
