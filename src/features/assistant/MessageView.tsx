@@ -90,7 +90,7 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
 
   return (
     <div className="msg-ai">
-      <div className="msg-ai__avatar">
+      <div className={cx('msg-ai__avatar', working && 'is-working')}>
         <FluidOrb size={30} active={working} />
       </div>
       <div className="msg-ai__body">
@@ -100,7 +100,7 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
             {(msg.steps ?? []).map((s, i, arr) => (
               <div key={i} className="steps__item">
                 {i === arr.length - 1 ? <Loader2 size={13} className="spin" /> : <Check size={13} />}
-                <span>{s}</span>
+                <span className={cx(i === arr.length - 1 && 'shimmer-text')}>{s}</span>
               </div>
             ))}
             {(msg.steps ?? []).length === 0 && (

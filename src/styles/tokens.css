@@ -131,3 +131,78 @@
   --glow-soft: 0 0 0 1px rgba(36, 88, 240, 0.25), 0 0 24px rgba(36, 88, 240, 0.1);
   --shadow-pop: 0 16px 40px rgba(20, 24, 40, 0.14), 0 0 0 1px rgba(10, 12, 18, 0.07);
 }
+
+/*
+ * Brand A · light-first (prototype). Values from Spark Studios Brand Guidelines
+ * 2026, p. 11: Saadiyat Sand, Mangrove Ink, Gulf Cobalt, Liwa Ember, Corniche
+ * Haze. The book gives no greys, surface steps or semantic colours: those are
+ * mixed from Sand and Ink here (product decision, to be approved).
+ * Fonts are stand-ins until Diatype is licensed: Archivo Expanded for Diatype
+ * Extended, JetBrains Mono for Diatype Mono; Doto as specified for numbers.
+ */
+:root[data-theme='sand'] {
+  color-scheme: light;
+  --sand: #f8f6f2;
+  --ink: #0e1116;
+  --cobalt: #1e3bd6;
+  --ember: #e8501f;
+  --haze: #c8d8f0;
+  /* Noor: "the light between Gulf Cobalt and Liwa Ember" (p. 11). The book
+     gives no stops; interpolating in OKLCH passes through violet and pink. */
+  --noor: linear-gradient(90deg in oklch, var(--cobalt), var(--ember));
+  --human: var(--cobalt);
+  --ai: var(--ember);
+
+  --font-display: 'Archivo', 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  --font-num: 'Doto', 'JetBrains Mono', monospace;
+
+  --bg: var(--sand);
+  --surface-1: #ffffff;
+  --surface-2: color-mix(in srgb, var(--ink) 5%, var(--sand));
+  --surface-3: color-mix(in srgb, var(--ink) 9%, var(--sand));
+  --surface-hover: rgba(14, 17, 22, 0.04);
+  --surface-active: rgba(14, 17, 22, 0.07);
+  --overlay: rgba(14, 17, 22, 0.32);
+  --control-fill: rgba(14, 17, 22, 0.045);
+  --control-fill-hover: rgba(14, 17, 22, 0.075);
+
+  --text: var(--ink);
+  /* Ink at 72% and 60% over Sand: ~7:1 and ~4.8:1, both pass AA. */
+  --text-2: color-mix(in srgb, var(--ink) 72%, var(--sand));
+  --text-3: color-mix(in srgb, var(--ink) 60%, var(--sand));
+  --text-display: var(--ink);
+  --text-inverse: var(--sand);
+  --line: rgba(14, 17, 22, 0.08);
+  --line-strong: rgba(14, 17, 22, 0.14);
+
+  /* Cobalt leads and marks everything human: actions, selection, focus. */
+  --accent: var(--cobalt);
+  --accent-hover: color-mix(in srgb, var(--ink) 15%, var(--cobalt));
+  --accent-text: var(--cobalt);
+  --accent-soft: rgba(30, 59, 214, 0.1);
+  --accent-softer: rgba(30, 59, 214, 0.05);
+  --on-accent: #ffffff;
+
+  --cream: var(--ink);
+  --on-cream: var(--sand);
+  --field-top: #ffffff;
+  --field-bottom: #ffffff;
+  --field-text: var(--ink);
+  --chip: #ffffff;
+  --chip-hover: color-mix(in srgb, var(--ink) 4%, #ffffff);
+  --chip-text: var(--ink);
+
+  /* Semantic colours sit outside the brand palette; Ember is never "error". */
+  --positive: #138a5a;
+  --positive-soft: rgba(19, 138, 90, 0.1);
+  --warning: #a86a06;
+  --warning-soft: rgba(200, 130, 10, 0.12);
+  --danger: #c0352f;
+  --danger-soft: rgba(192, 53, 47, 0.1);
+  --neutral-soft: rgba(14, 17, 22, 0.06);
+
+  --glow: 0 0 0 1px rgba(30, 59, 214, 0.5), 0 0 20px rgba(30, 59, 214, 0.2);
+  --glow-soft: 0 0 0 1px rgba(30, 59, 214, 0.22), 0 0 24px rgba(30, 59, 214, 0.1);
+  --shadow-pop: 0 18px 44px rgba(14, 17, 22, 0.12), 0 0 0 1px rgba(14, 17, 22, 0.06);
+}

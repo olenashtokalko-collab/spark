@@ -21,7 +21,8 @@ interface DialogProps {
   tone?: IconTileTone;
 }
 
-export type IconTileTone = 'accent' | 'danger' | 'neutral';
+/** 'ai' marks moments where Spark's AI takes over; Brand A gives it the Noor spectrum. */
+export type IconTileTone = 'accent' | 'danger' | 'neutral' | 'ai';
 
 /** A small rounded tile built like the primary button: lit top edge, soft drop. */
 export function IconTile({ icon: Icon, tone = 'accent', className }: { icon: LucideIcon; tone?: IconTileTone; className?: string }) {

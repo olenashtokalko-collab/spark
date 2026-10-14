@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { cx } from './primitives';
 
 /**
@@ -9,29 +9,37 @@ import { cx } from './primitives';
  * into the orb's own 2D canvas, so a long chat with many avatars never runs out
  * of WebGL contexts. The flow speeds up smoothly while the client types or the
  * assistant works (`active`); `still` draws a single frame. Without WebGL the
- * orb falls back to a CSS gradient.
+ * orb falls back to a CSS gradient. `glass` swaps in the brand look after the
+ * ElevenLabs orbs: one soft, slowly drifting field of Spark colours (Cobalt,
+ * violet, pink, Ember, peach) that melt into each other, airbrushed light and
+ * dark clouds, fine grain, no outline or highlight. It defaults to on in the
+ * Brand A theme, so every orb follows the theme.
  */
 export function FluidOrb({
   size = 200,
   active = false,
   still = false,
+  glass,
   className,
 }: {
   size?: number;
   active?: boolean;
   still?: boolean;
+  glass?: boolean;
   className?: string;
 }) {
   const ref = useRef<HTMLCanvasElement>(null);
   const orb = useRef<Orb>();
+  const brandTheme = useBrandTheme();
+  const isGlass = glass ?? brandTheme;
 
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
-    const o: Orb = { canvas, active, still, phase: Math.random() * 40, speed: active ? FAST : 1, drawn: false };
+    const o: Orb = { canvas, active, still, glass: isGlass, phase: Math.random() * 40, speed: active ? FAST : 1, drawn: false };
     orb.current = o;
     return renderer()?.add(o);
-  }, [still]);
+  }, [still, isGlass]);
 
   useEffect(() => {
     if (orb.current) orb.current.active = active;
@@ -39,7 +47,7 @@ export function FluidOrb({
 
   return (
     <div
-      className={cx('forb', size < 60 && 'forb--sm', className)}
+      className={cx('forb', size < 60 && 'forb--sm', isGlass && 'forb--glass', className)}
       style={{ width: size, height: size, ['--s' as string]: size }}
       aria-hidden
     >
@@ -48,12 +56,25 @@ export function FluidOrb({
   );
 }
 
+/** True while the Brand A ('sand') theme is on; follows theme switches. */
+function useBrandTheme() {
+  const read = () => document.documentElement.dataset.theme === 'sand';
+  const [on, setOn] = useState(read);
+  useEffect(() => {
+    const mo = new MutationObserver(() => setOn(read()));
+    mo.observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+    return () => mo.disconnect();
+  }, []);
+  return on;
+}
+
 // ---- Shared renderer -------------------------------------------------------------------
 
 interface Orb {
   canvas: HTMLCanvasElement;
   active: boolean;
   still: boolean;
+  glass: boolean;
   phase: number;
   speed: number;
   drawn: boolean;
@@ -67,6 +88,7 @@ const FRAG = `
 precision highp float;
 uniform vec2 uRes;
 uniform float uTime;
+uniform float uGlass;
 
 vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x,289.0);}
 vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}
@@ -91,6 +113,17 @@ float snoise(vec3 v){
 }
 float hash(vec2 p){return fract(sin(dot(p,vec2(12.9898,78.233)))*43758.5453);}
 mat2 rot(float a){float c=cos(a),s=sin(a);return mat2(c,-s,s,c);}
+
+// Brand ramp for the glass orb: Cobalt, violet, pink, Ember, peach, blended
+// with smooth steps so neighbouring colours melt into each other.
+vec3 noorRamp(float x){
+  float s=clamp(x,0.0,1.0)*4.0;
+  vec3 c=mix(vec3(0.16,0.27,0.86),vec3(0.56,0.40,0.95),smoothstep(0.0,1.0,s));
+  c=mix(c,vec3(0.96,0.52,0.76),smoothstep(1.0,2.0,s));
+  c=mix(c,vec3(0.94,0.42,0.20),smoothstep(2.0,3.0,s));
+  c=mix(c,vec3(1.0,0.80,0.60),smoothstep(3.0,4.0,s));
+  return c;
+}
 
 void main(){
   vec2 p=(gl_FragCoord.xy/uRes)*2.0-1.0;
@@ -139,8 +172,28 @@ void main(){
   col+=fr*mix(blue,vec3(0.75,0.7,1.0),0.4)*0.55*back;
   col*=1.0-0.3*smoothstep(0.7,1.0,r)*(1.0-back);
 
+  // Glass (Brand A), after the ElevenLabs "Narration" orb: one soft field of
+  // colour that drifts slowly, mapped through the brand ramp so the colours
+  // melt into each other. No outline, no highlight, no edge darkening: the
+  // depth comes from darker and lighter clouds inside the colour itself.
+  if(uGlass>0.5){
+    vec3 s1=q*0.75+w*0.35;
+    float c1=snoise(s1+vec3(0.0,t*0.05,t*0.04));
+    float c2=snoise(s1*1.6+vec3(c1*0.5,-t*0.06,t*0.05));
+    // Slow travel through the ramp, so the mood shifts from blue to warm and back.
+    float v=0.5+0.42*(c1*0.75+c2*0.25)+0.22*sin(t*0.12)+0.12*n.y-0.08*n.x;
+    vec3 b=noorRamp(v);
+    // Soft tonal clouds: deeper and lighter patches, like airbrushed paint.
+    float shade=snoise(s1*1.2+vec3(5.0,t*0.04,2.0));
+    b*=1.0-0.18*smoothstep(0.1,0.8,shade);
+    b=mix(b,vec3(1.0,0.93,0.86),0.22*smoothstep(0.2,0.9,-shade+n.y*0.4));
+    // A gentle sense of volume from the top left, without darkening the rim.
+    b*=0.94+0.1*clamp(dot(n,normalize(vec3(-0.45,0.6,0.65))),0.0,1.0);
+    col=clamp(b,0.0,1.0);
+  }
+
   // Fine film grain.
-  col+=(hash(gl_FragCoord.xy)-0.5)*0.09;
+  col+=(hash(gl_FragCoord.xy)-0.5)*(uGlass>0.5?0.06:0.09);
 
   col=clamp(col,0.0,1.0);
   gl_FragColor=vec4(col*mask,mask);
@@ -174,6 +227,7 @@ function renderer() {
   gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
   const uRes = gl.getUniformLocation(prog, 'uRes');
   const uTime = gl.getUniformLocation(prog, 'uTime');
+  const uGlass = gl.getUniformLocation(prog, 'uGlass');
   gl.clearColor(0, 0, 0, 0);
 
   const orbs = new Set<Orb>();
@@ -194,6 +248,7 @@ function renderer() {
     gl.clear(gl.COLOR_BUFFER_BIT);
     gl.uniform2f(uRes, px, px);
     gl.uniform1f(uTime, o.phase);
+    gl.uniform1f(uGlass, o.glass ? 1 : 0);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     const ctx = o.canvas.getContext('2d');
     if (!ctx) return;

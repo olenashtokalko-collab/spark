@@ -24,7 +24,8 @@ import type {
 import { addDays, nowIso } from '../lib/format';
 import { kindOf } from '../lib/files';
 
-export type Theme = 'dark' | 'light' | 'system';
+/** 'sand' is the Direction A prototype after the 2026 brand book (see VISUAL_DIRECTIONS.md). */
+export type Theme = 'dark' | 'light' | 'system' | 'sand';
 /** Prototype: which of the 5 request-page layouts is shown (switcher on the page). */
 export type RequestLayout = 1 | 2 | 3 | 4 | 5;
 export type NotifKey = 'proposals' | 'requests' | 'files' | 'team';

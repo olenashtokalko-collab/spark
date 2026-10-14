@@ -11,6 +11,10 @@ import { ThreadDemo } from './features/demo/ThreadDemo';
 import { DocsDemo } from './features/demo/DocsDemo';
 import { ButtonsDemo } from './features/demo/ButtonsDemo';
 import { ComposerDemo } from './features/demo/ComposerDemo';
+import { GlassDemo } from './features/demo/GlassDemo';
+import { BubblesDemo } from './features/demo/BubblesDemo';
+import { TableDemo } from './features/demo/TableDemo';
+import { AiButtonDemo } from './features/demo/AiButtonDemo';
 import { RequestDetail } from './features/requests/RequestDetail';
 import { ProposalView } from './features/requests/ProposalView';
 import { Documents } from './features/documents/Documents';
@@ -39,6 +43,10 @@ function Screen() {
       if (a === 'docs') return <DocsDemo />;
       if (a === 'buttons') return <ButtonsDemo />;
       if (a === 'composer') return <ComposerDemo />;
+      if (a === 'glass') return <GlassDemo />;
+      if (a === 'bubbles') return <BubblesDemo />;
+      if (a === 'table') return <TableDemo />;
+      if (a === 'ai-button') return <AiButtonDemo />;
       break;
     case 'monitoring':
       return <Monitoring />;

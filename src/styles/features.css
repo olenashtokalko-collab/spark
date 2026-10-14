@@ -529,6 +529,10 @@
   color: var(--text-display);
   margin: 28px 0 36px;
 }
+/* Content shown only in the Brand A theme (see brand-a.css). */
+.brand-only {
+  display: none;
+}
 .assistant__start {
   width: 100%;
   display: flex;

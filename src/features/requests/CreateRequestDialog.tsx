@@ -152,7 +152,7 @@ export function BasedOn({ basis }: { basis: Basis }) {
 export function RequestSent({ basis, onClose, closeLabel }: { id?: string; title?: string; basis?: Basis; onClose: () => void; closeLabel: string }) {
   return (
     <div className="req-done">
-      <IconTile icon={Check} />
+      <IconTile icon={Check} tone="ai" />
       <h2 className="req-done__title">Request sent to Spark</h2>
       <p className="req-done__reply">
         You’ll usually get a reply within <strong>2 business days</strong>.

@@ -41,6 +41,13 @@ export function Composer({ onSubmit, busy, placeholder = 'Message Spark AI', aut
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+    // Empty: one line. Measuring here could run before the text column has its
+    // width, and the wrapped placeholder would lock the box at full height.
+    if (!value) {
+      el.style.height = '';
+      el.style.overflowY = 'hidden';
+      return;
+    }
     el.style.height = 'auto';
     el.style.height = Math.min(el.scrollHeight, 200) + 'px';
     el.style.overflowY = el.scrollHeight > 200 ? 'auto' : 'hidden';

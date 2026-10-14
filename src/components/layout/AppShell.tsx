@@ -15,6 +15,7 @@ import {
   Users,
   Settings,
   LogOut,
+  Sparkles,
 } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { navigate, useRoute } from '../../lib/router';
@@ -76,7 +77,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       </div>
       <header className="topbar">
         <a className="topbar__logo" href="#/assistant" aria-label="Spark, new chat">
-          SPARK
+          <span className="brand-hide">SPARK</span>
+          {/* Brand A: the app icon from the brand book, the spark lit from inside (p. 9). */}
+          <img className="topbar__icon brand-only" src="/brand/spark-app-icon.jpg" alt="" />
         </a>
         <div className="topbar__spacer" />
         <TeamMenu team={team} />
@@ -269,6 +272,7 @@ function UserMenu() {
     { v: 'dark' as const, icon: Moon, label: 'Dark' },
     { v: 'light' as const, icon: Sun, label: 'Light' },
     { v: 'system' as const, icon: Monitor, label: 'System' },
+    { v: 'sand' as const, icon: Sparkles, label: 'Brand A' },
   ];
   return (
     <Popover

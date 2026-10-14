@@ -1,5 +1,5 @@
 import { Fragment, useEffect, useRef, useState } from 'react';
-import { Eye } from 'lucide-react';
+import { Eye, Lightbulb, MessageSquareQuote, Palette, ShieldCheck, UsersRound, type LucideIcon } from 'lucide-react';
 import { personById, useStore } from '../../state/store';
 import { navigate } from '../../lib/router';
 import { suggestedPrompts } from '../../data/assistant';
@@ -8,6 +8,15 @@ import { FluidOrb } from '../../components/ui/FluidOrb';
 import { Composer } from './Composer';
 import { MessageView } from './MessageView';
 import type { Attachment } from '../../data/types';
+
+/** Icons for the start suggestions; Brand A shows them before the label. */
+const CHIP_ICON: Record<string, LucideIcon> = {
+  'Shape an idea': Lightbulb,
+  'Background check': ShieldCheck,
+  'What people say': MessageSquareQuote,
+  'Know the audience': UsersRound,
+  'Explore a look': Palette,
+};
 
 export function Assistant({ convId }: { convId?: string }) {
   const { state, me, actions } = useStore();
@@ -61,10 +70,18 @@ export function Assistant({ convId }: { convId?: string }) {
         ) : !conv ? (
           <div className="assistant__empty">
             <FluidOrb size={170} active={typing} />
+            {/* Brand A: one centred line on the Spark gradient (after Lovable's start screen). */}
             <h1 className="assistant__hello">
-              Nice to see you, {me.name.split(' ')[0]}.
-              <br />
-              What’s new?
+              <span className="brand-hide">
+                Nice to see you, {me.name.split(' ')[0]}.
+                <br />
+                What’s new?
+              </span>
+              <span className="brand-only">
+                Hey Roland
+                <br />
+                Ready to achieve great things?
+              </span>
             </h1>
             {/* An empty chat starts with the input up here; it moves to the
                 bottom once the thread has messages. */}
@@ -76,6 +93,10 @@ export function Assistant({ convId }: { convId?: string }) {
                   <Fragment key={p.label}>
                     {i === 3 && <span className="start-chips__break" aria-hidden />}
                     <button className="start-chip" onClick={() => send(p.prompt)} title={p.prompt}>
+                      {(() => {
+                        const I = CHIP_ICON[p.label];
+                        return I ? <I size={16} strokeWidth={1.6} className="start-chip__icon brand-only" aria-hidden /> : null;
+                      })()}
                       {p.label}
                     </button>
                   </Fragment>
