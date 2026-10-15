@@ -52,12 +52,19 @@ export function stageIndex(s: RequestStatus) {
 
 export const isOpen = (s: RequestStatus) => !['delivered', 'declined'].includes(s);
 
-export function RequestStatus({ status }: { status: RequestStatus }) {
-  const m = requestStatusMeta[status];
+/**
+ * A request's status as a filled pill, a colour per status (picked on
+ * #/demo/status, 2b). When the next step waits on the client (`onClient`),
+ * it reads "Needs your feedback" in the same amber as a decision.
+ */
+export function RequestStatus({ status, onClient }: { status: RequestStatus; onClient?: boolean }) {
+  const onYou = status === 'proposal' || (onClient && status !== 'delivered' && status !== 'declined');
+  const label = status === 'proposal' ? requestStatusMeta.proposal.label : onYou ? 'Needs your feedback' : requestStatusMeta[status].label;
   return (
-    <Badge tone={m.tone} dot>
-      {m.label}
-    </Badge>
+    <span className={`rstatus rstatus--${onYou ? 'you' : status}`}>
+      <span className="rstatus__dot" />
+      {label}
+    </span>
   );
 }
 

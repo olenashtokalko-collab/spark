@@ -148,8 +148,10 @@
     inset 8px 0 14px -8px rgba(30, 59, 214, 0.25),
     inset -8px 0 14px -8px rgba(232, 80, 31, 0.25),
     0 0 0 1px rgba(14, 17, 22, 0.08),
-    -10px 7px 14px -9px rgba(30, 59, 214, 0.6),
-    10px 7px 14px -9px rgba(232, 80, 31, 0.6);
+    var(--ai-glow);
+  /* At rest the Noor light is a soft haze under the pill; on hover it grows. */
+  --ai-glow: -8px 6px 16px -10px rgba(30, 59, 214, 0.32), 8px 6px 16px -10px rgba(232, 80, 31, 0.32);
+  transition: background 0.15s, box-shadow 0.25s, transform 0.1s;
 }
 :root[data-theme='sand'] .btn--ai::before {
   display: none;
@@ -157,12 +159,14 @@
 :root[data-theme='sand'] .btn--ai:hover:not(:disabled) {
   filter: none;
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.55));
+  --ai-glow: -12px 9px 22px -9px rgba(30, 59, 214, 0.6), 12px 9px 22px -9px rgba(232, 80, 31, 0.6);
 }
 
 /* ---- Chips ---------------------------------------------------------------------- */
 /* Chips: a translucent fill and no outline, so they pick up the colour behind. */
 :root[data-theme='sand'] .start-chip,
 :root[data-theme='sand'] .followup,
+:root[data-theme='sand'] .src-chip,
 :root[data-theme='sand'] .sources__toggle {
   border-radius: 999px;
   background: rgba(14, 17, 22, 0.05);
@@ -173,6 +177,7 @@
 }
 :root[data-theme='sand'] .start-chip:hover,
 :root[data-theme='sand'] .followup:hover,
+:root[data-theme='sand'] .src-chip:hover,
 :root[data-theme='sand'] .sources__toggle:hover {
   background: rgba(14, 17, 22, 0.09);
   box-shadow: none;
@@ -326,25 +331,17 @@
 :root[data-theme='sand'] .composer__spacer {
   display: block;
 }
-/* Typing (the human's turn): a Cobalt line round the rim. */
+/* Typing (the human's turn): a fine Cobalt rim and a soft Cobalt halo. */
 :root[data-theme='sand'] .composer.is-focus {
   box-shadow: var(--pill-rim), 0 0 0 1px rgba(255, 255, 255, 0.35);
 }
 :root[data-theme='sand'] .composer.is-typing {
-  box-shadow: var(--pill-rim), 0 0 0 1.5px rgba(30, 59, 214, 0.55);
+  box-shadow: var(--pill-rim), 0 0 0 1px rgba(30, 59, 214, 0.45), 0 0 0 6px rgba(30, 59, 214, 0.08), 0 14px 40px -8px rgba(30, 59, 214, 0.35);
 }
-/* Spark at work (AI's turn): the line turns Ember and breathes. */
+/* Spark at work (AI's turn): the box and its orb stay still; the orb beside the
+   answer does the work (see .orb-spark). */
 :root[data-theme='sand'] .composer.is-busy {
-  animation: brand-a-busy 2.4s ease-in-out infinite;
-}
-@keyframes brand-a-busy {
-  0%,
-  100% {
-    box-shadow: var(--pill-rim), 0 0 0 1.5px rgba(232, 80, 31, 0.55), var(--pill-glow);
-  }
-  50% {
-    box-shadow: var(--pill-rim), 0 0 0 1.5px rgba(232, 80, 31, 0.15), var(--pill-glow);
-  }
+  animation: none;
 }
 /* The round action at the end of the pill: a glossy sphere, as in the "Ask
    anything" post (p. 20), but in Cobalt: sending is the client's action, and
@@ -423,8 +420,7 @@
 :root[data-theme='sand'] .prop-card,
 :root[data-theme='sand'] .proposal__side .decision,
 :root[data-theme='sand'] .digest,
-:root[data-theme='sand'] .prefs__row:not(.prefs__row--head),
-:root[data-theme='sand'] .member:not(.member--pending) {
+:root[data-theme='sand'] .prefs__row:not(.prefs__row--head) {
   background: #ffffff;
   box-shadow: inset 0 0 0 1px var(--line);
 }
@@ -458,34 +454,50 @@
 :root[data-theme='sand'] .dialog .field--error .input {
   box-shadow: 0 0 0 1.5px var(--danger);
 }
-/* Human moments: a Cobalt glass squircle with a white glyph. */
+/* Modal icon tiles: "Frosted + light beneath" (picked on #/demo/modals, 2), after
+   the interface recipe "01 Frosted glass body · 02 Spectrum underneath · 03 Ink
+   or white on top" (p. 16) and depth from light, not shadow. A milky glass
+   squircle, an Ink glyph, and the glow of its moment on the ground: Cobalt for
+   the client, the Noor light for AI, a neutral shade and a red glyph for what
+   can't be undone (Ember is the spark, never an error). */
 :root[data-theme='sand'] .icon-tile {
-  color: #ffffff;
-  background:
-    radial-gradient(60% 50% at 30% 22%, rgba(255, 255, 255, 0.45), transparent 70%),
-    linear-gradient(160deg, color-mix(in srgb, var(--cobalt) 70%, #ffffff), var(--cobalt));
+  --hue: var(--cobalt);
+  border-radius: 30%;
+  color: var(--ink);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(244, 242, 248, 0.82));
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.55),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.2),
-    0 14px 26px -14px rgba(30, 59, 214, 0.8);
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.95),
+    inset 0 6px 10px rgba(255, 255, 255, 0.8),
+    inset 0 -10px 14px -8px color-mix(in srgb, var(--hue) 22%, transparent),
+    0 0 0 1px rgba(14, 17, 22, 0.06),
+    0 14px 22px -8px color-mix(in srgb, var(--hue) 55%, transparent);
 }
-/* AI moments: glass with the Noor spectrum inside, like the app icon (p. 9, 16). */
+:root[data-theme='sand'] .icon-tile svg {
+  stroke-width: 1.8;
+}
 :root[data-theme='sand'] .icon-tile--ai {
-  color: #ffffff;
-  background:
-    radial-gradient(60% 50% at 30% 22%, rgba(255, 255, 255, 0.55), transparent 70%),
-    linear-gradient(135deg in oklch, var(--cobalt), var(--ember));
+  color: var(--ink);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(244, 242, 248, 0.82));
   box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.6),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.25),
-    -10px 14px 26px -14px rgba(30, 59, 214, 0.7),
-    10px 14px 26px -14px rgba(232, 80, 31, 0.7);
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.95),
+    inset 0 6px 10px rgba(255, 255, 255, 0.8),
+    inset 9px -10px 14px -8px rgba(30, 59, 214, 0.22),
+    inset -9px -10px 14px -8px rgba(232, 80, 31, 0.22),
+    0 0 0 1px rgba(14, 17, 22, 0.06),
+    -10px 14px 22px -8px rgba(30, 59, 214, 0.5),
+    10px 14px 22px -8px rgba(232, 80, 31, 0.5);
 }
-/* Destructive and neutral moments don't borrow the AI light: an Ink tile. */
 :root[data-theme='sand'] .icon-tile--danger,
 :root[data-theme='sand'] .icon-tile--neutral {
-  background: radial-gradient(60% 50% at 30% 22%, rgba(255, 255, 255, 0.18), transparent 70%), var(--ink);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 12px 24px -12px rgba(14, 17, 22, 0.6);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(244, 242, 248, 0.82));
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.95),
+    inset 0 6px 10px rgba(255, 255, 255, 0.8),
+    0 0 0 1px rgba(14, 17, 22, 0.08),
+    0 12px 20px -10px rgba(14, 17, 22, 0.3);
+}
+:root[data-theme='sand'] .icon-tile--danger {
+  color: #c2362f;
 }
 
 /* ---- Logo: the app icon ---------------------------------------------------------------------- */
@@ -990,6 +1002,7 @@
   font-size: 15px;
 }
 :root[data-theme='sand'] .followup,
+:root[data-theme='sand'] .src-chip,
 :root[data-theme='sand'] .sources__toggle {
   font-size: 13px;
 }
@@ -1220,11 +1233,11 @@
 
 /* ---- Tables: "One typeface" (picked on #/demo/table) -----------------------------------
    One font across the row: IDs and amounts in tabular figures, the type as a soft
-   pill, headers in sentence case. Hover is a whisper of Cobalt, not grey. */
+   pill, headers in sentence case. Hover is the same soft grey as every other row. */
 :root[data-theme='sand'] .req-row--head {
   font-family: inherit;
   font-size: 12px;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: 0;
   text-transform: none;
   color: var(--text-3);
@@ -1240,9 +1253,10 @@
   color: color-mix(in srgb, var(--ink) 60%, transparent);
   background: rgba(14, 17, 22, 0.05);
 }
+/* Every row, list item and menu item takes the same grey on hover (--surface-hover). */
 :root[data-theme='sand'] .req-row:not(.req-row--head):hover,
 :root[data-theme='sand'] .file-line:hover {
-  background: rgba(30, 59, 214, 0.04);
+  background: var(--surface-hover);
 }
 
 /* ---- Demo: "Start a chat" button (#/demo/ai-button) -------------------------------------
@@ -1766,18 +1780,23 @@
   padding-bottom: 8px;
 }
 /* The title matches the request page's (24px, semibold). */
-:root[data-theme='sand'] .proposal__eyebrow {
-  margin-top: 18px;
-}
 :root[data-theme='sand'] .proposal__title {
   margin: 6px 0 0;
 }
+/* With no badge above it, the title keeps its distance from the back link. */
+:root[data-theme='sand'] .proposal__head > .proposal__title:first-child {
+  margin-top: 24px;
+}
 
 :root[data-theme='sand'] .proposal__doc > .psec {
-  padding: 40px 0 0;
+  padding: 52px 0 0;
 }
 :root[data-theme='sand'] .proposal__doc .psec__head {
-  margin-bottom: 16px;
+  margin-bottom: 20px;
+}
+/* The first section sits close under the header; the gaps below it stay wide. */
+:root[data-theme='sand'] .proposal__doc > .psec:first-of-type {
+  padding-top: 28px;
 }
 :root[data-theme='sand'] .proposal__doc .psec__title {
   font-size: 18px;
@@ -2396,7 +2415,7 @@
   align-items: center;
   gap: 7px;
   padding: 0 16px;
-  font-size: 14px;
+  font-size: 12px;
   font-weight: 500;
   color: var(--text-2);
   border-left: 1px solid var(--line-strong);
@@ -2409,9 +2428,7 @@
 button.proposal__tool:hover {
   color: var(--ink, var(--text));
 }
-.proposal__tool--status {
-  font-weight: 400;
-}
+
 
 /* ---- Stages (StatusCard uses .stg--discs; the other looks are on #/demo/stages) ---------
    The request's Stages card after the feature-list reference: icon discs on a
@@ -2517,6 +2534,7 @@ button.proposal__tool:hover {
 }
 .stg__due-when {
   display: block;
+  font-weight: 500;
 }
 
 /* 2 · Icon discs: the current row lit in soft Cobalt. */
@@ -2614,30 +2632,29 @@ button.proposal__tool:hover {
   box-shadow: none;
 }
 
-/* ---- Details card (request page): label left, value right, hairlines between ---------- */
+/* ---- Details card (request page): label left, value right, no dividers ---------------- */
 :root[data-theme='sand'] .req-side .meta-list {
   gap: 0;
   font-size: 13px;
 }
 :root[data-theme='sand'] .req-side .meta-list :is(dt, dd) {
-  padding: 11px 0;
-  border-top: 1px solid var(--line);
+  padding: 8px 0;
 }
 :root[data-theme='sand'] .req-side .meta-list dt:first-of-type,
 :root[data-theme='sand'] .req-side .meta-list dt:first-of-type + dd {
   padding-top: 2px;
-  border-top: 0;
 }
 :root[data-theme='sand'] .req-side .meta-list :is(dt:last-of-type, dd:last-of-type) {
   padding-bottom: 0;
 }
+/* Labels take the grey of the quiet "Final files land in Documents." line (--text-3). */
 :root[data-theme='sand'] .req-side .meta-list dt {
-  color: var(--text-2);
+  color: var(--text-3);
 }
 :root[data-theme='sand'] .req-side .meta-list dd {
   justify-content: flex-end;
   text-align: right;
-  font-weight: 500;
+  font-weight: 400;
   color: var(--ink);
 }
 
@@ -2649,6 +2666,3156 @@ button.proposal__tool:hover {
 :root[data-theme='sand'] .comment-box .textarea:hover {
   box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.24);
 }
+/* Focused: a Cobalt rim with a thin, quiet ring. No spread light under the field. */
 :root[data-theme='sand'] .comment-box .textarea:focus {
+  box-shadow: 0 0 0 1px rgba(30, 59, 214, 0.5), 0 0 0 4px rgba(30, 59, 214, 0.07);
+}
+
+/* ---- Demo: status colours (#/demo/status) -----------------------------------------------
+   Groups: you (amber, the only fill) · spark (Cobalt) · done (green) · closed (faint). */
+.stdemo__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(560px, 1fr));
+  gap: 16px;
+  padding: 8px 0 48px;
+}
+.stdemo__table {
+  padding: 4px 20px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.stdemo__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  align-items: center;
+  gap: 12px;
+  min-height: 48px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+}
+.stdemo__row:first-child {
+  border-top: 0;
+}
+.stdemo__row > :last-child {
+  justify-self: start;
+}
+.stdemo__title {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.stdemo__title .mono {
+  margin-right: 6px;
+}
+.st-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.st {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.st__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.st.is-you {
+  height: 26px;
+  padding: 0 11px;
+  border-radius: 999px;
+  color: #8a5a00;
+  background: #fbe7bd;
+  box-shadow: inset 0 0 0 1px rgba(196, 130, 10, 0.25);
+}
+.st.is-spark {
+  color: var(--cobalt);
+}
+.st.is-done {
+  color: var(--positive);
+}
+.st.is-closed {
+  color: var(--text-3);
+  font-weight: 400;
+}
+.st-pips,
+.st-bar__track {
+  display: inline-flex;
+  gap: 3px;
+}
+.st-pips span {
+  width: 6px;
+  height: 6px;
+  border-radius: 2px;
+  background: rgba(14, 17, 22, 0.1);
+}
+.st-bar__track span {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(14, 17, 22, 0.08);
+}
+:is(.st-pips, .st-bar).is-you .is-on {
+  background: #d99a1e;
+}
+:is(.st-pips, .st-bar).is-spark .is-on {
+  background: var(--cobalt);
+}
+:is(.st-pips, .st-bar).is-done .is-on {
+  background: var(--positive);
+}
+:is(.st-pips, .st-bar).is-closed .is-on {
+  background: rgba(14, 17, 22, 0.2);
+}
+.st-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 180px;
+}
+.st-bar__label {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.st-bar.is-you .st-bar__label {
+  color: #a26a00;
+}
+.st-bar.is-closed .st-bar__label {
+  color: var(--text-3);
+  font-weight: 400;
+}
+.st-ic {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+.st-ic.is-you {
+  color: #a26a00;
+  font-weight: 600;
+}
+.st-ic.is-closed {
+  color: var(--text-3);
+}
+/* 2b · Every status the same filled pill, a colour each from the brand palette
+   and the Noor spectrum: the text and dot in the colour, the fill a tint of it. */
+.st.st--pill {
+  height: 26px;
+  padding: 0 11px;
+  border-radius: 999px;
+  font-weight: 500;
+  background: color-mix(in srgb, currentColor 11%, #ffffff);
+}
+.st.hue-you {
+  color: #8a5a00;
+  background: #fbe7bd;
+}
+.st.hue-submitted {
+  color: #586579;
+}
+.st.hue-in_review {
+  color: var(--cobalt);
+}
+.st.hue-changes_requested {
+  color: #6c3fc4;
+}
+.st.hue-approved {
+  color: #0f7a6e;
+}
+.st.hue-in_progress {
+  color: #b2337f;
+}
+.st.hue-delivered {
+  color: #2b7a43;
+}
+.st.hue-declined {
+  color: #c2362f;
+}
+.stdemo__legend {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px 18px;
+  padding: 16px 4px 0;
+}
+
+/* ---- File comments (document preview side panel) ----------------------------------------
+   A light section on the white panel instead of a dark grey card: a hairline
+   above, a 15px title, small event labels, and white bubbles with one type
+   scale (13 name, 12 time, 14 text). */
+:root[data-theme='sand'] .preview__side .review-card {
+  margin-top: 4px;
+  padding: 20px 0 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  border-top: 1px solid var(--line);
+}
+:root[data-theme='sand'] .review-card__title {
+  font-size: 15px;
+  font-weight: 600;
+  letter-spacing: 0;
+}
+:root[data-theme='sand'] .review-card .review__thread {
+  margin-top: 12px;
+  gap: 8px;
+}
+:root[data-theme='sand'] .review__thread .review__event {
+  display: block;
+  padding-left: 0;
+  margin: 6px 0 -2px 38px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+:root[data-theme='sand'] .review__thread .review__event:first-child {
+  margin-top: 0;
+}
+:root[data-theme='sand'] .review__thread .timeline__comment {
+  padding: 10px 12px;
+  background: #f6f4f0;
+}
+:root[data-theme='sand'] .review__thread .timeline__who {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin-bottom: 2px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+:root[data-theme='sand'] .review__thread .timeline__who .faint {
+  font-size: 12px;
+  font-weight: 400;
+}
+:root[data-theme='sand'] .review__thread .timeline__comment p {
+  margin-top: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+
+:root[data-theme='sand'] .review__thread .review__due {
+  margin-left: 0;
+  font-size: 12px;
+}
+
+/* ---- Underline tabs: a solid Cobalt bar for the selected tab ----------------------------
+   3px, rounded ends and a soft Cobalt glow, so it carries the weight of the
+   rest of the style instead of a hairline. */
+:root[data-theme='sand'] .tabs--underline .tabs__tab {
+  position: relative;
+  border-bottom: 0;
+}
+:root[data-theme='sand'] .tabs--underline .tabs__tab::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--cobalt);
+  box-shadow: 0 2px 8px rgba(30, 59, 214, 0.35);
+  opacity: 0;
+  transform: scaleX(0.6);
+  transition: opacity 0.2s, transform 0.25s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+:root[data-theme='sand'] .tabs--underline .tabs__tab.is-active::after {
+  opacity: 1;
+  transform: none;
+}
+:root[data-theme='sand'] .tabs--underline .tabs__tab.is-active {
+  color: var(--ink);
+}
+
+/* The role picker is a quiet field on white: no fill, a hairline. */
+
+/* Dialog heads: the display face at a size that sits with its description (it
+   read far heavier than the 15px line under it). */
+:root[data-theme='sand'] .dialog__title {
+  font-size: 21px;
+  font-weight: 600;
+  font-stretch: 112%;
+  letter-spacing: -0.02em;
+}
+:root[data-theme='sand'] .dialog--hero .dialog__desc {
+  margin-top: 10px;
+  font-size: 15px;
+  color: var(--text-2);
+}
+/* The invite email field: no grey fill (it read as disabled), a hairline like the other fields. */
+:root[data-theme='sand'] .dialog .token-input {
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+:root[data-theme='sand'] .dialog .token-input:hover {
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.24);
+}
+:root[data-theme='sand'] .dialog .token-input:focus-within {
   box-shadow: 0 0 0 1.5px var(--accent);
+}
+:root[data-theme='sand'] .dialog .token-input.has-error {
+  box-shadow: 0 0 0 1.5px var(--danger);
+}
+
+/* ---- Demo: modals and icon tiles (#/demo/modals) ----------------------------------------
+   Six looks for the modal icon tile after BRAND_GUIDELINES.md. Kinds:
+   is-human (Cobalt), is-ai (Noor, Cobalt → Ember), is-danger (Ink / red glyph). */
+.mdemo__strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 10px;
+}
+.mdemo__look {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 14px 16px 18px;
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  text-align: left;
+  transition: box-shadow 0.15s;
+}
+.mdemo__look:hover {
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.mdemo__look.is-on {
+  box-shadow: 0 0 0 2px var(--cobalt);
+}
+.mdemo__look-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.mdemo__look-tiles {
+  display: flex;
+  gap: 14px;
+}
+.mdemo__look-tiles .itile {
+  --s: 44px;
+  margin: 0;
+}
+.mdemo__ref {
+  max-width: 820px;
+  margin: 22px 0 18px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+.mdemo__ref strong {
+  font-weight: 600;
+  color: var(--ink);
+}
+.mdemo__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 20px 16px;
+  padding-bottom: 48px;
+}
+.mdemo__where {
+  margin-bottom: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.mdemo .mdemo__dialog {
+  max-width: none;
+  animation: none;
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.06), 0 20px 50px -28px rgba(14, 17, 22, 0.35);
+}
+
+/* The tile */
+.itile {
+  --s: 60px;
+  --hue: var(--cobalt);
+  position: relative;
+  width: var(--s);
+  height: var(--s);
+  flex: none;
+  display: grid;
+  place-items: center;
+  margin-bottom: 22px;
+  border-radius: 30%;
+  color: #ffffff;
+}
+.itile.is-ai {
+  --hue: var(--ember);
+}
+.itile svg:not(.itile__spark) {
+  position: relative;
+  z-index: 1;
+  width: 44%;
+  height: 44%;
+}
+
+/* 1 · Today */
+.itile--today {
+  background:
+    radial-gradient(60% 50% at 30% 22%, rgba(255, 255, 255, 0.45), transparent 70%),
+    linear-gradient(160deg, color-mix(in srgb, var(--cobalt) 70%, #ffffff), var(--cobalt));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 14px 26px -14px rgba(30, 59, 214, 0.8);
+}
+.itile--today.is-ai {
+  background: radial-gradient(60% 50% at 30% 22%, rgba(255, 255, 255, 0.55), transparent 70%), linear-gradient(135deg in oklch, var(--cobalt), var(--ember));
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.6), -10px 14px 26px -14px rgba(30, 59, 214, 0.7), 10px 14px 26px -14px rgba(232, 80, 31, 0.7);
+}
+.itile--today.is-danger {
+  background: radial-gradient(60% 50% at 30% 22%, rgba(255, 255, 255, 0.18), transparent 70%), var(--ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 12px 24px -12px rgba(14, 17, 22, 0.6);
+}
+
+/* 2 · Frosted + light beneath (p. 16 recipe): the light is a coloured glow on the ground. */
+.itile--frosted {
+  color: var(--ink);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(244, 242, 248, 0.82));
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.95),
+    inset 0 6px 10px rgba(255, 255, 255, 0.8),
+    inset 0 -10px 14px -8px color-mix(in srgb, var(--hue) 22%, transparent),
+    0 0 0 1px rgba(14, 17, 22, 0.06),
+    0 14px 22px -8px color-mix(in srgb, var(--hue) 55%, transparent);
+}
+.itile--frosted.is-ai {
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.95),
+    inset 0 6px 10px rgba(255, 255, 255, 0.8),
+    inset 9px -10px 14px -8px rgba(30, 59, 214, 0.22),
+    inset -9px -10px 14px -8px rgba(232, 80, 31, 0.22),
+    0 0 0 1px rgba(14, 17, 22, 0.06),
+    -10px 14px 22px -8px rgba(30, 59, 214, 0.5),
+    10px 14px 22px -8px rgba(232, 80, 31, 0.5);
+}
+.itile--frosted.is-danger {
+  color: #c2362f;
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.95),
+    inset 0 6px 10px rgba(255, 255, 255, 0.8),
+    0 0 0 1px rgba(14, 17, 22, 0.08),
+    0 12px 20px -10px rgba(14, 17, 22, 0.3);
+}
+
+/* 3 · Light inside the glass (pp. 9, 16): blurred, grainy light, a white glyph */
+.itile--inside {
+  overflow: hidden;
+  isolation: isolate;
+  background: #1b2fa8;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.35), 0 16px 26px -16px color-mix(in srgb, var(--hue) 80%, transparent);
+}
+.itile--inside::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  z-index: -1;
+  background:
+    radial-gradient(45% 45% at 30% 75%, #4a6cff, transparent 70%),
+    radial-gradient(40% 40% at 75% 30%, #7a8fff, transparent 70%),
+    radial-gradient(50% 50% at 60% 90%, #1e3bd6, transparent 70%);
+  filter: blur(6px);
+}
+.itile--inside.is-ai::before {
+  background:
+    radial-gradient(45% 45% at 25% 75%, var(--cobalt), transparent 70%),
+    radial-gradient(40% 40% at 55% 45%, #b35ad8, transparent 70%),
+    radial-gradient(45% 45% at 80% 25%, var(--ember), transparent 70%),
+    radial-gradient(40% 40% at 85% 85%, #ffc9a3, transparent 70%);
+}
+.itile--inside.is-ai {
+  background: #7b3fb8;
+}
+.itile--inside.is-danger {
+  background: var(--ink);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.18), 0 14px 24px -14px rgba(14, 17, 22, 0.6);
+}
+.itile--inside.is-danger::before {
+  background: radial-gradient(50% 50% at 30% 20%, rgba(255, 255, 255, 0.22), transparent 70%);
+}
+/* Frost and grain over the light. */
+.itile--inside::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0) 45%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='80' height='80'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.2' numOctaves='2'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.35'/%3E%3C/svg%3E");
+  mix-blend-mode: soft-light;
+}
+
+/* 4 · Ink object, the spark (p. 18) */
+.itile--ink {
+  background: radial-gradient(60% 50% at 30% 20%, rgba(255, 255, 255, 0.16), transparent 70%), var(--ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 12px 22px -12px rgba(14, 17, 22, 0.55);
+}
+.itile__spark {
+  position: absolute;
+  top: 14%;
+  right: 14%;
+  width: 22%;
+  height: 22%;
+  color: var(--hue);
+  filter: drop-shadow(0 0 3px color-mix(in srgb, var(--hue) 80%, transparent));
+}
+.itile--ink.is-danger svg:not(.itile__spark) {
+  color: #ff8b84;
+}
+
+/* 5 · Sand plaque (p. 16 logo plaque) */
+.itile--plaque {
+  color: var(--hue);
+  background: linear-gradient(180deg, #fbfaf7, #efeae1);
+  box-shadow:
+    inset 0 0 0 1.5px #ffffff,
+    inset 0 -3px 6px rgba(14, 17, 22, 0.05),
+    0 0 0 1px rgba(14, 17, 22, 0.07),
+    0 14px 22px -14px color-mix(in srgb, var(--hue) 70%, transparent);
+}
+.itile--plaque.is-ai {
+  box-shadow:
+    inset 0 0 0 1.5px #ffffff,
+    inset 0 -3px 6px rgba(14, 17, 22, 0.05),
+    0 0 0 1px rgba(14, 17, 22, 0.07),
+    -8px 14px 22px -14px rgba(30, 59, 214, 0.7),
+    8px 14px 22px -14px rgba(232, 80, 31, 0.7);
+}
+.itile--plaque.is-danger {
+  color: #c2362f;
+  box-shadow: inset 0 0 0 1.5px #ffffff, inset 0 -3px 6px rgba(14, 17, 22, 0.05), 0 0 0 1px rgba(14, 17, 22, 0.07), 0 12px 20px -14px rgba(14, 17, 22, 0.4);
+}
+
+/* 6 · Viewfinder (pp. 19–20): corner brackets and a mono tag, no tile */
+.itile--finder {
+  color: var(--hue);
+  border-radius: 0;
+}
+.itile--finder.is-danger {
+  color: #c2362f;
+}
+.itile__c {
+  position: absolute;
+  width: 22%;
+  height: 22%;
+  border-color: var(--ink);
+  border-style: solid;
+  border-width: 0;
+}
+.itile__c--tl {
+  top: 0;
+  left: 0;
+  border-top-width: 1.5px;
+  border-left-width: 1.5px;
+}
+.itile__c--tr {
+  top: 0;
+  right: 0;
+  border-top-width: 1.5px;
+  border-right-width: 1.5px;
+}
+.itile__c--bl {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 1.5px;
+  border-left-width: 1.5px;
+}
+.itile__c--br {
+  bottom: 0;
+  right: 0;
+  border-bottom-width: 1.5px;
+  border-right-width: 1.5px;
+}
+.itile__tag {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 50%;
+  transform: translateX(-50%);
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+.mdemo__dialog .itile--finder {
+  margin-bottom: 34px;
+}
+.mdemo__look-tiles .itile--finder {
+  margin-bottom: 14px;
+}
+
+/* ---- Answer orb while Spark works ---------------------------------------------------------
+   The orb's light races (FluidOrb boost) and the white spark from the app icon
+   (p. 9) twinkles inside it: it grows, glows and turns a little, then fades. */
+.msg-ai__avatar {
+  /* Stays beside its answer while a long one scrolls under the top bar;
+     it can't leave its own message row, so it never trails into the next one. */
+  position: sticky;
+  top: calc(var(--top-h) + 16px);
+  align-self: flex-start;
+}
+.orb-spark {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  fill: #ffffff;
+  filter: drop-shadow(0 0 2px #ffffff) drop-shadow(0 0 5px rgba(255, 230, 210, 0.9));
+  opacity: 0;
+  pointer-events: none;
+  animation: orb-spark 2s ease-in-out infinite;
+}
+@keyframes orb-spark {
+  0%,
+  100% {
+    opacity: 0;
+    transform: scale(0.4) rotate(-20deg);
+  }
+  45% {
+    opacity: 1;
+    transform: scale(1.05) rotate(0deg);
+  }
+  60% {
+    opacity: 1;
+    transform: scale(0.95) rotate(8deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .orb-spark {
+    animation: none;
+    opacity: 0.95;
+  }
+}
+
+/* ---- Demo: typing state of the glass input (#/demo/typing) ---------------------------------
+   Each variant restyles only `.is-typing`; the resting glass is the Brand A one. The long
+   selectors beat the Brand A composer rule, :root[data-theme='sand'] .composer.is-typing. */
+:root[data-theme='sand'] .tpdemo .composer.tp--halo.is-typing {
+  box-shadow: var(--pill-rim), 0 0 0 1px rgba(30, 59, 214, 0.45), 0 0 0 6px rgba(30, 59, 214, 0.08), 0 14px 40px -8px rgba(30, 59, 214, 0.35);
+}
+/* Spectrum rim, still (3) and turning (4): a gradient masked down to the edge. */
+.tpdemo .composer.tp--spectrum::before,
+.tpdemo .composer.tp--ring::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0;
+  transition: opacity 0.35s var(--ease);
+  pointer-events: none;
+}
+.tpdemo .composer.tp--spectrum::before {
+  background: linear-gradient(100deg, #1e3bd6, #6a5ad8 50%, #e8501f);
+}
+.tpdemo .composer.tp--ring::before {
+  background: conic-gradient(from var(--ring), #1e3bd6, #6a6fe0, #e8501f, #6a6fe0, #1e3bd6);
+  animation: btn-ring 6s linear infinite;
+}
+.tpdemo .composer.tp--spectrum.is-typing::before,
+.tpdemo .composer.tp--ring.is-typing::before {
+  opacity: 1;
+}
+:root[data-theme='sand'] .tpdemo .composer:is(.tp--spectrum, .tp--ring).is-typing {
+  box-shadow: var(--pill-rim), 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+/* 5 · Noor underglow */
+:root[data-theme='sand'] .tpdemo .composer.tp--noor.is-typing {
+  box-shadow: var(--pill-rim), 0 0 0 1px rgba(255, 255, 255, 0.35), 0 26px 40px -18px rgba(30, 59, 214, 0.55), 0 42px 60px -28px rgba(232, 80, 31, 0.45);
+}
+/* 6 · Light rising from inside the bottom edge */
+:root[data-theme='sand'] .tpdemo .composer.tp--inner.is-typing {
+  background:
+    radial-gradient(70% 80% at 22% 128%, rgba(30, 59, 214, 0.34), transparent 70%),
+    radial-gradient(60% 80% at 82% 128%, rgba(232, 80, 31, 0.3), transparent 70%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 45%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.22), rgba(255, 255, 255, 0.08));
+  box-shadow: var(--pill-rim), 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+/* 7 · Frost lift: denser, brighter, a little higher */
+:root[data-theme='sand'] .tpdemo .composer.tp--lift {
+  transition: box-shadow 0.35s var(--ease), transform 0.35s var(--ease), background 0.35s var(--ease);
+}
+:root[data-theme='sand'] .tpdemo .composer.tp--lift.is-typing {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 45%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.34));
+  box-shadow: var(--pill-rim), 0 0 0 1px rgba(255, 255, 255, 0.75), 0 18px 40px -16px rgba(14, 17, 22, 0.3);
+  transform: translateY(-2px);
+}
+/* 8 · Lit bottom edge */
+.tpdemo .composer.tp--edge::after {
+  content: '';
+  position: absolute;
+  left: 16%;
+  right: 16%;
+  bottom: 0;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg, transparent, #1e3bd6 25%, #e8501f 75%, transparent);
+  box-shadow: 0 0 14px rgba(30, 59, 214, 0.55), 0 0 22px rgba(232, 80, 31, 0.35);
+  opacity: 0;
+  transition: opacity 0.35s var(--ease);
+  pointer-events: none;
+}
+.tpdemo .composer.tp--edge.is-typing::after {
+  opacity: 1;
+}
+:root[data-theme='sand'] .tpdemo .composer.tp--edge.is-typing {
+  box-shadow: var(--pill-rim), 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+/* A calm Haze ground, so the underglow in variant 5 is the only colour on the stage. */
+.tpdemo .gvdemo__stage--haze {
+  background: linear-gradient(180deg, #f1f2f8, #d9e2f4);
+}
+/* Variant 1 keeps the earlier single Cobalt line now that the app uses the halo. */
+:root[data-theme='sand'] .tpdemo .composer.tp--today.is-typing {
+  box-shadow: var(--pill-rim), 0 0 0 1.5px rgba(30, 59, 214, 0.55);
+}
+
+/* ---- Demo: Activity tab (#/demo/activity) -------------------------------------------------
+   Look 1 (.axa) after the CRM timeline: icon tiles on a line. Look 2 (.axb) after the hiring
+   timeline: avatars, fact chips, a bordered note card, folded history. */
+.axdemo__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(480px, 1fr));
+  gap: 16px;
+  padding: 8px 0 48px;
+  align-items: start;
+}
+.axdemo__stage {
+  padding: 28px 28px 24px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+/* 1 · Icon tiles */
+.axa {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.axa__head {
+  margin: 0 0 14px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+.axa__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.axa__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  column-gap: 14px;
+  padding-bottom: 20px;
+}
+.axa__item:last-child {
+  padding-bottom: 0;
+}
+/* The line between tiles, inside a day. */
+.axa__item:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  left: 15.5px;
+  top: 38px;
+  bottom: 6px;
+  width: 1px;
+  background: var(--line-strong);
+}
+.axa__tile {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  color: var(--cobalt);
+  background: color-mix(in srgb, var(--cobalt) 9%, #ffffff);
+}
+.axa__item.tone-positive .axa__tile {
+  color: var(--positive);
+  background: color-mix(in srgb, var(--positive) 11%, #ffffff);
+}
+.axa__item.tone-negative .axa__tile {
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 11%, #ffffff);
+}
+.axa__item.tone-neutral .axa__tile {
+  color: var(--text-2);
+  background: var(--control-fill);
+}
+.axa__line {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+.axa__line b {
+  font-weight: 500;
+  color: var(--ink);
+}
+.axa__line i {
+  font-style: normal;
+  color: var(--ink);
+}
+.axa__quote {
+  margin: 2px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+.axa__when {
+  display: block;
+  margin-top: 3px;
+  font-size: 12.5px;
+  color: var(--text-3);
+}
+
+/* 2 · Inline chips */
+.axb {
+  display: flex;
+  flex-direction: column;
+}
+.axb__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+.axb__item,
+.axb__daylabel {
+  position: relative;
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  column-gap: 12px;
+}
+.axb__item {
+  padding-bottom: 12px;
+}
+.axb__item:last-child {
+  padding-bottom: 0;
+}
+/* One line joins every step, through the day labels. It starts at the first mark and ends at the last. */
+.axb__item::before,
+.axb__daylabel::before {
+  content: '';
+  position: absolute;
+  left: 15.5px;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: var(--line-strong);
+}
+/* The marks have no fill, so the line starts under its own mark and stops at the next one. */
+.axb__item::before {
+  top: 32px;
+}
+.axb__list > .axb__daylabel:first-child::before,
+.axb__item:last-child::before {
+  display: none;
+}
+/* A day: its name, centred, with no rule beside it. */
+.axb__daylabel {
+  padding: 16px 0 18px;
+}
+.axb__list > .axb__daylabel:first-child {
+  padding-top: 2px;
+}
+.axb__daylabel > span {
+  grid-column: 2;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+.axb__mark {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+}
+.axb__line {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+/* The sentence wraps by itself; the time stays at the right of the first line. */
+.axb__sentence {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 8px;
+  min-height: 32px;
+}
+.axb__who {
+  font-weight: 500;
+  color: var(--ink);
+}
+.axb__when {
+  flex: none;
+  line-height: 32px;
+  font-size: 12.5px;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+/* A comment or a note: a plain line of text under the sentence. */
+.axb__msg {
+  margin: 2px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--ink);
+}
+/* Everything but the name is plain words: the object of the sentence (a status, a file, a price)
+   is a shade darker than the verb, never a pill or a chip. Buttons are the app's text buttons. */
+.axb__text {
+  color: var(--text-2);
+}
+.axb__obj {
+  color: var(--ink);
+}
+.axb__act {
+  margin-left: 2px;
+}
+.axb__fold {
+  margin: 18px 0 0 2px;
+}
+
+/* ---- Demo: clickable elements (#/demo/clickables) -----------------------------------------
+   "Today" blocks use the app's own styles untouched. "After" blocks restyle the real
+   controls here, in the demo's scope only; `.is-hover` forces the hover look for comparing. */
+.ck-compare {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+.ck-compare--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.ck-tag {
+  margin-bottom: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+.ck-tag.is-now {
+  color: var(--cobalt);
+}
+.ck-stage {
+  padding: 22px 20px;
+  border-radius: 14px;
+  background: #f8f6f2;
+}
+.ck-stage--card {
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.ck-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+/* 1 · The file chip joined the chat chip family (now in the app); "before" keeps the old look. */
+.ckdemo .ck-was .src-chip {
+  height: 28px;
+  padding: 0 10px;
+  background: var(--surface-1);
+  color: var(--text-2);
+}
+.ckdemo .ck-was .src-chip:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+.ckdemo .ck-now .src-chip {
+  height: 30px;
+  padding: 0 11px 0 10px;
+  background: rgba(14, 17, 22, 0.05);
+  color: var(--ink);
+}
+.ckdemo .ck-now .src-chip:hover {
+  background: rgba(14, 17, 22, 0.09);
+}
+
+/* 2 · Hover for the avatar button, the logo and the theme buttons. */
+.ck-grid {
+  display: grid;
+  grid-template-columns: 120px 1fr 1fr;
+  align-items: center;
+  gap: 14px 16px;
+}
+.ck-grid__row {
+  display: contents;
+}
+.ck-col {
+  font-size: 12px;
+  color: var(--text-3);
+}
+.ck-name {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 13px;
+  color: var(--ink);
+}
+.ck-name em {
+  font-style: normal;
+  font-size: 12px;
+  color: var(--cobalt);
+}
+.ck-cell {
+  display: flex;
+  align-items: center;
+  min-height: 48px;
+}
+.ck-theme {
+  padding: 0;
+  grid-template-columns: repeat(3, auto);
+}
+.ckdemo .ck-now .user-btn {
+  transition: box-shadow 0.15s var(--ease);
+}
+.ckdemo .ck-now .user-btn:is(:hover, .is-hover) {
+  box-shadow: 0 0 0 4px rgba(14, 17, 22, 0.08);
+}
+.ckdemo .ck-now .topbar__icon {
+  transition: transform 0.18s var(--ease);
+}
+.ckdemo .ck-now .topbar__logo:is(:hover, .is-hover) .topbar__icon {
+  transform: scale(1.07);
+}
+.ckdemo .ck-now .theme-pick button:not(.is-active):is(:hover, .is-hover) {
+  background: var(--surface-3);
+  color: var(--ink);
+}
+
+/* 3 · Row hover. The three sample sets differ only in the hover colour. */
+.ck-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.ck-rows__label {
+  margin: 10px 0 2px;
+  font-size: 11px;
+  color: var(--text-3);
+}
+.ck-rows__label:first-child {
+  margin-top: 0;
+}
+.ck-rows .req-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-height: 44px;
+  font-size: 13px;
+}
+.ck-rows .req-row__main {
+  overflow: hidden;
+}
+.ck-rows .file-row {
+  font-size: 13px;
+  width: 100%;
+}
+.ck-rows .file-row .faint {
+  display: none;
+}
+.ck-rows .ck-menu {
+  padding: 0;
+}
+/* Today: tables Cobalt, the rest grey (as shipped). */
+:root[data-theme='sand'] .ck-rows--ship .req-row.is-hover {
+  background: rgba(30, 59, 214, 0.04);
+}
+.ck-rows--ship :is(.file-row, .menu__item).is-hover {
+  background: var(--surface-hover);
+}
+/* A: everything Cobalt. */
+:root[data-theme='sand'] .ck-rows--a :is(.req-row:not(.req-row--head), .file-row, .menu__item):is(:hover, .is-hover) {
+  background: rgba(30, 59, 214, 0.04);
+}
+/* B: everything grey. */
+:root[data-theme='sand'] .ck-rows--b :is(.req-row:not(.req-row--head), .file-row, .menu__item):is(:hover, .is-hover) {
+  background: var(--surface-hover);
+}
+
+/* ---- Demo: icon marks (#/demo/marks) ------------------------------------------------------
+   One mark component, five looks. States: active (new / current), done, todo.
+   "Now" mixes today's three looks, each in its own place and size. */
+.mkd__sets {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 8px 0 48px;
+}
+.mkd__stage {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  align-items: start;
+  margin-top: 14px;
+  padding: 18px;
+  border-radius: 16px;
+  background: #f8f6f2;
+}
+.mkd__ctx {
+  --s: 32px;
+  min-width: 0;
+}
+.mkd__card {
+  padding: 14px 16px 16px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.mkd__title {
+  margin-bottom: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+.mkd__set--now .mkd__ctx--activity {
+  --s: 28px;
+}
+.mkd__set--now .mkd__ctx--stages {
+  --s: 36px;
+}
+.mkd__mark {
+  position: relative;
+  z-index: 1;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: var(--s);
+  height: var(--s);
+  border-radius: 50%;
+}
+/* Raised disc */
+.mkd__set--raised .mkd__mark,
+.mkd__set--now .mkd__ctx--stages .mkd__mark {
+  background: #ffffff;
+  box-shadow: 0 0 0 1px var(--line), 0 4px 10px -4px rgba(14, 17, 22, 0.2);
+  color: var(--cobalt);
+}
+.mkd__set--raised .mkd__mark.is-todo,
+.mkd__set--now .mkd__ctx--stages .mkd__mark.is-todo {
+  color: var(--text-3);
+}
+.mkd__set--raised .mkd__mark.is-active,
+.mkd__set--now .mkd__ctx--stages .mkd__mark.is-active {
+  box-shadow: 0 0 0 1.5px rgba(30, 59, 214, 0.55), 0 4px 10px -4px rgba(14, 17, 22, 0.2);
+}
+/* Outline disc */
+.mkd__set--outline .mkd__mark,
+.mkd__set--now .mkd__ctx--activity .mkd__mark {
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+  color: var(--cobalt);
+}
+.mkd__set--outline .mkd__mark.is-todo {
+  color: var(--text-3);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.mkd__set--outline .mkd__mark.is-active {
+  box-shadow: inset 0 0 0 1.5px rgba(30, 59, 214, 0.55);
+}
+/* Soft tile */
+.mkd__set--tile .mkd__mark,
+.mkd__set--now .mkd__ctx--notif .mkd__mark {
+  border-radius: 10px;
+  background: var(--control-fill);
+  color: var(--text-2);
+}
+.mkd__set--tile .mkd__mark.is-active,
+.mkd__set--now .mkd__ctx--notif .mkd__mark.is-active {
+  background: color-mix(in srgb, var(--cobalt) 10%, #ffffff);
+  color: var(--cobalt);
+}
+.mkd__set--tile .mkd__mark.is-todo {
+  background: rgba(14, 17, 22, 0.025);
+  color: var(--text-3);
+}
+/* Bare icon */
+.mkd__set--bare .mkd__mark {
+  color: var(--text-2);
+}
+.mkd__set--bare .mkd__mark.is-active {
+  color: var(--cobalt);
+}
+.mkd__set--bare .mkd__mark.is-todo {
+  color: var(--text-3);
+}
+/* Rows */
+.mkd__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.mkd__row {
+  position: relative;
+  display: grid;
+  grid-template-columns: var(--s) minmax(0, 1fr);
+  column-gap: 12px;
+  padding-bottom: 14px;
+}
+.mkd__row:last-child {
+  padding-bottom: 0;
+}
+.mkd__row::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--s) / 2 - 0.5px);
+  top: var(--s);
+  bottom: 0;
+  width: 1px;
+  background: var(--line-strong);
+}
+.mkd__row:last-child::before {
+  display: none;
+}
+.mkd__line {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  min-height: var(--s);
+  font-size: 13px;
+  color: var(--text-2);
+}
+.mkd__line b {
+  font-weight: 500;
+  color: var(--ink);
+}
+.mkd__obj {
+  color: var(--ink);
+}
+.mkd__act {
+  font-weight: 500;
+  color: var(--cobalt);
+}
+.mkd__when {
+  font-size: 12px;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+.mkd__notif {
+  display: grid;
+  grid-template-columns: var(--s) minmax(0, 1fr) auto;
+  column-gap: 12px;
+  padding: 7px 0;
+}
+.mkd__notif-title {
+  font-size: 13px;
+  line-height: 1.35;
+  font-weight: 500;
+  color: var(--ink);
+}
+.mkd__sub {
+  margin-top: 1px;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-2);
+}
+.mkd__notif .mkd__when {
+  margin-top: 1px;
+}
+.mkd__dot {
+  align-self: center;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--cobalt);
+}
+.mkd__stage-name {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  line-height: 1.3;
+}
+.mkd__row--stage.is-todo .mkd__stage-name,
+.mkd__row--stage.is-todo .mkd__sub {
+  color: var(--text-3);
+}
+.mkd__row--stage.is-active .mkd__stage-name {
+  color: var(--cobalt);
+}
+.mkd__due {
+  margin-top: 3px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--warning);
+}
+
+/* ---- Icon marks: one soft tile everywhere (picked on #/demo/marks, C) ------------------------
+   Notifications, Activity and Stages lead their rows with the same 32px rounded tile.
+   Active (new or current): a Cobalt tint. Done: a soft grey. To do: fainter still. */
+.notif__icon,
+.axb__mark,
+.stg--discs .stg__item .stg__mark {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--control-fill);
+  color: var(--text-2);
+  box-shadow: none;
+}
+.notif.is-unread .notif__icon,
+.stg--discs .stg__item.is-current .stg__mark {
+  background: rgba(30, 59, 214, 0.12);
+  color: var(--cobalt);
+  box-shadow: none;
+}
+.stg--discs .stg__item.is-todo .stg__mark {
+  background: rgba(14, 17, 22, 0.025);
+  color: var(--text-3);
+}
+.stg--discs .stg__item.is-declined .stg__mark,
+.axb__item.tone-negative .axb__mark {
+  background: color-mix(in srgb, var(--danger) 11%, transparent);
+  color: var(--danger);
+}
+/* Stages: the column is 32px now; the line runs from under one tile to the next. */
+.stg--discs .stg__item {
+  grid-template-columns: 32px minmax(0, 1fr);
+}
+.stg--discs .stg__item:not(:last-child)::after {
+  left: 25.5px;
+}
+
+/* ---- Demo: "Your request" section (#/demo/brief) --------------------------------------------- */
+.bfdemo__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(460px, 1fr));
+  gap: 16px;
+  padding: 8px 0 48px;
+  align-items: start;
+}
+.bfdemo__stage {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+  margin-top: 14px;
+  padding: 22px;
+  border-radius: 16px;
+  background: #f8f6f2;
+}
+.bf__prop {
+  padding: 16px 20px 18px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.bf__prop-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.bf__prop-nums {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-top: 12px;
+}
+.bf__prop-nums b {
+  display: block;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--ink);
+}
+.bf__prop-nums span {
+  font-size: 12px;
+  color: var(--text-3);
+}
+.bfdemo .bf-tile {
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: var(--control-fill);
+  color: var(--text-2);
+}
+.bfdemo .bf-tile.is-cobalt {
+  background: rgba(30, 59, 214, 0.12);
+  color: var(--cobalt);
+}
+/* 2 · Card with details */
+.bfdemo .bf-card {
+  padding: 16px 20px 18px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.bfdemo .bf-card > header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.bfdemo .bf-card h3,
+.bfdemo .bf-tint h3 {
+  flex: 1;
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.bfdemo .bf-card__text {
+  margin-top: 14px;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+.bfdemo .bf-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 22px;
+  margin: 16px 0 0;
+  font-size: 12.5px;
+}
+.bfdemo .bf-meta > div {
+  display: inline-flex;
+  gap: 6px;
+}
+.bfdemo .bf-meta dt {
+  color: var(--text-3);
+}
+.bfdemo .bf-meta dd {
+  margin: 0;
+  color: var(--ink);
+}
+/* 3 · Lead paragraph */
+.bfdemo .bf-lead {
+  padding-left: 16px;
+  border-left: 2px solid var(--cobalt);
+}
+.bfdemo .bf-lead__label {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+.bfdemo .bf-lead__text {
+  margin-top: 6px;
+  font-size: 18px;
+  line-height: 1.5;
+  font-weight: 500;
+  color: var(--ink);
+}
+/* 4 · Message from you */
+.bfdemo .bf-msg {
+  display: flex;
+  justify-content: flex-end;
+}
+.bfdemo .bf-msg .msg-user {
+  max-width: 86%;
+}
+.bfdemo .bf-msg .msg-user__meta {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+/* 5 · Soft Cobalt block */
+.bfdemo .bf-tint {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr);
+  gap: 14px;
+  padding: 16px 20px 18px;
+  border-radius: 16px;
+  background: rgba(30, 59, 214, 0.05);
+}
+.bfdemo .bf-tint__head {
+  display: flex;
+  align-items: center;
+  min-height: 32px;
+  gap: 12px;
+}
+.bfdemo .bf-tint__text {
+  margin-top: 2px;
+  font-size: 16px;
+  line-height: 1.55;
+  color: var(--ink);
+}
+
+/* ---- "Your request": a quiet label over the text, in an outlined container (no fill) ----
+   Sits above the Proposal, which answers it. */
+.brief {
+  padding: 14px 18px 16px;
+  border-radius: 16px;
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.brief__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.brief__title {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-3);
+}
+.brief__text {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.55;
+  white-space: pre-wrap;
+  color: var(--ink);
+}
+
+/* 7 / 8 · Line and dot (#/demo/toc): a thin line with a dot the line bends around. */
+.tocdemo :is(.tocv--dot, .tocv--dotc) {
+  --row: 44px;
+  gap: 0;
+  padding: 12px 0;
+}
+.tocdemo :is(.tocv--dot, .tocv--dotc) .ptoc__item {
+  height: var(--row);
+  padding: 0 4px 0 38px;
+  font-size: 15px;
+  color: var(--text-3);
+}
+.tocdemo :is(.tocv--dot, .tocv--dotc) .ptoc__item:hover {
+  color: var(--text-2);
+}
+.tocdemo :is(.tocv--dot, .tocv--dotc) .ptoc__item.is-active {
+  background: none;
+  color: var(--ink);
+}
+.tocdemo .tocv--dotc .ptoc__item.is-active {
+  color: var(--cobalt);
+}
+.tocv__line {
+  position: absolute;
+  left: 0;
+  top: 0;
+  pointer-events: none;
+  -webkit-mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
+  mask-image: linear-gradient(180deg, transparent, #000 10%, #000 90%, transparent);
+}
+.tocv__line path {
+  stroke: var(--line-strong);
+  stroke-width: 1;
+  transition: d 0.35s var(--ease);
+}
+.tocv__line circle {
+  fill: var(--ink);
+  transition: cy 0.35s var(--ease);
+}
+.tocdemo .tocv--dotc .tocv__line circle {
+  fill: var(--cobalt);
+}
+
+/* ---- Proposal contents: line and dot (picked on #/demo/toc, 8; aligned with the tabs on #/demo/toc-align, C) ----
+   A barely-there grey line, a Cobalt dot for the section in view, the line bending round it. */
+:root[data-theme='sand'] .proposal__side .ptoc--line .ptoc__list {
+  position: relative;
+  padding: 12px 0;
+}
+:root[data-theme='sand'] .proposal__side .ptoc--line .ptoc__item {
+  height: 44px;
+  padding: 0 4px 0 38px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+:root[data-theme='sand'] .proposal__side .ptoc--line .ptoc__item:hover {
+  color: var(--ink);
+}
+/* As the tabs: the active item is Ink and Cobalt lives only in the marker (the tabs' underline). */
+:root[data-theme='sand'] .proposal__side .ptoc--line .ptoc__item.is-active {
+  color: var(--ink);
+}
+:root[data-theme='sand'] .proposal__side .ptoc--line .ptoc__item.is-active .ptoc__count {
+  color: var(--ink);
+}
+/* The heading is a quiet caption (like "Your request"), not tracked capitals. */
+:root[data-theme='sand'] .proposal__side .ptoc--line .ptoc__title {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-3);
+}
+.ptoc--line .tocv__line circle {
+  fill: var(--cobalt);
+}
+
+/* ---- Scope & deliverables as blocks (after a feature grid) ------------------------------------
+   Each block: an icon, the title, what it is, then the deliverables. An outline, no fill. */
+:root[data-theme='sand'] .proposal__doc .scope {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 16px;
+}
+:root[data-theme='sand'] .proposal__doc .scope__item {
+  display: flex;
+  flex-direction: column;
+  padding: 20px 22px 22px;
+  border-radius: 16px;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.scope__icon {
+  display: flex;
+  margin-bottom: 18px;
+  color: var(--text-2);
+}
+:root[data-theme='sand'] .proposal__doc .scope__item p {
+  margin: 0;
+}
+/* Title and description sit close together. */
+:root[data-theme='sand'] .proposal__doc .scope__item .scope__title {
+  line-height: 1.35;
+}
+
+/* ---- Demo: proposal approved (#/demo/approved) ------------------------------------------------
+   Eleven looks for the decision card once approved, each with a short motion that echoes the
+   time ring. Base styles are the END state; keyframes only describe where it starts, so with
+   reduced motion the finished card is simply shown. Brand roles: Cobalt = human, Ember = the
+   spark / AI, Noor only as glow and glass, Doto for numbers, mono for labels. */
+.apddemo__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+  gap: 16px;
+  padding: 8px 0 48px;
+  align-items: start;
+}
+.apd__stage {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  margin-top: 14px;
+  padding: 30px 26px 48px;
+  border-radius: 18px;
+  background: #f8f6f2;
+}
+.apd__replay {
+  position: absolute;
+  right: 16px;
+  bottom: 12px;
+}
+.apddemo .apd__ref {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ember);
+}
+.apd__card {
+  position: relative;
+  width: min(100%, 360px);
+  padding: 20px 24px 22px;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.apd__label {
+  margin-bottom: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ember);
+}
+.apd__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.apd__row--start {
+  align-items: flex-start;
+  justify-content: flex-start;
+}
+.apd__total {
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.apd__meta {
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.apd__who {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.apd__who b {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.apd__who em {
+  font-style: normal;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.apd__spark path {
+  fill: currentColor;
+}
+
+/* 1 · The hourglass counts to kick-off */
+.apd__obj {
+  position: relative;
+  flex: none;
+}
+.apd__badge {
+  position: absolute;
+  right: -2px;
+  bottom: 0;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  color: #ffffff;
+  background: var(--cobalt);
+  box-shadow: 0 0 0 3px #ffffff;
+  animation: apd-pop 0.5s cubic-bezier(0.3, 0.7, 0.4, 1) 1.1s both;
+}
+@keyframes apd-pop {
+  from {
+    transform: scale(0);
+    opacity: 0;
+  }
+}
+
+/* 2 · The ring closes, the spark lights */
+.apd__ring {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 84px;
+  height: 84px;
+}
+.apd__ring-svg {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+.apd__ring-track {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 3;
+}
+.apd__ring-arc {
+  fill: none;
+  stroke: var(--cobalt);
+  stroke-width: 3;
+  stroke-linecap: round;
+  stroke-dasharray: 276.5;
+  stroke-dashoffset: 0;
+  animation: apd-draw 1s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+@keyframes apd-draw {
+  from {
+    stroke-dashoffset: 276.5;
+  }
+}
+.apd__glow {
+  position: absolute;
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232, 80, 31, 0.45), rgba(30, 59, 214, 0.25) 55%, transparent 72%);
+  filter: blur(5px);
+  animation: apd-glow-in 1s ease-out 0.8s both, apd-breath 5s ease-in-out 1.8s infinite;
+}
+.apd__ignite {
+  position: relative;
+  color: var(--ink);
+  animation: apd-ignite 0.6s cubic-bezier(0.3, 0.7, 0.4, 1) 0.8s both;
+}
+@keyframes apd-glow-in {
+  from {
+    opacity: 0;
+    transform: scale(0.4);
+  }
+}
+@keyframes apd-breath {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.9;
+  }
+}
+@keyframes apd-ignite {
+  from {
+    transform: scale(0.3) rotate(-90deg);
+    opacity: 0;
+  }
+}
+
+/* 3 · Switch on the spark */
+.apd__toggle {
+  position: relative;
+  flex: none;
+  width: 88px;
+  height: 46px;
+  border-radius: 23px;
+  background: var(--control-fill);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.apd__toggle-fill {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(30, 59, 214, 0.92), rgba(160, 80, 200, 0.85) 55%, rgba(232, 80, 31, 0.92));
+  box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.5), 0 12px 22px -10px rgba(30, 59, 214, 0.5), 0 16px 24px -12px rgba(232, 80, 31, 0.45);
+  animation: apd-fade 0.7s ease 0.15s both;
+}
+.apd__knob {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  color: #ffffff;
+  background: radial-gradient(circle at 35% 30%, #ff8a5c, var(--ember) 60%, #b83a12);
+  box-shadow: 0 4px 10px -3px rgba(0, 0, 0, 0.35);
+  transform: translateX(42px);
+  animation: apd-slide 0.75s cubic-bezier(0.3, 0.7, 0.4, 1) 0.15s both;
+}
+@keyframes apd-slide {
+  from {
+    transform: translateX(0);
+  }
+}
+@keyframes apd-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+/* 4 · Glass seal */
+.apd__seal {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  overflow: hidden;
+  color: #ffffff;
+  background: linear-gradient(135deg, var(--cobalt), #9a5bd8 55%, var(--ember));
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.55), inset 0 8px 14px rgba(255, 255, 255, 0.28), 0 14px 26px -10px rgba(30, 59, 214, 0.6), 0 18px 28px -14px rgba(232, 80, 31, 0.5);
+  animation: apd-drop 0.7s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+.apd__seal::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.6) 50%, transparent 65%);
+  transform: translateX(120%);
+  animation: apd-sheen 1.1s ease 0.5s both;
+}
+@keyframes apd-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-14px) scale(0.88);
+  }
+}
+@keyframes apd-sheen {
+  from {
+    transform: translateX(-120%);
+  }
+}
+
+/* 5 · Human + AI = Spark */
+.apd__merge {
+  position: relative;
+  height: 64px;
+  margin: 2px 0 10px;
+}
+.apd__dot {
+  position: absolute;
+  top: 23px;
+  left: calc(50% - 9px);
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  opacity: 0;
+}
+.apd__dot--a {
+  background: var(--cobalt);
+  animation: apd-a 1.1s cubic-bezier(0.5, 0, 0.3, 1) both;
+}
+.apd__dot--b {
+  background: var(--ember);
+  animation: apd-b 1.1s cubic-bezier(0.5, 0, 0.3, 1) both;
+}
+@keyframes apd-a {
+  0% {
+    transform: translateX(-120px);
+    opacity: 1;
+  }
+  80% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0) scale(0.3);
+    opacity: 0;
+  }
+}
+@keyframes apd-b {
+  0% {
+    transform: translateX(120px);
+    opacity: 1;
+  }
+  80% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(0) scale(0.3);
+    opacity: 0;
+  }
+}
+.apd__flash {
+  position: absolute;
+  top: 2px;
+  left: calc(50% - 30px);
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(232, 80, 31, 0.5), rgba(30, 59, 214, 0.3) 50%, transparent 70%);
+  opacity: 0.3;
+  animation: apd-flash 1.3s ease 0.9s both;
+}
+@keyframes apd-flash {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  30% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.3;
+    transform: scale(1.3);
+  }
+}
+.apd__born {
+  position: absolute;
+  top: 11px;
+  left: calc(50% - 21px);
+  color: var(--ink);
+  animation: apd-ignite 0.6s cubic-bezier(0.3, 0.7, 0.4, 1) 1s both;
+}
+
+/* 6 · Noor underneath */
+.apd__card--glow::after {
+  content: '';
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: -18px;
+  height: 44px;
+  z-index: -1;
+  border-radius: 50%;
+  background: linear-gradient(90deg in oklch, var(--cobalt), var(--ember));
+  filter: blur(26px);
+  opacity: 0.6;
+  animation: apd-rise 1.2s ease both, apd-breath2 6s ease-in-out 1.2s infinite;
+}
+@keyframes apd-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px) scaleX(0.7);
+  }
+}
+@keyframes apd-breath2 {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.85;
+  }
+}
+.apd__total--doto {
+  font-family: var(--font-num);
+  font-weight: 800;
+  font-size: 40px;
+  letter-spacing: 0.02em;
+}
+
+/* 7 · Viewfinder lock */
+.apd__vf {
+  position: relative;
+  display: block;
+  padding: 24px 26px 18px;
+}
+.apd__corner {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 0 solid var(--ink);
+}
+.apd__corner--tl {
+  top: 0;
+  left: 0;
+  border-top-width: 2px;
+  border-left-width: 2px;
+  animation: apd-lock-tl 0.8s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+.apd__corner--tr {
+  top: 0;
+  right: 0;
+  border-top-width: 2px;
+  border-right-width: 2px;
+  animation: apd-lock-tr 0.8s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+.apd__corner--bl {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 2px;
+  border-left-width: 2px;
+  animation: apd-lock-bl 0.8s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+.apd__corner--br {
+  bottom: 0;
+  right: 0;
+  border-bottom-width: 2px;
+  border-right-width: 2px;
+  animation: apd-lock-br 0.8s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+@keyframes apd-lock-tl {
+  from {
+    transform: translate(-16px, -16px);
+    opacity: 0;
+  }
+}
+@keyframes apd-lock-tr {
+  from {
+    transform: translate(16px, -16px);
+    opacity: 0;
+  }
+}
+@keyframes apd-lock-bl {
+  from {
+    transform: translate(-16px, 16px);
+    opacity: 0;
+  }
+}
+@keyframes apd-lock-br {
+  from {
+    transform: translate(16px, 16px);
+    opacity: 0;
+  }
+}
+.apd__tag {
+  position: absolute;
+  top: -9px;
+  left: 22px;
+  display: grid;
+  height: 16px;
+  padding: 0 8px;
+  background: #ffffff;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  line-height: 16px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.apd__tag-a,
+.apd__tag-b {
+  grid-area: 1 / 1;
+  white-space: nowrap;
+}
+.apd__tag-a {
+  opacity: 0;
+  animation: apd-tag-out 0.3s ease 1s both;
+}
+.apd__tag-b {
+  animation: apd-fade 0.3s ease 1.1s both;
+}
+@keyframes apd-tag-out {
+  from {
+    opacity: 1;
+  }
+}
+.apd__blink {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 6px;
+  background: var(--ember);
+  animation: apd-blink 0.5s steps(2) 1.3s 2 both;
+}
+@keyframes apd-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* 8 · Squares fill up to Approved */
+.apd__steps {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 2px 0 16px;
+}
+.apd__sq {
+  width: 16px;
+  height: 16px;
+  border-radius: 4px;
+  background: var(--control-fill);
+}
+.apd__sq.is-on {
+  background: var(--cobalt);
+  animation: apd-fill 0.35s ease calc(var(--k) * 0.16s) both;
+}
+.apd__sq.is-now {
+  box-shadow: 0 0 0 3px rgba(30, 59, 214, 0.15), 0 8px 16px -4px rgba(232, 80, 31, 0.55);
+  animation: apd-fill 0.35s ease calc(var(--k) * 0.16s) both, apd-pulse 2.6s ease-in-out 1.2s infinite;
+}
+@keyframes apd-fill {
+  from {
+    background: rgba(14, 17, 22, 0.06);
+    transform: scale(0.75);
+  }
+}
+@keyframes apd-pulse {
+  50% {
+    box-shadow: 0 0 0 6px rgba(30, 59, 214, 0.06), 0 8px 20px -4px rgba(232, 80, 31, 0.75);
+  }
+}
+.apd__count {
+  margin-left: 12px;
+  font-family: var(--font-num);
+  font-weight: 800;
+  font-size: 22px;
+  color: var(--ink);
+}
+.apd__count em {
+  font-style: normal;
+  font-size: 14px;
+  color: var(--text-3);
+}
+
+/* 9 · Editorial rows with the spark sign */
+.apd__card--edit {
+  padding: 18px 24px 8px;
+}
+.apd__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.apd__top .apd__label {
+  margin: 0;
+}
+.apd__stamp {
+  color: var(--ember);
+  animation: apd-stamp 0.6s cubic-bezier(0.3, 0.7, 0.4, 1) 0.2s both;
+}
+@keyframes apd-stamp {
+  from {
+    transform: scale(0) rotate(90deg);
+    opacity: 0;
+  }
+}
+.apd__coords {
+  margin-top: 4px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+}
+.apd__rows {
+  list-style: none;
+  margin: 14px 0 0;
+  padding: 0;
+}
+.apd__rows li {
+  display: grid;
+  grid-template-columns: 34px 82px 1fr;
+  align-items: baseline;
+  gap: 8px;
+  padding: 11px 0;
+  border-top: 1px solid var(--line-strong);
+  animation: apd-up 0.45s ease calc(0.5s + var(--k) * 0.14s) both;
+}
+.apd__rows b {
+  font-family: var(--font-num);
+  font-weight: 800;
+  font-size: 15px;
+  color: var(--ember);
+}
+.apd__rows span {
+  font-size: 12.5px;
+  color: var(--text-3);
+}
+.apd__rows em {
+  font-style: normal;
+  font-size: 13.5px;
+  color: var(--ink);
+}
+@keyframes apd-up {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+
+/* 10 · Statement band */
+.apd__card--band {
+  overflow: hidden;
+  background: var(--cobalt);
+  box-shadow: 0 20px 30px -16px rgba(30, 59, 214, 0.6), 0 26px 34px -18px rgba(232, 80, 31, 0.4);
+}
+.apd__card--band::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(110deg, transparent 30%, rgba(255, 255, 255, 0.28) 50%, transparent 70%);
+  transform: translateX(110%);
+  animation: apd-band 1.5s ease 0.3s both;
+  pointer-events: none;
+}
+@keyframes apd-band {
+  from {
+    transform: translateX(-110%);
+  }
+}
+.apd__label--on {
+  color: rgba(255, 255, 255, 0.78);
+}
+.apd__say {
+  font-size: 28px;
+  line-height: 1.15;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  color: #ffffff;
+}
+.apd__meta--on {
+  margin-top: 14px;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* 11 · Quiet */
+.apd__quietcheck {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 26px;
+  height: 26px;
+  margin-top: 3px;
+  border-radius: 50%;
+  color: var(--cobalt);
+  box-shadow: inset 0 0 0 1.5px rgba(30, 59, 214, 0.4);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .apd *,
+  .apd *::before,
+  .apd *::after {
+    animation: none !important;
+  }
+}
+
+/* The Open proposal button inside the proposal card: on card hover the edge gets stronger instead
+   of the whole button brightening into the white card. */
+:root[data-theme='sand'] .prop-card:hover .prop-card__cta.btn--secondary {
+  filter: none;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.5), 0 1px 2px rgba(14, 17, 22, 0.08);
+}
+
+/* 11 · Noor glass card: light inside frosted glass, never a flat gradient fill (brand book p. 11). */
+.apd__card--noor {
+  overflow: hidden;
+  padding: 0;
+  background: #eef2fb;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.9), 0 20px 30px -18px rgba(30, 59, 214, 0.5), 0 26px 34px -20px rgba(232, 80, 31, 0.4);
+}
+.apd__cloud {
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(60% 55% at 14% 90%, rgba(30, 59, 214, 1), transparent 72%),
+    radial-gradient(62% 55% at 90% 94%, rgba(232, 80, 31, 0.95), transparent 72%),
+    radial-gradient(48% 46% at 56% 70%, rgba(179, 90, 216, 0.7), transparent 74%),
+    radial-gradient(56% 44% at 72% 2%, rgba(200, 216, 240, 0.95), transparent 70%);
+  filter: blur(14px);
+  animation: apd-cloud-in 1.4s ease both, apd-drift 12s ease-in-out 1.4s infinite alternate;
+}
+@keyframes apd-cloud-in {
+  from {
+    opacity: 0;
+    transform: translateY(24px) scale(0.9);
+  }
+}
+@keyframes apd-drift {
+  to {
+    transform: translate(-3%, -4%) scale(1.06);
+  }
+}
+/* The grain, and a milky veil that is clearer towards the bottom where the light is. */
+.apd__card--noor::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0) 55%),
+    url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  opacity: 0.55;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+.apd__noor-in {
+  position: relative;
+  z-index: 2;
+  padding: 20px 24px 22px;
+}
+.apd__say--ink {
+  color: var(--ink);
+  animation: apd-up 0.6s ease 0.3s both;
+}
+.apd__plate {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: 36px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  font-size: 12.5px;
+  color: rgba(14, 17, 22, 0.72);
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 8px 18px -10px rgba(14, 17, 22, 0.25);
+  animation: apd-up 0.6s ease 0.7s both;
+}
+.apd__plate b {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+}
+
+/* 12 · Gradient widget: a saturated rounded card, glass disc with the spark, white type. */
+.apd__card--widget {
+  overflow: hidden;
+  padding: 24px 24px 22px;
+  min-height: 236px;
+  border-radius: 32px;
+  color: #ffffff;
+  background:
+    radial-gradient(70% 55% at 100% 100%, rgba(232, 80, 31, 0.55), transparent 70%),
+    linear-gradient(165deg, #2a46e0 0%, #5b4fe6 48%, #8f7cf0 100%);
+  background-size: 140% 140%, 100% 100%;
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.22), 0 26px 34px -18px rgba(30, 59, 214, 0.65), 0 30px 36px -22px rgba(232, 80, 31, 0.4);
+  transform: rotate(-2.5deg);
+  animation: apd-tilt 0.8s cubic-bezier(0.3, 0.7, 0.4, 1) both, apd-shift 9s ease-in-out 0.8s infinite alternate;
+}
+@keyframes apd-tilt {
+  from {
+    opacity: 0;
+    transform: translateY(16px) rotate(2deg) scale(0.96);
+  }
+}
+@keyframes apd-shift {
+  to {
+    background-position: 20% 20%, 0 0;
+  }
+}
+.apd__card--widget::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 .5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  opacity: 0.35;
+  mix-blend-mode: soft-light;
+  pointer-events: none;
+}
+.apd__orb {
+  display: grid;
+  place-items: center;
+  width: 66px;
+  height: 66px;
+  border-radius: 50%;
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: inset 0 0 0 1.5px rgba(255, 255, 255, 0.45), inset 0 7px 12px rgba(255, 255, 255, 0.25), 0 10px 18px -8px rgba(14, 17, 22, 0.35);
+  animation: apd-pop 0.6s cubic-bezier(0.3, 0.7, 0.4, 1) 0.25s both;
+}
+.apd__wtitle {
+  margin-top: 26px;
+  font-size: 28px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+  animation: apd-up 0.5s ease 0.5s both;
+}
+.apd__wsub {
+  margin-top: 4px;
+  max-width: 260px;
+  font-size: 18px;
+  line-height: 1.3;
+  color: rgba(255, 255, 255, 0.85);
+  animation: apd-up 0.5s ease 0.65s both;
+}
+.apd__wmeta {
+  margin-top: 18px;
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.7);
+  animation: apd-up 0.5s ease 0.8s both;
+}
+
+
+/* ---- Demo: thumb in the brand's material (#/demo/thumb) -------------------------------------- */
+.thddemo__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(440px, 1fr));
+  gap: 16px;
+  padding: 8px 0 48px;
+  align-items: start;
+}
+.thd__stage {
+  position: relative;
+  isolation: isolate;
+  display: grid;
+  place-items: center;
+  min-height: 260px;
+  margin-top: 14px;
+  padding: 28px 26px 40px;
+  border-radius: 18px;
+  background: #f8f6f2;
+}
+.thd__play {
+  display: grid;
+  place-items: center;
+}
+.thddemo .thd__ref {
+  display: block;
+  margin-bottom: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ember);
+}
+.thd__svg {
+  display: block;
+  overflow: visible;
+}
+.thd__sizes {
+  display: flex;
+  align-items: flex-end;
+  gap: 28px;
+}
+.thd__replay {
+  position: absolute;
+  right: 16px;
+  bottom: 12px;
+}
+/* 7 · Viewfinder */
+.thd__vf {
+  position: relative;
+  padding: 26px 40px 20px;
+}
+.thd__c {
+  position: absolute;
+  width: 18px;
+  height: 18px;
+  border: 0 solid var(--ink);
+}
+.thd__c--tl {
+  top: 0;
+  left: 0;
+  border-top-width: 2px;
+  border-left-width: 2px;
+}
+.thd__c--tr {
+  top: 0;
+  right: 0;
+  border-top-width: 2px;
+  border-right-width: 2px;
+}
+.thd__c--bl {
+  bottom: 0;
+  left: 0;
+  border-bottom-width: 2px;
+  border-left-width: 2px;
+}
+.thd__c--br {
+  bottom: 0;
+  right: 0;
+  border-bottom-width: 2px;
+  border-right-width: 2px;
+}
+.thd__tag {
+  position: absolute;
+  top: -10px;
+  left: 20px;
+  padding: 2px 9px;
+  border-radius: 4px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #ffffff;
+  background: var(--ink);
+}
+/* 8 · Moving: rises and settles, a band of light crosses once, the light underneath breathes. */
+.thd__rise {
+  animation: thd-rise 0.9s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+@keyframes thd-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.92) rotate(-5deg);
+  }
+}
+.thd__sheen {
+  animation: thd-sheen 1.3s ease 0.55s both;
+}
+@keyframes thd-sheen {
+  from {
+    transform: translateX(0) skewX(-18deg);
+  }
+  to {
+    transform: translateX(46px) skewX(-18deg);
+  }
+}
+.thd__under {
+  animation: thd-breath 5s ease-in-out 1.2s infinite;
+}
+@keyframes thd-breath {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 0.95;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .thd *,
+  .thd__rise,
+  .thd__sheen,
+  .thd__under {
+    animation: none !important;
+  }
+}
+
+/* ---- "Insights to build on": the same outlined blocks as Scope & deliverables ------------------
+   No fill, a hairline outline, a bare grey icon (not a tinted tile), title and text. */
+:root[data-theme='sand'] .insights {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+}
+:root[data-theme='sand'] .insight {
+  gap: 0;
+  padding: 20px 22px 22px;
+  border-radius: 16px;
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+:root[data-theme='sand'] .insight__icon {
+  width: auto;
+  height: auto;
+  justify-content: start;
+  margin-bottom: 18px;
+  border-radius: 0;
+  color: var(--text-2);
+  background: none;
+}
+:root[data-theme='sand'] .insight__title {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--ink);
+}
+:root[data-theme='sand'] .insight__body {
+  margin-top: 8px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+
+/* ---- Demo: hourglass in the thumb's glass material (#/demo/hourglass) ---------------------------
+   Layout and the viewfinder come from the thumb demo (.thd*); only the ring and the labels are new. */
+.hgd__ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.hgd__ring > svg:first-child {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+.hgd__track {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 2.4;
+}
+.hgd__arc {
+  fill: none;
+  stroke: var(--cobalt);
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  animation: hgd-draw 1.2s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+@keyframes hgd-draw {
+  from {
+    stroke-dashoffset: 276.5;
+  }
+}
+.hgd__states {
+  align-items: flex-end;
+  gap: 36px;
+}
+.hgd__states > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.hgd__states span {
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+
+/* ---- Demo: decision card as one family (#/demo/states) ----------------------------------------- */
+.dstdemo__grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  padding: 8px 0 48px;
+}
+.dst__stage {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 14px;
+  padding: 28px 26px;
+  border-radius: 18px;
+  background: #f8f6f2;
+}
+.dst__card {
+  display: flex;
+  flex-direction: column;
+  width: 330px;
+  max-width: 100%;
+  padding: 16px 18px 18px;
+  border-radius: 22px;
+  color: var(--ink);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.dst__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.dst__label {
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: -0.005em;
+}
+.dst__label--sub {
+  margin-top: 4px;
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-2);
+}
+.dst__eyebrow {
+  margin-top: 2px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.dst__amount {
+  margin-top: 14px;
+  font-size: 30px;
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+}
+.dst__facts {
+  display: flex;
+  gap: 28px;
+  margin: 12px 0 0;
+}
+.dst__facts dt {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.dst__facts dd {
+  margin: 2px 0 0;
+  font-size: 14px;
+  font-weight: 500;
+}
+.dst__btns {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+.dst__btnrow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+.dst__btn {
+  height: 38px;
+  border-radius: 999px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line-strong), 0 1px 2px rgba(14, 17, 22, 0.06);
+}
+.dst__btn--main {
+  height: 42px;
+  color: #ffffff;
+  background: var(--cobalt);
+  box-shadow: 0 8px 16px -8px rgba(30, 59, 214, 0.7);
+}
+
+/* A · the state lives in the tile */
+.dst--a .is-approved .dst__label,
+.dst--d .is-approved .dst__label--sub {
+  color: #138a5a;
+}
+/* B (id d) · the ring in both states */
+.dst__ringrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.dst__ringrow .dst__amount {
+  margin-top: 6px;
+}
+.dst__ringrow .dst__eyebrow {
+  margin-top: 0;
+  font-size: 9.5px;
+  white-space: nowrap;
+}
+.dst__ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 84px;
+  height: 84px;
+}
+.dst__ring svg:first-child {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+.dst__track {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 3;
+}
+.dst__arc {
+  fill: none;
+  stroke: var(--cobalt);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.dst--d .is-approved .dst__arc {
+  stroke: #19a672;
+}
+/* C (id b) · two gradient cards */
+.dst--b .dst__card {
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 10px 18px -12px rgba(30, 59, 214, 0.5);
+}
+.dst--b .is-awaiting {
+  background: radial-gradient(70% 55% at 100% 100%, rgba(200, 216, 240, 0.4), transparent 70%), linear-gradient(155deg, #1e3bd6 0%, #3f4be0 55%, #6d5cf0 100%);
+}
+.dst--b .is-approved {
+  background: radial-gradient(70% 55% at 100% 100%, rgba(190, 255, 220, 0.38), transparent 70%), linear-gradient(155deg, #0a6a47 0%, #148a5f 55%, #27a874 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.2), 0 10px 18px -12px rgba(19, 138, 90, 0.55);
+}
+.dst--b .dst__eyebrow,
+.dst--b .dst__facts dt,
+.dst--e .dst__eyebrow,
+.dst--e .dst__facts dt {
+  color: rgba(255, 255, 255, 0.68);
+}
+.dst--b .dst__btn,
+.dst--e .dst__btn {
+  color: #ffffff;
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4);
+}
+.dst--b .dst__btn--main {
+  color: #1e3bd6;
+  background: #ffffff;
+  box-shadow: 0 8px 16px -8px rgba(14, 17, 22, 0.5);
+}
+/* D (id c) · soft tinted cards */
+.dst--c .is-awaiting {
+  background: rgba(30, 59, 214, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(30, 59, 214, 0.22);
+}
+.dst--c .is-approved {
+  background: rgba(19, 138, 90, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(19, 138, 90, 0.3);
+}
+.dst--c .is-approved .dst__label {
+  color: #0d6e4a;
+}
+/* E · Ink cards */
+.dst--e .dst__card {
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.1), 0 14px 24px -14px rgba(14, 17, 22, 0.6);
+}
+.dst--e .is-awaiting {
+  background: radial-gradient(75% 65% at 100% 0%, rgba(30, 59, 214, 0.6), transparent 70%), #0e1116;
+}
+.dst--e .is-approved {
+  background: radial-gradient(75% 65% at 100% 0%, rgba(25, 166, 114, 0.55), transparent 70%), #0e1116;
+}
+.dst--e .dst__btn--main {
+  background: var(--cobalt);
+  box-shadow: 0 8px 16px -8px rgba(30, 59, 214, 0.8);
+}
+
+/* ---- Toggle: a white knob in both states ------------------------------------------------------
+   The off knob was dark grey and read as a hole in the track. Now the knob is always white with a
+   soft shadow, and the off track is a clearer light grey so the white knob shows. */
+:root[data-theme='sand'] .switch {
+  background: rgba(14, 17, 22, 0.16);
+}
+:root[data-theme='sand'] .switch.is-on {
+  background: var(--accent);
+}
+:root[data-theme='sand'] .switch__thumb {
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(14, 17, 22, 0.3), 0 0 0 0.5px rgba(14, 17, 22, 0.06);
+}
+
+/* ---- Decision card: the ring with a glass tile (picked on #/demo/states, B) ---------------------
+   Waiting: the ring runs on in Cobalt around the hourglass tile. Approved: the ring is closed in
+   green around the thumb tile, and the card's corner glow turns green. The hourglass turns over now
+   and then. */
+.st__tile {
+  display: block;
+  flex: none;
+}
+.st__tile {
+  overflow: visible;
+}
+/* The like, once: the thumb is pressed down, springs up and settles. */
+.st__like {
+  transform-box: fill-box;
+  transform-origin: 25% 85%;
+  animation: st-like 1.5s cubic-bezier(0.4, 0, 0.2, 1) 0.4s both;
+}
+@keyframes st-like {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  22% {
+    transform: scale(0.84) rotate(10deg);
+  }
+  45% {
+    transform: scale(1.16) rotate(-14deg);
+  }
+  68% {
+    transform: scale(1) rotate(-3deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
+}
+/* Success, once. The thumb starts alone, with no ring. It is pressed and springs up; thin green
+   circles pulse outwards from it; then the ring settles around it and stays. Everything ends in
+   the finished card, and nothing repeats. */
+.st__ring > .st__tile {
+  position: relative;
+  z-index: 1;
+}
+.st__wave {
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: 50%;
+  background: conic-gradient(from 0deg, #19a672, #9af0c6, #19a672, #0a6a47, #19a672);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  filter: drop-shadow(0 0 3px rgba(25, 166, 114, 0.45));
+  opacity: 0;
+  pointer-events: none;
+  animation: st-wave 1.6s cubic-bezier(0.2, 0.6, 0.3, 1) calc(0.95s + var(--i) * 0.26s) both;
+}
+@keyframes st-wave {
+  0% {
+    opacity: 0;
+    transform: scale(0.5);
+  }
+  18% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.2);
+  }
+}
+.st__halo {
+  position: absolute;
+  inset: -6%;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(25, 166, 114, 0.32), rgba(154, 240, 198, 0.16) 52%, transparent 70%);
+  filter: blur(8px);
+  opacity: 0;
+  pointer-events: none;
+  animation: st-halo 2.2s ease-out 0.95s both;
+}
+@keyframes st-halo {
+  0% {
+    opacity: 0;
+    transform: scale(0.6);
+  }
+  30% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.1);
+  }
+}
+/* The finished ring appears last, once the circles have gone out. */
+.st__ring.is-celebrate .st__ringsvg {
+  animation: st-ring-in 0.7s ease-out 1.85s both;
+}
+@keyframes st-ring-in {
+  from {
+    opacity: 0;
+    transform: rotate(-90deg) scale(0.86);
+  }
+}
+.st__ring.is-celebrate .st__arc {
+  animation: none;
+}
+.st__flip {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: st-flip 8s cubic-bezier(0.5, 0, 0.3, 1) 1.6s infinite;
+}
+/* Hold, turn over, hold, turn over again: the hourglass runs again and again. */
+@keyframes st-flip {
+  0%,
+  36% {
+    transform: rotate(0deg);
+  }
+  48%,
+  86% {
+    transform: rotate(180deg);
+  }
+  98%,
+  100% {
+    transform: rotate(360deg);
+  }
+}
+.st__ring {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+}
+.st__ringsvg {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+.st__track {
+  fill: none;
+  stroke: var(--line-strong);
+  stroke-width: 2.2;
+}
+.st__arc {
+  fill: none;
+  stroke: var(--cobalt);
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  animation: st-draw 1.2s cubic-bezier(0.3, 0.7, 0.4, 1) both;
+}
+.st__ring.is-green .st__arc {
+  stroke: #19a672;
+}
+@keyframes st-draw {
+  from {
+    stroke-dashoffset: var(--c);
+  }
+}
+.decision__meta--ok {
+  font-weight: 500;
+  color: #138a5a;
+}
+:root[data-theme='sand'] .proposal__side .decision.decision--timed.decision--ok {
+  --glow-a: rgba(25, 166, 114, 0.2);
+  --glow-b: rgba(154, 240, 198, 0.22);
+}
+@media (prefers-reduced-motion: reduce) {
+  .st__flip,
+  .st__like,
+  .st__wave,
+  .st__halo,
+  .st__arc {
+    animation: none !important;
+  }
+}
+
+/* ---- Demo: the menu next to the tabs (#/demo/toc-align) ------------------------------------- */
+.taldemo__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 16px;
+  padding: 8px 0 48px;
+  align-items: start;
+}
+.tal__stage {
+  margin-top: 14px;
+  padding: 24px 26px 26px;
+  border-radius: 18px;
+  background: #f8f6f2;
+}
+.tal__tabs {
+  margin-bottom: 26px;
+}
+.tal__cap {
+  margin-bottom: 8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.tal__title {
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.tal__list {
+  position: relative;
+  padding: 12px 0;
+}
+.tal__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  height: var(--row);
+  padding: 0 4px 0 38px;
+  text-align: left;
+  font-size: 15px;
+  font-weight: 400;
+  color: var(--text-3);
+  transition: color 0.15s;
+}
+.tal__item:hover {
+  color: var(--text-2);
+}
+.tal__item.is-active {
+  color: var(--cobalt);
+}
+.tal__count {
+  font-size: 13px;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.tal__toc .tocv__line circle {
+  fill: var(--cobalt);
+}
+/* A · the tabs' type */
+.tal--a .tal__item,
+.tal--b .tal__item,
+.tal--c .tal__item,
+.tal--d .tal__item {
+  font-size: 14px;
+  font-weight: 500;
+}
+/* B · Ink text, Cobalt only in the marker, the tabs' greys */
+.tal--b .tal__item,
+.tal--c .tal__item,
+.tal--d .tal__item {
+  color: var(--text-2);
+}
+.tal--b .tal__item.is-active,
+.tal--c .tal__item.is-active,
+.tal--d .tal__item.is-active {
+  color: var(--ink);
+}
+/* C · a quiet heading */
+.tal--c .tal__title,
+.tal--d .tal__title {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+  color: var(--text-3);
 }

@@ -3,7 +3,7 @@ import { ArrowLeft, Calendar, FileText, LayoutGrid, List, Search, Upload, UserRo
 import { FluidOrb } from '../../components/ui/FluidOrb';
 import { personById, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
-import { Badge, Button, EmptyState, Input, PageHeader, Progress, Segmented, Skeleton } from '../../components/ui/primitives';
+import { Button, cx, EmptyState, Input, PageHeader, Progress, Segmented, Skeleton } from '../../components/ui/primitives';
 import { DocThumb, FileIcon, FolderTile, folderHue, kindLabel } from '../../components/domain';
 import { useToast } from '../../components/ui/toast';
 import { FilterMenu } from '../../components/ui/overlay';
@@ -352,20 +352,15 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
 }
 
 /** Approval state of a file Spark shared for review. */
+/** A file's review state, in the request status colours (amber when it's on you). */
 function ReviewBadge({ doc, className }: { doc: Doc; className?: string }) {
   const st = doc.review?.status;
   if (!st) return null;
-  if (st === 'open')
-    return (
-      <Badge tone="warning" className={className}>
-        Needs approval
-      </Badge>
-    );
-  if (st === 'approved')
-    return (
-      <Badge tone="positive" className={className}>
-        Approved
-      </Badge>
-    );
-  return <Badge className={className}>Changes requested</Badge>;
+  const [mod, label] = st === 'open' ? ['you', 'Needs approval'] : st === 'approved' ? ['approved', 'Approved'] : ['changes_requested', 'Changes requested'];
+  return (
+    <span className={cx('rstatus', `rstatus--${mod}`, className)}>
+      <span className="rstatus__dot" />
+      {label}
+    </span>
+  );
 }

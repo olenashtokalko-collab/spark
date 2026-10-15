@@ -1,15 +1,28 @@
 import { useEffect, useRef, useState } from 'react';
-import { CircleAlert, Download, MessageSquare, RotateCcw, ShieldCheck, Check, PenLine, X } from 'lucide-react';
+import { ArrowLeft, CalendarDays, CircleAlert, Compass, Download, Layers, Lightbulb, ListChecks, MessageSquare, Package, Palette, Printer, RotateCcw, ShieldCheck, Check, PenLine, X } from 'lucide-react';
 import { canApprove, latestProposal, personById, proposalTotal, proposalWeeks, useStore } from '../../state/store';
 import { Avatar, Button, Checkbox, EmptyState, Field, Select, Textarea, cx } from '../../components/ui/primitives';
 import { Dialog } from '../../components/ui/overlay';
-import { DeadlineHourglass, deadline } from '../../components/ui/DeadlineHourglass';
-import { ProposalStatus } from '../../components/domain';
+import { deadline } from '../../components/ui/DeadlineHourglass';
 import { FluidOrb } from '../../components/ui/FluidOrb';
+import { StateRing } from '../../components/ui/StateTile';
 import { useToast } from '../../components/ui/toast';
 import { aed, addDays, fmtDate, fmtDateTime, fmtRelative } from '../../lib/format';
 import { navigate } from '../../lib/router';
 import type { Proposal } from '../../data/types';
+
+// One icon per scope block, picked from what the block is called (first match wins).
+const SCOPE_ICONS: [RegExp, typeof Package][] = [
+  [/concept|idea|visual|creative/i, Lightbulb],
+  [/develop|build|system|format/i, Layers],
+  [/print|production|artwork|packag/i, Printer],
+  [/position|strateg|research|audit|insight/i, Compass],
+  [/content|copy|social|post/i, PenLine],
+  [/identity|brand|design|guideline/i, Palette],
+  [/event|launch|campaign|activation/i, CalendarDays],
+  [/manage|plan|coordinat|report/i, ListChecks],
+];
+const scopeIcon = (title: string) => SCOPE_ICONS.find(([re]) => re.test(title))?.[1] ?? Package;
 
 const SECTIONS = ['Summary', 'Objectives', 'Scope & deliverables', 'Timeline', 'Investment', 'Terms'] as const;
 type Section = (typeof SECTIONS)[number];
@@ -37,6 +50,7 @@ export function ProposalView({ requestId }: { requestId: string }) {
   const weeks = proposalWeeks(p);
   const sender = personById(state, p.sentBy);
   const decider = p.decision ? personById(state, p.decision.by) : undefined;
+  const approvedView = p.status === 'approved' && !!p.decision && !!decider;
   const awaiting = p.status === 'awaiting';
   const mayDecide = awaiting && canApprove(me);
   const timed = awaiting ? deadline(p.sentAt, p.validUntil) : null;
@@ -101,32 +115,24 @@ export function ProposalView({ requestId }: { requestId: string }) {
 
   return (
     <div className="proposal">
-      {/* After documentation pages: a breadcrumb, the status and title, and a row
-          of tools over a hairline. */}
-      <nav className="crumbs" aria-label="Breadcrumb">
-        <a href="#/requests">Requests</a>
-        <span aria-hidden>/</span>
-        <a href={`#/requests/${req.id}`}>{req.title}</a>
-        <span aria-hidden>/</span>
-        <span aria-current="page">Proposal{p.version > 1 ? ` v${p.version}` : ''}</span>
-      </nav>
+      {/* After documentation pages: a back link, the title, and a row of tools over a hairline. */}
+      <a className="back" href={`#/requests/${req.id}`}>
+        <ArrowLeft size={15} /> Back
+      </a>
 
       <div className="proposal__layout">
         <article className="proposal__doc">
           <header className="proposal__head">
-            <div className="proposal__eyebrow">
-              <ProposalStatus status={p.status} />
-            </div>
             <h1 className="proposal__title">{p.title}</h1>
             <div className="proposal__tools">
               <span className="proposal__tool proposal__tool--status">
                 Sent {fmtDate(p.sentAt)} by {sender.name.split(' ')[0]}
               </span>
-              <button className="proposal__tool" onClick={askSpark}>
-                <FluidOrb size={16} /> Ask Spark about this proposal
+              <button className="proposal__tool" onClick={askSpark} data-tip="Open chat">
+                <FluidOrb size={14} /> Ask Spark about this proposal
               </button>
               <button className="proposal__tool" onClick={exportProposal}>
-                <Download size={15} /> Download
+                <Download size={14} /> Download
               </button>
             </div>
           </header>
@@ -151,16 +157,18 @@ export function ProposalView({ requestId }: { requestId: string }) {
           <section className="psec" id="sec-scope">
             {sectionHead('Scope & deliverables')}
             <div className="scope">
-              {p.scope.map((s, i) => (
-                <div key={i} className="scope__item">
-                  <div className="scope__num">{i + 1}.</div>
-                  <div>
+              {p.scope.map((s, i) => {
+                const Icon = scopeIcon(s.title);
+                return (
+                  <div key={i} className="scope__item">
+                    <span className="scope__icon">
+                      <Icon size={22} strokeWidth={1.7} />
+                    </span>
                     <div className="scope__title">{s.title}</div>
                     {s.detail && <p className="muted">{s.detail}</p>}
-                    <div className="scope__del">{s.deliverables.filter(Boolean).join(' · ')}</div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
             {sectionComposer('Scope & deliverables')}
           </section>
@@ -238,7 +246,23 @@ export function ProposalView({ requestId }: { requestId: string }) {
         </article>
 
         <aside className="proposal__side">
-          <section className={cx('decision', timed && 'decision--timed', timed?.urgent && 'is-urgent')}>
+          <section className={cx('decision', (timed || approvedView) && 'decision--timed', timed?.urgent && 'is-urgent', approvedView && 'decision--ok')}>
+            {approvedView ? (
+              // Approved (picked on #/demo/states, B): the same card as while waiting, the ring closed in green around the thumb.
+              <>
+                <div className="decision__eyebrow">
+                  <span>Decided {fmtDate(p.decision!.at)}</span>
+                </div>
+                <div className="decision__timed">
+                  <div>
+                    <div className="decision__total">{aed(total)}</div>
+                    <div className="decision__meta decision__meta--ok">Approved</div>
+                  </div>
+                  <StateRing used={1} glyph="thumb" tone="green" celebrate />
+                </div>
+              </>
+            ) : (
+            <>
             {timed ? (
               // Awaiting a decision: how long is left, the total, and the deadline hourglass.
               <>
@@ -250,7 +274,7 @@ export function ProposalView({ requestId }: { requestId: string }) {
                     <div className="decision__total">{aed(total)}</div>
                     <div className="decision__meta">Waiting for your decision</div>
                   </div>
-                  <DeadlineHourglass progress={timed.progress} daysLeft={timed.daysLeft} />
+                  <StateRing used={timed.progress} glyph="hourglass" tone="cobalt" />
                 </div>
               </>
             ) : (
@@ -298,6 +322,8 @@ export function ProposalView({ requestId }: { requestId: string }) {
                 </div>
               </div>
             )}
+            </>
+            )}
           </section>
           <ProposalToc
             items={[
@@ -332,6 +358,10 @@ export function ProposalView({ requestId }: { requestId: string }) {
 
 // The decision itself shows in the side card; the banner only says a revised
 // proposal is on its way after the client asked for changes.
+const TOC_ROW = 44; // keep in step with the row height in brand-a.css (.ptoc--line)
+const TOC_PAD = 12;
+const LINE_X = 10;
+
 /** In-page contents for the proposal: jumps to a section and marks the one
  *  in view, so the document stays whole while still easy to move around. */
 function ProposalToc({ items }: { items: { id: string; label: string; count?: number }[] }) {
@@ -364,27 +394,40 @@ function ProposalToc({ items }: { items: { id: string; label: string; count?: nu
     };
   }, [items.map((i) => i.id).join()]); // eslint-disable-line react-hooks/exhaustive-deps
 
+  // Geometry of the line: rows are 44px, with room for the line above the first and below the last.
+  const idx = Math.max(0, items.findIndex((i) => i.id === active));
+  const lineH = items.length * TOC_ROW + TOC_PAD * 2;
+  const dotY = TOC_PAD + (idx + 0.5) * TOC_ROW;
+  const linePath = `M ${LINE_X} 0 V ${Math.max(0, dotY - 28)} C ${LINE_X} ${dotY - 11}, ${LINE_X + 11} ${dotY - 17}, ${LINE_X + 11} ${dotY} C ${LINE_X + 11} ${dotY + 17}, ${LINE_X} ${dotY + 11}, ${LINE_X} ${Math.min(lineH, dotY + 28)} V ${lineH}`;
+
   return (
-    <nav className="ptoc" aria-label="Proposal sections">
+    <nav className="ptoc ptoc--line" aria-label="Proposal sections">
       <div className="ptoc__title">On this page</div>
-      {items.map((i) => (
-        <a
-          key={i.id}
-          href={`#sec-${i.id}`}
-          className={cx('ptoc__item', active === i.id && 'is-active')}
-          aria-current={active === i.id ? 'location' : undefined}
-          onClick={(e) => {
-            // Hash routing owns the URL hash, so scroll instead of following the link.
-            e.preventDefault();
-            hold.current = Date.now() + 900;
-            setActive(i.id);
-            document.getElementById(`sec-${i.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-          }}
-        >
-          {i.label}
-          {i.count ? <span className="ptoc__count">{i.count}</span> : null}
-        </a>
-      ))}
+      {/* A thin line with a dot for the section in view; the line bends round the dot. */}
+      <div className="ptoc__list">
+        <svg className="tocv__line" width="36" height={lineH} viewBox={`0 0 36 ${lineH}`} aria-hidden>
+          <path style={{ d: `path("${linePath}")` }} fill="none" />
+          <circle cx={LINE_X - 1} r="6.5" style={{ cy: `${dotY}px` }} />
+        </svg>
+        {items.map((i) => (
+          <a
+            key={i.id}
+            href={`#sec-${i.id}`}
+            className={cx('ptoc__item', active === i.id && 'is-active')}
+            aria-current={active === i.id ? 'location' : undefined}
+            onClick={(e) => {
+              // Hash routing owns the URL hash, so scroll instead of following the link.
+              e.preventDefault();
+              hold.current = Date.now() + 900;
+              setActive(i.id);
+              document.getElementById(`sec-${i.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }}
+          >
+            {i.label}
+            {i.count ? <span className="ptoc__count">{i.count}</span> : null}
+          </a>
+        ))}
+      </div>
     </nav>
   );
 }
@@ -402,7 +445,7 @@ function StatusBanner({ p }: { p: Proposal }) {
 function CommentList({ p }: { p: Proposal }) {
   const { state } = useStore();
   const list = p.comments;
-  if (list.length === 0) return <div className="pcomments__empty faint">No comments yet. Use “Comment” on any section to point at something specific.</div>;
+  if (list.length === 0) return <div className="pcomments__empty faint">No comments yet.</div>;
   return (
     <div className="pcomments__list">
       {list.map((c) => {

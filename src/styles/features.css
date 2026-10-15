@@ -149,6 +149,18 @@
 .filter-bar .segmented__item.is-active {
   background: var(--control-fill-hover);
 }
+/* Compact filters (32px): smaller than the 36px action buttons. They keep the translucent
+   grey fill (--control-fill), so they take on whatever sits behind them. */
+.filter-bar__search .input,
+.filter-bar .filter-btn,
+.filter-bar .segmented {
+  height: 32px;
+}
+.filter-bar .segmented__item {
+  height: 26px;
+  width: 32px;
+  border-radius: 7px;
+}
 .table {
   width: 100%;
   border-collapse: collapse;
@@ -761,8 +773,8 @@
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  height: 28px;
-  padding: 0 10px;
+  height: 30px;
+  padding: 0 11px 0 10px;
   border-radius: 999px;
   background: var(--surface-1);
   font-size: 13px;
@@ -1052,6 +1064,7 @@
   display: flex;
   gap: 6px;
   flex-wrap: wrap;
+  margin-bottom: 14px;
 }
 .review {
   display: flex;
@@ -1110,43 +1123,37 @@
   border-radius: var(--radius-xl);
   background: var(--surface-2);
 }
+/* Same table as Team (.ptable): full-width hairlines, a tinted header row, no inner padding. */
+.req-table {
+  padding: 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
 .req-row {
   display: grid;
   grid-template-columns: minmax(0, 2.6fr) 180px 170px 110px;
   align-items: center;
   gap: 16px;
-  padding: 14px 12px;
-  border-radius: var(--radius-md);
+  min-height: 60px;
+  padding: 0 16px;
   font-size: 14px;
   transition: background 0.15s;
 }
-/* Dividers are inset by the row radius so they stop where the rounded hover
-   and highlight backgrounds start, instead of curving at the ends. */
-.req-row:not(.req-row--head) {
-  position: relative;
-}
-.req-row + .req-row:not(.req-row--head)::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 12px;
-  right: 12px;
-  height: 1px;
-  background: var(--line);
-}
-.req-row--head + .req-row::before,
-.req-row:not(.req-row--head):hover::before,
-.req-row:not(.req-row--head):hover + .req-row::before {
-  display: none;
+.req-row + .req-row {
+  border-top: 1px solid var(--line);
 }
 .req-row:not(.req-row--head):hover {
   background: var(--surface-3);
 }
 .req-row--head {
-  padding-top: 8px;
-  padding-bottom: 10px;
+  min-height: 38px;
   font-size: 12px;
+  font-weight: 500;
   color: var(--text-3);
+  background: color-mix(in srgb, var(--text) 3%, transparent);
+}
+.req-row--head > :first-child {
+  color: var(--text-2);
 }
 .req-row__main {
   display: flex;
@@ -1753,17 +1760,6 @@
 .proposal__head {
   padding-bottom: 16px;
 }
-.proposal__eyebrow {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 10px;
-  min-height: 34px;
-  font-size: 13px;
-}
-.proposal__eyebrow .segmented {
-  margin-left: auto;
-}
 /* Same scale as the request title: sentence case, not display caps. */
 .proposal__title {
   font-size: 24px;
@@ -2231,7 +2227,14 @@ button.file-card:hover .file-card__thumb {
   position: absolute;
   left: 8px;
   top: 8px;
-  backdrop-filter: blur(8px);
+}
+/* On the artwork the pill needs an opaque fill (a tint over white) to stay legible on dark covers. */
+.rstatus.file-card__badge {
+  background: color-mix(in srgb, currentColor 12%, #ffffff);
+  box-shadow: 0 2px 8px -2px rgba(14, 17, 22, 0.35);
+}
+.rstatus--you.file-card__badge {
+  background: #fbe7bd;
 }
 .file-card__name {
   display: flex;
@@ -2307,7 +2310,10 @@ button.file-card:hover .file-card__thumb {
   display: flex;
   flex-direction: column;
   gap: 40px;
-  max-width: 920px;
+}
+/* The page header lives inside .team (it holds the invite button): keep its own spacing. */
+.team > .page-head {
+  margin-bottom: -40px;
 }
 /* Same rhythm as the settings rows. */
 .members {
@@ -2439,7 +2445,7 @@ button.file-card:hover .file-card__thumb {
 }
 .prefs__row {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 70px 70px;
+  grid-template-columns: minmax(0, 1fr) 70px;
   gap: 12px;
   align-items: center;
   justify-items: center;
@@ -2779,20 +2785,24 @@ button.file-card:hover .file-card__thumb {
   position: fixed;
   inset: var(--top-h) 0 0 var(--rail-w);
   z-index: 15;
+  border-top-left-radius: var(--radius-lg);
   background: var(--overlay);
   animation: fade-in 0.15s;
 }
 .history-flyout {
   position: fixed;
   top: var(--top-h);
-  bottom: 0;
-  left: var(--rail-w);
+  /* Lined up with the notifications panel, which opens 10px right of the rail
+     buttons and ends level with the bell: same left edge, width, foot and radius. */
+  bottom: 64px;
+  left: calc(var(--rail-w) - 4px);
   z-index: 16;
   display: flex;
   flex-direction: column;
-  width: min(320px, calc(100vw - var(--rail-w)));
+  width: min(380px, calc(100vw - var(--rail-w)));
   padding: 16px 12px;
-  border-radius: 0 var(--radius-lg) 0 0;
+  border-radius: var(--radius-md);
+  overflow: hidden;
   background: var(--surface-1);
   box-shadow: var(--shadow-pop);
   animation: fade-up 0.18s var(--ease);
@@ -5415,83 +5425,217 @@ body:has(.assistant) .app-bg__light {
   box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22), var(--cg-rest), 0 0 0 6px rgba(255, 255, 255, 0.03);
 }
 
-/* ---- Activity log (request page): one list after the task-log reference ---------------- */
-.alog {
-  display: flex;
-  flex-direction: column;
-  margin-bottom: 24px;
+/* ---- Request status (picked on #/demo/status, 2b) ---------------------------------------
+   Every status the same filled pill: text and dot in the status's colour, the
+   fill a tint of it. Amber for what's on the client; one colour per stage. */
+.rstatus {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  background: color-mix(in srgb, currentColor 11%, transparent);
 }
-.alog--log {
-  list-style: none;
-  gap: 18px;
+.rstatus__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
 }
-.alog-l {
+.rstatus--you {
+  color: #8a5a00;
+  background: #fbe7bd;
+}
+.rstatus--submitted {
+  color: #586579;
+}
+.rstatus--in_review {
+  color: var(--cobalt, #1e3bd6);
+}
+.rstatus--changes_requested {
+  color: #6c3fc4;
+}
+.rstatus--approved {
+  color: #0f7a6e;
+}
+.rstatus--in_progress {
+  color: #b2337f;
+}
+.rstatus--delivered {
+  color: #2b7a43;
+}
+.rstatus--declined {
+  color: #c2362f;
+}
+
+/* ---- People table (Team page) ------------------------------------------------------------
+   One table as on Requests; a tinted group header row per kind of person
+   (members, invitations), each with its own column labels. */
+.ptable {
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+  box-shadow: inset 0 0 0 1px var(--line);
+  overflow: hidden;
+}
+.ptable__group,
+.ptable__row {
   display: grid;
-  grid-template-columns: 22px minmax(0, 1fr);
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.8fr) 140px 96px 32px;
   column-gap: 14px;
-  align-items: start;
+  align-items: center;
+  gap: 16px;
+  padding: 0 16px;
 }
-.alog-l__mark {
-  display: grid;
-  place-items: center;
-  height: 22px;
+.ptable__group {
+  min-height: 38px;
+  font-size: 12px;
+  font-weight: 500;
   color: var(--text-3);
+  background: color-mix(in srgb, var(--text) 3%, transparent);
+  border-top: 1px solid var(--line);
 }
-.alog-l.is-proposal .alog-l__mark,
-.alog-l.tone-accent .alog-l__mark {
-  color: var(--cobalt, var(--accent));
+.ptable__group:first-child {
+  border-top: 0;
 }
-.alog-l.tone-positive .alog-l__mark {
-  color: var(--positive);
-}
-.alog-l.tone-negative .alog-l__mark {
-  color: var(--danger);
-}
-.alog-l__line {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: baseline;
-  gap: 4px 7px;
-  font-size: 14px;
-  line-height: 22px;
+.ptable__group > :first-child {
   color: var(--text-2);
 }
-.alog-l__line strong {
-  font-weight: 600;
-  color: var(--text);
+.ptable__row {
+  min-height: 60px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
 }
-.alog-l__line strong.is-positive {
-  color: var(--positive);
+.ptable__who {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
 }
-.alog-l__line strong.is-negative {
-  color: var(--danger);
+.ptable__who > span:last-child {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
 }
-.alog-l__line strong.is-accent {
-  color: var(--cobalt, var(--accent));
-}
-.alog-l__sep {
-  margin-right: 7px;
-  font-weight: 400;
-  color: var(--text-3);
-}
-.alog-l__who {
+.ptable__name {
   font-weight: 500;
   color: var(--text);
 }
-.alog-l__quote {
-  color: var(--text-2);
-}
-.alog-l__quote--block {
-  font-size: 14px;
-  line-height: 1.5;
-}
-.alog-l__by,
-.alog-l__when,
-.alog-l__dot {
-  font-size: 13px;
+.ptable__sub {
+  font-size: 12px;
   color: var(--text-3);
 }
-.alog-l__body > .alog-l__when {
-  display: block;
-  margin-top: 2px;
+.ptable__email {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--text-2);
+}
+.ptable__role {
+  font-size: 14px;
+  color: var(--text);
+}
+.ptable__acts {
+  display: flex;
+  justify-content: flex-end;
+}
+.ptable .select select {
+  height: 32px;
+}
+@media (max-width: 900px) {
+  .ptable__group,
+  .ptable__row {
+    grid-template-columns: minmax(0, 1fr) 130px 36px;
+  }
+  .ptable__group > :nth-child(2),
+  .ptable__group > :nth-child(4),
+  .ptable__row > :nth-child(2),
+  .ptable__row > :nth-child(4) {
+    display: none;
+  }
+}
+/* An invited person who hasn't joined: an empty dotted ring, faint initials. */
+.avatar.avatar--invited {
+  width: 32px;
+  height: 32px;
+  flex: none;
+  font-size: 11px;
+  color: var(--text-3);
+  background: none;
+  border: 1.5px dotted color-mix(in srgb, var(--text) 28%, transparent);
+}
+/* Roles in the people table: the status pill shape, a colour per role. The
+   owner's editable rows put the picker inside the pill with a chevron. */
+.role-pill--owner {
+  color: #3b3f8f;
+}
+.role-pill--member {
+  color: var(--cobalt, #1e3bd6);
+}
+.role-pill--viewer {
+  color: #586579;
+}
+.role-pill--edit {
+  position: relative;
+  gap: 4px;
+  padding-right: 8px;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+.role-pill--edit:hover {
+  background: color-mix(in srgb, currentColor 18%, transparent);
+}
+.role-pill--edit:focus-within {
+  box-shadow: 0 0 0 1.5px var(--accent);
+}
+.role-pill select {
+  appearance: none;
+  border: 0;
+  padding: 0;
+  font: inherit;
+  color: inherit;
+  background: none;
+  outline: none;
+  cursor: pointer;
+  field-sizing: content;
+}
+
+/* ---- Thinking line (while Spark works) ---------------------------------------------------
+   "Thinking 5s ›": what Spark is doing (shimmering), a live timer and a
+   chevron that opens the steps. Replaced by the answer once it streams. */
+.thinking {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 28px;
+  margin-bottom: 4px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.thinking:not(:disabled):hover {
+  color: var(--text);
+}
+.thinking:disabled {
+  cursor: default;
+}
+.thinking__label {
+  max-width: 420px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.thinking__time {
+  font-variant-numeric: tabular-nums;
+  color: var(--text-3);
+}
+.thinking__chev {
+  margin-left: -4px;
+  color: var(--text-3);
+  transition: transform 0.2s;
+}
+.thinking__chev.rot {
+  transform: rotate(180deg);
 }

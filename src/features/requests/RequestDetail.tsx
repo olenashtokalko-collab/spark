@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, BadgeCheck, Check, CircleDot, CircleX, Clock, Eye, FileText, Hammer, Lightbulb, MessageSquare, PackageCheck, Paperclip, PenLine, Plus, ScanSearch, Send, TrendingUp, TriangleAlert } from 'lucide-react';
+import { ArrowLeft, BadgeCheck, Check, CircleDot, ChevronDown, CircleX, Clock, Eye, FileText, Hammer, Lightbulb, MessageSquare, PackageCheck, Paperclip, PenLine, Plus, ScanSearch, Send, TrendingUp, TriangleAlert } from 'lucide-react';
 import { latestProposal, personById, proposalTotal, proposalWeeks, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { Avatar, Button, EmptyState, Tabs, Textarea, cx } from '../../components/ui/primitives';
@@ -88,7 +88,7 @@ export function RequestDetail({ id }: { id: string }) {
           <header className="req-head">
             <div className="req-head__top">
               <span className="mono faint">{r.id}</span>
-              <RequestStatus status={r.status} />
+              <RequestStatus status={r.status} onClient={r.nextStep?.onClient} />
             </div>
             <h1 className="req-head__title">{r.title}</h1>
           </header>
@@ -97,6 +97,67 @@ export function RequestDetail({ id }: { id: string }) {
 
           {tab === 'overview' && (
             <div className="req-tab">
+              {draft !== null ? (
+                <section className="block brief">
+                  <div className="brief__head">
+                    <h2 className="brief__title">Your request</h2>
+                  </div>
+                  <div className="brief-edit">
+                    <Textarea
+                      rows={5}
+                      value={draft}
+                      onChange={(e) => setDraft(e.target.value)}
+                      placeholder="The deliverable, who it’s for, and any must-haves."
+                      aria-label="What you need from Spark"
+                      data-autofocus
+                      autoFocus
+                      onKeyDown={(e) => {
+                        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) saveBrief();
+                        if (e.key === 'Escape') setDraft(null);
+                      }}
+                    />
+                    <div className="comment-box__bar">
+                      <div className="brief-edit__actions">
+                        <Button size="sm" variant="ghost" onClick={() => setDraft(null)}>
+                          Cancel
+                        </Button>
+                        <Button size="sm" variant="primary" disabled={!draft.trim()} onClick={saveBrief}>
+                          Save
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                </section>
+              ) : ask ? (
+                <section className="block brief">
+                  <div className="brief__head">
+                    <h2 className="brief__title">Your request</h2>
+                    {canEditBrief && (
+                      <button className="link-btn" onClick={() => setDraft(ask)}>
+                        <PenLine size={13} /> Edit
+                      </button>
+                    )}
+                  </div>
+                  <div className="brief__text">{ask}</div>
+                </section>
+              ) : (
+                canEditBrief && (
+                  <div className="ask-empty">
+                    <PenLine size={15} />
+                    <div>
+                      <div className="ask-empty__title">Tell us what you need</div>
+                      <div className="faint">
+                        The deliverable, audience and any must-haves
+                        {r.nextStep ? `, so the review on ${fmtDate(r.nextStep.date, { weekday: true })} has what it needs.` : '.'}
+                      </div>
+                    </div>
+                    <Button size="sm" onClick={() => setDraft('')}>
+                      Add details
+                    </Button>
+                  </div>
+                )
+              )}
+
               {p && (
                 <a className="prop-card" href={`#/requests/${r.id}/proposal`}>
                   <div className="prop-card__head">
@@ -131,71 +192,10 @@ export function RequestDetail({ id }: { id: string }) {
                 </a>
               )}
 
-              {draft !== null ? (
-                <section className="block">
-                  <h2 className="block__title">Your request</h2>
-                  <div className="brief-edit">
-                    <Textarea
-                      rows={5}
-                      value={draft}
-                      onChange={(e) => setDraft(e.target.value)}
-                      placeholder="The deliverable, who it’s for, and any must-haves."
-                      aria-label="What you need from Spark"
-                      data-autofocus
-                      autoFocus
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) saveBrief();
-                        if (e.key === 'Escape') setDraft(null);
-                      }}
-                    />
-                    <div className="comment-box__bar">
-                      <div className="brief-edit__actions">
-                        <Button size="sm" variant="ghost" onClick={() => setDraft(null)}>
-                          Cancel
-                        </Button>
-                        <Button size="sm" variant="primary" disabled={!draft.trim()} onClick={saveBrief}>
-                          Save
-                        </Button>
-                      </div>
-                    </div>
-                  </div>
-                </section>
-              ) : ask ? (
-                <section className="block">
-                  <div className="block__head">
-                    <h2 className="block__title">Your request</h2>
-                    {canEditBrief && (
-                      <button className="link-btn link-btn--quiet" onClick={() => setDraft(ask)}>
-                        <PenLine size={13} /> Edit
-                      </button>
-                    )}
-                  </div>
-                  <p className="block__text">{ask}</p>
-                </section>
-              ) : (
-                canEditBrief && (
-                  <div className="ask-empty">
-                    <PenLine size={15} />
-                    <div>
-                      <div className="ask-empty__title">Tell us what you need</div>
-                      <div className="faint">
-                        The deliverable, audience and any must-haves
-                        {r.nextStep ? `, so the review on ${fmtDate(r.nextStep.date, { weekday: true })} has what it needs.` : '.'}
-                      </div>
-                    </div>
-                    <Button size="sm" onClick={() => setDraft('')}>
-                      Add details
-                    </Button>
-                  </div>
-                )
-              )}
-
               {findings && findings.length > 0 && (
                 <section className="block">
                   <div className="block__head">
-                    <h2 className="block__title">
-                      <Lightbulb size={14} /> Insights to build on <span className="block__count">· {findings.length}</span>
-                    </h2>
+                    <h2 className="block__title">Insights to build on</h2>
                   </div>
                   <div className="insights">
                     {findings.map((f) => {
@@ -203,7 +203,7 @@ export function RequestDetail({ id }: { id: string }) {
                       return (
                         <div key={f.title} className={`insight insight--${f.tone}`}>
                           <span className="insight__icon">
-                            <I size={16} />
+                            <I size={22} strokeWidth={1.7} />
                           </span>
                           <div className="insight__title">{f.title}</div>
                           <div className="insight__body">{f.body}</div>
@@ -256,7 +256,7 @@ export function RequestDetail({ id }: { id: string }) {
 
           {tab === 'activity' && (
             <div className="req-tab">
-              <ActivityLog items={r.activity} />
+              <ActivityLog items={r.activity} requestId={r.id} />
               <div className="comment-box">
                 <Avatar person={me} size={28} />
                 <div className="comment-box__field">
@@ -329,13 +329,12 @@ export function StatusCard({ r }: { r: WorkRequest }) {
   const idx = stageIndex(r.status);
   const declined = r.status === 'declined';
   const done = r.status === 'delivered';
-  const since = [...r.activity].reverse().find((a) => a.kind !== 'comment' && a.kind !== 'file')?.at ?? r.createdAt;
 
   return (
     <section className="side-card stg stg--discs" aria-label="Stages">
       {/* The status is named once, in the page header; this card shows the path. */}
       <h3 className="side-card__title">
-        Stages <span className="block__count status-card__step">{declined ? 'Closed at proposal' : done ? 'All stages complete' : `Step ${idx + 1} of ${STAGES.length}`}</span>
+        Stages <span className="block__count status-card__step">{declined ? 'Closed at proposal' : done ? 'All stages complete' : `${idx + 1} of ${STAGES.length}`}</span>
       </h3>
       <ol className="stg__list">
         {STAGES.map((s, i) => {
@@ -351,18 +350,15 @@ export function StatusCard({ r }: { r: WorkRequest }) {
                 <div className="stg__info">{st === 'declined' ? 'The proposal was declined and the request closed.' : STAGE_INFO[s]}</div>
                 {st === 'current' && (
                   <>
-                    <div className="stg__when">Started {fmtRelative(since)}</div>
                     {r.nextStep && (
                       // The one place a deadline shows: amber when it waits on the client.
-                      <div className={cx('stg__due', r.nextStep.onClient && 'is-on-you')}>
+                      // One line; the step's name stays as the tooltip.
+                      <div className={cx('stg__due', r.nextStep.onClient && 'is-on-you')} title={r.nextStep.label}>
                         <Clock size={14} />
-                        <span>
-                          <span className="stg__due-what">{r.nextStep.label}</span>
-                          <span className="stg__due-when">
-                            {r.nextStep.onClient
-                              ? `Due ${fmtDate(r.nextStep.date, { weekday: true })} · ${dueLabel(r.nextStep.date).replace(/^due /, '')}`
-                              : `Expected by ${fmtDate(r.nextStep.date, { weekday: true })}`}
-                          </span>
+                        <span className="stg__due-when">
+                          {r.nextStep.onClient
+                            ? `Due ${fmtDate(r.nextStep.date, { weekday: true })} · ${dueLabel(r.nextStep.date).replace(/^due /, '')}`
+                            : `Expected by ${fmtDate(r.nextStep.date, { weekday: true })}`}
                         </span>
                       </div>
                     )}
@@ -381,7 +377,7 @@ export function StatusCard({ r }: { r: WorkRequest }) {
 // One line per event: an icon, the change with its facts in bold, "by" whom and
 // when. Comments and decision notes are quoted.
 
-type Chip = { text: string; tone?: 'accent' | 'positive' | 'negative' | 'neutral'; icon?: typeof Check; mono?: boolean };
+export type Chip = { text: string; tone?: 'accent' | 'positive' | 'negative' | 'neutral'; icon?: typeof Check; mono?: boolean };
 
 const STAGE_FOR: Record<string, string> = {
   'started reviewing': 'In review',
@@ -389,7 +385,7 @@ const STAGE_FOR: Record<string, string> = {
 };
 
 /** Splits an activity's text into a verb, chips for the facts, and a quoted note. */
-function describe(a: Activity): { verb: string; chips: Chip[]; tail?: string; quote?: string; tone?: Chip['tone'] } {
+export function describe(a: Activity): { verb: string; chips: Chip[]; tail?: string; quote?: string; tone?: Chip['tone'] } {
   const quoted = a.text.match(/^(.*?): "(.*)"$/s);
   const text = quoted ? quoted[1] : a.text;
   const quote = quoted?.[2];
@@ -423,7 +419,7 @@ function describe(a: Activity): { verb: string; chips: Chip[]; tail?: string; qu
   return { verb: text, chips: [], quote };
 }
 
-const activityIcon: Record<Activity['kind'], typeof Check> = {
+export const activityIcon: Record<Activity['kind'], typeof Check> = {
   created: Plus,
   status: CircleDot,
   comment: MessageSquare,
@@ -432,58 +428,155 @@ const activityIcon: Record<Activity['kind'], typeof Check> = {
   file: Paperclip,
 };
 
-/** The activity tab (after the task-log reference, picked on #/demo/activity):
- *  one plain list, newest first; each line ends with "by" and the date, and
- *  comments are quoted with the date beneath. */
-export function ActivityLog({ items }: { items: Activity[] }) {
+// ---- Days, for grouping and for the time on each line (also used by #/demo/activity) ----
+
+const dayKey = (iso: string) => iso.slice(0, 10);
+const startOfDay = (iso: string) => new Date(dayKey(iso) + 'T00:00:00').getTime();
+const todayStart = () => new Date(new Date().toDateString()).getTime();
+
+export function dayLabel(iso: string) {
+  const diff = Math.round((todayStart() - startOfDay(iso)) / 86400000);
+  if (diff === 0) return 'Today';
+  if (diff === 1) return 'Yesterday';
+  return fmtDate(iso, { weekday: true });
+}
+
+/** Newest first, grouped by day. */
+export function byDay(items: Activity[]) {
+  const sorted = [...items].sort((a, b) => b.at.localeCompare(a.at));
+  const groups: { key: string; label: string; items: Activity[] }[] = [];
+  for (const a of sorted) {
+    const k = dayKey(a.at);
+    const g = groups.find((x) => x.key === k);
+    if (g) g.items.push(a);
+    else groups.push({ key: k, label: dayLabel(a.at), items: [a] });
+  }
+  return groups;
+}
+
+/** "4 h ago" for today; the day has its own heading, so earlier days show just the time. */
+export const whenLine = (a: Activity) => (startOfDay(a.at) === todayStart() ? fmtRelative(a.at) : fmtTime(a.at));
+
+// ---- The activity tab (picked on #/demo/activity, look 2) ------------------------------
+// One tight line per event, newest first, a rule between days, the older events folded.
+// What each thing looks like follows what it does everywhere else in the app:
+//   a status or decision  → the status pill (.rstatus), as in the header and the table
+//   a file                → the clickable file chip (.src-chip), as under a chat answer; it opens the file
+//   a fact (price, weeks) → the quiet tag (.req-row__type look), never clickable
+//   "n earlier activities"→ the quiet toggle (.steps-toggle), as on "Researched 4 steps"
+//   a person              → plain medium text; only links are underlined
+
+const FOLD_AFTER = 6; // events shown before the older ones fold
+
+// The stage a "started …" event moves the request away from.
+const FROM_STAGE: Record<string, string> = { 'In review': 'Submitted', 'In progress': 'Approved' };
+
+export function ActivityLog({ items, requestId }: { items: Activity[]; requestId: string }) {
+  const [open, setOpen] = useState(false);
+  const sorted = [...items].sort((a, b) => b.at.localeCompare(a.at));
+  const hidden = sorted.length - FOLD_AFTER;
+  const shown = open ? sorted : sorted.slice(0, FOLD_AFTER);
   return (
-    <ol className="alog alog--log">
-      {[...items].reverse().map((a) => (
-        <LogItem key={a.id} a={a} />
-      ))}
-    </ol>
+    <div className="axb">
+      {/* One list for the whole history: a single line joins every step, and each day is a
+          centred label on a rule, so the line runs on through the days. */}
+      <ol className="axb__list">
+        {byDay(shown).flatMap((g) => [
+          <li key={g.key} className="axb__daylabel" role="separator">
+            <span>{g.label}</span>
+          </li>,
+          ...g.items.map((a) => <LogItem key={a.id} a={a} requestId={requestId} />),
+        ])}
+      </ol>
+      {hidden > 0 && (
+        <button className="steps-toggle axb__fold" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
+          {open ? 'Show fewer' : `${hidden} earlier ${hidden === 1 ? 'activity' : 'activities'}`}
+          <ChevronDown size={13} className={cx(open && 'rot')} />
+        </button>
+      )}
+    </div>
   );
 }
 
-function LogItem({ a }: { a: Activity }) {
+/** The mark's icon: the same icons as the Stages card, so a step reads the same in both places. */
+function markIcon(a: Activity, declined: boolean) {
+  if (a.kind === 'created') return STAGE_ICONS[0];
+  if (a.kind === 'proposal') return STAGE_ICONS[2];
+  if (a.kind === 'comment') return MessageSquare;
+  if (a.kind === 'status') return /^delivered/.test(a.text) ? STAGE_ICONS[5] : a.text === 'started reviewing' ? STAGE_ICONS[1] : a.text === 'started work' ? STAGE_ICONS[4] : CircleDot;
+  if (a.kind === 'decision') return declined ? CircleX : /^approved/.test(a.text) ? STAGE_ICONS[3] : PenLine;
+  return Paperclip;
+}
+
+function LogItem({ a, requestId }: { a: Activity; requestId: string }) {
   const { state } = useStore();
+  const { openDoc } = useUI();
   const p = personById(state, a.by);
   const { verb, chips, tail, quote, tone } = describe(a);
-  const declined = a.kind === 'decision' && tone === 'negative';
-  const I = declined ? CircleX : activityIcon[a.kind];
   const comment = a.kind === 'comment';
-  const when = `${fmtDate(a.at)}, ${fmtTime(a.at)}`;
-  // Sentence case, the person last ("Proposal sent … by Spark"), as in the reference.
-  const phrase = a.kind === 'decision' ? 'proposal marked as' : verb === 'moved the request to' ? 'stage changed to' : verb;
-  const lead = phrase.charAt(0).toUpperCase() + phrase.slice(1);
+  const declined = a.kind === 'decision' && tone === 'negative';
+  const I = markIcon(a, declined);
+  const stage = a.kind === 'status' ? STAGE_FOR[a.text] : undefined;
+  const fileChip = chips.find((c) => c.icon === Paperclip);
+  const doc = fileChip ? state.docs.find((d) => d.name === fileChip.text) : undefined;
+  // The facts (price, weeks, a reason) are plain words; the file and the status are drawn in the sentence.
+  const facts = stage ? [] : chips.filter((c) => c !== fileChip && c.text !== 'Delivered' && !(a.kind === 'decision' && c.icon));
+  const decision = a.kind === 'decision' ? chips.find((c) => c.icon)?.text : undefined;
+  const showProposal = a.kind === 'proposal' || a.kind === 'decision';
   return (
-    <li className={cx('alog-l', `is-${a.kind}`, tone && `tone-${tone}`)}>
-      <span className="alog-l__mark">{comment ? <Avatar person={p} size={22} /> : <I size={16} strokeWidth={2} />}</span>
-      <div className="alog-l__body">
-        <div className="alog-l__line">
-          {comment ? (
-            <>
-              <span className="alog-l__who">{p.name} commented:</span>
-              <span className="alog-l__quote">“{a.text}”</span>
-            </>
-          ) : (
-            <>
-              <span>{lead}</span>
-              {chips.map((c, i) => (
-                <strong key={c.text} className={cx(c.tone && `is-${c.tone}`)}>
-                  {i > 0 && <span className="alog-l__sep">·</span>}
-                  {c.text}
-                </strong>
-              ))}
-              {tail && <span>{tail}</span>}
-              <span className="alog-l__by">by {p.name}</span>
-              <span className="alog-l__dot">•</span>
-              <span className="alog-l__when">{when}</span>
-            </>
-          )}
+    <li className={cx('axb__item', tone && `tone-${tone}`)}>
+      <span className="axb__mark">
+        <I size={15} strokeWidth={1.8} />
+      </span>
+      <div className="axb__body">
+        <div className="axb__line">
+          <div className="axb__sentence">
+            <span className="axb__who">{p.name}</span>
+            <span className="axb__text">
+              {comment && 'commented'}
+              {!comment && stage && (
+                <>
+                  moved the request from <span className="axb__obj">{FROM_STAGE[stage]}</span> to <span className="axb__obj">{stage}</span>
+                </>
+              )}
+              {!comment && !stage && decision && (
+                <>
+                  marked the proposal as <span className="axb__obj">{decision}</span>
+                </>
+              )}
+              {!comment && !stage && !decision && (
+                <>
+                  {verb}
+                  {fileChip && <> <span className="axb__obj">{fileChip.text}</span></>}
+                </>
+              )}
+              {facts.length > 0 && (
+                <>
+                  {decision ? ' · ' : ' '}
+                  {facts.map((c, i) => (
+                    <span key={c.text}>
+                      {i > 0 && ' · '}
+                      <span className="axb__obj">{c.text}</span>
+                    </span>
+                  ))}
+                </>
+              )}
+              {!comment && tail && ` ${tail}`}
+            </span>
+            {showProposal && (
+              <button className="link-btn axb__act" onClick={() => navigate(`/requests/${requestId}/proposal`)}>
+                See proposal
+              </button>
+            )}
+            {doc && (
+              <button className="link-btn axb__act" onClick={() => openDoc(doc.id)}>
+                Open file
+              </button>
+            )}
+          </div>
+          <span className="axb__when">{whenLine(a)}</span>
         </div>
-        {quote && !comment && <div className="alog-l__quote alog-l__quote--block">“{quote}”</div>}
-        {comment && <div className="alog-l__when">{when}</div>}
+        {(comment || quote) && <div className="axb__msg">{comment ? a.text : quote}</div>}
       </div>
     </li>
   );

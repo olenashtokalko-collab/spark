@@ -133,6 +133,7 @@ ol {
 }
 .link {
   color: var(--accent-text);
+  font-weight: 500;
 }
 .link:hover {
   text-decoration: underline;
@@ -144,6 +145,8 @@ ol {
   gap: 6px;
   color: var(--accent-text);
   font-size: 13px;
+  /* Text buttons and links are Medium everywhere (not the weight of what they sit in). */
+  font-weight: 500;
 }
 .link-btn:hover:not(:disabled) {
   text-decoration: underline;
@@ -332,7 +335,8 @@ kbd {
 
 .page-head {
   display: flex;
-  align-items: flex-end;
+  /* Actions sit centred on the title-and-description block, on every page. */
+  align-items: center;
   justify-content: space-between;
   gap: 24px;
   padding: 24px 0 40px;
@@ -1062,6 +1066,8 @@ kbd {
   padding: 0 10px;
   border-radius: 7px;
   font-size: 14px;
+  /* One line per item: the menu is sized to fit its labels. */
+  white-space: nowrap;
   color: var(--text);
   text-align: left;
   cursor: pointer;
@@ -1212,25 +1218,39 @@ kbd {
   flex: none;
 }
 
+/* Toasts drop in at the top centre, newest first, on a white card. */
 .toasts {
   position: fixed;
-  right: 20px;
-  bottom: 20px;
+  top: 16px;
+  left: 50%;
+  transform: translateX(-50%);
   z-index: 200;
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 8px;
-  width: min(380px, calc(100vw - 32px));
+  width: min(440px, calc(100vw - 32px));
 }
 .toast {
   display: flex;
   align-items: flex-start;
   gap: 10px;
+  width: 100%;
   padding: 12px 12px 12px 14px;
   border-radius: var(--radius-md);
-  background: var(--surface-2);
-  box-shadow: var(--shadow-pop);
-  animation: fade-up 0.2s var(--ease);
+  background: var(--surface-1);
+  box-shadow: 0 0 0 1px var(--line), var(--shadow-pop);
+  animation: toast-in 0.24s var(--ease);
+}
+@keyframes toast-in {
+  from {
+    opacity: 0;
+    transform: translateY(-8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
 }
 .toast__icon {
   flex: none;

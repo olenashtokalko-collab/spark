@@ -23,18 +23,35 @@ const VARIANTS = [
   { id: 'mono', name: '4 · Mono labels', note: 'After “Human mind · the input” (p. 12): uppercase mono labels; the section in view gets an Ink rule above it.' },
   { id: 'rail', name: '5 · Ink rail', note: 'A thin rail on the left; an Ink segment slides to the section in view. Quiet, like a scroll position.' },
   { id: 'noor', name: '6 · Noor progress', note: 'The light fills the rail from Cobalt to Ember down to the section in view: how far through the proposal you are.' },
+  { id: 'dot', name: '7 · Line and dot (reference)', note: 'After the reference: a thin line, grey labels, and a dot for the section in view that the line bends around. The dot slides when you click. The label in view is Ink.' },
+  { id: 'dotc', name: '8 · Line and dot in Cobalt', note: 'The same, in the product’s colour: a Cobalt dot, and the section in view in Cobalt as in today’s menu.' },
 ] as const;
+
+const ROW = 44; // row height of the two line-and-dot looks (matches --row below)
+const PAD = 12; // room for the line above the first and below the last row
 
 type VariantId = (typeof VARIANTS)[number]['id'];
 
 function Toc({ variant }: { variant: VariantId }) {
   const [active, setActive] = useState(0);
+  const dot = variant === 'dot' || variant === 'dotc';
+  // The line runs the full height and bends round the dot; the dot sits just left of it.
+  const H = ITEMS.length * ROW + PAD * 2;
+  const y = PAD + (active + 0.5) * ROW;
+  const x = 10;
+  const d = `M ${x} 0 V ${Math.max(0, y - 28)} C ${x} ${y - 11}, ${x + 11} ${y - 17}, ${x + 11} ${y} C ${x + 11} ${y + 17}, ${x} ${y + 11}, ${x} ${Math.min(H, y + 28)} V ${H}`;
   return (
     <nav
       className={cx('ptoc', 'tocv', `tocv--${variant}`)}
       style={{ ['--i' as string]: active, ['--n' as string]: ITEMS.length }}
       aria-label="Proposal sections"
     >
+      {dot && (
+        <svg className="tocv__line" width="36" height={H} viewBox={`0 0 36 ${H}`} aria-hidden>
+          <path style={{ d: `path("${d}")` }} fill="none" />
+          <circle cx={x - 1} r="6.5" style={{ cy: `${y}px` }} />
+        </svg>
+      )}
       {ITEMS.map((it, i) => (
         <a
           key={it.id}

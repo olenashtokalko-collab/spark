@@ -136,7 +136,7 @@ export function Requests() {
                   <span className="req-row__type">{r.type}</span>
                 </span>
                 <span role="cell">
-                  <RequestStatus status={r.status} />
+                  <RequestStatus status={r.status} onClient={r.nextStep?.onClient} />
                 </span>
                 <span role="cell" className="hide-sm mono muted">
                   {p ? aed(proposalTotal(p)) : '—'}

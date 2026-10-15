@@ -18,12 +18,15 @@ import { cx } from './primitives';
 export function FluidOrb({
   size = 200,
   active = false,
+  boost = false,
   still = false,
   glass,
   className,
 }: {
   size?: number;
   active?: boolean;
+  /** Spark at work: the light races (faster than `active`). */
+  boost?: boolean;
   still?: boolean;
   glass?: boolean;
   className?: string;
@@ -36,7 +39,7 @@ export function FluidOrb({
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
-    const o: Orb = { canvas, active, still, glass: isGlass, phase: Math.random() * 40, speed: active ? FAST : 1, drawn: false };
+    const o: Orb = { canvas, active, boost, still, glass: isGlass, phase: Math.random() * 40, speed: active ? FAST : 1, drawn: false };
     orb.current = o;
     return renderer()?.add(o);
   }, [still, isGlass]);
@@ -44,6 +47,9 @@ export function FluidOrb({
   useEffect(() => {
     if (orb.current) orb.current.active = active;
   }, [active]);
+  useEffect(() => {
+    if (orb.current) orb.current.boost = boost;
+  }, [boost]);
 
   return (
     <div
@@ -73,6 +79,7 @@ function useBrandTheme() {
 interface Orb {
   canvas: HTMLCanvasElement;
   active: boolean;
+  boost: boolean;
   still: boolean;
   glass: boolean;
   phase: number;
@@ -81,6 +88,7 @@ interface Orb {
 }
 
 const FAST = 2.6;
+const BOOST = 6;
 
 const VERT = `attribute vec2 a;void main(){gl_Position=vec4(a,0.,1.);}`;
 
@@ -274,7 +282,7 @@ function renderer() {
       }
       moving = true;
       // Ease the speed so the flow speeds up and settles smoothly.
-      o.speed += ((o.active ? FAST : 1) - o.speed) * Math.min(1, dt * 3);
+      o.speed += ((o.boost ? BOOST : o.active ? FAST : 1) - o.speed) * Math.min(1, dt * 3);
       o.phase += dt * o.speed;
       if (visible(o.canvas)) draw(o);
     }

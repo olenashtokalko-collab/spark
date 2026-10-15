@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
-import { Mail, MoreHorizontal, RefreshCw, Trash2, UserMinus, UserPlus, X, AlertTriangle } from 'lucide-react';
-import { useStore, type NotifKey } from '../../state/store';
-import { Avatar, Badge, Button, Field, PageHeader, Select, Switch, Textarea, cx } from '../../components/ui/primitives';
+import { ChevronDown, MoreHorizontal, RefreshCw, Trash2, UserMinus, UserPlus, X, AlertTriangle } from 'lucide-react';
+import { personById, useStore, type NotifKey } from '../../state/store';
+import { Avatar, Button, Field, PageHeader, Select, Switch, Textarea, cx } from '../../components/ui/primitives';
 import { Dialog, Menu } from '../../components/ui/overlay';
 import { useToast } from '../../components/ui/toast';
 import { fmtRelative } from '../../lib/format';
@@ -15,10 +15,7 @@ export const ROLE_INFO: Record<ClientRole, { label: string; desc: string }> = {
 
 export function TeamPage() {
   return (
-    <div>
-      <PageHeader title="Team" sub="Invite colleagues to this workspace. They see requests, proposals and documents. Chats stay private." />
-      <Team />
-    </div>
+    <Team />
   );
 }
 
@@ -31,6 +28,13 @@ export function Settings() {
   );
 }
 
+/** A display name guessed from an invite's email ("karim.nasser@…" → "Karim Nasser"). */
+const inviteName = (email: string) =>
+  email
+    .split('@')[0]
+    .replace(/[._-]+/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+
 function Team() {
   const { state, me, actions } = useStore();
   const toast = useToast();
@@ -41,117 +45,164 @@ function Team() {
 
   return (
     <div className="team">
-      <section>
-        <div className="section-head">
-          <h2 className="section-head__title">
-            {state.brand.name} <span className="section-head__meta">· {clients.length} members</span>
-          </h2>
-          {isOwner && (
+      {/* The invite button sits in the page header, as on Requests and Documents. */}
+      <PageHeader
+        title="Team"
+        sub="Invite colleagues to this workspace. They see requests, proposals and documents."
+        actions={
+          isOwner && (
             <Button variant="primary" icon={UserPlus} onClick={() => setInviting(true)}>
               Invite people
             </Button>
-          )}
-        </div>
-        <div className="members">
+          )
+        }
+      />
+      <section>
+        {/* One table, as on Requests: a group header row per kind of person
+            (members, then invitations), each with its own column labels. */}
+        <div className="ptable" role="table" aria-label="People">
+          <div className="ptable__group" role="row">
+            <span role="columnheader">Members</span>
+            <span role="columnheader">Email</span>
+            <span role="columnheader">Role</span>
+            <span role="columnheader">Status</span>
+            <span aria-hidden />
+          </div>
           {clients.map((p) => (
-            <div key={p.id} className="member">
-              <Avatar person={p} size={34} />
-              <div className="member__who">
-                <div className="member__name">
-                  {p.name} {p.id === me.id && <span className="faint">(you)</span>}
-                </div>
-                <div className="faint">
-                  {p.title} · {p.email}
-                </div>
-              </div>
-              {isOwner && p.id !== me.id ? (
-                <Select
-                  aria-label={`Role for ${p.name}`}
-                  value={p.role}
-                  onChange={(e) => {
-                    actions.changeRole(p.id, e.target.value as ClientRole);
-                    toast({ title: `${p.name.split(' ')[0]} is now ${ROLE_INFO[e.target.value as ClientRole].label.toLowerCase()}` });
-                  }}
-                  className="member__role"
-                >
-                  {(Object.keys(ROLE_INFO) as ClientRole[]).map((r) => (
-                    <option key={r} value={r}>
-                      {ROLE_INFO[r].label}
-                    </option>
-                  ))}
-                </Select>
-              ) : (
-                <Badge>{ROLE_INFO[p.role ?? 'member'].label}</Badge>
-              )}
-              {isOwner && p.id !== me.id ? (
-                <Menu
-                  width={200}
-                  trigger={({ toggle, ref }) => (
-                    <button ref={ref} className="btn btn--ghost btn--sm btn--icon" onClick={toggle} aria-label={`More for ${p.name}`}>
-                      <MoreHorizontal size={16} />
-                    </button>
-                  )}
-                  items={[{ label: 'Remove from workspace', icon: UserMinus, danger: true, onSelect: () => setRemoving(p) }]}
-                />
-              ) : (
-                <span className="member__spacer" />
-              )}
+            <div key={p.id} className="ptable__row" role="row">
+              <span role="cell" className="ptable__who">
+                <Avatar person={p} size={32} />
+                <span>
+                  <span className="ptable__name">
+                    {p.name} {p.id === me.id && <span className="faint">(you)</span>}
+                  </span>
+                  <span className="ptable__sub">{p.title}</span>
+                </span>
+              </span>
+              <span role="cell" className="ptable__email">
+                {p.email}
+              </span>
+              <span role="cell">
+                {isOwner && p.id !== me.id ? (
+                  // The status pill, with the role picker inside it.
+                  <label className={`rstatus role-pill role-pill--${p.role ?? 'member'} role-pill--edit`}>
+                    <select
+                      aria-label={`Role for ${p.name}`}
+                      value={p.role}
+                      onChange={(e) => {
+                        actions.changeRole(p.id, e.target.value as ClientRole);
+                        toast({ title: `${p.name.split(' ')[0]} is now ${ROLE_INFO[e.target.value as ClientRole].label.toLowerCase()}` });
+                      }}
+                    >
+                      {(Object.keys(ROLE_INFO) as ClientRole[]).map((r) => (
+                        <option key={r} value={r}>
+                          {ROLE_INFO[r].label}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown size={13} strokeWidth={2.2} aria-hidden />
+                  </label>
+                ) : (
+                  <span className={`rstatus role-pill role-pill--${p.role ?? 'member'}`}>{ROLE_INFO[p.role ?? 'member'].label}</span>
+                )}
+              </span>
+              <span role="cell">
+                <span className="rstatus rstatus--approved">
+                  <span className="rstatus__dot" />
+                  Active
+                </span>
+              </span>
+              <span role="cell" className="ptable__acts">
+                {isOwner && p.id !== me.id && (
+                  <Menu
+                    width={220}
+                    trigger={({ toggle, ref }) => (
+                      <button ref={ref} className="btn btn--ghost btn--sm btn--icon" onClick={toggle} aria-label={`More for ${p.name}`}>
+                        <MoreHorizontal size={16} />
+                      </button>
+                    )}
+                    items={[{ label: 'Remove from team', icon: UserMinus, danger: true, onSelect: () => setRemoving(p) }]}
+                  />
+                )}
+              </span>
             </div>
           ))}
-        </div>
 
-        {state.invitations.length > 0 && (
-          <>
-            <div className="eyebrow sub-eyebrow">Pending invitations</div>
-            <div className="members">
+          {state.invitations.length > 0 && (
+            <>
+              <div className="ptable__group" role="row">
+                <span role="columnheader">Invited</span>
+                <span role="columnheader">Email</span>
+                <span role="columnheader">Role</span>
+                <span role="columnheader">Status</span>
+                <span aria-hidden />
+              </div>
               {state.invitations.map((inv) => (
-                <div key={inv.id} className="member member--pending">
-                  <span className="avatar avatar--pending">
-                    <Mail size={15} />
+                <div key={inv.id} className="ptable__row" role="row">
+                  <span role="cell" className="ptable__who">
+                    {/* Not joined yet: an empty dotted ring with faint initials. */}
+                    <span className="avatar avatar--invited" aria-hidden>
+                      {inviteName(inv.email)
+                        .split(' ')
+                        .map((w) => w[0])
+                        .slice(0, 2)
+                        .join('')}
+                    </span>
+                    <span>
+                      <span className="ptable__name">{inviteName(inv.email)}</span>
+                      <span className="ptable__sub">
+                        Invited by {personById(state, inv.invitedBy).name.split(' ')[0]} · {fmtRelative(inv.invitedAt)}
+                      </span>
+                    </span>
                   </span>
-                  <div className="member__who">
-                    <div className="member__name">{inv.email}</div>
-                    <div className="faint">
-                      Invited {fmtRelative(inv.invitedAt)} · {ROLE_INFO[inv.role].label}
-                    </div>
-                  </div>
-                  <Badge tone="warning">Pending</Badge>
-                  {isOwner ? (
-                    <Menu
-                      width={200}
-                      trigger={({ toggle, ref }) => (
-                        <button ref={ref} className="btn btn--ghost btn--sm btn--icon" onClick={toggle} aria-label={`More for ${inv.email}`}>
-                          <MoreHorizontal size={16} />
-                        </button>
-                      )}
-                      items={[
-                        {
-                          label: 'Resend invitation',
-                          icon: RefreshCw,
-                          onSelect: () => {
-                            actions.resendInvite(inv.id);
-                            toast({ title: 'Invitation resent', body: inv.email });
+                  <span role="cell" className="ptable__email">
+                    {inv.email}
+                  </span>
+                  <span role="cell">
+                    <span className={`rstatus role-pill role-pill--${inv.role}`}>{ROLE_INFO[inv.role].label}</span>
+                  </span>
+                  <span role="cell">
+                    <span className="rstatus rstatus--you">
+                      <span className="rstatus__dot" />
+                      Pending
+                    </span>
+                  </span>
+                  <span role="cell" className="ptable__acts">
+                    {isOwner && (
+                      <Menu
+                        width={220}
+                        trigger={({ toggle, ref }) => (
+                          <button ref={ref} className="btn btn--ghost btn--sm btn--icon" onClick={toggle} aria-label={`More for ${inv.email}`}>
+                            <MoreHorizontal size={16} />
+                          </button>
+                        )}
+                        items={[
+                          {
+                            label: 'Resend invitation',
+                            icon: RefreshCw,
+                            onSelect: () => {
+                              actions.resendInvite(inv.id);
+                              toast({ title: 'Invitation resent', body: inv.email });
+                            },
                           },
-                        },
-                        {
-                          label: 'Revoke invitation',
-                          icon: Trash2,
-                          danger: true,
-                          onSelect: () => {
-                            actions.revokeInvite(inv.id);
-                            toast({ title: 'Invitation revoked', body: inv.email });
+                          {
+                            label: 'Revoke invitation',
+                            icon: Trash2,
+                            danger: true,
+                            onSelect: () => {
+                              actions.revokeInvite(inv.id);
+                              toast({ title: 'Invitation revoked', body: inv.email });
+                            },
                           },
-                        },
-                      ]}
-                    />
-                  ) : (
-                    <span className="member__spacer" />
-                  )}
+                        ]}
+                      />
+                    )}
+                  </span>
                 </div>
               ))}
-            </div>
-          </>
-        )}
+            </>
+          )}
+        </div>
       </section>
 
       <InviteDialog open={inviting} onClose={() => setInviting(false)} />
@@ -258,7 +309,7 @@ function InviteDialog({ open, onClose }: { open: boolean; onClose: () => void })
       open={open}
       onClose={onClose}
       icon={UserPlus}
-      title="Invite people to Brand Co."
+      title="Invite your team"
       description="They'll see this workspace: requests, proposals and documents. Chats stay private."
       footer={
         <>
@@ -272,7 +323,7 @@ function InviteDialog({ open, onClose }: { open: boolean; onClose: () => void })
       }
     >
       <div className="stack">
-        <Field label="Email addresses" htmlFor="inv-emails" error={error ?? undefined} hint="Press Enter or comma after each address.">
+        <Field label="Email" htmlFor="inv-emails" error={error ?? undefined}>
           <div className={cx('token-input', error && 'has-error')} onClick={() => inputRef.current?.focus()}>
             {emails.map((e) => (
               <span key={e} className={cx('token', e.split('@')[1] !== domain && 'token--ext')}>
@@ -347,11 +398,6 @@ function NotificationPrefs() {
   const { state, actions } = useStore();
   return (
     <div className="prefs">
-      <div className="prefs__row prefs__row--head">
-        <span />
-        <span>In app</span>
-        <span>Email</span>
-      </div>
       {PREF_ROWS.map((r) => (
         <div key={r.key} className="prefs__row">
           <div>
@@ -359,7 +405,6 @@ function NotificationPrefs() {
             <div className="faint">{r.desc}</div>
           </div>
           <Switch checked={state.prefs[r.key].inApp} onChange={(v) => actions.setPref(r.key, 'inApp', v)} label={`${r.label} in app`} />
-          <Switch checked={state.prefs[r.key].email} onChange={(v) => actions.setPref(r.key, 'email', v)} label={`${r.label} by email`} />
         </div>
       ))}
     </div>

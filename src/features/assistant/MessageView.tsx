@@ -1,4 +1,4 @@
-import { Fragment, useState } from 'react';
+import { Fragment, useEffect, useState } from 'react';
 import { AlertCircle, ArrowRight, Check, Heart, ChevronDown, Copy, Globe, Inbox, Loader2, RotateCcw, FileText } from 'lucide-react';
 import type { Message, Source, Visual } from '../../data/types';
 import { Button, cx } from '../../components/ui/primitives';
@@ -90,26 +90,21 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
 
   return (
     <div className="msg-ai">
+      {/* While Spark works its orb's light races and the logo's white spark twinkles in it. */}
       <div className={cx('msg-ai__avatar', working && 'is-working')}>
-        <FluidOrb size={30} active={working} />
+        <FluidOrb size={30} boost={working} />
+        {working && (
+          <svg className="orb-spark" viewBox="0 0 100 100" aria-hidden>
+            <path d="M50 4 C53 34 66 47 96 50 C66 53 53 66 50 96 C47 66 34 53 4 50 C34 47 47 34 50 4 Z" />
+          </svg>
+        )}
       </div>
       <div className="msg-ai__body">
         {/* Research steps: live while working, collapsible once done */}
         {msg.state === 'thinking' ? (
-          <div className="steps steps--live" aria-live="polite">
-            {(msg.steps ?? []).map((s, i, arr) => (
-              <div key={i} className="steps__item">
-                {i === arr.length - 1 ? <Loader2 size={13} className="spin" /> : <Check size={13} />}
-                <span className={cx(i === arr.length - 1 && 'shimmer-text')}>{s}</span>
-              </div>
-            ))}
-            {(msg.steps ?? []).length === 0 && (
-              <div className="steps__item">
-                <Loader2 size={13} className="spin" />
-                <span className="shimmer-text">Thinking…</span>
-              </div>
-            )}
-          </div>
+          // One quiet line while Spark works: what it's doing, a live
+          // timer; the steps open under it. The answer replaces it when it streams.
+          <Thinking steps={msg.steps ?? []} since={msg.at} open={stepsOpen} onToggle={() => setStepsOpen((o) => !o)} />
         ) : (
           msg.steps &&
           msg.steps.length > 0 && (
@@ -120,11 +115,11 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
             </button>
           )
         )}
-        {stepsOpen && msg.state !== 'thinking' && (
+        {stepsOpen && (
           <div className="steps">
-            {msg.steps!.map((s, i) => (
+            {(msg.steps ?? []).map((s, i, arr) => (
               <div key={i} className="steps__item">
-                <Check size={13} />
+                {msg.state === 'thinking' && i === arr.length - 1 ? <Loader2 size={13} className="spin" /> : <Check size={13} />}
                 <span>{s}</span>
               </div>
             ))}
@@ -298,5 +293,23 @@ function VisualArt({ v }: { v: Visual }) {
         BRAND CO. · RIYADH
       </text>
     </svg>
+  );
+}
+
+/** "Thinking 5s ›": the current step (or "Thinking") shimmering, seconds since the question. */
+function Thinking({ steps, since, open, onToggle }: { steps: string[]; since: string; open: boolean; onToggle: () => void }) {
+  const [now, setNow] = useState(() => Date.now());
+  useEffect(() => {
+    const t = setInterval(() => setNow(Date.now()), 1000);
+    return () => clearInterval(t);
+  }, []);
+  const secs = Math.max(0, Math.round((now - new Date(since).getTime()) / 1000));
+  const label = steps.length ? steps[steps.length - 1] : 'Thinking';
+  return (
+    <button className="thinking" onClick={onToggle} aria-expanded={open} aria-live="polite" disabled={!steps.length}>
+      <span className="thinking__label shimmer-text">{label}</span>
+      <span className="thinking__time">{secs}s</span>
+      {steps.length > 0 && <ChevronDown size={13} className={cx('thinking__chev', open && 'rot')} />}
+    </button>
   );
 }

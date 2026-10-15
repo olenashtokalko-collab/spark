@@ -103,7 +103,8 @@ export function Composer({ onSubmit, busy, placeholder = 'Message Spark AI', aut
         </ul>
       )}
       <div className="composer__row">
-        <FluidOrb size={26} active={typing || busy} className="composer__orb" />
+        {/* The input's orb stays at rest while Spark works; the orb beside the answer does the work. */}
+        <FluidOrb size={26} active={typing} className="composer__orb" />
         <div className="composer__field">
           <textarea
             ref={ref}
