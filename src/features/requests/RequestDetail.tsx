@@ -1,11 +1,11 @@
 import { useState } from 'react';
-import { ArrowLeft, Check, CircleDot, Clock, Eye, FileText, Lightbulb, MessageSquare, PenLine, Send, TrendingUp, TriangleAlert } from 'lucide-react';
+import { ArrowLeft, BadgeCheck, Check, CircleDot, CircleX, Clock, Eye, FileText, Hammer, Lightbulb, MessageSquare, PackageCheck, Paperclip, PenLine, Plus, ScanSearch, Send, TrendingUp, TriangleAlert } from 'lucide-react';
 import { latestProposal, personById, proposalTotal, proposalWeeks, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
-import { Avatar, Badge, Button, EmptyState, Tabs, Textarea, cx } from '../../components/ui/primitives';
+import { Avatar, Button, EmptyState, Tabs, Textarea, cx } from '../../components/ui/primitives';
 import { FileIcon, ProposalStatus, RequestStatus, STAGES, STAGE_INFO, stageIndex } from '../../components/domain';
 import { useToast } from '../../components/ui/toast';
-import { aed, dueLabel, fmtDate, fmtDateTime, fmtRelative } from '../../lib/format';
+import { aed, dueLabel, fmtDate, fmtDateTime, fmtRelative, fmtTime } from '../../lib/format';
 import { navigate } from '../../lib/router';
 import type { Activity, Finding, WorkRequest } from '../../data/types';
 import { ChatCut } from '../assistant/ChatCut';
@@ -256,11 +256,7 @@ export function RequestDetail({ id }: { id: string }) {
 
           {tab === 'activity' && (
             <div className="req-tab">
-              <ol className="timeline">
-                {[...r.activity].reverse().map((a) => (
-                  <ActivityItem key={a.id} a={a} />
-                ))}
-              </ol>
+              <ActivityLog items={r.activity} />
               <div className="comment-box">
                 <Avatar person={me} size={28} />
                 <div className="comment-box__field">
@@ -326,42 +322,43 @@ function findingsFromConversation(r: WorkRequest, conversation: { messages: { ro
 // The status card: the full stage list is the progress. The current stage is
 // marked Now (with when it started and the next step), the one after it Next.
 // Spark people aren't named: the client doesn't know who picks a request up.
-function StatusCard({ r }: { r: WorkRequest }) {
+// One icon per stage, in a raised disc on the line (picked on #/demo/stages, 2).
+const STAGE_ICONS = [Send, ScanSearch, FileText, BadgeCheck, Hammer, PackageCheck];
+
+export function StatusCard({ r }: { r: WorkRequest }) {
   const idx = stageIndex(r.status);
   const declined = r.status === 'declined';
   const done = r.status === 'delivered';
   const since = [...r.activity].reverse().find((a) => a.kind !== 'comment' && a.kind !== 'file')?.at ?? r.createdAt;
 
   return (
-    <section className="side-card status-card" aria-label="Stages">
+    <section className="side-card stg stg--discs" aria-label="Stages">
       {/* The status is named once, in the page header; this card shows the path. */}
       <h3 className="side-card__title">
         Stages <span className="block__count status-card__step">{declined ? 'Closed at proposal' : done ? 'All stages complete' : `Step ${idx + 1} of ${STAGES.length}`}</span>
       </h3>
-      <hr className="status-card__rule" />
-      <ol className="stages">
+      <ol className="stg__list">
         {STAGES.map((s, i) => {
-          const st = declined && i === idx ? 'declined' : i < idx || done ? 'done' : i === idx ? 'current' : i === idx + 1 && !declined ? 'next' : 'todo';
+          const st = declined && i === idx ? 'declined' : i < idx || done ? 'done' : i === idx ? 'current' : 'todo';
+          const Icon = st === 'declined' ? CircleX : STAGE_ICONS[i];
           return (
-            <li key={s} className={`stages__item is-${st}`} aria-current={st === 'current' ? 'step' : undefined}>
-              <span className="stages__dot">{st === 'done' ? <Check size={10} strokeWidth={3} /> : null}</span>
-              <div>
-                <div className="stages__label">
-                  {st === 'declined' ? 'Declined' : s}
-                  {st === 'current' && <Badge tone="accent">Now</Badge>}
-                  {st === 'next' && <span className="stages__next">Next</span>}
-                </div>
-                <div className="stages__info">{st === 'declined' ? 'The proposal was declined and the request closed.' : STAGE_INFO[s]}</div>
+            <li key={s} className={cx('stg__item', `is-${st}`)} aria-current={st === 'current' ? 'step' : undefined}>
+              <span className="stg__mark">
+                <Icon size={15} strokeWidth={1.8} />
+              </span>
+              <div className="stg__body">
+                <div className="stg__label">{st === 'declined' ? 'Declined' : s}</div>
+                <div className="stg__info">{st === 'declined' ? 'The proposal was declined and the request closed.' : STAGE_INFO[s]}</div>
                 {st === 'current' && (
                   <>
-                    <div className="stages__when">Started {fmtRelative(since)}</div>
+                    <div className="stg__when">Started {fmtRelative(since)}</div>
                     {r.nextStep && (
                       // The one place a deadline shows: amber when it waits on the client.
-                      <div className={cx('due-chip stages__step', r.nextStep.onClient && 'is-on-you')}>
+                      <div className={cx('stg__due', r.nextStep.onClient && 'is-on-you')}>
                         <Clock size={14} />
                         <span>
-                          <span className="due-chip__what">{r.nextStep.label}</span>
-                          <span className="due-chip__when">
+                          <span className="stg__due-what">{r.nextStep.label}</span>
+                          <span className="stg__due-when">
                             {r.nextStep.onClient
                               ? `Due ${fmtDate(r.nextStep.date, { weekday: true })} · ${dueLabel(r.nextStep.date).replace(/^due /, '')}`
                               : `Expected by ${fmtDate(r.nextStep.date, { weekday: true })}`}
@@ -380,39 +377,115 @@ function StatusCard({ r }: { r: WorkRequest }) {
   );
 }
 
+// ---- Activity log (after the task-log reference) ----------------------------------------
+// One line per event: an icon, the change with its facts in bold, "by" whom and
+// when. Comments and decision notes are quoted.
+
+type Chip = { text: string; tone?: 'accent' | 'positive' | 'negative' | 'neutral'; icon?: typeof Check; mono?: boolean };
+
+const STAGE_FOR: Record<string, string> = {
+  'started reviewing': 'In review',
+  'started work': 'In progress',
+};
+
+/** Splits an activity's text into a verb, chips for the facts, and a quoted note. */
+function describe(a: Activity): { verb: string; chips: Chip[]; tail?: string; quote?: string; tone?: Chip['tone'] } {
+  const quoted = a.text.match(/^(.*?): "(.*)"$/s);
+  const text = quoted ? quoted[1] : a.text;
+  const quote = quoted?.[2];
+  const file = text.match(/^(attached|shared|delivered|approved|requested changes to|commented on) (.+?\.[a-z0-9]{2,4})(.*)$/i);
+  if (a.kind === 'proposal') {
+    const [verb, ...facts] = text.split(' · ');
+    return { verb, chips: facts.map((f) => ({ text: f, mono: /AED/.test(f) })), quote };
+  }
+  if (file) {
+    const delivered = /^delivered$/i.test(file[1]);
+    return {
+      verb: file[1],
+      chips: [{ text: file[2], icon: Paperclip }, ...(delivered ? [{ text: 'Delivered', tone: 'positive' as const, icon: PackageCheck }] : [])],
+      tail: file[3].trim() || undefined,
+      quote,
+      tone: delivered ? 'positive' : undefined,
+    };
+  }
+  if (a.kind === 'decision') {
+    const approved = /^approved/i.test(text);
+    const declined = /^declined/i.test(text);
+    const reason = text.match(/\((.+)\)$/)?.[1];
+    return {
+      verb: approved ? 'approved the proposal' : declined ? 'declined the proposal' : 'requested changes to the proposal',
+      chips: [{ text: approved ? 'Approved' : declined ? 'Declined' : 'Changes requested', tone: approved ? 'positive' : declined ? 'negative' : 'accent', icon: approved ? Check : declined ? CircleX : PenLine }, ...(reason ? [{ text: reason }] : [])],
+      quote,
+      tone: approved ? 'positive' : declined ? 'negative' : 'accent',
+    };
+  }
+  if (a.kind === 'status' && STAGE_FOR[text]) return { verb: 'moved the request to', chips: [{ text: STAGE_FOR[text], tone: 'accent', icon: CircleDot }], quote, tone: 'accent' };
+  return { verb: text, chips: [], quote };
+}
+
 const activityIcon: Record<Activity['kind'], typeof Check> = {
-  created: MessageSquare,
+  created: Plus,
   status: CircleDot,
   comment: MessageSquare,
   proposal: FileText,
   decision: Check,
-  file: FileText,
+  file: Paperclip,
 };
 
-function ActivityItem({ a }: { a: Activity }) {
+/** The activity tab (after the task-log reference, picked on #/demo/activity):
+ *  one plain list, newest first; each line ends with "by" and the date, and
+ *  comments are quoted with the date beneath. */
+export function ActivityLog({ items }: { items: Activity[] }) {
+  return (
+    <ol className="alog alog--log">
+      {[...items].reverse().map((a) => (
+        <LogItem key={a.id} a={a} />
+      ))}
+    </ol>
+  );
+}
+
+function LogItem({ a }: { a: Activity }) {
   const { state } = useStore();
   const p = personById(state, a.by);
-  const I = activityIcon[a.kind];
-  if (a.kind === 'comment')
-    return (
-      <li className="timeline__item timeline__item--comment">
-        <Avatar person={p} size={26} />
-        <div className="timeline__comment">
-          <div className="timeline__who">
-            {p.name} <span className="faint">· {fmtRelative(a.at)}</span>
-          </div>
-          <p>{a.text}</p>
-        </div>
-      </li>
-    );
+  const { verb, chips, tail, quote, tone } = describe(a);
+  const declined = a.kind === 'decision' && tone === 'negative';
+  const I = declined ? CircleX : activityIcon[a.kind];
+  const comment = a.kind === 'comment';
+  const when = `${fmtDate(a.at)}, ${fmtTime(a.at)}`;
+  // Sentence case, the person last ("Proposal sent … by Spark"), as in the reference.
+  const phrase = a.kind === 'decision' ? 'proposal marked as' : verb === 'moved the request to' ? 'stage changed to' : verb;
+  const lead = phrase.charAt(0).toUpperCase() + phrase.slice(1);
   return (
-    <li className="timeline__item">
-      <span className="timeline__icon">
-        <I size={13} />
-      </span>
-      <div className="timeline__line">
-        <strong>{p.name}</strong> {a.text} <span className="faint">· {fmtRelative(a.at)}</span>
+    <li className={cx('alog-l', `is-${a.kind}`, tone && `tone-${tone}`)}>
+      <span className="alog-l__mark">{comment ? <Avatar person={p} size={22} /> : <I size={16} strokeWidth={2} />}</span>
+      <div className="alog-l__body">
+        <div className="alog-l__line">
+          {comment ? (
+            <>
+              <span className="alog-l__who">{p.name} commented:</span>
+              <span className="alog-l__quote">“{a.text}”</span>
+            </>
+          ) : (
+            <>
+              <span>{lead}</span>
+              {chips.map((c, i) => (
+                <strong key={c.text} className={cx(c.tone && `is-${c.tone}`)}>
+                  {i > 0 && <span className="alog-l__sep">·</span>}
+                  {c.text}
+                </strong>
+              ))}
+              {tail && <span>{tail}</span>}
+              <span className="alog-l__by">by {p.name}</span>
+              <span className="alog-l__dot">•</span>
+              <span className="alog-l__when">{when}</span>
+            </>
+          )}
+        </div>
+        {quote && !comment && <div className="alog-l__quote alog-l__quote--block">“{quote}”</div>}
+        {comment && <div className="alog-l__when">{when}</div>}
       </div>
     </li>
   );
 }
+

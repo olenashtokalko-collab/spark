@@ -15,6 +15,10 @@ import { GlassDemo } from './features/demo/GlassDemo';
 import { BubblesDemo } from './features/demo/BubblesDemo';
 import { TableDemo } from './features/demo/TableDemo';
 import { AiButtonDemo } from './features/demo/AiButtonDemo';
+import { TocDemo } from './features/demo/TocDemo';
+import { RailDemo } from './features/demo/RailDemo';
+import { DecisionDemo } from './features/demo/DecisionDemo';
+import { StagesDemo } from './features/demo/StagesDemo';
 import { RequestDetail } from './features/requests/RequestDetail';
 import { ProposalView } from './features/requests/ProposalView';
 import { Documents } from './features/documents/Documents';
@@ -47,6 +51,10 @@ function Screen() {
       if (a === 'bubbles') return <BubblesDemo />;
       if (a === 'table') return <TableDemo />;
       if (a === 'ai-button') return <AiButtonDemo />;
+      if (a === 'toc') return <TocDemo />;
+      if (a === 'rail') return <RailDemo />;
+      if (a === 'decision') return <DecisionDemo />;
+      if (a === 'stages') return <StagesDemo />;
       break;
     case 'monitoring':
       return <Monitoring />;

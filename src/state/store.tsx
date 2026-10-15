@@ -84,7 +84,12 @@ function load(): State {
       const saved = JSON.parse(raw) as Partial<State>;
       // Folder copy comes from the seed, so edits to it reach saved demos too.
       const folders = saved.folders?.map((f) => ({ ...f, description: seed.folders.find((x) => x.id === f.id)?.description ?? f.description }));
-      return { ...seed, ...saved, ...(folders && { folders }) };
+      // Requests, proposals and notifications added to the seed later reach saved demos too.
+      const missing = <T extends { id: string }>(mine: T[] | undefined, fromSeed: T[]) => (mine ? [...fromSeed.filter((x) => !mine.some((m) => m.id === x.id)), ...mine] : undefined);
+      const requests = missing(saved.requests, seed.requests);
+      const proposals = missing(saved.proposals, seed.proposals);
+      const notifications = missing(saved.notifications, seed.notifications);
+      return { ...seed, ...saved, ...(folders && { folders }), ...(requests && { requests }), ...(proposals && { proposals }), ...(notifications && { notifications }) };
     }
   } catch {
     /* storage unavailable: fall back to seed */

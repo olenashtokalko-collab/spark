@@ -129,9 +129,11 @@
   background: #ffffff;
   box-shadow: inset 0 0 0 1px var(--line-strong), 0 1px 2px rgba(14, 17, 22, 0.06);
 }
+/* Hover keeps the white fill and darkens the edge instead of greying the button. */
 :root[data-theme='sand'] .btn--secondary:hover:not(:disabled) {
   filter: none;
-  background: var(--surface-2);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.32), 0 1px 2px rgba(14, 17, 22, 0.08);
 }
 /* AI action: the glass plaque (p. 16), picked on #/demo/ai-button. A clear
    glass pill with a bright rim; the Noor light (Cobalt left, Ember right) glows
@@ -436,6 +438,25 @@
 :root[data-theme='sand'] .dialog {
   background: #ffffff;
   box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.06), 0 30px 70px -24px rgba(14, 17, 22, 0.35);
+}
+/* Fields in a modal take the panel's colour: no fill, a hairline edge that
+   darkens on hover, the Cobalt ring on focus. */
+:root[data-theme='sand'] .dialog :is(.input, .select select),
+:root[data-theme='sand'] .dialog :is(.input, .select select):hover,
+:root[data-theme='sand'] .dialog .input:focus {
+  background: transparent;
+}
+:root[data-theme='sand'] .dialog :is(.input, .select select) {
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+:root[data-theme='sand'] .dialog :is(.input, .select select):hover {
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.24);
+}
+:root[data-theme='sand'] .dialog :is(.input, .select select):focus {
+  box-shadow: 0 0 0 1.5px var(--accent);
+}
+:root[data-theme='sand'] .dialog .field--error .input {
+  box-shadow: 0 0 0 1.5px var(--danger);
 }
 /* Human moments: a Cobalt glass squircle with a white glyph. */
 :root[data-theme='sand'] .icon-tile {
@@ -1318,4 +1339,1316 @@
 }
 .aibdemo .aib--knob:hover .aib-knob {
   transform: scale(1.08);
+}
+
+/* Glass tube and Noor light for the rail demo (#/demo/rail). */
+:root[data-theme='sand'] {
+  /* Clear glass: barely tinted, a thin specular line down the left and a
+     faint shade on the right, so it reads as a round tube. */
+  --rail-tube:
+    linear-gradient(90deg, transparent 1px, rgba(255, 255, 255, 0.85) 1.5px, rgba(255, 255, 255, 0.85) 2.5px, transparent 3.5px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.08) 60%, rgba(14, 17, 22, 0.04));
+  /* No outline: the tube is shaped by the specular line and a soft shade. */
+  --rail-tube-edge:
+    inset -1px 0 2px rgba(14, 17, 22, 0.06),
+    0 3px 8px -2px rgba(14, 17, 22, 0.08);
+  /* The light that spills into the glass around the marker. */
+  --rail-wash: linear-gradient(180deg, transparent, rgba(30, 59, 214, 0.16) 35%, rgba(232, 80, 31, 0.16) 65%, transparent);
+  --rail-light:
+    linear-gradient(90deg, transparent 20%, rgba(255, 255, 255, 0.7) 40%, transparent 60%),
+    linear-gradient(180deg in oklch, var(--cobalt), var(--ember));
+  --rail-glow: 0 0 6px rgba(140, 90, 230, 0.45), 0 -6px 14px rgba(30, 59, 214, 0.35), 0 6px 14px rgba(232, 80, 31, 0.35);
+}
+
+/* ---- Proposal contents: "On this page" ---------------------------------------------------
+   After documentation sidebars: an uppercase heading, the sections as plain
+   Ink text with no fill, the section in view in Cobalt. */
+:root[data-theme='sand'] .proposal__side .ptoc {
+  gap: 0;
+  padding: 4px 0 0;
+}
+:root[data-theme='sand'] .proposal__side .ptoc__title {
+  display: block;
+  margin-bottom: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+:root[data-theme='sand'] .proposal__side .ptoc__item {
+  height: 34px;
+  padding: 0;
+  border-radius: 0;
+  font-size: 15px;
+  color: var(--text-2);
+}
+:root[data-theme='sand'] .proposal__side .ptoc__item:hover {
+  background: none;
+  color: var(--ink);
+}
+:root[data-theme='sand'] .proposal__side .ptoc__item.is-active {
+  background: none;
+  color: var(--cobalt);
+  font-weight: 500;
+}
+:root[data-theme='sand'] .proposal__side .ptoc__item.is-active .ptoc__count {
+  color: var(--cobalt);
+}
+
+/* ---- Demo: proposal contents (#/demo/toc) -----------------------------------------------
+   Every variant resets the live .ptoc row (grey fill) first. Rows are a fixed
+   height (--row) so the rails can slide to the active one with --i. */
+.tocdemo__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 16px;
+  padding: 8px 0 48px;
+}
+.tocdemo__stage {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 24px;
+  border-radius: 18px;
+  background: #f8f6f2;
+}
+.tocdemo__decision {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 18px 20px;
+  border-radius: var(--radius-lg);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.tocdemo__decision strong {
+  font-size: 22px;
+  font-weight: 600;
+}
+.tocdemo__decision span {
+  font-size: 13px;
+  color: var(--text-3);
+}
+.tocv {
+  --row: 34px;
+  position: relative;
+}
+.tocdemo .tocv .ptoc__item {
+  height: var(--row);
+}
+/* 2 · Hairlines */
+.tocdemo .tocv--rules {
+  --row: 44px;
+  gap: 0;
+  padding: 0;
+}
+.tocdemo .tocv--rules .ptoc__item {
+  border-radius: 0;
+  padding: 0 4px;
+  border-top: 1px solid var(--line-strong);
+}
+.tocdemo .tocv--rules .ptoc__item:last-child {
+  border-bottom: 1px solid var(--line-strong);
+}
+.tocdemo .tocv--rules .ptoc__item.is-active {
+  background: none;
+  color: var(--ink);
+  font-weight: 500;
+}
+/* 3 · Ember numbers */
+.tocdemo .tocv--numbers {
+  --row: 44px;
+  gap: 0;
+  padding: 0;
+}
+.tocdemo .tocv--numbers .ptoc__item {
+  gap: 18px;
+  border-radius: 0;
+  padding: 0 4px;
+  border-top: 1px solid var(--line-strong);
+}
+.tocdemo .tocv--numbers .ptoc__item:last-child {
+  border-bottom: 1px solid var(--line-strong);
+}
+.tocv__num {
+  width: 22px;
+  font-family: var(--font-num);
+  font-size: 17px;
+  font-weight: 800;
+  color: color-mix(in srgb, var(--ember) 55%, transparent);
+  transition: color 0.15s;
+}
+.tocdemo .tocv--numbers .ptoc__item:hover .tocv__num,
+.tocdemo .tocv--numbers .ptoc__item.is-active .tocv__num {
+  color: var(--ember);
+}
+.tocdemo .tocv--numbers .ptoc__item.is-active {
+  background: none;
+  color: var(--ink);
+}
+/* 4 · Mono labels */
+.tocdemo .tocv--mono {
+  --row: 40px;
+  gap: 0;
+  padding: 0;
+}
+.tocdemo .tocv--mono .ptoc__item {
+  border-radius: 0;
+  padding: 0 4px;
+  border-top: 1px solid var(--line);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.tocdemo .tocv--mono .ptoc__item.is-active {
+  background: none;
+  color: var(--ink);
+  border-top: 1.5px solid var(--ink);
+}
+.tocdemo .tocv--mono .ptoc__count {
+  font-size: 11px;
+}
+/* 5 · Ink rail and 6 · Noor progress: a 2px track on the left */
+.tocdemo :is(.tocv--rail, .tocv--noor) {
+  gap: 0;
+  padding: 0 0 0 16px;
+}
+.tocdemo :is(.tocv--rail, .tocv--noor)::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--line-strong);
+}
+.tocdemo :is(.tocv--rail, .tocv--noor) .ptoc__item {
+  padding: 0 4px;
+}
+.tocdemo :is(.tocv--rail, .tocv--noor) .ptoc__item.is-active {
+  background: none;
+  color: var(--ink);
+  font-weight: 500;
+}
+.tocdemo :is(.tocv--rail, .tocv--noor)::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  width: 2px;
+  border-radius: 2px;
+  transition: top 0.3s, height 0.3s;
+}
+.tocdemo .tocv--rail::after {
+  top: calc(var(--i) * var(--row) + 7px);
+  height: calc(var(--row) - 14px);
+  background: var(--ink);
+}
+/* The light runs from the top to the middle of the active row, and its gradient
+   spans the whole list, so it warms from Cobalt to Ember the further you read. */
+.tocdemo .tocv--noor::after {
+  top: 0;
+  height: calc(var(--i) * var(--row) + var(--row) / 2);
+  background: linear-gradient(180deg in oklch, var(--cobalt), var(--ember)) 0 0 / 100% calc(var(--n) * var(--row));
+  box-shadow: 0 0 8px rgba(232, 80, 31, 0.35);
+}
+.tocdemo .tocv--noor .ptoc__item.is-past {
+  color: var(--text-2);
+}
+
+/* ---- Demo: contents marker (#/demo/rail) ------------------------------------------------
+   The live rail's rows (34px) and track; only the marker (.rmk) changes. Bars
+   stretch edge-first like the live one; the spark glides and turns a quarter. */
+.rdemo {
+  --row: 34px;
+  --ease: cubic-bezier(0.3, 0.7, 0.4, 1);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  padding-left: 24px;
+}
+.rdemo__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: var(--row);
+  padding: 0 4px;
+  font-size: 14px;
+  color: var(--text-3);
+  transition: color 0.2s;
+}
+.rdemo__item:hover,
+.rdemo__item.is-active {
+  color: var(--ink);
+}
+.rdemo__item.is-active {
+  font-weight: 500;
+}
+.rdemo__track {
+  position: absolute;
+  left: 8px;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  border-radius: 2px;
+  background: var(--line-strong);
+}
+.rmk {
+  position: absolute;
+  z-index: 1;
+  pointer-events: none;
+}
+
+/* Bars: 1 · Ink, 2 · Spectrum, 6 · Noor spot */
+.rdemo:is(.rdemo--ink, .rdemo--spectrum, .rdemo--glow) .rmk {
+  left: 8px;
+  width: 2px;
+  border-radius: 2px;
+  top: calc(var(--i) * var(--row) + 7px);
+  bottom: calc((var(--n) - var(--i) - 1) * var(--row) + 7px);
+}
+.rdemo--down .rmk {
+  transition: bottom 0.22s var(--ease), top 0.34s var(--ease) 0.08s;
+}
+.rdemo--up .rmk {
+  transition: top 0.22s var(--ease), bottom 0.34s var(--ease) 0.08s;
+}
+.rdemo--ink .rmk {
+  background: var(--ink);
+}
+.rdemo--spectrum .rdemo__track {
+  left: 4px;
+  width: 10px;
+  border-radius: 10px;
+  background: var(--rail-tube), var(--rail-wash) no-repeat;
+  /* The tube is two layers; the wash is the third. */
+  background-size: 100% 100%, 100% 100%, 100% calc(var(--row) * 3);
+  background-position: 0 0, 0 0, 0 calc((var(--i) - 1) * var(--row));
+  box-shadow: var(--rail-tube-edge);
+  transition: background-position 0.4s var(--ease);
+}
+.rdemo.rdemo--spectrum .rmk {
+  left: 6.5px;
+  width: 5px;
+  border-radius: 5px;
+  top: calc(var(--i) * var(--row) + 5px);
+  bottom: calc((var(--n) - var(--i) - 1) * var(--row) + 5px);
+  background: var(--rail-light);
+  box-shadow: var(--rail-glow);
+}
+.rdemo--glow .rmk {
+  background: #ffffff;
+  box-shadow: 0 0 0 0.5px rgba(255, 255, 255, 0.9);
+}
+.rdemo--glow .rmk::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: -4px -7px;
+  border-radius: 999px;
+  background: linear-gradient(180deg in oklch, var(--cobalt), #b35ad8, var(--ember));
+  filter: blur(5px);
+  opacity: 0.85;
+}
+
+/* Spark: 3 · Spark, 4 · Trail, 5 · Spots */
+.rdemo:is(.rdemo--spark, .rdemo--trail, .rdemo--dots) .rmk {
+  left: -1px;
+  width: 20px;
+  height: 20px;
+  display: grid;
+  place-items: center;
+  top: calc(var(--i) * var(--row) + var(--row) / 2 - 10px);
+  transition: top 0.42s var(--ease);
+}
+.rmk::before {
+  content: '';
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 30% 70%, rgba(30, 59, 214, 0.9), transparent 62%),
+    radial-gradient(circle at 70% 30%, rgba(232, 80, 31, 0.95), transparent 62%);
+  filter: blur(4px);
+}
+.rdemo:is(.rdemo--ink, .rdemo--spectrum) .rmk::before {
+  display: none;
+}
+.rmk__spark {
+  position: relative;
+  width: 16px;
+  height: 16px;
+  color: #ffffff;
+  filter: drop-shadow(0 0 1.5px rgba(255, 255, 255, 0.9));
+  transform: rotate(calc(var(--i) * 90deg));
+  transition: transform 0.42s var(--ease);
+}
+.rdemo--dots .rmk::before {
+  inset: -1px;
+  filter: blur(3px);
+}
+
+/* 4 · The trail: a streak from where the spark left to where it lands. */
+.rmk__trail {
+  position: absolute;
+  left: 7px;
+  width: 4px;
+  border-radius: 4px;
+  top: calc(var(--a) * var(--row) + var(--row) / 2);
+  height: calc((var(--b) - var(--a)) * var(--row));
+  animation: rmk-trail 0.75s var(--ease) forwards;
+}
+.rmk__trail--down {
+  background: linear-gradient(180deg in oklch, transparent, var(--cobalt) 40%, var(--ember));
+  transform-origin: bottom;
+}
+.rmk__trail--up {
+  background: linear-gradient(0deg in oklch, transparent, var(--cobalt) 40%, var(--ember));
+  transform-origin: top;
+}
+@keyframes rmk-trail {
+  0% {
+    opacity: 0.9;
+    transform: scaleY(0);
+  }
+  45% {
+    opacity: 0.9;
+    transform: scaleY(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scaleY(0.2);
+  }
+}
+
+/* 5 · Spots: a dotted track; the dots around the spark light up. */
+.rdemo--dots .rdemo__track {
+  left: 7px;
+  width: 4px;
+  border-radius: 0;
+  background: radial-gradient(circle, rgba(14, 17, 22, 0.22) 1.2px, transparent 1.7px) 0 1px / 4px 6px repeat-y;
+}
+.rdemo--dots .rdemo__track::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* Full height and masked by the same dots, so the lit dots always sit on
+     the track's; only the gradient moves. */
+  background: linear-gradient(180deg in oklch, transparent, var(--cobalt) 25%, #b35ad8 50%, var(--ember) 75%, transparent) no-repeat;
+  background-size: 100% calc(var(--row) * 2.5);
+  background-position: 0 calc(var(--i) * var(--row) - var(--row) * 0.75);
+  -webkit-mask: radial-gradient(circle, #000 1.5px, transparent 2px) 0 1px / 4px 6px repeat-y;
+  mask: radial-gradient(circle, #000 1.5px, transparent 2px) 0 1px / 4px 6px repeat-y;
+  transition: background-position 0.42s var(--ease);
+}
+@media (prefers-reduced-motion: reduce) {
+  .rdemo .rmk,
+  .rmk__spark,
+  .rdemo--dots .rdemo__track::after {
+    transition: none;
+  }
+  .rmk__trail {
+    display: none;
+  }
+}
+
+/* ---- Proposal document: laid out like a documentation page ------------------------------
+   A breadcrumb, the status and the title (as on the request page), a row of
+   tools over a hairline, then the sections as plain headings and airy body
+   text, with no rules between them (after the Stripe docs reference). */
+:root[data-theme='sand'] .proposal__doc {
+  max-width: 760px;
+  gap: 0;
+}
+:root[data-theme='sand'] .proposal__head {
+  padding-bottom: 8px;
+}
+/* The title matches the request page's (24px, semibold). */
+:root[data-theme='sand'] .proposal__eyebrow {
+  margin-top: 18px;
+}
+:root[data-theme='sand'] .proposal__title {
+  margin: 6px 0 0;
+}
+
+:root[data-theme='sand'] .proposal__doc > .psec {
+  padding: 40px 0 0;
+}
+:root[data-theme='sand'] .proposal__doc .psec__head {
+  margin-bottom: 16px;
+}
+:root[data-theme='sand'] .proposal__doc .psec__title {
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+/* One type scale for the document: 18 section titles; 15 for what you read
+   (objectives, scope titles, terms, table and timeline labels, numbers);
+   14 for descriptions; 13 for deliverables and footnotes. */
+:root[data-theme='sand'] .proposal__doc :is(.objectives, .scope__title, .scope__num, .list-num, .terms, .invest td, .gantt__label) {
+  font-size: 15px;
+  line-height: 1.6;
+}
+:root[data-theme='sand'] .proposal__doc .terms {
+  color: var(--text);
+}
+:root[data-theme='sand'] .proposal__doc .scope__item p {
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+:root[data-theme='sand'] .proposal__doc :is(.scope__del, .gantt__foot) {
+  font-size: 13px;
+}
+
+/* ---- Demo: decision card (#/demo/decision) ----------------------------------------------
+   The proposal's decision card with an object in a time ring, after the
+   "Tennis 29 mins" reference. The ring's arc is the share of the time used. */
+.decdemo__slider {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 16px;
+  padding: 8px 16px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-size: 13px;
+  color: var(--text-2);
+}
+.decdemo__slider input {
+  width: 200px;
+  accent-color: var(--cobalt);
+}
+.decdemo__slider strong {
+  min-width: 70px;
+  color: var(--ink);
+  font-weight: 500;
+}
+.decdemo__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(380px, 1fr));
+  gap: 16px;
+  padding: 0 0 48px;
+}
+.decdemo__stage {
+  display: grid;
+  place-items: center;
+  padding: 28px 20px;
+  border-radius: 18px;
+  background: #f2efe9;
+}
+.dcard {
+  /* The object's light spills onto the card from the lower right, as in the
+     reference: --glow-a is the main tint, --glow-b the second. */
+  --glow-a: rgba(179, 90, 216, 0.22);
+  --glow-b: rgba(232, 80, 31, 0.16);
+  width: 320px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  background:
+    radial-gradient(80% 65% at 85% 105%, var(--glow-a), transparent 72%),
+    radial-gradient(60% 55% at 105% 50%, var(--glow-b), transparent 72%),
+    #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line), 0 20px 40px -28px rgba(14, 17, 22, 0.3);
+}
+.dcard--glass {
+  --glow-a: rgba(30, 59, 214, 0.2);
+  --glow-b: rgba(110, 140, 255, 0.16);
+}
+.dcard.is-urgent {
+  --glow-a: rgba(232, 80, 31, 0.22);
+  --glow-b: rgba(240, 150, 90, 0.18);
+}
+.dcard__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 4px;
+}
+.dcard__text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.dcard__eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+.dcard.is-urgent .dcard__eyebrow {
+  color: var(--ember);
+}
+.dcard__total {
+  font-size: 25px;
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.dcard__meta {
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+/* The ring */
+.dring {
+  position: relative;
+  flex: none;
+  width: 90px;
+  height: 90px;
+}
+.dring svg {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  transform: rotate(-90deg);
+}
+.dring__track {
+  fill: none;
+  stroke: rgba(14, 17, 22, 0.08);
+  stroke-width: 1.5;
+}
+.dring__arc {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.1s cubic-bezier(0.3, 0.7, 0.4, 1), stroke 0.3s;
+}
+.dcard.is-urgent .dring__arc {
+  stroke: var(--ember);
+}
+.dring--noor .dring__arc,
+.dcard.is-urgent .dring--noor .dring__arc {
+  stroke: url(#dring-noor);
+  stroke-width: 3;
+}
+.dring__head {
+  fill: #ffffff;
+  stroke: var(--ember);
+  stroke-width: 1.5;
+  filter: drop-shadow(0 0 4px rgba(232, 80, 31, 0.8));
+  transition: cx 1.1s cubic-bezier(0.3, 0.7, 0.4, 1), cy 1.1s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+.dring__in {
+  position: absolute;
+  inset: 12px;
+  display: grid;
+  place-items: center;
+}
+
+/* 4a · Segments: one per day; the days left are Ink (Ember on the last day). */
+.dring__seg {
+  fill: none;
+  stroke: rgba(14, 17, 22, 0.1);
+  stroke-width: 3;
+  stroke-linecap: round;
+  transition: stroke 0.4s;
+}
+.dring__seg.is-left {
+  stroke: var(--ink);
+}
+.dcard.is-urgent .dring__seg.is-left {
+  stroke: var(--ember);
+}
+/* The segments are drawn from the top already; undo the ring's turn. */
+.dring--segments svg {
+  transform: none;
+}
+/* 4b · Timer: the arc is the time left; it counts down. */
+.dring--remaining .dring__arc {
+  stroke-width: 3;
+}
+
+/* 4c · Hourglass: a 3D glass flask, the Noor light as sand, Ink caps. */
+.dhour svg {
+  display: block;
+  width: 78px;
+  height: 119px;
+  overflow: visible;
+  animation: dobj-float 4.5s ease-in-out infinite;
+}
+.dhour__body {
+  fill: rgba(240, 238, 250, 0.55);
+  stroke: rgba(14, 17, 22, 0.14);
+  stroke-width: 2.2;
+}
+.dhour__edge {
+  fill: none;
+  stroke: url(#dhour-edge);
+  stroke-width: 5;
+  opacity: 0.35;
+  filter: blur(1.5px);
+}
+.dhour__rim {
+  fill: none;
+  stroke: rgba(255, 255, 255, 1);
+  stroke-width: 1.2;
+}
+.dhour__glint {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  opacity: 0.9;
+}
+.dhour__glint--soft {
+  stroke-width: 1.2;
+  opacity: 0.55;
+}
+/* The light glows through the glass. */
+.dhour__light {
+  filter: drop-shadow(0 0 3px rgba(179, 90, 216, 0.55));
+}
+.dhour__top,
+.dhour__bottom {
+  transform-box: fill-box;
+  transform-origin: bottom;
+  transition: transform 1.1s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+.dhour__surface {
+  fill: rgba(255, 255, 255, 0.55);
+}
+.dhour.is-empty .dhour__surface {
+  display: none;
+}
+.dhour__capshine {
+  fill: rgba(255, 255, 255, 0.35);
+}
+/* Glowing grains falling from the neck to the heap, one after another. */
+.dhour__grains circle {
+  fill: #fff4ec;
+  filter: drop-shadow(0 0 1.5px #f0642c);
+  animation: dhour-grain 0.9s linear infinite;
+}
+.dhour__grains circle:nth-child(2) {
+  animation-delay: 0.3s;
+}
+.dhour__grains circle:nth-child(3) {
+  animation-delay: 0.6s;
+}
+@keyframes dhour-grain {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(36px);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dhour svg,
+  .dhour__grains circle {
+    animation: none;
+  }
+}
+
+/* 1 · Glass sphere: a glossy Cobalt ball, floating a little. */
+.dobj-glass {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background:
+    radial-gradient(circle at 34% 26%, rgba(255, 255, 255, 0.95) 0 8%, rgba(255, 255, 255, 0) 30%),
+    radial-gradient(circle at 60% 75%, rgba(150, 175, 255, 0.9), transparent 55%),
+    radial-gradient(circle at 40% 35%, color-mix(in srgb, var(--cobalt) 55%, #ffffff), var(--cobalt) 60%, color-mix(in srgb, var(--cobalt) 70%, #000));
+  box-shadow: inset 0 -4px 8px rgba(255, 255, 255, 0.35), 0 10px 16px -8px rgba(30, 59, 214, 0.7);
+  animation: dobj-float 3.6s ease-in-out infinite;
+}
+@keyframes dobj-float {
+  50% {
+    transform: translateY(-3px);
+  }
+}
+
+/* 3 · The spark, breathing and turning slowly. */
+.dobj-spark {
+  width: 46px;
+  height: 46px;
+  filter: drop-shadow(0 4px 10px rgba(179, 90, 216, 0.45));
+  animation: dobj-breathe 4s ease-in-out infinite;
+}
+@keyframes dobj-breathe {
+  0%,
+  100% {
+    transform: scale(0.92) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.04) rotate(12deg);
+  }
+}
+
+/* 4 · Days left in Doto. */
+.dobj-count {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1;
+}
+.dobj-count strong {
+  font-family: var(--font-num);
+  font-size: 30px;
+  font-weight: 800;
+  color: var(--ink);
+}
+.dobj-count span {
+  margin-top: 4px;
+  white-space: nowrap;
+  font-family: var(--font-mono);
+  font-size: 8.5px;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.dobj-count.is-due strong {
+  color: var(--ember);
+}
+.dobj-count.is-today strong {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+/* 5 · A clear glass sphere filling with the Noor light; the wave rolls on top. */
+.dobj-fill {
+  position: relative;
+  width: 54px;
+  height: 54px;
+  overflow: hidden;
+  border-radius: 50%;
+  background: radial-gradient(circle at 34% 26%, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.25) 45%, rgba(14, 17, 22, 0.04));
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.08), inset 0 -6px 10px rgba(14, 17, 22, 0.05);
+}
+.dobj-fill__liquid {
+  position: absolute;
+  left: -50%;
+  width: 200%;
+  height: 200%;
+  top: calc((1 - var(--p)) * 100% - 6%);
+  border-radius: 42%;
+  background: linear-gradient(180deg in oklch, #b35ad8, var(--ember) 20%, var(--cobalt) 45%);
+  opacity: 0.9;
+  animation: dobj-wave 6s linear infinite;
+  transition: top 1.1s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+@keyframes dobj-wave {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.dobj-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.85) 0 7%, transparent 26%);
+}
+
+/* 6 · Due date inside the light ring. */
+.dobj-date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  line-height: 1.1;
+}
+.dobj-date span {
+  font-family: var(--font-mono);
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.dobj-date strong {
+  font-size: 14px;
+  font-weight: 600;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dobj-glass,
+  .dobj-spark,
+  .dobj-fill__liquid {
+    animation: none;
+  }
+}
+
+/* ---- Deadline hourglass (DeadlineHourglass; picked on #/demo/decision, 5b) ---------------
+   A ring whose line runs on as the time is used, around a 3D glass hourglass
+   holding the Noor light. Ember on the last day. */
+.dl {
+  position: relative;
+  flex: none;
+  width: 112px;
+  height: 112px;
+  display: grid;
+  place-items: center;
+}
+.dl__ring {
+  position: absolute;
+  inset: 0;
+  overflow: visible;
+  transform: rotate(-90deg);
+}
+.dl__track {
+  fill: none;
+  stroke: rgba(14, 17, 22, 0.08);
+  stroke-width: 1.5;
+}
+.dl__arc {
+  fill: none;
+  stroke: var(--ink, #0e1116);
+  stroke-width: 2.5;
+  stroke-linecap: round;
+  transition: stroke-dashoffset 1.1s cubic-bezier(0.3, 0.7, 0.4, 1), stroke 0.3s;
+}
+.dl.is-urgent .dl__arc {
+  stroke: var(--ember, #e8501f);
+}
+.dl__glass {
+  position: relative;
+  width: 33px;
+  height: 61px;
+  overflow: visible;
+}
+.dl__body {
+  fill: rgba(240, 238, 250, 0.55);
+  stroke: rgba(14, 17, 22, 0.14);
+  stroke-width: 2.2;
+}
+.dl__light {
+  filter: drop-shadow(0 0 3px rgba(179, 90, 216, 0.55));
+}
+.dl__level {
+  transition: transform 1.4s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+.dl__stream {
+  stroke: #f7a06a;
+  stroke-width: 1.2;
+  stroke-dasharray: 1.5 2.5;
+  opacity: 0.85;
+  animation: dl-fall 0.5s linear infinite;
+}
+@keyframes dl-fall {
+  to {
+    stroke-dashoffset: -4;
+  }
+}
+.dl__grains circle {
+  fill: #fff4ec;
+  filter: drop-shadow(0 0 1.5px #f0642c);
+  animation: dl-grain 0.9s linear infinite;
+}
+.dl__grains circle:nth-child(2) {
+  animation-delay: 0.3s;
+}
+.dl__grains circle:nth-child(3) {
+  animation-delay: 0.6s;
+}
+@keyframes dl-grain {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(36px);
+    opacity: 0;
+  }
+}
+.dl__edge {
+  fill: none;
+  stroke-width: 5;
+  opacity: 0.35;
+  filter: blur(1.5px);
+}
+.dl__rim {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 1.2;
+}
+.dl__glint {
+  fill: none;
+  stroke: #ffffff;
+  stroke-width: 2.2;
+  stroke-linecap: round;
+  opacity: 0.9;
+}
+.dl__glint--soft {
+  stroke-width: 1.2;
+  opacity: 0.55;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dl__level,
+  .dl__arc {
+    transition: none;
+  }
+  .dl__stream,
+  .dl__grains circle {
+    animation: none;
+  }
+}
+
+/* ---- Proposal decision while awaiting: the deadline card (picked on #/demo/decision) -----
+   "Due Wed 14 Oct · 3 days left", the total with "Waiting for your decision",
+   the deadline hourglass beside it, and the light of the glass spilling onto
+   the card from the lower right. Ember when a day or less is left. */
+.decision__eyebrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: -6px -6px 0 0;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.decision.is-urgent .decision__eyebrow > span {
+  color: var(--ember, #e8501f);
+}
+.decision__timed {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: -2px;
+}
+.decision--timed .decision__total {
+  font-size: 25px;
+  white-space: nowrap;
+}
+.decision--timed .decision__meta {
+  margin-top: 4px;
+}
+/* A slightly wider side column for the deadline card, and more air before the
+   contents. The request page's side column (Stages, Details) matches its width. */
+:root[data-theme='sand'] .proposal__layout {
+  grid-template-columns: minmax(0, 1fr) 330px;
+}
+:root[data-theme='sand'] .req-layout {
+  grid-template-columns: minmax(0, 1fr) 330px;
+}
+:root[data-theme='sand'] .proposal__side {
+  gap: 32px;
+}
+:root[data-theme='sand'] .proposal__side .decision.decision--timed {
+  --glow-a: rgba(179, 90, 216, 0.22);
+  --glow-b: rgba(232, 80, 31, 0.16);
+  background:
+    radial-gradient(80% 65% at 85% 105%, var(--glow-a), transparent 72%),
+    radial-gradient(60% 55% at 105% 50%, var(--glow-b), transparent 72%),
+    #ffffff;
+}
+:root[data-theme='sand'] .proposal__side .decision.decision--timed.is-urgent {
+  --glow-a: rgba(232, 80, 31, 0.22);
+  --glow-b: rgba(240, 150, 90, 0.18);
+}
+
+/* ---- Breadcrumb and tools row (proposal page) ------------------------------------------- */
+.crumbs {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.crumbs a {
+  color: var(--text-2);
+  transition: color 0.15s;
+}
+.crumbs a:hover {
+  color: var(--ink, var(--text));
+}
+.crumbs span[aria-hidden] {
+  color: var(--text-3);
+}
+.crumbs [aria-current='page'] {
+  color: var(--text);
+}
+.proposal__tools {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  margin-top: 18px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line-strong);
+}
+.proposal__tool {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 0 16px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text-2);
+  border-left: 1px solid var(--line-strong);
+  transition: color 0.15s;
+}
+.proposal__tool:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+button.proposal__tool:hover {
+  color: var(--ink, var(--text));
+}
+.proposal__tool--status {
+  font-weight: 400;
+}
+
+/* ---- Stages (StatusCard uses .stg--discs; the other looks are on #/demo/stages) ---------
+   The request's Stages card after the feature-list reference: icon discs on a
+   line, one row lit. Each row draws its own connector down to the next mark. */
+.stgdemo__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(390px, 1fr));
+  gap: 16px;
+  padding: 8px 0 48px;
+}
+.stgdemo__stage {
+  display: grid;
+  place-items: start center;
+  padding: 24px 20px;
+  border-radius: 18px;
+  background: #f2efe9;
+}
+.stgdemo__stage > .side-card {
+  width: 340px;
+}
+.stg__list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+.stg__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr);
+  gap: 14px;
+  margin: 0 -10px;
+  padding: 10px;
+  border-radius: 14px;
+}
+.stg__item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 28px;
+  top: 46px;
+  bottom: -16px;
+  width: 1px;
+  background: var(--line-strong);
+}
+.stg__mark {
+  position: relative;
+  z-index: 1;
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  color: var(--text-3);
+  background: var(--surface-1);
+  box-shadow: 0 0 0 1px var(--line), 0 4px 10px -4px rgba(14, 17, 22, 0.2);
+}
+.stg__item.is-done .stg__mark {
+  color: var(--cobalt, var(--accent));
+}
+.stg__item.is-declined .stg__mark {
+  color: var(--danger);
+}
+.stg__body {
+  padding-top: 1px;
+}
+.stg__label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink, var(--text));
+}
+.stg__info {
+  margin-top: 2px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+.stg__item.is-todo :is(.stg__label, .stg__info) {
+  color: var(--text-3);
+}
+.stg__when {
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.stg__due {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--text-2);
+}
+.stg__due.is-on-you {
+  color: var(--warning);
+}
+.stg__due svg {
+  flex: none;
+  margin-top: 2px;
+}
+.stg__due-what {
+  display: block;
+  font-weight: 500;
+}
+.stg__due-when {
+  display: block;
+}
+
+/* 2 · Icon discs: the current row lit in soft Cobalt. */
+.stg--discs .stg__item.is-current,
+.stg--folded .stg__item.is-current {
+  /* Opaque and raised, so the connector stops at the card's edges: the line
+     from the stage above is covered, and its own starts below the card. */
+  z-index: 1;
+  background: color-mix(in srgb, var(--cobalt, var(--accent)) 6%, var(--surface-1));
+}
+.stg--discs .stg__item.is-current:not(:last-child)::after,
+.stg--folded .stg__item.is-current:not(:last-child)::after {
+  top: 100%;
+}
+.stg--discs .stg__item.is-current .stg__label,
+.stg--folded .stg__item.is-current .stg__label {
+  color: var(--cobalt, var(--accent));
+}
+.stg--discs .stg__item.is-current .stg__mark,
+.stg--folded .stg__item.is-current .stg__mark {
+  color: var(--cobalt, var(--accent));
+  box-shadow: 0 0 0 1.5px rgba(30, 59, 214, 0.55), 0 4px 10px -4px rgba(30, 59, 214, 0.4);
+}
+
+/* 3 · Glass disc for now: a Cobalt glass sphere, the row a lifted white card. */
+.stg--glass .stg__item.is-current {
+  background: #ffffff;
+  box-shadow: 0 0 0 1px var(--line), 0 14px 30px -16px rgba(14, 17, 22, 0.35);
+}
+.stg--glass .stg__item.is-current .stg__mark {
+  color: #ffffff;
+  background:
+    radial-gradient(circle at 34% 26%, rgba(255, 255, 255, 0.85) 0 9%, rgba(255, 255, 255, 0) 32%),
+    radial-gradient(circle at 60% 78%, rgba(150, 175, 255, 0.85), transparent 55%),
+    radial-gradient(circle at 40% 35%, color-mix(in srgb, var(--cobalt) 55%, #ffffff), var(--cobalt) 60%, color-mix(in srgb, var(--cobalt) 70%, #000));
+  box-shadow: inset 0 -3px 6px rgba(255, 255, 255, 0.3), 0 8px 14px -6px rgba(30, 59, 214, 0.7);
+}
+
+/* 4 · Filled path: done discs solid Cobalt, a Cobalt line up to now, a halo. */
+.stg--filled .stg__item.is-done .stg__mark {
+  color: #ffffff;
+  background: var(--cobalt);
+  box-shadow: none;
+}
+.stg--filled .stg__item.is-done::after {
+  background: var(--cobalt);
+  width: 2px;
+  left: 27.5px;
+}
+.stg--filled .stg__item.is-current .stg__mark {
+  color: var(--cobalt);
+  box-shadow: 0 0 0 1.5px var(--cobalt), 0 0 0 6px rgba(30, 59, 214, 0.12);
+}
+.stg--filled .stg__item.is-todo .stg__mark {
+  box-shadow: 0 0 0 1px var(--line-strong);
+}
+
+/* 5 · Current as a card: small dots, the current stage opens into a card. */
+.stg--lifted .stg__item {
+  grid-template-columns: 12px minmax(0, 1fr);
+}
+.stg--lifted .stg__mark {
+  width: 12px;
+  height: 12px;
+  margin-top: 4px;
+  box-shadow: 0 0 0 1.5px var(--line-strong);
+}
+.stg--lifted .stg__item:not(:last-child)::after {
+  left: 15.5px;
+  top: 30px;
+  bottom: -20px;
+}
+.stg--lifted .stg__item.is-done .stg__mark {
+  background: var(--cobalt);
+  box-shadow: none;
+}
+.stg--lifted .stg__item.is-current {
+  margin: 4px -10px;
+  padding: 14px 12px 14px 10px;
+  background: #ffffff;
+  box-shadow: 0 0 0 1px var(--line), 0 16px 34px -18px rgba(14, 17, 22, 0.4);
+}
+.stg--lifted .stg__item.is-current .stg__mark {
+  background: #ffffff;
+  box-shadow: 0 0 0 3px var(--cobalt);
+}
+.stg--lifted .stg__item.is-current .stg__label {
+  font-size: 15px;
+}
+
+/* 6 · Past folded */
+.stg .stg__item.stg__fold .stg__mark {
+  color: #ffffff;
+  background: var(--cobalt);
+  box-shadow: none;
+}
+
+/* ---- Details card (request page): label left, value right, hairlines between ---------- */
+:root[data-theme='sand'] .req-side .meta-list {
+  gap: 0;
+  font-size: 13px;
+}
+:root[data-theme='sand'] .req-side .meta-list :is(dt, dd) {
+  padding: 11px 0;
+  border-top: 1px solid var(--line);
+}
+:root[data-theme='sand'] .req-side .meta-list dt:first-of-type,
+:root[data-theme='sand'] .req-side .meta-list dt:first-of-type + dd {
+  padding-top: 2px;
+  border-top: 0;
+}
+:root[data-theme='sand'] .req-side .meta-list :is(dt:last-of-type, dd:last-of-type) {
+  padding-bottom: 0;
+}
+:root[data-theme='sand'] .req-side .meta-list dt {
+  color: var(--text-2);
+}
+:root[data-theme='sand'] .req-side .meta-list dd {
+  justify-content: flex-end;
+  text-align: right;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/* The comment field under the activity log: no fill, a hairline, like the modal fields. */
+:root[data-theme='sand'] .comment-box .textarea {
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+:root[data-theme='sand'] .comment-box .textarea:hover {
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.24);
+}
+:root[data-theme='sand'] .comment-box .textarea:focus {
+  box-shadow: 0 0 0 1.5px var(--accent);
 }

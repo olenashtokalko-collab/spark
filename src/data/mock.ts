@@ -192,6 +192,19 @@ export const docs: Doc[] = [
 // ---- Requests & proposals -------------------------------------------------
 
 export const requests: WorkRequest[] = [
+  // A proposal awaiting the client's decision, due in a few days (shows the deadline hourglass).
+  {
+    id: 'REQ-100', title: 'UAE National Day window displays', type: 'Creative',
+    description: 'Window displays for the five UAE stores for National Day on 2 December: one idea, adapted per store, with a matching social post.',
+    timing: 'This quarter', budget: 'Up to AED 60,000', status: 'proposal', createdBy: 'u-layla', createdAt: '2026-10-01T10:00:00', updatedAt: '2026-10-10T12:00:00', ownerId: 's-dana',
+    nextStep: { label: 'Your decision on the proposal', date: '2026-10-18', onClient: true },
+    proposalIds: ['P-100-1'],
+    activity: [
+      { id: 'g1', at: '2026-10-01T10:00:00', by: 'u-layla', kind: 'created', text: 'created this request' },
+      { id: 'g2', at: '2026-10-02T09:30:00', by: 's-dana', kind: 'status', text: 'started reviewing' },
+      { id: 'g3', at: '2026-10-10T12:00:00', by: 's-dana', kind: 'proposal', text: 'sent a proposal · AED 54,000 · 6 weeks' },
+    ],
+  },
   {
     id: 'REQ-105', title: 'Response plan for delivery fee complaints', type: 'Social',
     description: 'Complaints about the AED 15 delivery fee tripled this week, mostly on Instagram comments and Google reviews. We need a reply approach for the community team and a view on whether to change the pricing message before Riyadh.',
@@ -280,6 +293,21 @@ const riyadhBase = {
 };
 
 export const proposals: Proposal[] = [
+  {
+    id: 'P-100-1', requestId: 'REQ-100', version: 1, title: 'UAE National Day window displays', sentBy: 's-dana', sentAt: '2026-10-10T12:00:00', validUntil: '2026-10-18', startDate: '2026-10-20',
+    summary: 'One window idea built around the flag colours in light and craft, adapted to the five UAE stores, installed by 28 November with a matching social post.',
+    objectives: ['Windows people stop for and photograph in National Day week.', 'One idea that fits every store, from Dubai Mall to Al Ain.'],
+    scope: [
+      { title: 'Window concept', detail: 'Two routes, presented as store renders.', deliverables: ['2 concept routes', 'Renders for Dubai Mall'] },
+      { title: 'Store adaptations', detail: 'The chosen route fitted to each window.', deliverables: ['5 store layouts', 'Production files'] },
+      { title: 'Social post', detail: 'A post and story from the windows.', deliverables: ['1 post', '3 stories'] },
+    ],
+    phases: [{ name: 'Concept', weeks: 2 }, { name: 'Adaptation', weeks: 2 }, { name: 'Production', weeks: 2 }],
+    investment: [{ item: 'Window concept', amount: 18000 }, { item: 'Store adaptations', amount: 24000 }, { item: 'Social post', amount: 7000 }, { item: 'Project management', amount: 5000 }],
+    terms: ['Prices exclude VAT, printing and installation.', '50% on approval, 50% on installation.'],
+    status: 'awaiting',
+    comments: [],
+  },
   {
     ...riyadhBase,
     id: 'P-104-2', version: 2, sentBy: 's-dana', sentAt: '2026-10-06T15:30:00', validUntil: '2026-10-14', startDate: '2026-11-09',
@@ -444,6 +472,7 @@ export const conversations: Conversation[] = [
 // ---- Notifications ------------------------------------------------------------
 
 export const notifications: Notification[] = [
+  { id: 'nt-100', audience: 'client', at: '2026-10-10T12:00:00', title: 'Proposal ready: UAE National Day window displays', body: 'AED 54,000 · 6 weeks · decision by 18 Oct', route: '/requests/REQ-100/proposal', kind: 'proposal', read: false },
   { id: 'nt1', audience: 'client', at: '2026-10-08T09:10:00', title: 'Spark started reviewing REQ-105', body: 'Response plan for delivery fee complaints', route: '/requests/REQ-105', kind: 'request', read: false },
   { id: 'nt2', audience: 'client', at: '2026-10-07T18:00:00', title: 'Approval requested on packaging concepts', body: 'Spark shared round 1 for Ramadan 2027 · due 15 Oct', route: '/documents/f-ramadan?doc=d-pack-r1', kind: 'file', read: false },
   { id: 'nt3', audience: 'client', at: '2026-10-06T15:30:00', title: 'Proposal ready: Riyadh launch campaign', body: 'AED 186,000 · 10 weeks · decision by 14 Oct', route: '/requests/REQ-104/proposal', kind: 'proposal', read: false },

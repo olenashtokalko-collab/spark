@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react';
-import { ArrowLeft, CircleAlert, Download, MessageSquare, RotateCcw, ShieldCheck, Check, PenLine, X } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { CircleAlert, Download, MessageSquare, RotateCcw, ShieldCheck, Check, PenLine, X } from 'lucide-react';
 import { canApprove, latestProposal, personById, proposalTotal, proposalWeeks, useStore } from '../../state/store';
 import { Avatar, Button, Checkbox, EmptyState, Field, Select, Textarea, cx } from '../../components/ui/primitives';
 import { Dialog } from '../../components/ui/overlay';
+import { DeadlineHourglass, deadline } from '../../components/ui/DeadlineHourglass';
 import { ProposalStatus } from '../../components/domain';
+import { FluidOrb } from '../../components/ui/FluidOrb';
 import { useToast } from '../../components/ui/toast';
-import { aed, addDays, dueLabel, fmtDate, fmtDateTime, fmtRelative } from '../../lib/format';
+import { aed, addDays, fmtDate, fmtDateTime, fmtRelative } from '../../lib/format';
 import { navigate } from '../../lib/router';
 import type { Proposal } from '../../data/types';
 
@@ -37,6 +39,7 @@ export function ProposalView({ requestId }: { requestId: string }) {
   const decider = p.decision ? personById(state, p.decision.by) : undefined;
   const awaiting = p.status === 'awaiting';
   const mayDecide = awaiting && canApprove(me);
+  const timed = awaiting ? deadline(p.sentAt, p.validUntil) : null;
   const countFor = (s: Section) => p.comments.filter((c) => c.section === s).length;
 
   const exportProposal = () => {
@@ -67,6 +70,11 @@ export function ProposalView({ requestId }: { requestId: string }) {
     toast({ title: 'Proposal downloaded', body: 'A plain-text copy for sharing internally.' });
   };
 
+  const askSpark = () => {
+    const id = actions.ask(null, `Help me decide on the proposal for ${p.title}: what's included, what's not, and what to ask before approving.`);
+    navigate(`/assistant/${id}`);
+  };
+
   const sectionHead = (s: Section) => (
     <div className="psec__head">
       <h2 className="psec__title">{s}</h2>
@@ -93,29 +101,37 @@ export function ProposalView({ requestId }: { requestId: string }) {
 
   return (
     <div className="proposal">
-      <a className="back" href={`#/requests/${req.id}`}>
-        <ArrowLeft size={15} /> Request
-      </a>
+      {/* After documentation pages: a breadcrumb, the status and title, and a row
+          of tools over a hairline. */}
+      <nav className="crumbs" aria-label="Breadcrumb">
+        <a href="#/requests">Requests</a>
+        <span aria-hidden>/</span>
+        <a href={`#/requests/${req.id}`}>{req.title}</a>
+        <span aria-hidden>/</span>
+        <span aria-current="page">Proposal{p.version > 1 ? ` v${p.version}` : ''}</span>
+      </nav>
 
       <div className="proposal__layout">
         <article className="proposal__doc">
           <header className="proposal__head">
             <div className="proposal__eyebrow">
-              <span className="faint">Proposal</span>
               <ProposalStatus status={p.status} />
-              <span className="faint">· sent {fmtRelative(p.sentAt)}</span>
             </div>
             <h1 className="proposal__title">{p.title}</h1>
+            <div className="proposal__tools">
+              <span className="proposal__tool proposal__tool--status">
+                Sent {fmtDate(p.sentAt)} by {sender.name.split(' ')[0]}
+              </span>
+              <button className="proposal__tool" onClick={askSpark}>
+                <FluidOrb size={16} /> Ask Spark about this proposal
+              </button>
+              <button className="proposal__tool" onClick={exportProposal}>
+                <Download size={15} /> Download
+              </button>
+            </div>
           </header>
 
           <StatusBanner p={p} />
-
-
-          <section className="psec" id="sec-summary">
-            {sectionHead('Summary')}
-            <p className="psec__lead">{p.summary}</p>
-            {sectionComposer('Summary')}
-          </section>
 
           {p.objectives.length > 0 && (
             <section className="psec" id="sec-objectives">
@@ -222,16 +238,32 @@ export function ProposalView({ requestId }: { requestId: string }) {
         </article>
 
         <aside className="proposal__side">
-          <section className="decision">
-            {/* The three decisions stay visible; the download is an icon by the total. */}
-            <div className="decision__head">
-              <div className="decision__total">{aed(total)}</div>
-              <Button variant="ghost" size="sm" icon={Download} onClick={exportProposal} aria-label="Download a copy" data-tip="Download a copy" />
-            </div>
-            <div className="decision__meta">
-              {weeks} weeks · starts {fmtDate(p.startDate)}
-              {awaiting && <> · {dueLabel(p.validUntil)}</>}
-            </div>
+          <section className={cx('decision', timed && 'decision--timed', timed?.urgent && 'is-urgent')}>
+            {timed ? (
+              // Awaiting a decision: how long is left, the total, and the deadline hourglass.
+              <>
+                <div className="decision__eyebrow">
+                  <span>{timed.daysLeft === 0 ? 'Due today' : `Due ${fmtDate(p.validUntil, { weekday: true })} · ${timed.daysLeft} day${timed.daysLeft === 1 ? '' : 's'} left`}</span>
+                </div>
+                <div className="decision__timed">
+                  <div>
+                    <div className="decision__total">{aed(total)}</div>
+                    <div className="decision__meta">Waiting for your decision</div>
+                  </div>
+                  <DeadlineHourglass progress={timed.progress} daysLeft={timed.daysLeft} />
+                </div>
+              </>
+            ) : (
+              <>
+                {/* The download sits in the tools row over the document. */}
+                <div className="decision__head">
+                  <div className="decision__total">{aed(total)}</div>
+                </div>
+                <div className="decision__meta">
+                  {weeks} weeks · starts {fmtDate(p.startDate)}
+                </div>
+              </>
+            )}
             {mayDecide && (
               <div className="decision__btns">
                 <Button variant="primary" size="lg" onClick={() => setDecision('approved')}>
@@ -255,18 +287,20 @@ export function ProposalView({ requestId }: { requestId: string }) {
             {p.decision && decider && (
               <div className={cx('decision__done', `is-${p.status}`)}>
                 <Avatar person={decider} size={22} />
-                <span>
-                  {p.status === 'approved' ? 'Approved' : p.status === 'declined' ? 'Declined' : 'Changes requested'} by {decider.name}
-                  {p.decision.reason && <> ({p.decision.reason.toLowerCase()})</>}
-                  <span className="faint"> · {fmtDateTime(p.decision.at)}</span>
-                  {p.decision.note && <span className="decision__quote">“{p.decision.note}”</span>}
-                </span>
+                {/* What happened, the note if there was one, then when. */}
+                <div className="decision__done-body">
+                  <div className="decision__what">
+                    {p.status === 'approved' ? 'Approved' : p.status === 'declined' ? 'Declined' : 'Changes requested'} by {decider.name}
+                    {p.decision.reason && <> ({p.decision.reason.toLowerCase()})</>}
+                  </div>
+                  {p.decision.note && <p className="decision__quote">“{p.decision.note}”</p>}
+                  <div className="decision__when">{fmtDateTime(p.decision.at)}</div>
+                </div>
               </div>
             )}
           </section>
           <ProposalToc
             items={[
-              { id: 'summary', label: 'Summary' },
               ...(p.objectives.length ? [{ id: 'objectives', label: 'Objectives' }] : []),
               { id: 'scope', label: 'Scope & deliverables' },
               { id: 'timeline', label: 'Timeline' },
@@ -302,21 +336,37 @@ export function ProposalView({ requestId }: { requestId: string }) {
  *  in view, so the document stays whole while still easy to move around. */
 function ProposalToc({ items }: { items: { id: string; label: string; count?: number }[] }) {
   const [active, setActive] = useState(items[0]?.id);
+  // After a click, hold the picked section while the smooth scroll runs, so a
+  // short section near the end isn't overruled when the page hits the bottom.
+  const hold = useRef(0);
   useEffect(() => {
     const els = items.map((i) => document.getElementById(`sec-${i.id}`)).filter((e): e is HTMLElement => !!e);
-    const io = new IntersectionObserver(
-      (entries) => {
-        const top = entries.filter((e) => e.isIntersecting).sort((a, b) => a.boundingClientRect.top - b.boundingClientRect.top)[0];
-        if (top) setActive(top.target.id.replace('sec-', ''));
-      },
-      { rootMargin: '-80px 0px -60% 0px' },
-    );
-    els.forEach((e) => io.observe(e));
-    return () => io.disconnect();
+    // The section in view is the last one whose top has passed a line under the
+    // top bar; at the very bottom of the page it's the last one, however short.
+    const update = () => {
+      if (Date.now() < hold.current) return;
+      const line = 140;
+      const doc = document.scrollingElement ?? document.documentElement;
+      const scroller = els[0]?.closest('main') ?? doc;
+      const atEnd = [scroller, doc].some((s) => s.scrollHeight - s.scrollTop - s.clientHeight < 4 && s.scrollTop > 0);
+      let current = els[0];
+      for (const e of els) if (e.getBoundingClientRect().top <= line) current = e;
+      if (atEnd) current = els[els.length - 1];
+      if (current) setActive(current.id.replace('sec-', ''));
+    };
+    update();
+    // Capture, so it hears whichever element actually scrolls (window or main).
+    window.addEventListener('scroll', update, { capture: true, passive: true });
+    window.addEventListener('resize', update);
+    return () => {
+      window.removeEventListener('scroll', update, { capture: true });
+      window.removeEventListener('resize', update);
+    };
   }, [items.map((i) => i.id).join()]); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
     <nav className="ptoc" aria-label="Proposal sections">
+      <div className="ptoc__title">On this page</div>
       {items.map((i) => (
         <a
           key={i.id}
@@ -326,6 +376,7 @@ function ProposalToc({ items }: { items: { id: string; label: string; count?: nu
           onClick={(e) => {
             // Hash routing owns the URL hash, so scroll instead of following the link.
             e.preventDefault();
+            hold.current = Date.now() + 900;
             setActive(i.id);
             document.getElementById(`sec-${i.id}`)?.scrollIntoView({ behavior: 'smooth', block: 'start' });
           }}
