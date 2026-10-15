@@ -50,7 +50,7 @@ export function DotSphere({ size = 120, active = false, density = 260, className
     let light = false;
     let frame = 0;
     const readTheme = () => {
-      light = document.documentElement.dataset.theme === 'light';
+      light = document.documentElement.dataset.theme === 'sand';
     };
     readTheme();
 

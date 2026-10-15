@@ -521,9 +521,6 @@ kbd {
     --ring: 360deg;
   }
 }
-:root[data-theme='light'] .btn--ai {
-  color: #fff;
-}
 .btn:disabled {
   opacity: 0.45;
 }
@@ -595,10 +592,6 @@ kbd {
   letter-spacing: 0.02em;
   background: hsl(var(--hue) 38% 30%);
   color: hsl(var(--hue) 70% 88%);
-}
-:root[data-theme='light'] .avatar {
-  background: hsl(var(--hue) 55% 88%);
-  color: hsl(var(--hue) 45% 28%);
 }
 .avatar--ring {
   box-shadow: 0 0 0 2px var(--bg);
@@ -1138,6 +1131,10 @@ kbd {
   font-size: 13px;
   color: var(--text-2);
   background: var(--surface-2);
+}
+.theme-pick button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
 }
 .theme-pick button.is-active {
   color: var(--text);

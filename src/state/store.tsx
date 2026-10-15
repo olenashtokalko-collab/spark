@@ -24,8 +24,8 @@ import type {
 import { addDays, nowIso } from '../lib/format';
 import { kindOf } from '../lib/files';
 
-/** 'sand' is the Direction A prototype after the 2026 brand book (see VISUAL_DIRECTIONS.md). */
-export type Theme = 'dark' | 'light' | 'system' | 'sand';
+/** 'sand' is the light theme, after the 2026 brand book (see VISUAL_DIRECTIONS.md). */
+export type Theme = 'dark' | 'system' | 'sand';
 /** Prototype: which of the 5 request-page layouts is shown (switcher on the page). */
 export type RequestLayout = 1 | 2 | 3 | 4 | 5;
 export type NotifKey = 'proposals' | 'requests' | 'files' | 'team';
@@ -54,7 +54,7 @@ const STORAGE_KEY = 'spark-portal-v10';
 const attachedContext = (files?: Attachment[]) => (files?.length ? (files.length === 1 ? files[0].name : `${files.length} attached files`) : undefined);
 
 const initial = (): State => ({
-  theme: 'dark',
+  theme: 'sand',
   requestLayout: 1,
   signedIn: true,
   web: true,
@@ -89,6 +89,8 @@ function load(): State {
       const requests = missing(saved.requests, seed.requests);
       const proposals = missing(saved.proposals, seed.proposals);
       const notifications = missing(saved.notifications, seed.notifications);
+      // Light is the only theme for now (dark is switched off); saved demos open in it too.
+      saved.theme = 'sand';
       return { ...seed, ...saved, ...(folders && { folders }), ...(requests && { requests }), ...(proposals && { proposals }), ...(notifications && { notifications }) };
     }
   } catch {

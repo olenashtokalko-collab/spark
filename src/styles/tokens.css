@@ -83,55 +83,6 @@
   --shadow-pop: 0 16px 48px rgba(0, 0, 0, 0.55), 0 0 0 1px rgba(170, 185, 255, 0.08);
 }
 
-:root[data-theme='light'] {
-  color-scheme: light;
-  --bg: #f4f4f2;
-  --surface-1: #ffffff;
-  --surface-2: #efefec;
-  --surface-3: #e6e6e2;
-  --surface-hover: rgba(10, 12, 18, 0.04);
-  --surface-active: rgba(10, 12, 18, 0.07);
-  --overlay: rgba(20, 22, 28, 0.38);
-  --control-fill: rgba(12, 14, 19, 0.05);
-  --control-fill-hover: rgba(12, 14, 19, 0.08);
-
-  --text: #0c0e13;
-  --text-2: #4d5361;
-  --text-3: #858b97;
-  --text-display: #0c0e13;
-  --text-inverse: #ffffff;
-  --line: rgba(10, 12, 18, 0.07);
-  --line-strong: rgba(10, 12, 18, 0.13);
-
-  --accent: #2458f0;
-  --accent-hover: #1b47cc;
-  --accent-text: #1f4fd8;
-  --accent-soft: rgba(36, 88, 240, 0.1);
-  --accent-softer: rgba(36, 88, 240, 0.05);
-  --on-accent: #ffffff;
-
-  --cream: #0c0e13;
-  --on-cream: #ffffff;
-  --field-top: #ffffff;
-  --field-bottom: #f7f7f4;
-  --field-text: #0c0e13;
-  --chip: rgba(12, 14, 19, 0.06);
-  --chip-hover: rgba(12, 14, 19, 0.09);
-  --chip-text: #2a2d36;
-
-  --positive: #138a5a;
-  --positive-soft: rgba(19, 138, 90, 0.1);
-  --warning: #a86a06;
-  --warning-soft: rgba(200, 130, 10, 0.12);
-  --danger: #c93a37;
-  --danger-soft: rgba(201, 58, 55, 0.1);
-  --neutral-soft: rgba(10, 12, 18, 0.06);
-
-  --glow: 0 0 0 1px rgba(36, 88, 240, 0.55), 0 0 20px rgba(36, 88, 240, 0.22);
-  --glow-soft: 0 0 0 1px rgba(36, 88, 240, 0.25), 0 0 24px rgba(36, 88, 240, 0.1);
-  --shadow-pop: 0 16px 40px rgba(20, 24, 40, 0.14), 0 0 0 1px rgba(10, 12, 18, 0.07);
-}
-
 /*
  * Brand A · light-first (prototype). Values from Spark Studios Brand Guidelines
  * 2026, p. 11: Saadiyat Sand, Mangrove Ink, Gulf Cobalt, Liwa Ember, Corniche

@@ -15,7 +15,6 @@ import {
   Users,
   Settings,
   LogOut,
-  Sparkles,
 } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { navigate, useRoute } from '../../lib/router';
@@ -48,7 +47,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   // Theme: resolve "system" to the OS preference.
   useEffect(() => {
     const apply = () => {
-      const t = state.theme === 'system' ? (window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark') : state.theme;
+      const t = state.theme === 'system' ? (window.matchMedia('(prefers-color-scheme: light)').matches ? 'sand' : 'dark') : state.theme;
       document.documentElement.dataset.theme = t;
     };
     apply();
@@ -269,10 +268,10 @@ function Notifications() {
 function UserMenu() {
   const { state, me, actions } = useStore();
   const themes = [
-    { v: 'dark' as const, icon: Moon, label: 'Dark' },
-    { v: 'light' as const, icon: Sun, label: 'Light' },
-    { v: 'system' as const, icon: Monitor, label: 'System' },
-    { v: 'sand' as const, icon: Sparkles, label: 'Brand A' },
+    { v: 'sand' as const, icon: Sun, label: 'Light' },
+    // Dark is switched off for now (and System, which could resolve to it).
+    { v: 'dark' as const, icon: Moon, label: 'Dark', off: true },
+    { v: 'system' as const, icon: Monitor, label: 'System', off: true },
   ];
   return (
     <Popover
@@ -297,7 +296,14 @@ function UserMenu() {
           <div className="menu__label">Appearance</div>
           <div className="theme-pick">
             {themes.map((t) => (
-              <button key={t.v} className={cx(state.theme === t.v && 'is-active')} onClick={() => actions.setTheme(t.v)} aria-pressed={state.theme === t.v}>
+              <button
+                key={t.v}
+                className={cx(state.theme === t.v && 'is-active')}
+                onClick={() => actions.setTheme(t.v)}
+                aria-pressed={state.theme === t.v}
+                disabled={t.off}
+                data-tip={t.off ? 'Coming soon' : undefined}
+              >
                 <t.icon size={14} /> {t.label}
               </button>
             ))}
