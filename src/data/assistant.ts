@@ -31,7 +31,26 @@ interface Script extends Answer {
 
 const scripts: Script[] = [
   {
-    // Must stay first: the prompt also mentions Riyadh.
+    // The demo story: Layla asks for a brief for the spring campaign. Must stay first, so it wins over the generic brief below.
+    match: /spring/i,
+    steps: ['Read the brand profile', 'Read Brand Guidelines v3.2', 'Checked open requests and Q1 budget'],
+    text:
+      'Happy to. A brief Spark can price needs four things: **what you want to make**, **who it is for**, **what success looks like**, and **budget and timing**. Some of it is already in your workspace, so let\'s start with the campaign idea itself. What do you have in mind for spring, in a sentence or two? Rough is fine.',
+    findings: [
+      { title: 'The audience is already defined', body: 'Shoppers aged 24–35, evening visits, found through creators.', tone: 'positive', sourceIds: ['ws-pers'] },
+      { title: 'The brand voice is set', body: 'Warm, never loud, and bilingual by default.', tone: 'neutral', sourceIds: ['ws-guide'] },
+      { title: 'Spring needs Q1 2027 budget', body: 'The Q4 launch line has AED 4,000 left, so a spring campaign likely needs a new line.', tone: 'attention', sourceIds: ['ws-budget'] },
+    ],
+    sources: [
+      { id: 'ws-pers', kind: 'workspace', title: 'Audience personas — GCC.pdf', docId: 'd-personas', snippet: 'Noura, 29 · visits 4× a week, mostly after 7 pm.' },
+      { id: 'ws-guide', kind: 'workspace', title: 'Brand Guidelines v3.2.pdf', docId: 'd-guidelines', snippet: 'Warm, never loud. Bilingual by default.' },
+      { id: 'ws-budget', kind: 'workspace', title: 'Q4 marketing budget.xlsx', docId: 'd-budget', snippet: 'Riyadh launch: 190,000 remaining.' },
+    ],
+    followUps: ['A spring story across all stores', 'A creator-led social series for spring'],
+    suggestedRequest: { title: 'Spring campaign brief', type: 'Strategy' },
+  },
+  {
+    // Must stay first among the rest: the prompt also mentions Riyadh.
     match: /\bidea\b|\bbrief\b|shape/i,
     steps: ['Read the brand profile', 'Read KSA market entry strategy', 'Checked open requests and Q4 budget'],
     text:

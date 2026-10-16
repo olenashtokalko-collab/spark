@@ -2387,3 +2387,158 @@ button.proposal__tool:hover {
 :root[data-theme='sand'] .composer__send:not(.is-busy):hover:not(:disabled) {
   background: #2a2f38;
 }
+
+/* ---- System notes in the thread: a pale strip of Noor light --------------------------------- */
+/* "Created request REQ-113 from this chat": the light between Cobalt and Ember at a fraction of its
+   strength over white (picked on the note-strip demo, A). No stroke, no edge; Ink type and an Ink link. */
+:root[data-theme='sand'] .msg-system:not(.chat-cut__pill) {
+  position: relative;
+  padding: 9px 18px;
+  color: var(--ink);
+  background:
+    linear-gradient(100deg, rgba(42, 60, 240, 0.1), rgba(138, 60, 240, 0.09) 32%, rgba(255, 46, 147, 0.09) 64%, rgba(255, 106, 26, 0.11)),
+    rgba(255, 255, 255, 0.75);
+}
+:root[data-theme='sand'] .msg-system:not(.chat-cut__pill) svg {
+  color: var(--ink);
+}
+:root[data-theme='sand'] .msg-system:not(.chat-cut__pill) .link {
+  color: var(--ink);
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(14, 17, 22, 0.35);
+}
+:root[data-theme='sand'] .msg-system:not(.chat-cut__pill) .link:hover {
+  text-decoration-color: var(--ink);
+}
+
+/* ---- Note strip demo (#/demo/note-strip) ------------------------------------------------------ */
+.nsdemo__grid {
+  display: grid;
+  gap: 20px;
+}
+.nsdemo__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 14px;
+}
+.nsdemo__stage {
+  display: grid;
+  place-items: center;
+  padding: 36px 16px;
+  border-radius: 16px;
+}
+.nsdemo__stage--sand {
+  background: #f8f6f2;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.06);
+}
+.nsdemo__stage--chat {
+  background: linear-gradient(180deg, #f1f2f6 0%, #e3d9f1 45%, #dcb4ea 100%);
+}
+/* The looks reset the current strip first (grain, gradient, edge), then add their own. */
+:root[data-theme='sand'] .msg-system.ns:where(:not(.ns--now)) {
+  background: none;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+:root[data-theme='sand'] .msg-system.ns--a {
+  background: linear-gradient(100deg, rgba(42, 60, 240, 0.1), rgba(138, 60, 240, 0.09) 32%, rgba(255, 46, 147, 0.09) 64%, rgba(255, 106, 26, 0.11)), rgba(255, 255, 255, 0.75);
+}
+:root[data-theme='sand'] .msg-system.ns--b {
+  background: linear-gradient(100deg, rgba(184, 216, 245, 0.7), rgba(236, 196, 228, 0.55) 55%, rgba(255, 214, 190, 0.65)), rgba(255, 255, 255, 0.6);
+}
+:root[data-theme='sand'] .msg-system.ns--c {
+  position: relative;
+  isolation: isolate;
+}
+:root[data-theme='sand'] .msg-system.ns--c::before {
+  content: '';
+  position: absolute;
+  inset: -4px -14px -8px;
+  z-index: -1;
+  border-radius: 999px;
+  background: linear-gradient(100deg, rgba(42, 60, 240, 0.4), rgba(138, 60, 240, 0.34) 32%, rgba(255, 46, 147, 0.34) 64%, rgba(255, 106, 26, 0.4));
+  filter: blur(14px);
+  opacity: 0.6;
+}
+:root[data-theme='sand'] .msg-system.ns--d {
+  position: relative;
+  background: rgba(255, 255, 255, 0.85);
+}
+:root[data-theme='sand'] .msg-system.ns--d::after {
+  content: '';
+  position: absolute;
+  left: 18px;
+  right: 18px;
+  bottom: -3px;
+  height: 3px;
+  border-radius: 3px;
+  background: linear-gradient(90deg, #2a3cf0, #8a3cf0 35%, #ff2e93 70%, #ff6a1a);
+  filter: blur(1.5px);
+  opacity: 0.75;
+}
+
+/* ---- Modal spacing demo (#/demo/modal-spacing) --------------------------------------------- */
+.msdemo__grid {
+  display: grid;
+  gap: 20px;
+}
+.msp__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: flex-start;
+  margin-top: 16px;
+}
+.msp__stage {
+  flex: 1 1 480px;
+  max-width: 560px;
+  padding: 24px;
+  border-radius: 20px;
+  background: rgba(14, 17, 22, 0.05);
+}
+.msp .dialog {
+  animation: none;
+  max-height: none;
+}
+/* The spacing knobs; "now" keeps the app's own values. */
+:root[data-theme='sand'] .msp--a .dialog--hero .dialog__head { padding: 28px 24px 0; }
+:root[data-theme='sand'] .msp--a .icon-tile { margin-bottom: 14px; }
+:root[data-theme='sand'] .msp--a .dialog--hero .dialog__desc { margin-top: 6px; }
+:root[data-theme='sand'] .msp--a .dialog__body { padding: 16px 24px; }
+:root[data-theme='sand'] .msp--a .stack { gap: 12px; }
+:root[data-theme='sand'] .msp--a .dialog__foot { padding: 0 24px 24px; }
+:root[data-theme='sand'] .msp--a .req-done { padding: 28px 16px 12px; }
+:root[data-theme='sand'] .msp--a .req-done__title { margin-top: 22px; }
+:root[data-theme='sand'] .msp--a .req-done__reply { margin-top: 10px; }
+:root[data-theme='sand'] .msp--a .req-done__actions { margin-top: 28px; }
+
+:root[data-theme='sand'] .msp--b .dialog--hero .dialog__head { padding: 44px 36px 0; }
+:root[data-theme='sand'] .msp--b .icon-tile { margin-bottom: 26px; }
+:root[data-theme='sand'] .msp--b .dialog--hero .dialog__desc { margin-top: 12px; }
+:root[data-theme='sand'] .msp--b .dialog__body { padding: 28px 36px; }
+:root[data-theme='sand'] .msp--b .stack { gap: 20px; }
+:root[data-theme='sand'] .msp--b .dialog__foot { padding: 8px 36px 36px; }
+:root[data-theme='sand'] .msp--b .req-done { padding: 56px 28px 36px; }
+:root[data-theme='sand'] .msp--b .req-done__title { margin-top: 36px; }
+:root[data-theme='sand'] .msp--b .req-done__reply { margin-top: 16px; }
+:root[data-theme='sand'] .msp--b .req-done__actions { margin-top: 52px; }
+
+:root[data-theme='sand'] .msp--c .dialog--hero .dialog__head { padding: 56px 48px 0; }
+:root[data-theme='sand'] .msp--c .icon-tile { margin-bottom: 30px; }
+:root[data-theme='sand'] .msp--c .dialog--hero .dialog__desc { margin-top: 14px; }
+:root[data-theme='sand'] .msp--c .dialog__body { padding: 36px 48px; }
+:root[data-theme='sand'] .msp--c .stack { gap: 26px; }
+:root[data-theme='sand'] .msp--c .dialog__foot { padding: 16px 48px 48px; }
+:root[data-theme='sand'] .msp--c .req-done { padding: 72px 36px 44px; }
+:root[data-theme='sand'] .msp--c .req-done__title { margin-top: 44px; }
+:root[data-theme='sand'] .msp--c .req-done__reply { margin-top: 20px; }
+:root[data-theme='sand'] .msp--c .req-done__actions { margin-top: 64px; }
+
+/* Modals have no icon tile for now: the title leads. (The tile markup stays; delete this rule to bring it back.) */
+:root[data-theme='sand'] .dialog .icon-tile {
+  display: none;
+}

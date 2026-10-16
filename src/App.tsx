@@ -5,6 +5,8 @@ import { SignIn } from './features/auth/SignIn';
 import { useStore } from './state/store';
 import { Assistant } from './features/assistant/Assistant';
 import { ComposerColorDemo } from './features/demo/ComposerColorDemo';
+import { NoteStripDemo } from './features/demo/NoteStripDemo';
+import { ModalSpacingDemo } from './features/demo/ModalSpacingDemo';
 import { Requests } from './features/requests/Requests';
 import { Monitoring } from './features/monitoring/Monitoring';
 import { RequestDetail } from './features/requests/RequestDetail';
@@ -31,6 +33,8 @@ function Screen() {
       return <Documents folderId={a} docId={query.get('doc')} />;
     case 'demo':
       if (a === 'composer-color') return <ComposerColorDemo />;
+      if (a === 'note-strip') return <NoteStripDemo />;
+      if (a === 'modal-spacing') return <ModalSpacingDemo />;
       break;
     case 'monitoring':
       return <Monitoring />;

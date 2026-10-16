@@ -15,6 +15,9 @@ type Filter = 'all' | 'decision' | 'active' | 'closed';
 type Updated = 'any' | 'week' | 'month';
 const UPDATED_DAYS: Record<Exclude<Updated, 'any'>, number> = { week: 7, month: 30 };
 
+/** A request sent in the last ten minutes stays at the top of the list, so the person sees it land. */
+const isFresh = (r: WorkRequest) => r.status === 'submitted' && Date.now() - new Date(r.createdAt).getTime() < 10 * 60000;
+
 export function Requests() {
   const { state } = useStore();
   const { openRequest } = useUI();
@@ -44,7 +47,7 @@ export function Requests() {
         .filter((r) => (q ? `${r.id} ${r.title} ${r.type}`.toLowerCase().includes(q.toLowerCase()) : true))
         .filter((r) => type === 'any' || r.type === type)
         .filter((r) => updated === 'any' || Date.now() - new Date(r.updatedAt).getTime() <= UPDATED_DAYS[updated] * 86400000)
-        .sort((a, b) => Number(needsDecision(b)) - Number(needsDecision(a)) || b.updatedAt.localeCompare(a.updatedAt)),
+        .sort((a, b) => Number(isFresh(b)) - Number(isFresh(a)) || Number(needsDecision(b)) - Number(needsDecision(a)) || b.updatedAt.localeCompare(a.updatedAt)),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [state.requests, filter, q, type, updated],
   );

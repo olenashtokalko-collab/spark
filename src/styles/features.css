@@ -833,24 +833,22 @@
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 40px 32px 28px;
+  padding: 48px 40px 32px;
 }
 .req-done__title {
-  font-size: 26px;
+  margin-top: 0;
+  font-size: 28px;
   font-weight: 700;
   letter-spacing: -0.02em;
   line-height: 1.2;
 }
 .req-done__reply {
-  margin-top: 10px;
-  max-width: 360px;
+  margin-top: 12px;
+  max-width: 400px;
+  /* The same type as a modal description (see .dialog--hero .dialog__desc). */
   font-size: 15px;
   line-height: 1.5;
   color: var(--text-2);
-}
-.req-done__reply strong {
-  color: var(--text);
-  font-weight: 600;
 }
 .req-done__hint {
   display: flex;
@@ -900,7 +898,7 @@
   justify-content: space-between;
   gap: 8px;
   width: 100%;
-  margin-top: 28px;
+  margin-top: 44px;
 }
 
 /* ---- Document preview ------------------------------------------------------------- */

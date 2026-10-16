@@ -2,13 +2,12 @@
 // it came from is attached automatically (the focused answer and the question
 // before it) and shown back to the client once the request is sent.
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Bell, Check, Send } from 'lucide-react';
+import { ArrowRight, Check, Send } from 'lucide-react';
 import { Dialog, IconTile } from '../../components/ui/overlay';
 import { Button, Field, Input, Select, Textarea, cx } from '../../components/ui/primitives';
 import { useStore } from '../../state/store';
 import type { Conversation, Message, RequestType, Source, Timing } from '../../data/types';
 import { navigate } from '../../lib/router';
-import { ChatCut } from '../assistant/ChatCut';
 
 export interface RequestPrefill {
   title?: string;
@@ -137,34 +136,14 @@ export function RequestFields({ value, onChange, errors, idPrefix = 'rq', compac
   );
 }
 
-/** "Based on": the question and answer the request came from, as a chat cut. */
-export function BasedOn({ basis }: { basis: Basis }) {
-  const msgs = basis.messages.map((m) => ({ role: m.role as 'user' | 'assistant', text: m.text }));
-  return (
-    <div className="sent-with">
-      <ChatCut messages={msgs} author="You" compact />
-    </div>
-  );
-}
-
 /** Success screen, after the "autopilot is on" reference: a lit icon tile,
- *  a clear title, the chat excerpt it came from, then the way on. */
-export function RequestSent({ basis, onClose, closeLabel }: { id?: string; title?: string; basis?: Basis; onClose: () => void; closeLabel: string }) {
+ *  a clear title, then the way on. */
+export function RequestSent({ onClose, closeLabel }: { id?: string; title?: string; onClose: () => void; closeLabel: string }) {
   return (
     <div className="req-done">
       <IconTile icon={Check} tone="ai" />
-      <h2 className="req-done__title">Request sent to Spark</h2>
-      <p className="req-done__reply">
-        You’ll usually get a reply within <strong>2 business days</strong>.
-      </p>
-      {/* From a chat: the excerpt that went with the request. Otherwise a bell that rings once. */}
-      {basis ? (
-        <BasedOn basis={basis} />
-      ) : (
-        <p className="req-done__hint">
-          <Bell size={15} className="req-done__bell" /> We’ll notify you as soon as Spark replies.
-        </p>
-      )}
+      <h2 className="req-done__title">Request sent</h2>
+      <p className="req-done__reply">Your request has been sent successfully! You’ll usually receive a reply within 2 business days. We’ll notify you as soon as Spark responds.</p>
       <div className="req-done__actions">
         <Button variant="secondary" onClick={onClose}>
           {closeLabel}
@@ -194,7 +173,6 @@ export function CreateRequestDialog({ open, onClose, prefill }: { open: boolean;
   const [errors, setErrors] = useState<Errors>({});
   const [busy, setBusy] = useState(false);
   const [done, setDone] = useState<{ id: string; title: string } | null>(null);
-  const [sentBasis, setSentBasis] = useState<Basis | undefined>();
 
   useEffect(() => {
     if (!open) return;
@@ -211,7 +189,6 @@ export function CreateRequestDialog({ open, onClose, prefill }: { open: boolean;
     if (Object.keys(e).length) return;
     setBusy(true);
     await new Promise((r) => setTimeout(r, 650));
-    setSentBasis(basis);
     const id = submit(fields, basis);
     setBusy(false);
     setDone({ id, title: fields.title.trim() });
@@ -220,7 +197,7 @@ export function CreateRequestDialog({ open, onClose, prefill }: { open: boolean;
   if (done)
     return (
       <Dialog open={open} onClose={onClose} size="md">
-        <RequestSent id={done.id} title={done.title} basis={sentBasis} onClose={onClose} closeLabel={basis ? 'Back to chat' : 'Close'} />
+        <RequestSent id={done.id} title={done.title} onClose={onClose} closeLabel={basis ? 'Back to chat' : 'Close'} />
       </Dialog>
     );
 
