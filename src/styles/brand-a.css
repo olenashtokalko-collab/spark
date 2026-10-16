@@ -330,12 +330,12 @@
 :root[data-theme='sand'] .composer__spacer {
   display: block;
 }
-/* Typing (the human's turn): a fine Cobalt rim and a soft Cobalt halo. */
+/* Typing (the human's turn): a bright white rim and the spectrum glowing under the box. */
 :root[data-theme='sand'] .composer.is-focus {
   box-shadow: var(--pill-rim), 0 0 0 1px rgba(255, 255, 255, 0.35);
 }
 :root[data-theme='sand'] .composer.is-typing {
-  box-shadow: var(--pill-rim), 0 0 0 1px rgba(30, 59, 214, 0.45), 0 0 0 6px rgba(30, 59, 214, 0.08), 0 14px 40px -8px rgba(30, 59, 214, 0.35);
+  box-shadow: var(--pill-rim), 0 0 0 1.5px rgba(255, 255, 255, 0.9), 0 18px 36px -10px rgba(214, 90, 166, 0.5), 0 10px 30px -6px rgba(30, 59, 214, 0.3);
 }
 /* Spark at work (AI's turn): the box and its orb stay still; the orb beside the
    answer does the work (see .orb-spark). */
@@ -2360,4 +2360,30 @@ button.proposal__tool:hover {
   :root[data-theme='sand'] .checkbox input:checked + .checkbox__box::after {
     animation: none;
   }
+}
+
+/* ---- Focus and the send button in the primary colour (Ink) ----------------------------------- */
+:root[data-theme='sand'] :focus-visible {
+  outline-color: var(--ink);
+}
+:root[data-theme='sand'] .input:focus,
+:root[data-theme='sand'] .select select:focus,
+:root[data-theme='sand'] .token-input:focus-within,
+:root[data-theme='sand'] .dialog :is(.input, .select select):focus,
+:root[data-theme='sand'] .dialog .token-input:focus-within {
+  box-shadow: 0 0 0 1.5px var(--ink);
+}
+:root[data-theme='sand'] :is(.filter-bar__search, .history__search) .input:focus {
+  box-shadow: inset 0 0 0 1.5px var(--ink);
+}
+:root[data-theme='sand'] .comment-box .textarea:focus {
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.55), 0 0 0 4px rgba(14, 17, 22, 0.06);
+}
+/* The round send button is the primary: a solid Ink circle. */
+:root[data-theme='sand'] .composer__send:not(.is-busy) {
+  background: var(--ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 1px 2px rgba(14, 17, 22, 0.25), 0 6px 14px -8px rgba(14, 17, 22, 0.55);
+}
+:root[data-theme='sand'] .composer__send:not(.is-busy):hover:not(:disabled) {
+  background: #2a2f38;
 }
