@@ -78,7 +78,7 @@ export function Assistant({ convId }: { convId?: string }) {
                 What’s new?
               </span>
               <span className="brand-only">
-                Hey Roland
+                Hey {me.name.split(' ')[0]}
                 <br />
                 Ready to achieve great things?
               </span>
