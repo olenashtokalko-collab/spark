@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowLeft, CalendarDays, CircleAlert, Compass, Download, Layers, Lightbulb, ListChecks, MessageSquare, Package, Palette, Printer, RotateCcw, ShieldCheck, Check, PenLine, X } from 'lucide-react';
+import { AlignLeft, ArrowLeft, CalendarDays, CircleAlert, Compass, Download, Layers, Lightbulb, ListChecks, MessageSquare, Package, Palette, Printer, RotateCcw, ShieldCheck, Check, PenLine, X } from 'lucide-react';
 import { canApprove, latestProposal, personById, proposalTotal, proposalWeeks, useStore } from '../../state/store';
 import { Avatar, Button, Checkbox, EmptyState, Field, Select, Textarea, cx } from '../../components/ui/primitives';
 import { Dialog } from '../../components/ui/overlay';
@@ -51,6 +51,8 @@ export function ProposalView({ requestId }: { requestId: string }) {
   const sender = personById(state, p.sentBy);
   const decider = p.decision ? personById(state, p.decision.by) : undefined;
   const approvedView = p.status === 'approved' && !!p.decision && !!decider;
+  // Declined and changes requested are drawn like Approved: the amount, the word and a glass tile, without the ring.
+  const endedView = (p.status === 'declined' || p.status === 'changes_requested') && !!p.decision && !!decider;
   const awaiting = p.status === 'awaiting';
   const mayDecide = awaiting && canApprove(me);
   const timed = awaiting ? deadline(p.sentAt, p.validUntil) : null;
@@ -246,9 +248,9 @@ export function ProposalView({ requestId }: { requestId: string }) {
         </article>
 
         <aside className="proposal__side">
-          <section className={cx('decision', (timed || approvedView) && 'decision--timed', timed?.urgent && 'is-urgent', approvedView && 'decision--ok')}>
+          <section className={cx('decision', (timed || approvedView || endedView) && 'decision--timed', timed?.urgent && 'is-urgent', approvedView && 'decision--ok', endedView && `decision--${p.status === 'declined' ? 'declined' : 'changes'}`)}>
             {approvedView ? (
-              // Approved (picked on #/demo/states, B): the same card as while waiting, the ring closed in green around the thumb.
+              // Approved (picked on #/demo/states, B): the same card as while waiting, the ring closed in the spectrum around the thumb.
               <>
                 <div className="decision__eyebrow">
                   <span>Decided {fmtDate(p.decision!.at)}</span>
@@ -258,7 +260,21 @@ export function ProposalView({ requestId }: { requestId: string }) {
                     <div className="decision__total">{aed(total)}</div>
                     <div className="decision__meta decision__meta--ok">Approved</div>
                   </div>
-                  <StateRing used={1} glyph="thumb" tone="green" celebrate />
+                  <StateRing used={1} glyph="thumb" tone="spectrum" celebrate />
+                </div>
+              </>
+            ) : endedView ? (
+              // Declined / changes requested: the same card as Approved, a pen or a thumb turned down in the tile.
+              <>
+                <div className="decision__eyebrow">
+                  <span>Decided {fmtDate(p.decision!.at)}</span>
+                </div>
+                <div className="decision__timed">
+                  <div>
+                    <div className="decision__total">{aed(total)}</div>
+                    <div className="decision__meta decision__meta--ok">{p.status === 'declined' ? 'Declined' : 'Changes requested'}</div>
+                  </div>
+                  <StateRing used={1} glyph={p.status === 'declined' ? 'thumb-down' : 'pen'} tone={p.status === 'declined' ? 'red' : 'cobalt'} celebrate quiet />
                 </div>
               </>
             ) : (
@@ -274,7 +290,8 @@ export function ProposalView({ requestId }: { requestId: string }) {
                     <div className="decision__total">{aed(total)}</div>
                     <div className="decision__meta">Waiting for your decision</div>
                   </div>
-                  <StateRing used={timed.progress} glyph="hourglass" tone="cobalt" />
+                  {/* The light warms as the time runs out; the line stays Ink until the last day. */}
+                  <StateRing used={timed.progress} glyph="hourglass" tone={timed.urgent ? 'warm' : timed.daysLeft <= 3 ? 'mid' : 'cobalt'} ink={!timed.urgent} />
                 </div>
               </>
             ) : (
@@ -358,10 +375,6 @@ export function ProposalView({ requestId }: { requestId: string }) {
 
 // The decision itself shows in the side card; the banner only says a revised
 // proposal is on its way after the client asked for changes.
-const TOC_ROW = 44; // keep in step with the row height in brand-a.css (.ptoc--line)
-const TOC_PAD = 12;
-const LINE_X = 10;
-
 /** In-page contents for the proposal: jumps to a section and marks the one
  *  in view, so the document stays whole while still easy to move around. */
 function ProposalToc({ items }: { items: { id: string; label: string; count?: number }[] }) {
@@ -394,21 +407,15 @@ function ProposalToc({ items }: { items: { id: string; label: string; count?: nu
     };
   }, [items.map((i) => i.id).join()]); // eslint-disable-line react-hooks/exhaustive-deps
 
-  // Geometry of the line: rows are 44px, with room for the line above the first and below the last.
   const idx = Math.max(0, items.findIndex((i) => i.id === active));
-  const lineH = items.length * TOC_ROW + TOC_PAD * 2;
-  const dotY = TOC_PAD + (idx + 0.5) * TOC_ROW;
-  const linePath = `M ${LINE_X} 0 V ${Math.max(0, dotY - 28)} C ${LINE_X} ${dotY - 11}, ${LINE_X + 11} ${dotY - 17}, ${LINE_X + 11} ${dotY} C ${LINE_X + 11} ${dotY + 17}, ${LINE_X} ${dotY + 11}, ${LINE_X} ${Math.min(lineH, dotY + 28)} V ${lineH}`;
 
   return (
-    <nav className="ptoc ptoc--line" aria-label="Proposal sections">
-      <div className="ptoc__title">On this page</div>
-      {/* A thin line with a dot for the section in view; the line bends round the dot. */}
-      <div className="ptoc__list">
-        <svg className="tocv__line" width="36" height={lineH} viewBox={`0 0 36 ${lineH}`} aria-hidden>
-          <path style={{ d: `path("${linePath}")` }} fill="none" />
-          <circle cx={LINE_X - 1} r="6.5" style={{ cy: `${dotY}px` }} />
-        </svg>
+    <nav className="ptoc ptoc--rail" style={{ ['--i' as string]: idx }} aria-label="Proposal sections">
+      <div className="ptoc__title">
+        <AlignLeft size={15} strokeWidth={1.8} /> On this page
+      </div>
+      {/* A hairline rail; one accent bar slides to the section in view, a pale bar shows on hover. */}
+      <div className="ptoc__items">
         {items.map((i) => (
           <a
             key={i.id}

@@ -4,6 +4,7 @@
 // (p. 19). Each sits under the white decision card, as on the proposal page.
 // Click the items.
 import { useState } from 'react';
+import { AlignLeft } from 'lucide-react';
 import { PageHeader, cx } from '../../components/ui/primitives';
 
 const ITEMS = [
@@ -25,6 +26,9 @@ const VARIANTS = [
   { id: 'noor', name: '6 · Noor progress', note: 'The light fills the rail from Cobalt to Ember down to the section in view: how far through the proposal you are.' },
   { id: 'dot', name: '7 · Line and dot (reference)', note: 'After the reference: a thin line, grey labels, and a dot for the section in view that the line bends around. The dot slides when you click. The label in view is Ink.' },
   { id: 'dotc', name: '8 · Line and dot in Cobalt', note: 'The same, in the product’s colour: a Cobalt dot, and the section in view in Cobalt as in today’s menu.' },
+  { id: 'docs', name: '9 · Docs rail (after the reference)', note: 'The documentation-site pattern: a small list icon with the heading, a hairline rail down the left, and a very light rail. Hover: a pale grey bar fades in beside the row and the text darkens. Selected: one accent bar that slides down the rail to the row, the text turning accent as it arrives.' },
+  { id: 'docsink', name: '10 · Docs rail, Ink text', note: 'The same rail and states, but with the roles of the tabs: the selected row is Ink and Cobalt is only in the bar, as the tabs have Ink text and a Cobalt underline. Quieter than 9.' },
+  { id: 'docsreg', name: '11 · Docs rail, Regular weight', note: 'The same as 9 with Regular (400) instead of Medium (500) for the rows. Lighter and more like the reference; the tabs and the rest of the product are Medium, so it would be the one place that is not.' },
 ] as const;
 
 const ROW = 44; // row height of the two line-and-dot looks (matches --row below)
@@ -34,6 +38,22 @@ type VariantId = (typeof VARIANTS)[number]['id'];
 
 function Toc({ variant }: { variant: VariantId }) {
   const [active, setActive] = useState(0);
+  const docs = variant === 'docs' || variant === 'docsink' || variant === 'docsreg';
+  const links = ITEMS.map((it, i) => (
+    <a
+      key={it.id}
+      href={`#sec-${it.id}`}
+      className={cx('ptoc__item', i === active && 'is-active', i < active && 'is-past')}
+      onClick={(e) => {
+        e.preventDefault();
+        setActive(i);
+      }}
+    >
+      {variant === 'numbers' && <span className="tocv__num">{String(i + 1).padStart(2, '0')}</span>}
+      <span className="tocv__label">{it.label}</span>
+      {it.count ? <span className="ptoc__count">{it.count}</span> : null}
+    </a>
+  ));
   const dot = variant === 'dot' || variant === 'dotc';
   // The line runs the full height and bends round the dot; the dot sits just left of it.
   const H = ITEMS.length * ROW + PAD * 2;
@@ -52,21 +72,12 @@ function Toc({ variant }: { variant: VariantId }) {
           <circle cx={x - 1} r="6.5" style={{ cy: `${y}px` }} />
         </svg>
       )}
-      {ITEMS.map((it, i) => (
-        <a
-          key={it.id}
-          href={`#sec-${it.id}`}
-          className={cx('ptoc__item', i === active && 'is-active', i < active && 'is-past')}
-          onClick={(e) => {
-            e.preventDefault();
-            setActive(i);
-          }}
-        >
-          {variant === 'numbers' && <span className="tocv__num">{String(i + 1).padStart(2, '0')}</span>}
-          <span className="tocv__label">{it.label}</span>
-          {it.count ? <span className="ptoc__count">{it.count}</span> : null}
-        </a>
-      ))}
+      {docs && (
+        <div className="tocv__head">
+          <AlignLeft size={15} strokeWidth={1.8} /> On this page
+        </div>
+      )}
+      {docs ? <div className="tocv__items">{links}</div> : links}
     </nav>
   );
 }
@@ -74,7 +85,7 @@ function Toc({ variant }: { variant: VariantId }) {
 export function TocDemo() {
   return (
     <div className="cdemo tocdemo">
-      <PageHeader title="Proposal contents" sub="Six looks for the side menu on the proposal page, after the brand book: hairlines, mono labels, Ember numbers and the Noor light. Click the items." />
+      <PageHeader title="Proposal contents" sub="Ten looks for the side menu on the proposal page: after the brand book (hairlines, mono labels, Ember numbers, the Noor light), a line with a dot, and the documentation-site rail. Click the items." />
       <div className="tocdemo__grid">
         {VARIANTS.map((v) => (
           <section key={v.id} className="gdemo__card">

@@ -21,6 +21,7 @@ export function FluidOrb({
   boost = false,
   still = false,
   glass,
+  squircle,
   className,
 }: {
   size?: number;
@@ -29,6 +30,8 @@ export function FluidOrb({
   boost?: boolean;
   still?: boolean;
   glass?: boolean;
+  /** Fill the reference squircle instead of a circle. */
+  squircle?: boolean;
   className?: string;
 }) {
   const ref = useRef<HTMLCanvasElement>(null);
@@ -39,10 +42,10 @@ export function FluidOrb({
   useEffect(() => {
     const canvas = ref.current;
     if (!canvas) return;
-    const o: Orb = { canvas, active, boost, still, glass: isGlass, phase: Math.random() * 40, speed: active ? FAST : 1, drawn: false };
+    const o: Orb = { canvas, active, boost, still, glass: isGlass, squircle: !!squircle, phase: Math.random() * 40, speed: active ? FAST : 1, drawn: false };
     orb.current = o;
     return renderer()?.add(o);
-  }, [still, isGlass]);
+  }, [still, isGlass, squircle]);
 
   useEffect(() => {
     if (orb.current) orb.current.active = active;
@@ -53,7 +56,7 @@ export function FluidOrb({
 
   return (
     <div
-      className={cx('forb', size < 60 && 'forb--sm', isGlass && 'forb--glass', className)}
+      className={cx('forb', size < 60 && 'forb--sm', isGlass && 'forb--glass', squircle && 'forb--squircle', className)}
       style={{ width: size, height: size, ['--s' as string]: size }}
       aria-hidden
     >
@@ -82,6 +85,7 @@ interface Orb {
   boost: boolean;
   still: boolean;
   glass: boolean;
+  squircle: boolean;
   phase: number;
   speed: number;
   drawn: boolean;
@@ -97,6 +101,7 @@ precision highp float;
 uniform vec2 uRes;
 uniform float uTime;
 uniform float uGlass;
+uniform float uShape;
 
 vec4 permute(vec4 x){return mod(((x*34.0)+1.0)*x,289.0);}
 vec4 taylorInvSqrt(vec4 r){return 1.79284291400159-0.85373472095314*r;}
@@ -137,11 +142,15 @@ void main(){
   vec2 p=(gl_FragCoord.xy/uRes)*2.0-1.0;
   float r=length(p);
   float aa=3.0/uRes.x;
-  float mask=1.0-smoothstep(1.0-aa,1.0,r);
+  // The edge: a circle, or the squircle (a superellipse a little squarer than a rounded square).
+  vec2 ap=abs(p);
+  float edge=mix(r,pow(pow(ap.x,4.0)+pow(ap.y,4.0),0.25),uShape);
+  float mask=1.0-smoothstep(1.0-aa,1.0,edge);
   if(mask<=0.0){gl_FragColor=vec4(0.0);return;}
 
   // A point on the sphere's surface, turning slowly so the waves wrap around it.
-  vec3 n=vec3(p,sqrt(max(0.0,1.0-r*r)));
+  float rz=mix(r,r*0.72,uShape);
+  vec3 n=vec3(p,sqrt(max(0.0,1.0-rz*rz)));
   float t=uTime;
   vec3 q=n;
   q.xz=rot(t*0.12)*q.xz;
@@ -236,6 +245,7 @@ function renderer() {
   const uRes = gl.getUniformLocation(prog, 'uRes');
   const uTime = gl.getUniformLocation(prog, 'uTime');
   const uGlass = gl.getUniformLocation(prog, 'uGlass');
+  const uShape = gl.getUniformLocation(prog, 'uShape');
   gl.clearColor(0, 0, 0, 0);
 
   const orbs = new Set<Orb>();
@@ -246,7 +256,7 @@ function renderer() {
   const draw = (o: Orb) => {
     const dpr = Math.min(window.devicePixelRatio || 1, 2);
     const px = Math.max(8, Math.round(o.canvas.clientWidth * dpr));
-    if (o.canvas.width !== px) {
+    if (o.canvas.width !== px || o.canvas.height !== px) {
       o.canvas.width = o.canvas.height = px;
     }
     if (glCanvas.width < px || glCanvas.height < px) {
@@ -257,6 +267,7 @@ function renderer() {
     gl.uniform2f(uRes, px, px);
     gl.uniform1f(uTime, o.phase);
     gl.uniform1f(uGlass, o.glass ? 1 : 0);
+    gl.uniform1f(uShape, o.squircle ? 1 : 0);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
     const ctx = o.canvas.getContext('2d');
     if (!ctx) return;

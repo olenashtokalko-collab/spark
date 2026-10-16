@@ -31,6 +31,13 @@ import { ThumbDemo } from './features/demo/ThumbDemo';
 import { HourglassDemo } from './features/demo/HourglassDemo';
 import { DecisionStatesDemo } from './features/demo/DecisionStatesDemo';
 import { TocAlignDemo } from './features/demo/TocAlignDemo';
+import { BrandFitDemo } from './features/demo/BrandFitDemo';
+import { PrimaryDemo } from './features/demo/PrimaryDemo';
+import { IconsDemo } from './features/demo/IconsDemo';
+import { AccentDemo } from './features/demo/AccentDemo';
+import { OutcomesDemo } from './features/demo/OutcomesDemo';
+import { OrbDemo } from './features/demo/OrbDemo';
+import { ChatCloudDemo } from './features/demo/ChatCloudDemo';
 import { RequestDetail } from './features/requests/RequestDetail';
 import { ProposalView } from './features/requests/ProposalView';
 import { Documents } from './features/documents/Documents';
@@ -79,6 +86,13 @@ function Screen() {
       if (a === 'hourglass') return <HourglassDemo />;
       if (a === 'states') return <DecisionStatesDemo />;
       if (a === 'toc-align') return <TocAlignDemo />;
+      if (a === 'brand-fit') return <BrandFitDemo />;
+      if (a === 'primary') return <PrimaryDemo />;
+      if (a === 'icons') return <IconsDemo />;
+      if (a === 'accent') return <AccentDemo />;
+      if (a === 'outcomes') return <OutcomesDemo />;
+      if (a === 'orb') return <OrbDemo />;
+      if (a === 'chat-cloud') return <ChatCloudDemo />;
       break;
     case 'monitoring':
       return <Monitoring />;
