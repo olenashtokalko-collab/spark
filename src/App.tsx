@@ -4,6 +4,7 @@ import { AppShell } from './components/layout/AppShell';
 import { SignIn } from './features/auth/SignIn';
 import { useStore } from './state/store';
 import { Assistant } from './features/assistant/Assistant';
+import { ComposerColorDemo } from './features/demo/ComposerColorDemo';
 import { Requests } from './features/requests/Requests';
 import { Monitoring } from './features/monitoring/Monitoring';
 import { RequestDetail } from './features/requests/RequestDetail';
@@ -28,6 +29,9 @@ function Screen() {
       return <Requests />;
     case 'documents':
       return <Documents folderId={a} docId={query.get('doc')} />;
+    case 'demo':
+      if (a === 'composer-color') return <ComposerColorDemo />;
+      break;
     case 'monitoring':
       return <Monitoring />;
     case 'team':

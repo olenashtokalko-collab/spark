@@ -103,8 +103,7 @@ ol {
   *::after {
     animation-duration: 0.01ms !important;
     transition-duration: 0.01ms !important;
-  }
-}
+  }}
 
 /* One typeface: IDs, amounts and counts stay Inter, with even-width digits
    so columns still line up. (The class name predates the switch from mono.) */
@@ -1300,9 +1299,7 @@ kbd {
   display: block;
   width: 100%;
   height: 100%;
-}
-
-/* ---- Responsive shell ------------------------------------------------------------------------ */
+}/* ---- Responsive shell ------------------------------------------------------------------------ */
 
 @media (max-width: 900px) {
   .shell {
@@ -1316,8 +1313,7 @@ kbd {
   }
   .page-head__title {
     font-size: 24px;
-  }
-}
+  }}
 @media (max-width: 560px) {
   .row {
     flex-direction: column;
@@ -1329,8 +1325,7 @@ kbd {
   .dialog {
     max-height: 92vh;
     border-radius: var(--radius-lg) var(--radius-lg) 0 0;
-  }
-}
+  }}
 
 /* Mobile-only controls: declared last so they beat .btn's display. */
 .btn.preview__close-m {
@@ -1339,8 +1334,7 @@ kbd {
 @media (max-width: 1024px) {
   .btn.preview__close-m {
     display: inline-flex;
-  }
-}
+  }}
 
 /* ---- Tooltip ------------------------------------------------------------------ */
 
