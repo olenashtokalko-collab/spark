@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useRoute } from './lib/router';
 import { AppShell } from './components/layout/AppShell';
 import { SignIn } from './features/auth/SignIn';
-import { useStore } from './state/store';
+import { STORAGE_KEY, useStore } from './state/store';
 import { Assistant } from './features/assistant/Assistant';
 import { ComposerColorDemo } from './features/demo/ComposerColorDemo';
 import { NoteStripDemo } from './features/demo/NoteStripDemo';
@@ -36,6 +36,9 @@ function Screen() {
       if (a === 'note-strip') return <NoteStripDemo />;
       if (a === 'modal-spacing') return <ModalSpacingDemo />;
       break;
+    case 'reset':
+      // For rehearsals: forget everything that was done in the prototype and start from the seed data again.
+      return <Reset />;
     case 'monitoring':
       return <Monitoring />;
     case 'team':
@@ -48,6 +51,19 @@ function Screen() {
   return (
     <EmptyState title="Page not found" body="This link doesn't match anything in the workspace." action={<Button onClick={() => navigate('/')}>Go to chats</Button>} />
   );
+}
+
+function Reset() {
+  useEffect(() => {
+    try {
+      localStorage.removeItem(STORAGE_KEY);
+    } catch {
+      /* storage can be blocked; the reload below still gives a fresh state in memory */
+    }
+    window.location.hash = '#/requests';
+    window.location.reload();
+  }, []);
+  return null;
 }
 
 function Redirect({ to }: { to: string }) {

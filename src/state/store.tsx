@@ -48,7 +48,7 @@ export interface State {
   prefs: Record<NotifKey, { inApp: boolean; email: boolean }>;
 }
 
-const STORAGE_KEY = 'spark-portal-v10';
+export const STORAGE_KEY = 'spark-portal-v10';
 
 // Files attached to a message are read like a workspace document.
 const attachedContext = (files?: Attachment[]) => (files?.length ? (files.length === 1 ? files[0].name : `${files.length} attached files`) : undefined);
