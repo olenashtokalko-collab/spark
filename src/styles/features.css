@@ -566,7 +566,11 @@
   height: 0;
 }
 .start-chips.is-dim {
-  opacity: 0.35;
+  /* Once there is text the ideas are in the way: they fade out, keeping their room so the box does not move. */
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.2s var(--ease), visibility 0s 0.2s;
 }
 .start-chip {
   height: 40px;
