@@ -5,6 +5,8 @@ import { ArrowLeft, FileText, HelpCircle, Lock, MessageSquare, Paperclip, Plus }
 import { Avatar, Badge, Button, EmptyState, Select, Tabs, Textarea } from '../../components/ui/primitives';
 import { useToast } from '../../components/ui/toast';
 import { useStore } from '../../state/store';
+import { StatusCard } from '../requests/RequestDetail';
+import type { WorkRequest } from '../../data/types';
 import { aed } from '../../lib/format';
 import { navigate } from '../../lib/router';
 import type { RequestStatus } from '../../data/types';
@@ -66,6 +68,11 @@ function Inner({ base, live, tab }: { base: SparkRequest; live: boolean; tab: Ta
   const first = base.requester.name.split(' ')[0];
   const open = (t: Tab) => navigate(`/spark/requests/${base.id}${t === 'overview' ? '' : '/' + t}`);
   const messages = m.items.filter((x) => x.kind !== 'system').length;
+  const { state } = useStore();
+  // The same Stages card as the client's request page; sample clients get an equivalent built from their row.
+  const stageReq: WorkRequest =
+    state.requests.find((x) => x.id === base.id) ??
+    ({ id: base.id, status: m.status as RequestStatus, nextStep: base.dueIso ? { label: base.waitingFor ?? '', date: base.dueIso, onClient: base.waiting === 'client' } : undefined } as WorkRequest);
   const waitingOnSpark = base.waiting === 'spark' && m.items.some((x) => x.kind === 'message' && x.by?.org === 'client');
 
   return (
@@ -172,6 +179,7 @@ function Inner({ base, live, tab }: { base: SparkRequest; live: boolean; tab: Ta
             </section>
           </div>
           <aside className="spk-req__side">
+            <StatusCard r={stageReq} perspective="spark" />
             <section className="side-card">
               <h3 className="side-card__title">Details</h3>
               <dl className="spk-dl">
@@ -188,14 +196,6 @@ function Inner({ base, live, tab }: { base: SparkRequest; live: boolean; tab: Ta
                 <dt>Created</dt>
                 <dd>{base.created}</dd>
               </dl>
-            </section>
-            <section className="side-card">
-              <h3 className="side-card__title">Next step</h3>
-              <p className="spk-next">
-                {base.waiting === 'spark' ? 'Spark: ' : base.waiting === 'client' ? 'Client: ' : ''}
-                {base.waitingFor ?? 'Nothing is waiting.'}
-              </p>
-              {base.due && <p className="faint">Due {base.due}</p>}
             </section>
           </aside>
         </div>

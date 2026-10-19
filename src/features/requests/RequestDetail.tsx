@@ -3,7 +3,7 @@ import { ArrowLeft, BadgeCheck, Check, CircleDot, ChevronDown, CircleX, Clock, E
 import { latestProposal, personById, proposalTotal, proposalWeeks, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { Avatar, Button, EmptyState, Tabs, Textarea, cx } from '../../components/ui/primitives';
-import { FileIcon, ProposalStatus, RequestStatus, STAGES, STAGE_INFO, stageIndex } from '../../components/domain';
+import { FileIcon, ProposalStatus, RequestStatus, SPARK_STAGE_INFO, STAGES, STAGE_INFO, stageIndex } from '../../components/domain';
 import { useToast } from '../../components/ui/toast';
 import { aed, dueLabel, fmtDate, fmtDateTime, fmtRelative, fmtTime } from '../../lib/format';
 import { navigate, useRoute } from '../../lib/router';
@@ -349,7 +349,11 @@ function findingsFromConversation(r: WorkRequest, conversation: { messages: { ro
 // One icon per stage, in a raised disc on the line (picked on #/demo/stages, 2).
 const STAGE_ICONS = [Send, ScanSearch, FileText, BadgeCheck, Hammer, PackageCheck];
 
-export function StatusCard({ r }: { r: WorkRequest }) {
+/** `perspective` is who is looking: the client (the default) or the Spark team, which reads the same path
+ *  with its own wording and amber when the next step is on Spark. */
+export function StatusCard({ r, perspective = 'client' }: { r: WorkRequest; perspective?: 'client' | 'spark' }) {
+  const spark = perspective === 'spark';
+  const info = spark ? SPARK_STAGE_INFO : STAGE_INFO;
   const idx = stageIndex(r.status);
   const declined = r.status === 'declined';
   const done = r.status === 'delivered';
@@ -371,18 +375,20 @@ export function StatusCard({ r }: { r: WorkRequest }) {
               </span>
               <div className="stg__body">
                 <div className="stg__label">{st === 'declined' ? 'Declined' : s}</div>
-                <div className="stg__info">{st === 'declined' ? 'The proposal was declined and the request closed.' : STAGE_INFO[s]}</div>
+                <div className="stg__info">{st === 'declined' ? 'The proposal was declined and the request closed.' : info[s]}</div>
                 {st === 'current' && (
                   <>
                     {r.nextStep && (
                       // The one place a deadline shows: amber when it waits on the client.
                       // One line; the step's name stays as the tooltip.
-                      <div className={cx('stg__due', r.nextStep.onClient && 'is-on-you')} title={r.nextStep.label}>
+                      <div className={cx('stg__due', (spark ? !r.nextStep.onClient : r.nextStep.onClient) && 'is-on-you')} title={r.nextStep.label}>
                         <Clock size={14} />
                         <span className="stg__due-when">
-                          {r.nextStep.onClient
-                            ? `Due ${fmtDate(r.nextStep.date, { weekday: true })} · ${dueLabel(r.nextStep.date).replace(/^due /, '')}`
-                            : `Expected by ${fmtDate(r.nextStep.date, { weekday: true })}`}
+                          {spark
+                            ? `${r.nextStep.onClient ? 'Client due' : 'Due'} ${fmtDate(r.nextStep.date, { weekday: true })} · ${dueLabel(r.nextStep.date).replace(/^due /, '')}`
+                            : r.nextStep.onClient
+                              ? `Due ${fmtDate(r.nextStep.date, { weekday: true })} · ${dueLabel(r.nextStep.date).replace(/^due /, '')}`
+                              : `Expected by ${fmtDate(r.nextStep.date, { weekday: true })}`}
                         </span>
                       </div>
                     )}

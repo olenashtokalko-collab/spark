@@ -43,6 +43,16 @@ export const STAGE_INFO: Record<(typeof STAGES)[number], string> = {
   Delivered: 'Final files land in Documents.',
 };
 
+/** The same stages, described from the Spark team's side. */
+export const SPARK_STAGE_INFO: Record<(typeof STAGES)[number], string> = {
+  Submitted: 'The client’s request is in your queue. It needs a first reply.',
+  'In review': 'Scope the work and ask the client any questions.',
+  Proposal: 'Send scope, price and timeline for the client to approve or change.',
+  Approved: 'Schedule the kick-off.',
+  'In progress': 'Work on the deliverables; the client reviews drafts.',
+  Delivered: 'Final files land in the client’s Documents.',
+};
+
 export function stageIndex(s: RequestStatus) {
   switch (s) {
     case 'submitted':

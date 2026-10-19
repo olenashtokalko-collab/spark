@@ -62,6 +62,7 @@ export interface SparkRequest {
   waitingFor?: string; // what is being waited for
   owner: Person;
   due?: string;
+  dueIso?: string; // the same date, for the stage card
   updated: string;
   budget?: string;
   timing: string;
@@ -73,15 +74,15 @@ export interface SparkRequest {
 /** Sample requests from other clients. Brand Co.'s requests are live: they come from the shared store. */
 export const sampleRequests: SparkRequest[] = [
   {
-    id: 'REQ-212', title: 'Ramadan menu launch film', type: 'Content', clientId: 'noor', requester: client('n1', 'Hessa Al Mansoori', 'Marketing Director', 200), status: 'in_review', waiting: 'spark', waitingFor: 'Reply to the client’s question', owner: youssef, due: 'Tue 20 Oct', updated: '3 h ago', budget: 'AED 80–120k', timing: 'ASAP', created: '14 Oct',
+    id: 'REQ-212', title: 'Ramadan menu launch film', type: 'Content', clientId: 'noor', requester: client('n1', 'Hessa Al Mansoori', 'Marketing Director', 200), status: 'in_review', waiting: 'spark', waitingFor: 'Reply to the client’s question', owner: youssef, due: 'Tue 20 Oct', dueIso: '2026-10-20', updated: '3 h ago', budget: 'AED 80–120k', timing: 'ASAP', created: '14 Oct',
     description: 'A 60-second film introducing the Ramadan menu across three venues, with a cut-down for social.',
   },
   {
-    id: 'REQ-207', title: 'Quarterly brand tracker', type: 'Research', clientId: 'fajr', requester: client('f2', 'Salma Idris', 'Brand Lead', 300), status: 'in_review', waiting: 'spark', waitingFor: 'Proposal to send', owner: dana, due: 'Thu 22 Oct', updated: 'Yesterday', budget: 'AED 30–45k', timing: 'This quarter', created: '12 Oct',
+    id: 'REQ-207', title: 'Quarterly brand tracker', type: 'Research', clientId: 'fajr', requester: client('f2', 'Salma Idris', 'Brand Lead', 300), status: 'in_review', waiting: 'spark', waitingFor: 'Proposal to send', owner: dana, due: 'Thu 22 Oct', dueIso: '2026-10-22', updated: 'Yesterday', budget: 'AED 30–45k', timing: 'This quarter', created: '12 Oct',
     description: 'A repeatable survey tracking awareness and preference across the four emirates, with a dashboard for the leadership team.',
   },
   {
-    id: 'REQ-210', title: 'Driver recruitment video', type: 'Content', clientId: 'gulf', requester: client('g1', 'Faisal Qureshi', 'Head of Comms', 30), status: 'proposal', waiting: 'client', waitingFor: 'Decision on the proposal', owner: mira, due: 'Fri 23 Oct', updated: '2 days ago', budget: 'AED 40–60k', timing: 'This quarter', created: '8 Oct',
+    id: 'REQ-210', title: 'Driver recruitment video', type: 'Content', clientId: 'gulf', requester: client('g1', 'Faisal Qureshi', 'Head of Comms', 30), status: 'proposal', waiting: 'client', waitingFor: 'Decision on the proposal', owner: mira, due: 'Fri 23 Oct', dueIso: '2026-10-23', updated: '2 days ago', budget: 'AED 40–60k', timing: 'This quarter', created: '8 Oct',
     description: 'Two short videos to recruit drivers on social, in Arabic and English.',
     proposal: { version: 1, total: 52000, sent: '16 Oct', state: 'Awaiting decision' },
   },

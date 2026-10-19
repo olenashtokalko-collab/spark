@@ -32,6 +32,7 @@ export function toSparkRequest(state: State, r: WorkRequest): SparkRequest {
     ...w,
     owner: real(state, r.ownerId),
     due: r.nextStep?.date ? fmtDate(r.nextStep.date, { weekday: true }) : undefined,
+    dueIso: r.nextStep?.date,
     updated: fmtRelative(r.updatedAt),
     budget: r.budget,
     timing: r.timing,
