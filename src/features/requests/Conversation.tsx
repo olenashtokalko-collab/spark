@@ -45,16 +45,17 @@ export function conversationItems(state: State, r: WorkRequest, viewer: 'client'
 /** A conversation with nothing said yet: an empty state with a button that goes to the box below. */
 export function EmptyThread({ body }: { body: string }) {
   return (
-    <EmptyState
-      panel
-      title="No messages yet."
-      body={body}
-      action={
-        <Button size="sm" variant="primary" onClick={() => document.querySelector<HTMLTextAreaElement>('.conv-box textarea')?.focus()}>
-          Start chat
-        </Button>
-      }
-    />
+    <div className="empty-thread">
+      <EmptyState
+        title="No messages yet."
+        body={body}
+        action={
+          <button className="link-btn" onClick={() => document.querySelector<HTMLTextAreaElement>('.conv-box textarea')?.focus()}>
+            Start chat
+          </button>
+        }
+      />
+    </div>
   );
 }
 

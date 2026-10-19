@@ -786,3 +786,8 @@
 .ptoc__trail .pe-mark[data-tip]:hover::after {
   transform: translate(0, 0);
 }
+
+/* The empty conversation: the product's empty state (no panel), with less air than a whole page. */
+.empty-thread .empty {
+  padding: 56px 24px 48px;
+}
