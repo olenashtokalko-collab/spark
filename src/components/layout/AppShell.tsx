@@ -205,9 +205,9 @@ const notifIcon: Record<Notification['kind'], typeof Bell> = {
   decision: Check,
 };
 
-function Notifications() {
+export function Notifications({ audience = 'client', routeFor = (r: string) => r }: { audience?: 'client' | 'spark'; routeFor?: (route: string) => string }) {
   const { state, actions } = useStore();
-  const list = state.notifications.filter((n) => n.audience === 'client').sort((a, b) => b.at.localeCompare(a.at));
+  const list = state.notifications.filter((n) => n.audience === audience).sort((a, b) => b.at.localeCompare(a.at));
   const unread = list.filter((n) => !n.read).length;
   return (
     <Popover
@@ -230,7 +230,7 @@ function Notifications() {
         <div className="notifs">
           <div className="notifs__head">
             <span>Notifications</span>
-            <button className="link-btn" onClick={actions.markAllRead} disabled={!unread}>
+            <button className="link-btn" onClick={() => actions.markAllRead(audience)} disabled={!unread}>
               <CheckCheck size={14} /> Mark all read
             </button>
           </div>
@@ -247,7 +247,7 @@ function Notifications() {
                     onClick={() => {
                       actions.markRead(n.id);
                       close();
-                      navigate(n.route);
+                      navigate(routeFor(n.route));
                     }}
                   >
                     <span className="notif__icon">

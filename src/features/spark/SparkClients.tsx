@@ -4,10 +4,12 @@ import { Plus, Search } from 'lucide-react';
 import { Avatar, AvatarStack, Button, Input, PageHeader } from '../../components/ui/primitives';
 import { useToast } from '../../components/ui/toast';
 import { navigate } from '../../lib/router';
-import { clients, requests } from './data';
+import { clients } from './data';
+import { useSparkRequests } from './model';
 
 export function SparkClients() {
   const toast = useToast();
+  const { list: requests } = useSparkRequests();
   const [q, setQ] = useState('');
   const list = clients.filter((c) => c.name.toLowerCase().includes(q.toLowerCase()));
   return (

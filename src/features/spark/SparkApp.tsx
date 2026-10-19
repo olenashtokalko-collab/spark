@@ -5,11 +5,18 @@ import { Building2, Inbox as InboxIcon, ArrowUpRight } from 'lucide-react';
 import { Avatar, cx } from '../../components/ui/primitives';
 import { useRoute } from '../../lib/router';
 import { useStore } from '../../state/store';
+import { Notifications } from '../../components/layout/AppShell';
 import { dana } from './data';
 import { SparkInbox } from './SparkInbox';
 import { SparkRequestPage } from './SparkRequestPage';
 import { NewProposal } from './NewProposal';
 import { SparkClients } from './SparkClients';
+
+/** A notification's route is a client-portal one; the Spark team opens the same request in its own view. */
+const sparkRoute = (route: string) => {
+  const m = route.match(/^\/requests\/([^/]+)/);
+  return route.startsWith('/spark') ? route : m ? `/spark/requests/${m[1]}` : '/spark';
+};
 
 export function SparkApp() {
   const { parts, query } = useRoute();
@@ -53,6 +60,9 @@ export function SparkApp() {
         <a className={cx('rail__btn', onClients && 'is-active')} href="#/spark/clients" aria-label="Clients" data-tip="Clients">
           <Building2 size={18} strokeWidth={1.7} />
         </a>
+        <span className="rail__end">
+          <Notifications audience="spark" routeFor={sparkRoute} />
+        </span>
       </nav>
       <main className="content" id="content">
         <div className="screen" key={parts.slice(0, 4).join('/')}>

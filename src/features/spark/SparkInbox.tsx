@@ -4,7 +4,8 @@ import { Building2, Search, UserRound, X } from 'lucide-react';
 import { Avatar, Input, PageHeader, Tabs, EmptyState } from '../../components/ui/primitives';
 import { FilterMenu } from '../../components/ui/overlay';
 import { navigate } from '../../lib/router';
-import { STATUS_LABEL, clientOf, clients, requests, sparkTeam, type SparkRequest } from './data';
+import { STATUS_LABEL, clientOf, clients, sparkTeam, type SparkRequest } from './data';
+import { useSparkRequests } from './model';
 
 type Tab = 'all' | 'reply' | 'new' | 'client' | 'done';
 
@@ -29,6 +30,7 @@ const WaitingBadge = ({ r }: { r: SparkRequest }) =>
   );
 
 export function SparkInbox({ initialClient }: { initialClient?: string }) {
+  const { list: requests } = useSparkRequests();
   const [tab, setTab] = useState<Tab>('all');
   const [q, setQ] = useState('');
   const [client, setClient] = useState<string>(initialClient ?? 'any');
@@ -50,7 +52,7 @@ export function SparkInbox({ initialClient }: { initialClient?: string }) {
         .filter((r) => owner === 'any' || r.owner.id === owner)
         .sort((a, b) => Number(b.waiting === 'spark') - Number(a.waiting === 'spark')),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [tab, q, client, owner],
+    [tab, q, client, owner, requests],
   );
   const narrowed = !!q || client !== 'any' || owner !== 'any';
 

@@ -79,7 +79,7 @@ src/
 3. **Requests and proposals API.** Status transitions as server-side commands with audit log (who, when, which version). Notifications and email on each transition. Optional: PDF export of proposals; e-signature later.
 4. **File storage.** Signed upload/download URLs, virus scan, size limits, versions, previews. The prototype's "Download" exports a preview copy, not the original.
 5. **Monitoring.** Removed from the prototype; see the open questions in 01-product-definition.md §6.
-6. **Spark side.** Not prototyped. Requests may go into another system Spark already uses (CRM, project tool), which then sends proposals and status updates back to the portal. To be confirmed with Spark before scoping an admin console.
+6. **Spark side.** Prototyped on branch `spark-team-view` (confirmed by Spark: today they use phone, WhatsApp and email, with no system). A separate shell at `#/spark` for Spark staff: inbox of all clients, request page (status, owner, proposals, internal notes), one conversation per request shared with the client side (questions, replies, internal notes the client never sees), a proposal form that matches the client's proposal page, a client list and notifications. Brand Co.'s requests are live from the same store as the client portal (what Spark does shows on the client side and the other way round); the other clients are sample data. Still to build for real: roles and permissions per Spark person, many workspaces, email and WhatsApp notifications, file upload to a client's Documents.
 7. **Analytics and observability.** Funnel: question → request → proposal → decision.
 
 ## Known limitations of the prototype

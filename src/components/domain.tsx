@@ -18,6 +18,19 @@ export const requestStatusMeta: Record<RequestStatus, { label: string; tone: Ton
   declined: { label: 'Declined', tone: 'neutral' },
 };
 
+/** The same states named from the Spark team's side: whatever waits on the client is "Awaiting client decision",
+ *  where the client reads "Needs your decision". One state, two points of view. */
+export const sparkStatusLabel: Record<RequestStatus, string> = {
+  submitted: 'New',
+  in_review: 'In review',
+  proposal: 'Awaiting client decision',
+  changes_requested: 'Changes requested',
+  approved: 'Approved',
+  in_progress: 'In progress',
+  delivered: 'Delivered',
+  declined: 'Declined',
+};
+
 export const STAGES = ['Submitted', 'In review', 'Proposal', 'Approved', 'In progress', 'Delivered'] as const;
 
 // What each stage means for the client, shown in the request's stage list.

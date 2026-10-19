@@ -117,6 +117,15 @@ export interface Excerpt {
   findings?: Finding[]; // the answer's key findings, shown as insight cards
 }
 
+/** The conversation on a request. `internal` messages are Spark's own notes: the client side never shows them. */
+export interface RequestMessage {
+  id: ID;
+  at: ISODate;
+  by: ID;
+  kind: 'message' | 'question' | 'internal';
+  text: string;
+}
+
 export interface WorkRequest {
   id: ID; // REQ-104
   title: string;
@@ -134,6 +143,7 @@ export interface WorkRequest {
   sourceIds?: ID[];
   proposalIds: ID[];
   activity: Activity[];
+  thread?: RequestMessage[];
 }
 
 export interface Comment {

@@ -1,32 +1,72 @@
-// Screens 2 and 3 · A request from the Spark side: overview with status, owner, proposals and internal notes,
-// and the conversation with the client (questions, replies, internal notes). State is local to the page.
+// Screens 2 and 3 · A request from the Spark side: overview (status, owner, proposals, internal notes) and the
+// conversation with the client. Brand Co.'s requests are live from the shared store; others keep local state.
 import { useState } from 'react';
-import { ArrowLeft, FileText, Lock, MessageSquare, Paperclip, Plus, Send, HelpCircle } from 'lucide-react';
-import { Avatar, Button, EmptyState, Select, Tabs, Textarea, cx } from '../../components/ui/primitives';
+import { ArrowLeft, FileText, HelpCircle, Lock, MessageSquare, Paperclip, Plus } from 'lucide-react';
+import { Avatar, Button, EmptyState, Select, Tabs, Textarea } from '../../components/ui/primitives';
 import { useToast } from '../../components/ui/toast';
+import { useStore } from '../../state/store';
 import { aed } from '../../lib/format';
 import { navigate } from '../../lib/router';
-import { STATUS_LABEL, clientOf, dana, requests, sparkTeam, threadFor, type Msg, type SparkRequest, type SparkStatus } from './data';
+import type { RequestStatus } from '../../data/types';
+import { ThreadComposer, ThreadList, conversationItems, type ConvItem } from '../requests/Conversation';
+import { STATUS_LABEL, clientOf, dana, sampleThread, sparkTeam, type SparkRequest, type SparkStatus } from './data';
 import { SparkStatusChip } from './SparkInbox';
+import { useSparkRequests } from './model';
 
 type Tab = 'overview' | 'conversation' | 'files' | 'activity';
 
 export function SparkRequestPage({ id, tab }: { id: string; tab: Tab }) {
-  const base = requests.find((r) => r.id === id);
+  const { list, isLive } = useSparkRequests();
+  const base = list.find((r) => r.id === id);
   if (!base) return <EmptyState title="Request not found" action={<Button onClick={() => navigate('/spark')}>Back to inbox</Button>} />;
-  return <Inner key={id} base={base} tab={tab} />;
+  return <Inner key={id} base={base} live={isLive(id)} tab={tab} />;
 }
 
-function Inner({ base, tab }: { base: SparkRequest; tab: Tab }) {
+/** One model for both kinds of request: stored ones act on the shared store, sample ones on local state. */
+function useRequestModel(base: SparkRequest, live: boolean) {
+  const { state, actions } = useStore();
   const toast = useToast();
-  const [status, setStatus] = useState<SparkStatus>(base.status);
-  const [owner, setOwner] = useState(base.owner.id);
-  const [thread, setThread] = useState<Msg[]>(() => threadFor(base));
-  const [notes, setNotes] = useState<string[]>(base.id === 'REQ-100' ? ['Budget range up to AED 60k. Show the price per store as a line item.'] : []);
-  const r = { ...base, status };
+  const stored = live ? state.requests.find((r) => r.id === base.id) : undefined;
+  const [local, setLocal] = useState<ConvItem[]>([]);
+  const [status, setStatusLocal] = useState<SparkStatus>(base.status);
+  const [owner, setOwnerLocal] = useState(base.owner.id);
+  const first = base.requester.name.split(' ')[0];
+
+  const items: ConvItem[] = stored ? conversationItems(state, stored, 'spark') : [...sampleThread(base), ...local];
+  const notes = items.filter((m) => m.kind === 'internal');
+  const add = (m: Omit<ConvItem, 'id' | 'at'>) => setLocal((l) => [...l, { ...m, id: 'l' + l.length, at: 'Just now' }]);
+
+  return {
+    items,
+    notes,
+    status: stored ? (stored.status as SparkStatus) : status,
+    owner: stored ? stored.ownerId : owner,
+    setStatus: (s: SparkStatus) => {
+      if (stored) actions.setRequestStatus(base.id, s as RequestStatus);
+      else {
+        setStatusLocal(s);
+        add({ kind: 'system', text: `Dana Kareem moved the request to ${STATUS_LABEL[s]}.` });
+      }
+      toast({ title: 'Status updated', body: `${first} sees “${s === 'proposal' ? 'Needs your decision' : STATUS_LABEL[s]}” in the portal and is notified.` });
+    },
+    setOwner: (o: string) => (stored ? actions.setRequestOwner(base.id, o) : setOwnerLocal(o)),
+    send: (mode: string, text: string) => {
+      if (stored) actions.sparkMessage(base.id, text, mode === 'internal' ? 'internal' : mode === 'question' ? 'question' : 'message');
+      else add({ kind: mode === 'internal' ? 'internal' : 'message', by: dana, text, question: mode === 'question' });
+      toast(mode === 'internal' ? { title: 'Internal note added', body: 'Only the Spark team sees it.' } : { title: mode === 'question' ? 'Question sent' : 'Reply sent', body: `${first} is notified and sees it on the request in the client portal.` });
+    },
+  };
+}
+
+function Inner({ base, live, tab }: { base: SparkRequest; live: boolean; tab: Tab }) {
+  const toast = useToast();
+  const m = useRequestModel(base, live);
+  const r = { ...base, status: m.status };
   const client = clientOf(base.clientId);
+  const first = base.requester.name.split(' ')[0];
   const open = (t: Tab) => navigate(`/spark/requests/${base.id}${t === 'overview' ? '' : '/' + t}`);
-  const unanswered = thread.filter((m) => m.question && m.kind === 'client').length;
+  const messages = m.items.filter((x) => x.kind !== 'system').length;
+  const waitingOnSpark = base.waiting === 'spark' && m.items.some((x) => x.kind === 'message' && x.by?.org === 'client');
 
   return (
     <div className="spk-req">
@@ -39,20 +79,14 @@ function Inner({ base, tab }: { base: SparkRequest; tab: Tab }) {
             <span className="mono faint">{base.id}</span>
             <span className="spk__client">{client.name}</span>
             <SparkStatusChip r={r} />
+            {live && <span className="spk__live" title="Shared with the client portal">Live</span>}
           </div>
           <h1 className="page-head__title spk-req__title">{base.title}</h1>
         </div>
         <div className="spk-req__controls">
           <label className="spk-req__ctl">
             <span>Status</span>
-            <Select
-              value={status}
-              onChange={(e) => {
-                setStatus(e.target.value as SparkStatus);
-                setThread((t) => [...t, { id: 's' + t.length, kind: 'system', at: 'Just now', text: `Dana Kareem moved the request to ${STATUS_LABEL[e.target.value as SparkStatus]}.` }]);
-                toast({ title: 'Status updated', body: `${base.requester.name.split(' ')[0]} sees “${STATUS_LABEL[e.target.value as SparkStatus]}” in the portal and is notified.` });
-              }}
-            >
+            <Select value={m.status} onChange={(e) => m.setStatus(e.target.value as SparkStatus)}>
               {(Object.keys(STATUS_LABEL) as SparkStatus[]).map((s) => (
                 <option key={s} value={s}>
                   {STATUS_LABEL[s]}
@@ -62,7 +96,7 @@ function Inner({ base, tab }: { base: SparkRequest; tab: Tab }) {
           </label>
           <label className="spk-req__ctl">
             <span>Owner</span>
-            <Select value={owner} onChange={(e) => setOwner(e.target.value)}>
+            <Select value={m.owner} onChange={(e) => m.setOwner(e.target.value)}>
               {sparkTeam.map((p) => (
                 <option key={p.id} value={p.id}>
                   {p.name}
@@ -80,7 +114,7 @@ function Inner({ base, tab }: { base: SparkRequest; tab: Tab }) {
           onChange={open}
           items={[
             { value: 'overview', label: 'Overview' },
-            { value: 'conversation', label: 'Conversation', count: thread.filter((m) => m.kind !== 'system').length },
+            { value: 'conversation', label: 'Conversation', count: messages },
             { value: 'files', label: 'Files', count: base.id === 'REQ-100' ? 3 : 1 },
             { value: 'activity', label: 'Activity' },
           ]}
@@ -90,9 +124,9 @@ function Inner({ base, tab }: { base: SparkRequest; tab: Tab }) {
       {tab === 'overview' && (
         <div className="spk-req__grid">
           <div className="spk-req__main">
-            {unanswered > 0 && base.waiting === 'spark' && (
+            {waitingOnSpark && (
               <button className="spk-callout" onClick={() => open('conversation')}>
-                <HelpCircle size={16} /> {base.requester.name.split(' ')[0]} is waiting for your reply: {base.waitingFor?.toLowerCase()}. <span>Open the conversation</span>
+                <HelpCircle size={16} /> {first} is waiting for your reply: {base.waitingFor?.toLowerCase()}. <span>Open the conversation</span>
               </button>
             )}
             <section className="block">
@@ -123,20 +157,18 @@ function Inner({ base, tab }: { base: SparkRequest; tab: Tab }) {
             </section>
             <section className="block spk-notes">
               <h3 className="block__title">
-                Internal notes <span className="spk-lock"><Lock size={12} /> Only the Spark team sees these</span>
+                Internal notes{' '}
+                <span className="conv-lock">
+                  <Lock size={12} /> Only the Spark team sees these
+                </span>
               </h3>
-              {notes.map((n, i) => (
-                <div key={i} className="spk-note">
-                  <Avatar person={dana} size={22} />
-                  <p>{n}</p>
+              {m.notes.map((n) => (
+                <div key={n.id} className="spk-note">
+                  <Avatar person={n.by ?? dana} size={22} />
+                  <p>{n.text}</p>
                 </div>
               ))}
-              <NoteForm
-                onAdd={(t) => {
-                  setNotes((n) => [...n, t]);
-                  toast({ title: 'Note added', body: 'Clients never see internal notes.' });
-                }}
-              />
+              <NoteForm onAdd={(t) => m.send('internal', t)} />
             </section>
           </div>
           <aside className="spk-req__side">
@@ -159,14 +191,30 @@ function Inner({ base, tab }: { base: SparkRequest; tab: Tab }) {
             </section>
             <section className="side-card">
               <h3 className="side-card__title">Next step</h3>
-              <p className="spk-next">{base.waiting === 'spark' ? 'Spark: ' : base.waiting === 'client' ? 'Client: ' : ''}{base.waitingFor ?? 'Nothing is waiting.'}</p>
+              <p className="spk-next">
+                {base.waiting === 'spark' ? 'Spark: ' : base.waiting === 'client' ? 'Client: ' : ''}
+                {base.waitingFor ?? 'Nothing is waiting.'}
+              </p>
               {base.due && <p className="faint">Due {base.due}</p>}
             </section>
           </aside>
         </div>
       )}
 
-      {tab === 'conversation' && <Conversation base={base} thread={thread} setThread={setThread} />}
+      {tab === 'conversation' && (
+        <div className="conv">
+          <ThreadList items={m.items} clientName={client.name} />
+          <ThreadComposer
+            modes={[
+              { key: 'reply', label: 'Reply to client', icon: MessageSquare, send: 'Send reply', placeholder: `Reply to ${first}…`, note: `${first} and the client team are notified in the portal and by email.` },
+              { key: 'question', label: 'Ask a question', icon: HelpCircle, send: 'Send question', placeholder: `Ask ${first} a follow-up question…`, note: `${first} is asked to answer; the request shows “waiting on the client”.` },
+              { key: 'internal', label: 'Internal note', icon: Lock, send: 'Add note', placeholder: 'A note for the Spark team. The client will not see it.', note: 'Visible to the Spark team only.' },
+            ]}
+            onSend={m.send}
+            onAttach={() => toast({ title: 'Attach a file', body: 'Files go into the client’s Documents.' })}
+          />
+        </div>
+      )}
 
       {tab === 'files' && (
         <section className="block">
@@ -187,16 +235,19 @@ function Inner({ base, tab }: { base: SparkRequest; tab: Tab }) {
       {tab === 'activity' && (
         <section className="block">
           <h3 className="block__title">Activity</h3>
-          {thread
-            .filter((m) => m.kind === 'system')
+          {m.items
+            .filter((x) => x.kind === 'system')
             .reverse()
-            .concat([{ id: 'c', kind: 'system', at: base.created, text: `${base.requester.name} created this request.` }])
-            .map((m) => (
-              <div key={m.id} className="spk-act">
-                <span className="faint">{m.at}</span>
-                <span>{m.text}</span>
+            .map((x) => (
+              <div key={x.id} className="spk-act">
+                <span className="faint">{x.at}</span>
+                <span>{x.text}</span>
               </div>
             ))}
+          <div className="spk-act">
+            <span className="faint">{base.created}</span>
+            <span>{base.requester.name} created this request.</span>
+          </div>
         </section>
       )}
     </div>
@@ -218,76 +269,6 @@ function NoteForm({ onAdd }: { onAdd: (t: string) => void }) {
       >
         Add note
       </Button>
-    </div>
-  );
-}
-
-function Conversation({ base, thread, setThread }: { base: SparkRequest; thread: Msg[]; setThread: (f: (t: Msg[]) => Msg[]) => void }) {
-  const toast = useToast();
-  const [text, setText] = useState('');
-  const [mode, setMode] = useState<'reply' | 'question' | 'internal'>('reply');
-  const first = base.requester.name.split(' ')[0];
-  const send = () => {
-    if (!text.trim()) return;
-    setThread((t) => [...t, { id: 'n' + t.length, kind: mode === 'internal' ? 'internal' : 'spark', by: dana, at: 'Just now', text: text.trim(), question: mode === 'question' }]);
-    setText('');
-    toast(mode === 'internal' ? { title: 'Internal note added', body: 'Only the Spark team sees it.' } : { title: mode === 'question' ? 'Question sent' : 'Reply sent', body: `${first} is notified and sees it on the request in the client portal.` });
-  };
-  return (
-    <div className="spk-conv">
-      <div className="spk-thread">
-        {thread.map((m) =>
-          m.kind === 'system' ? (
-            <div key={m.id} className="spk-sys">
-              <span>{m.text}</span>
-              <span className="faint">{m.at}</span>
-            </div>
-          ) : (
-            <div key={m.id} className={cx('spk-msg', `spk-msg--${m.kind}`)}>
-              {m.by && <Avatar person={m.by} size={30} />}
-              <div className="spk-msg__body">
-                <div className="spk-msg__head">
-                  <strong>{m.by?.name}</strong>
-                  <span className="faint">{m.by?.org === 'spark' ? 'Spark' : clientOf(base.clientId).name}</span>
-                  {m.kind === 'internal' && (
-                    <span className="spk-lock">
-                      <Lock size={12} /> Internal note
-                    </span>
-                  )}
-                  {m.question && <span className="spk__wait spk__wait--spark">Question</span>}
-                  <span className="faint spk-msg__at">{m.at}</span>
-                </div>
-                <p>{m.text}</p>
-              </div>
-            </div>
-          ),
-        )}
-      </div>
-      <div className="spk-compose">
-        <div className="spk-compose__modes" role="tablist" aria-label="Message type">
-          {([
-            ['reply', 'Reply to client', MessageSquare],
-            ['question', 'Ask a question', HelpCircle],
-            ['internal', 'Internal note', Lock],
-          ] as const).map(([k, label, Icon]) => (
-            <button key={k} role="tab" aria-selected={mode === k} className={cx('spk-compose__mode', mode === k && 'is-on')} onClick={() => setMode(k)}>
-              <Icon size={14} /> {label}
-            </button>
-          ))}
-        </div>
-        <Textarea rows={3} value={text} onChange={(e) => setText(e.target.value)} placeholder={mode === 'internal' ? 'A note for the Spark team. The client will not see it.' : mode === 'question' ? `Ask ${first} a follow-up question…` : `Reply to ${first}…`} />
-        <div className="spk-compose__foot">
-          <span className="faint">{mode === 'internal' ? 'Visible to the Spark team only.' : `${first} and the client team are notified in the portal and by email.`}</span>
-          <span className="spk-compose__acts">
-            <Button size="sm" icon={Paperclip} onClick={() => toast({ title: 'Attach a file', body: 'Files go into the client’s Documents.' })}>
-              Attach
-            </Button>
-            <Button variant="primary" size="sm" icon={Send} disabled={!text.trim()} onClick={send}>
-              {mode === 'internal' ? 'Add note' : mode === 'question' ? 'Send question' : 'Send reply'}
-            </Button>
-          </span>
-        </div>
-      </div>
     </div>
   );
 }

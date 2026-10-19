@@ -193,7 +193,7 @@
 .spk-prop__title {
   font-weight: 500;
 }
-.spk-lock {
+.conv-lock {
   display: inline-flex;
   align-items: center;
   gap: 4px;
@@ -271,31 +271,31 @@
 }
 
 /* ---- Conversation ----------------------------------------------------------------------- */
-.spk-conv {
+.conv {
   display: flex;
   flex-direction: column;
   gap: 20px;
   max-width: 820px;
   margin-top: 24px;
 }
-.spk-thread {
+.conv-thread {
   display: flex;
   flex-direction: column;
   gap: 18px;
 }
-.spk-sys {
+.conv-sys {
   display: flex;
   justify-content: center;
   gap: 10px;
   font-size: 13px;
   color: var(--text-2);
 }
-.spk-msg {
+.conv-msg {
   display: flex;
   gap: 12px;
   align-items: flex-start;
 }
-.spk-msg__body {
+.conv-msg__body {
   flex: 1;
   min-width: 0;
   padding: 12px 16px;
@@ -303,46 +303,46 @@
   background: #fff;
   box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.06);
 }
-.spk-msg--spark .spk-msg__body {
+.conv-msg--spark .conv-msg__body {
   background: rgba(14, 17, 22, 0.04);
   box-shadow: none;
 }
-.spk-msg--internal .spk-msg__body {
+.conv-msg--internal .conv-msg__body {
   background: color-mix(in srgb, var(--warning) 10%, #fff);
   box-shadow: none;
 }
-.spk-msg__head {
+.conv-msg__head {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
   gap: 8px;
   font-size: 13px;
 }
-.spk-msg__head strong {
+.conv-msg__head strong {
   font-weight: 600;
   color: var(--ink);
 }
-.spk-msg__at {
+.conv-msg__at {
   margin-left: auto;
 }
-.spk-msg__body p {
+.conv-msg__body p {
   margin: 6px 0 0;
   font-size: 15px;
   line-height: 1.55;
   color: var(--ink);
 }
-.spk-compose {
+.conv-compose {
   padding: 14px 16px 12px;
   border-radius: 18px;
   background: #fff;
   box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.08), 0 12px 30px -20px rgba(14, 17, 22, 0.3);
 }
-.spk-compose__modes {
+.conv-compose__modes {
   display: flex;
   gap: 6px;
   margin-bottom: 10px;
 }
-.spk-compose__mode {
+.conv-compose__mode {
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -353,17 +353,17 @@
   font-weight: 500;
   color: var(--text-2);
 }
-.spk-compose__mode:hover {
+.conv-compose__mode:hover {
   background: rgba(14, 17, 22, 0.05);
 }
-.spk-compose__mode.is-on {
+.conv-compose__mode.is-on {
   background: var(--ink);
   color: #fff;
 }
-.spk-compose textarea {
+.conv-compose textarea {
   width: 100%;
 }
-.spk-compose__foot {
+.conv-compose__foot {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -371,7 +371,7 @@
   margin-top: 10px;
   font-size: 13px;
 }
-.spk-compose__acts {
+.conv-compose__acts {
   display: flex;
   gap: 8px;
 }
@@ -525,4 +525,40 @@
   align-items: center;
   gap: 6px;
   color: var(--text-2);
+}
+
+/* ---- The conversation tab on the client's request page ------------------------------------ */
+.conv-wait {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 12px 16px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--warning) 12%, #fff);
+  font-size: 14px;
+  color: var(--ink);
+}
+.req-tab .conv-thread {
+  margin-bottom: 20px;
+}
+.spk__live {
+  display: inline-flex;
+  align-items: center;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: color-mix(in srgb, #19a672 14%, #fff);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #138a5a;
+}
+.spk-rowfields--one {
+  grid-template-columns: 1fr 36px;
+}
+.spk-three--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin-top: 8px;
 }

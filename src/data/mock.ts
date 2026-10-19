@@ -204,6 +204,12 @@ export const requests: WorkRequest[] = [
       { id: 'g2', at: '2026-10-02T09:30:00', by: 's-dana', kind: 'status', text: 'started reviewing' },
       { id: 'g3', at: '2026-10-10T12:00:00', by: 's-dana', kind: 'proposal', text: 'sent a proposal · AED 54,000 · 6 weeks' },
     ],
+    thread: [
+      { id: 'th1', at: '2026-10-01T10:00:00', by: 'u-layla', kind: 'message', text: 'Hi Dana, we need window displays for the five UAE stores for National Day on 2 December. One idea, adapted per store, and a matching social post.' },
+      { id: 'th2', at: '2026-10-02T09:41:00', by: 's-dana', kind: 'question', text: 'Thanks Layla. Two quick questions before we scope it: are the five stores the same size, and is the Mall of the Emirates window the largest?' },
+      { id: 'th3', at: '2026-10-02T14:10:00', by: 'u-layla', kind: 'message', text: 'Four are similar. The Mall of the Emirates window is about twice as wide.' },
+      { id: 'th4', at: '2026-10-03T11:00:00', by: 's-dana', kind: 'internal', text: 'Budget range up to AED 60k. Layla will want a clear price per store, so show it as a line item.' },
+    ],
   },
   {
     id: 'REQ-105', title: 'Response plan for delivery fee complaints', type: 'Social',

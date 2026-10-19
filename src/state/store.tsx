@@ -16,6 +16,7 @@ import type {
   Notification,
   Person,
   Proposal,
+  RequestMessage,
   RequestStatus,
   RequestType,
   Timing,
@@ -111,6 +112,21 @@ export interface NewRequest {
   excerpt?: Excerpt;
   sourceIds?: ID[];
 }
+
+/** What the Spark team fills in when it sends a proposal. */
+export interface NewProposal {
+  title: string;
+  summary: string;
+  objectives: string[];
+  scope: { title: string; detail: string }[];
+  phases: { name: string; weeks: number }[];
+  startDate: string;
+  validUntil: string;
+  investment: { item: string; amount: number }[];
+  terms: string[];
+}
+
+const SPARK_ME = 's-dana'; // the Spark person acting in the prototype's team view
 
 function useStoreValue() {
   const [state, setState] = useState<State>(load);
@@ -372,6 +388,147 @@ function useStoreValue() {
     [set],
   );
 
+
+  // ---- The Spark team's side (prototype: acting as Dana) ---------------------------------
+
+  const addMessage = (r: WorkRequest, m: Omit<RequestMessage, 'id' | 'at'>): RequestMessage[] => [...(r.thread ?? []), { ...m, id: uid('th'), at: nowIso() }];
+
+  /** Spark writes on a request: a reply, a question (the client is asked to answer) or an internal note. */
+  const sparkMessage = useCallback(
+    (id: ID, text: string, kind: RequestMessage['kind']) => {
+      const at = nowIso();
+      set((s) => ({
+        requests: patchRequest(s, id, (r) => ({
+          ...r,
+          updatedAt: at,
+          thread: addMessage(r, { by: SPARK_ME, kind, text }),
+          nextStep: kind === 'question' ? { label: 'Your reply to Spark’s question', date: addDays(at.slice(0, 10), 2), onClient: true } : r.nextStep,
+          activity: kind === 'internal' ? r.activity : [...r.activity, activity(SPARK_ME, 'comment', text)],
+        })),
+        notifications:
+          kind === 'internal'
+            ? s.notifications
+            : notify(s, {
+                audience: 'client',
+                title: kind === 'question' ? `Spark has a question on ${s.requests.find((r) => r.id === id)?.title ?? id}` : `Spark replied on ${s.requests.find((r) => r.id === id)?.title ?? id}`,
+                body: text.length > 80 ? text.slice(0, 77) + '…' : text,
+                route: `/requests/${id}`,
+                kind: 'request',
+              }),
+      }));
+    },
+    [set],
+  );
+
+  /** The client writes back on a request. An answer to a question clears "waiting on the client". */
+  const clientMessage = useCallback(
+    (id: ID, text: string) => {
+      const meId = 'u-layla';
+      const at = nowIso();
+      set((s) => ({
+        requests: patchRequest(s, id, (r) => ({
+          ...r,
+          updatedAt: at,
+          thread: addMessage(r, { by: meId, kind: 'message', text }),
+          nextStep: r.nextStep?.onClient && r.status !== 'proposal' ? { label: 'Spark reads your reply', date: addDays(at.slice(0, 10), 2) } : r.nextStep,
+          activity: [...r.activity, activity(meId, 'comment', text)],
+        })),
+        notifications: notify(s, {
+          audience: 'spark',
+          title: `Brand Co. replied on ${id}`,
+          body: text.length > 80 ? text.slice(0, 77) + '…' : text,
+          route: `/spark/requests/${id}/conversation`,
+          kind: 'request',
+        }),
+      }));
+    },
+    [set],
+  );
+
+  const STATUS_TEXT: Partial<Record<RequestStatus, string>> = {
+    in_review: 'started reviewing',
+    approved: 'confirmed the approval',
+    in_progress: 'started work',
+    delivered: 'delivered the final files',
+  };
+
+  /** Spark moves a request along. The client sees the new stage and is told. */
+  const setRequestStatus = useCallback(
+    (id: ID, status: RequestStatus) => {
+      const at = nowIso();
+      set((s) => ({
+        requests: patchRequest(s, id, (r) => ({
+          ...r,
+          status,
+          updatedAt: at,
+          nextStep: status === 'delivered' || status === 'declined' ? undefined : status === 'in_review' ? { label: 'Spark scopes your request', date: addDays(at.slice(0, 10), 2) } : r.nextStep,
+          activity: [...r.activity, activity(SPARK_ME, 'status', STATUS_TEXT[status] ?? `moved the request to ${status.replace('_', ' ')}`)],
+        })),
+        notifications: notify(s, {
+          audience: 'client',
+          title: `${s.requests.find((r) => r.id === id)?.title ?? id}: ${status === 'in_review' ? 'Spark started reviewing' : status === 'in_progress' ? 'work has started' : status === 'delivered' ? 'delivered' : 'updated'}`,
+          body: id,
+          route: `/requests/${id}`,
+          kind: 'request',
+        }),
+      }));
+    },
+    [set],
+  );
+
+  const setRequestOwner = useCallback((id: ID, ownerId: ID) => set((s) => ({ requests: patchRequest(s, id, (r) => ({ ...r, ownerId })) })), [set]);
+
+  /** Spark sends a proposal (or a new version, which replaces the earlier one). */
+  const sendProposal = useCallback(
+    (requestId: ID, input: NewProposal): ID => {
+      const at = nowIso();
+      const s0 = stateRef.current;
+      const earlier = s0.proposals.filter((p) => p.requestId === requestId);
+      const version = earlier.reduce((m, p) => Math.max(m, p.version), 0) + 1;
+      const id = `P-${requestId.split('-')[1]}-${version}`;
+      const proposal: Proposal = {
+        id,
+        requestId,
+        version,
+        title: input.title,
+        sentBy: SPARK_ME,
+        sentAt: at,
+        validUntil: input.validUntil,
+        summary: input.summary,
+        objectives: input.objectives,
+        scope: input.scope.map((x) => ({ ...x, deliverables: [] })),
+        phases: input.phases,
+        startDate: input.startDate,
+        investment: input.investment,
+        terms: input.terms,
+        status: 'awaiting',
+        comments: [],
+      };
+      const total = input.investment.reduce((a, l) => a + l.amount, 0);
+      const weeks = input.phases.reduce((a, p) => a + p.weeks, 0);
+      set((s) => ({
+        proposals: [...s.proposals.map((p) => (p.requestId === requestId && p.status === 'awaiting' ? { ...p, status: 'superseded' as const } : p)), proposal],
+        requests: patchRequest(s, requestId, (r) => ({
+          ...r,
+          status: 'proposal',
+          updatedAt: at,
+          proposalIds: [...r.proposalIds, id],
+          nextStep: { label: 'Your decision on the proposal', date: input.validUntil, onClient: true },
+          activity: [...r.activity, activity(SPARK_ME, 'proposal', `sent a proposal · AED ${total.toLocaleString('en-US')} · ${weeks} weeks`)],
+        })),
+        notifications: notify(s, {
+          audience: 'client',
+          title: `Proposal ready: ${input.title}`,
+          body: `AED ${total.toLocaleString('en-US')} · ${weeks} weeks · decision by ${input.validUntil}`,
+          route: `/requests/${requestId}/proposal`,
+          kind: 'proposal',
+        }),
+      }));
+      return id;
+    },
+    [set],
+  );
+
   // ---- Proposals ----------------------------------------------------------
 
   const decideProposal = useCallback(
@@ -405,7 +562,7 @@ function useStoreValue() {
           audience: 'spark',
           title: `Brand Co. ${decision === 'approved' ? 'approved' : decision === 'declined' ? 'declined' : 'requested changes on'} the proposal`,
           body: p.title,
-          route: `/requests/${p.requestId}/proposal`,
+          route: `/spark/requests/${p.requestId}`,
           kind: 'decision',
         }),
       }));
@@ -537,7 +694,7 @@ function useStoreValue() {
     [set],
   );
   const markAllRead = useCallback(
-    () => set((s) => ({ notifications: s.notifications.map((n) => (n.audience === 'client' ? { ...n, read: true } : n)) })),
+    (audience: 'client' | 'spark' = 'client') => set((s) => ({ notifications: s.notifications.map((n) => (n.audience === audience ? { ...n, read: true } : n)) })),
     [set],
   );
   const setPref = useCallback(
@@ -573,6 +730,11 @@ function useStoreValue() {
       createRequest,
       commentOnRequest,
       updateBrief,
+      sparkMessage,
+      clientMessage,
+      setRequestStatus,
+      setRequestOwner,
+      sendProposal,
       decideProposal,
       commentOnProposal,
       uploadFiles,

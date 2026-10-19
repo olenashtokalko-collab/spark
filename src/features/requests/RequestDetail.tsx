@@ -6,11 +6,13 @@ import { Avatar, Button, EmptyState, Tabs, Textarea, cx } from '../../components
 import { FileIcon, ProposalStatus, RequestStatus, STAGES, STAGE_INFO, stageIndex } from '../../components/domain';
 import { useToast } from '../../components/ui/toast';
 import { aed, dueLabel, fmtDate, fmtDateTime, fmtRelative, fmtTime } from '../../lib/format';
-import { navigate } from '../../lib/router';
+import { navigate, useRoute } from '../../lib/router';
 import type { Activity, Finding, WorkRequest } from '../../data/types';
 import { ChatCut } from '../assistant/ChatCut';
+import { ThreadComposer, ThreadList, conversationItems } from './Conversation';
+import { MessageSquare as ReplyIcon } from 'lucide-react';
 
-type Tab = 'overview' | 'context' | 'files' | 'activity';
+type Tab = 'overview' | 'conversation' | 'context' | 'files' | 'activity';
 
 // Requests made from a chat get a generated description ("Key findings from
 // the assistant: … What we'd like from Spark: …"). The findings are shown as
@@ -32,7 +34,8 @@ export function RequestDetail({ id }: { id: string }) {
   const { state, me, actions } = useStore();
   const { openDoc } = useUI();
   const toast = useToast();
-  const [tab, setTab] = useState<Tab>('overview');
+  const { query } = useRoute();
+  const [tab, setTab] = useState<Tab>(query.get('tab') === 'conversation' ? 'conversation' : 'overview');
   const [comment, setComment] = useState('');
   const [draft, setDraft] = useState<string | null>(null);
   const r = state.requests.find((x) => x.id === id);
@@ -70,8 +73,11 @@ export function RequestDetail({ id }: { id: string }) {
     toast({ title: 'Brief updated', body: 'Spark will see it when they review the request.' });
   };
 
+  const thread = conversationItems(state, r, 'client');
+  const messages = thread.filter((m) => m.kind === 'message').length;
   const tabs: { value: Tab; label: string; count?: number }[] = [
     { value: 'overview', label: 'Overview' },
+    { value: 'conversation', label: 'Conversation', count: messages || undefined },
     ...(r.excerpt ? [{ value: 'context' as const, label: 'Context' }] : []),
     { value: 'files', label: 'Files', count: allFiles.length || undefined },
     { value: 'activity', label: 'Activity', count: r.activity.length },
@@ -213,6 +219,24 @@ export function RequestDetail({ id }: { id: string }) {
                   </div>
                 </section>
               )}
+            </div>
+          )}
+
+          {tab === 'conversation' && (
+            <div className="req-tab">
+              {r.nextStep?.onClient && r.status !== 'proposal' && (
+                <div className="conv-wait">
+                  <ReplyIcon size={15} /> Spark is waiting for your reply: {r.nextStep.label}.
+                </div>
+              )}
+              <ThreadList items={thread} clientName={state.brand.name} />
+              <ThreadComposer
+                modes={[{ key: 'reply', label: 'Reply', icon: ReplyIcon, send: 'Send reply', placeholder: 'Write to the Spark team…', note: 'The Spark team is notified in the portal and by email.' }]}
+                onSend={(_, text) => {
+                  actions.clientMessage(r.id, text);
+                  toast({ title: 'Message sent', body: 'Spark has been notified.' });
+                }}
+              />
             </div>
           )}
 
