@@ -34,8 +34,10 @@ export function SparkApp() {
   else if (section === 'requests' && id) screen = <SparkRequestPage id={id} tab={sub === 'conversation' ? 'conversation' : sub === 'files' ? 'files' : sub === 'activity' ? 'activity' : 'overview'} />;
   else screen = <SparkInbox initialClient={query.get('client') ?? undefined} />;
   const onClients = section === 'clients';
+  // The proposal editor fills the page, its menu attached to the rail.
+  const editor = section === 'requests' && sub === 'proposal' && sub2 === 'new';
   return (
-    <div className="shell spk">
+    <div className={cx('shell spk', editor && 'spk--bleed')}>
       <div className="app-bg" aria-hidden>
         <span className="app-bg__light" />
         <span className="app-bg__grain" />
@@ -44,7 +46,6 @@ export function SparkApp() {
         <a className="topbar__logo" href="#/spark" aria-label="Spark team view">
           <img className="topbar__icon brand-only" src="/brand/spark-app-icon.jpg" alt="" />
         </a>
-        <span className="spk__badge">Spark team view</span>
         <div className="topbar__spacer" />
         <span className="spk__me">
           <Avatar person={dana} size={28} />

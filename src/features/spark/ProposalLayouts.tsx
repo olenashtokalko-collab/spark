@@ -94,13 +94,24 @@ const FACT_ICON = { client: Building2, owner: UserRound, total: Banknote, durati
 const NAME: Partial<Record<SectionId, string>> = { overview: 'General', file: 'Documents' };
 const nameOf = (id: SectionId) => NAME[id] ?? SECTIONS.find((s) => s.id === id)!.label;
 
-function LayoutE({ f }: { f: ProposalForm }) {
+export interface EditorMeta {
+  requestId: string;
+  clientName: string;
+  ownerName: string;
+  requesterFirst: string;
+  version: number;
+}
+const DEMO_META: EditorMeta = { requestId: 'REQ-105', clientName: 'Brand Co.', ownerName: 'Dana Kareem', requesterFirst: 'Omar', version: 1 };
+
+/** The proposal editor after the reference: a section menu, a header strip and one large card.
+ *  Used as a demo layout and as the real New proposal page (with `bleed`, where it fills the page). */
+export function ReferenceEditor({ f, meta = DEMO_META, onSend, onBack, bleed }: { f: ProposalForm; meta?: EditorMeta; onSend?: () => void; onBack?: () => void; bleed?: boolean }) {
   const [active, setActive] = useState<SectionId | 'key'>('key');
   const [tab, setTab] = useState<'contents' | 'ideas'>('contents');
   const missing = SECTIONS.filter((s) => !f.done[s.id]);
   const facts: { k: keyof typeof FACT_ICON; label: string; value: string | null; to?: SectionId }[] = [
-    { k: 'client', label: 'Client', value: 'Brand Co.' },
-    { k: 'owner', label: 'Owner', value: 'Dana Kareem' },
+    { k: 'client', label: 'Client', value: meta.clientName },
+    { k: 'owner', label: 'Owner', value: meta.ownerName },
     { k: 'total', label: 'Total value', value: f.done.investment ? aed(f.total) : null, to: 'investment' },
     { k: 'duration', label: 'Duration', value: f.done.timeline ? `${f.weeks} weeks` : null, to: 'timeline' },
     { k: 'starts', label: 'Work starts', value: f.start ? fmtDate(f.start) : null, to: 'timeline' },
@@ -116,7 +127,7 @@ function LayoutE({ f }: { f: ProposalForm }) {
     </li>
   );
   return (
-    <div className="pe-ref">
+    <div className={cx('pe-ref', bleed && 'pe-ref--bleed')}>
       <nav className="pe-ref__side" aria-label="Proposal sections">
         <h2 className="pe-ref__heading">Proposal</h2>
         <ul>
@@ -137,9 +148,9 @@ function LayoutE({ f }: { f: ProposalForm }) {
             <span>Here you can review all sections before sending to the client</span>
           </div>
           <div className="pe-ref__actions">
-            <Button icon={ArrowLeft} onClick={() => navigate('/spark')}>Back to inbox</Button>
+            <Button icon={ArrowLeft} onClick={onBack ?? (() => navigate('/spark'))}>Back to request</Button>
             <Button icon={Sparkles}>Ask Spark AI</Button>
-            <Button variant="primary" disabled={missing.length > 0}>Send to client</Button>
+            <Button variant="primary" disabled={missing.length > 0} onClick={onSend}>Send to client</Button>
             <span className="pe-ref__people">
               <Avatar person={dana} size={30} />
               <Avatar person={youssef} size={30} />
@@ -153,8 +164,8 @@ function LayoutE({ f }: { f: ProposalForm }) {
               <h2 className="pe-ref__title">{f.title || 'Untitled proposal'}</h2>
               <div className="pe-ref__chips">
                 <span className="pe-chip-s pe-chip-s--draft">DRAFT</span>
-                <span className="pe-chip-s">V1</span>
-                <span className="pe-chip-s">REQ-105</span>
+                <span className="pe-chip-s">V{meta.version}</span>
+                <span className="pe-chip-s">{meta.requestId}</span>
                 <span className="faint">Created today by Dana Kareem</span>
               </div>
               <div className="pe-ref__facts">
@@ -207,7 +218,7 @@ function LayoutE({ f }: { f: ProposalForm }) {
                 </div>
               ) : (
                 <div className="pe-ref__clauses">
-                  {['Layla asked for a price per store in an earlier message: show it as line items.', 'The budget is up to AED 60,000: keep the total under it or explain the difference.', 'Add one objective that can be measured, such as a response time.', 'Attach last quarter’s delivery-fee mentions as an appendix.'].map((t) => (
+                  {[`${meta.requesterFirst} asked for a clear price in the conversation: show it as line items.`, 'The budget is up to AED 60,000: keep the total under it or explain the difference.', 'Add one objective that can be measured, such as a response time.', 'Attach last quarter’s delivery-fee mentions as an appendix.'].map((t) => (
                     <div key={t} className="pe-clause pe-clause--idea">
                       <span className="pe-clause__l"><Lightbulb size={14} /> Suggestion</span>
                       <span className="pe-clause__v">{t}</span>
@@ -393,7 +404,7 @@ export function ProposalLayouts() {
         </span>
       </div>
       <p className="pe-note muted">{NOTES[layout]}</p>
-      {layout === 'e' && <LayoutE f={f} />}
+      {layout === 'e' && <ReferenceEditor f={f} />}
       {layout === 'a' && <LayoutA f={f} />}
       {layout === 'b' && <LayoutB f={f} />}
       {layout === 'c' && <LayoutC f={f} />}

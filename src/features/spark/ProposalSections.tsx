@@ -21,9 +21,9 @@ export const SECTIONS: { id: SectionId; label: string; hint: string; icon: Lucid
 const today = () => nowIso().slice(0, 10);
 const num = (v: string) => Number(v.replace(/[^\d]/g, '')) || 0;
 
-export function useProposalForm() {
-  const [title, setTitle] = useState('Response plan for delivery fee complaints');
-  const [summary, setSummary] = useState('A reply approach for the community team and a view on the pricing message before Riyadh.');
+export function useProposalForm(initial?: { title?: string; summary?: string }) {
+  const [title, setTitle] = useState(initial?.title ?? 'Response plan for delivery fee complaints');
+  const [summary, setSummary] = useState(initial?.summary ?? 'A reply approach for the community team and a view on the pricing message before Riyadh.');
   const [objectives, setObjectives] = useState(['']);
   const [scope, setScope] = useState([{ title: '', detail: '' }]);
   const [phases, setPhases] = useState([
