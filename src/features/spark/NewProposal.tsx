@@ -11,7 +11,7 @@ import { aed, fmtDate } from '../../lib/format';
 import { navigate } from '../../lib/router';
 import { clientOf } from './data';
 import { useSparkRequests } from './model';
-import { ProposalProgress, RailEditor } from './ProposalEditor';
+import { SectionsEditor } from './ProposalEditor';
 import { SECTIONS, useProposalForm } from './ProposalSections';
 
 const num = (v: string) => Number(v.replace(/[^\d]/g, '')) || 0;
@@ -69,11 +69,7 @@ export function NewProposal({ id }: { id: string }) {
           </Button>
         </div>
       </header>
-      <div className="pe-bar">
-        <p className="muted pe-bar__hint">{first} reviews it, comments on any section and approves, asks for changes or declines.</p>
-        <ProposalProgress f={f} />
-      </div>
-      <RailEditor f={f} />
+      <SectionsEditor f={f} onSaved={(label) => toast({ title: 'Saved', body: `${label} is saved in the draft.` })} />
       <Dialog
         open={confirm}
         onClose={() => setConfirm(false)}

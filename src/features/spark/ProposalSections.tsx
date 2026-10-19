@@ -1,6 +1,6 @@
 // The sections of a proposal, as the Spark team fills them in, and how complete each one is.
 // Shared by the proposal editor layouts (#/spark/layouts). Each section has an editor and a "done" test.
-import { useMemo, useState } from 'react';
+import { useMemo, useRef, useState } from 'react';
 import { Calendar, FileText, Package, Paperclip, Plus, ScrollText, Banknote, Target, Trash2, UploadCloud } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Button, Field, Input, Textarea } from '../../components/ui/primitives';
@@ -45,10 +45,34 @@ export function useProposalForm(initial?: { title?: string; summary?: string }) 
     terms: terms.some((t) => t.trim()),
     file: !!file,
   };
+  // What each section holds right now, to tell edits that are not saved yet.
+  const snapshot = (id: SectionId): string => {
+    switch (id) {
+      case 'overview':
+        return JSON.stringify([title, summary]);
+      case 'objectives':
+        return JSON.stringify(objectives);
+      case 'scope':
+        return JSON.stringify(scope);
+      case 'timeline':
+        return JSON.stringify([phases, start, until]);
+      case 'investment':
+        return JSON.stringify(lines);
+      case 'terms':
+        return JSON.stringify(terms);
+      case 'file':
+        return JSON.stringify(file);
+    }
+  };
+  const base = useRef<Record<string, string> | null>(null);
+  if (!base.current) base.current = Object.fromEntries(SECTIONS.map((x) => [x.id, snapshot(x.id)]));
+  const [saved, setSaved] = useState<Record<string, string>>({});
+  const dirty = Object.fromEntries(SECTIONS.map((x) => [x.id, snapshot(x.id) !== (saved[x.id] ?? base.current![x.id])])) as Record<SectionId, boolean>;
+  const save = (id: SectionId) => setSaved((m) => ({ ...m, [id]: snapshot(id) }));
   const ready = SECTIONS.filter((s) => done[s.id]).length;
   const total = useMemo(() => lines.reduce((a, l) => a + num(l.amount), 0), [lines]);
   const weeks = useMemo(() => phases.reduce((a, p) => a + num(p.weeks), 0), [phases]);
-  return { title, setTitle, summary, setSummary, objectives, setObjectives, scope, setScope, phases, setPhases, start, setStart, until, setUntil, lines, setLines, terms, setTerms, file, setFile, done, ready, total, weeks };
+  return { title, setTitle, summary, setSummary, objectives, setObjectives, scope, setScope, phases, setPhases, start, setStart, until, setUntil, lines, setLines, terms, setTerms, file, setFile, done, ready, total, weeks, dirty, save };
 }
 export type ProposalForm = ReturnType<typeof useProposalForm>;
 

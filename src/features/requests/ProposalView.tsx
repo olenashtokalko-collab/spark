@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { AlignLeft, ArrowLeft, CalendarDays, CircleAlert, Compass, Download, Layers, Lightbulb, ListChecks, MessageSquare, Package, Palette, Printer, RotateCcw, ShieldCheck, Check, PenLine, X } from 'lucide-react';
 import { canApprove, latestProposal, personById, proposalTotal, proposalWeeks, useStore } from '../../state/store';
 import { Avatar, Button, Checkbox, EmptyState, Field, Select, Textarea, cx } from '../../components/ui/primitives';
@@ -377,7 +377,7 @@ export function ProposalView({ requestId }: { requestId: string }) {
 // proposal is on its way after the client asked for changes.
 /** In-page contents for the proposal: jumps to a section and marks the one
  *  in view, so the document stays whole while still easy to move around. */
-function ProposalToc({ items }: { items: { id: string; label: string; count?: number }[] }) {
+export function ProposalToc({ items, title = 'On this page' }: { items: { id: string; label: string; count?: number; trail?: ReactNode }[]; title?: string }) {
   const [active, setActive] = useState(items[0]?.id);
   // After a click, hold the picked section while the smooth scroll runs, so a
   // short section near the end isn't overruled when the page hits the bottom.
@@ -412,7 +412,7 @@ function ProposalToc({ items }: { items: { id: string; label: string; count?: nu
   return (
     <nav className="ptoc ptoc--rail" style={{ ['--i' as string]: idx }} aria-label="Proposal sections">
       <div className="ptoc__title">
-        <AlignLeft size={15} strokeWidth={1.8} /> On this page
+        <AlignLeft size={15} strokeWidth={1.8} /> {title}
       </div>
       {/* A hairline rail; one accent bar slides to the section in view, a pale bar shows on hover. */}
       <div className="ptoc__items">
@@ -432,6 +432,7 @@ function ProposalToc({ items }: { items: { id: string; label: string; count?: nu
           >
             {i.label}
             {i.count ? <span className="ptoc__count">{i.count}</span> : null}
+            {i.trail ? <span className="ptoc__trail">{i.trail}</span> : null}
           </a>
         ))}
       </div>

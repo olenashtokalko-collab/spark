@@ -758,3 +758,33 @@
     stroke-dashoffset: 0;
   }
 }
+
+/* ---- The editor: the contents menu and the sections one under another ------------------------- */
+.pe-layout {
+  display: grid;
+  grid-template-columns: 230px minmax(0, 1fr);
+  gap: 48px;
+  align-items: start;
+}
+.pe-menu {
+  position: sticky;
+  top: 24px;
+}
+.pe-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  scroll-behavior: smooth;
+}
+.pe-pane {
+  scroll-margin-top: 100px;
+}
+.pe-pane__foot {
+  align-items: center;
+  gap: 14px;
+}
+.ptoc__trail {
+  margin-left: auto;
+  display: inline-grid;
+  place-items: center;
+}
