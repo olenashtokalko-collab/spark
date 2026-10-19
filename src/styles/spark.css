@@ -778,12 +778,6 @@
 .pe-pane__head .pe-mark[data-tip]:hover::after {
   transform: translate(0, 0);
 }
-.pe-pane__head .pe-mark[data-tip]::after,
-.ptoc__trail .pe-mark[data-tip]::after {
-  white-space: normal;
-  width: 220px;
-  line-height: 1.35;
-}
 .ptoc__trail .pe-mark[data-tip]::after {
   left: auto;
   right: 0;

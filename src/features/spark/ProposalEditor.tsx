@@ -9,7 +9,7 @@ import { SECTIONS, SectionEditor, type ProposalForm } from './ProposalSections';
 /** Only a section that is not filled yet gets a mark; hovering it says what it means. */
 const Mark = ({ ok }: { ok: boolean }) =>
   ok ? null : (
-    <span className="pe-mark pe-mark--todo" data-tip="Not filled yet. The client sees nothing here until you add content." aria-label="Not filled yet">
+    <span className="pe-mark pe-mark--todo" data-tip="Fill in this section to send" aria-label="Fill in this section to send">
       <AlertCircle size={16} strokeWidth={2} />
     </span>
   );
