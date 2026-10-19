@@ -2,7 +2,7 @@
 // (header, tabs, the request, the proposal card, insights, Stages and Details) with Spark's controls added.
 // Brand Co.'s requests are live from the shared store; the other clients keep local state.
 import { useState } from 'react';
-import { ArrowLeft, HelpCircle, Lock, MessageSquare, Plus, Send } from 'lucide-react';
+import { ArrowLeft, Lock, MessageSquare, Plus, Send } from 'lucide-react';
 import { Avatar, Button, EmptyState, Tabs, Textarea } from '../../components/ui/primitives';
 import { FileIcon } from '../../components/domain';
 import { useToast } from '../../components/ui/toast';
@@ -247,11 +247,7 @@ function Inner({ base, live, tab }: { base: SparkRequest; live: boolean; tab: Ta
             <div className="req-tab">
               <ThreadList items={m.items} clientName={client.name} />
               <ThreadComposer
-                modes={[
-                  { key: 'reply', label: 'Reply to client', icon: MessageSquare, send: 'Send reply', placeholder: `Reply to ${first}…`, note: `${first} and the client team are notified in the portal and by email.` },
-                  { key: 'question', label: 'Ask a question', icon: HelpCircle, send: 'Send question', placeholder: `Ask ${first} a follow-up question…`, note: `${first} is asked to answer; the request shows “waiting on the client”.` },
-                  { key: 'internal', label: 'Internal note', icon: Lock, send: 'Add note', placeholder: 'A note for the Spark team. The client will not see it.', note: 'Visible to the Spark team only.' },
-                ]}
+                modes={[{ key: 'reply', label: 'Reply to client', icon: MessageSquare, send: 'Send reply', placeholder: `Reply to ${first}…`, note: `${first} and the client team are notified in the portal and by email.` }]}
                 onSend={m.send}
                 onAttach={() => toast({ title: 'Attach a file', body: 'Files go into the client’s Documents.' })}
               />

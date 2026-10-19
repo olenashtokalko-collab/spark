@@ -296,28 +296,47 @@
   color: var(--ink);
 }
 .conv-compose {
-  padding: 14px 16px 12px;
-  border-radius: 18px;
-  background: #fff;
-  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.08), 0 12px 30px -20px rgba(14, 17, 22, 0.3);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 }
 .conv-compose__modes {
-  margin-bottom: 10px;
+  margin-bottom: 2px;
 }
-.conv-compose textarea {
+/* One box: the text, the attach "+" at the bottom left and the send button at the bottom right. */
+.conv-box {
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.14);
+  transition: box-shadow 0.15s;
+}
+.conv-box:hover {
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.24);
+}
+.conv-box:focus-within {
+  box-shadow: 0 0 0 1.5px var(--ink);
+}
+.conv-box textarea {
   width: 100%;
+  min-height: 84px;
+  padding: 14px 16px 4px;
+  border: 0;
+  background: transparent;
+  box-shadow: none !important;
+  resize: none;
 }
-.conv-compose__foot {
+.conv-box__bar {
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  gap: 12px;
-  margin-top: 10px;
-  font-size: 13px;
+  justify-content: space-between;
+  padding: 6px 10px 10px 8px;
 }
-.conv-compose__acts {
-  display: flex;
-  gap: 8px;
+.conv-compose__note {
+  margin: 0;
+  padding-left: 4px;
+  font-size: 13px;
 }
 
 /* ---- New proposal ----------------------------------------------------------------------- */
@@ -651,4 +670,305 @@
 }
 .req-detail .spk-note {
   margin-bottom: 12px;
+}
+
+/* ---- Animated icons for the empty proposal block (#/spark/icons) ----------------------------- */
+.aei-list {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.aei-card h3 {
+  margin: 0 0 4px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.aei-card p {
+  margin: 0 0 10px;
+  font-size: 14px;
+}
+.aei {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  color: var(--ink);
+}
+.aei svg {
+  overflow: visible;
+}
+.ask-empty > div {
+  flex: 1;
+}
+/* A. the plane takes off */
+.aei__fly {
+  animation: aei-fly 4.2s ease-in-out infinite;
+}
+@keyframes aei-fly {
+  0%,
+  50% {
+    transform: translate(7px, 7px) scale(1.25);
+    opacity: 1;
+  }
+  68% {
+    transform: translate(19px, -5px) scale(1.25);
+    opacity: 0;
+  }
+  69% {
+    transform: translate(-6px, 20px) scale(1.25);
+    opacity: 0;
+  }
+  86%,
+  100% {
+    transform: translate(7px, 7px) scale(1.25);
+    opacity: 1;
+  }
+}
+.aei__trail {
+  animation: aei-trail 4.2s ease-in-out infinite;
+  opacity: 0;
+}
+@keyframes aei-trail {
+  0%,
+  45% {
+    opacity: 0;
+  }
+  58% {
+    opacity: 0.6;
+  }
+  72%,
+  100% {
+    opacity: 0;
+  }
+}
+/* B and the line drawing of D and E */
+.aei__l {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+.aei--write .aei__l,
+.aei--tile .aei__l {
+  animation: aei-line 5s ease-in-out infinite;
+}
+.aei__l2 {
+  animation-delay: 0.45s !important;
+}
+.aei__l3 {
+  animation-delay: 0.9s !important;
+}
+@keyframes aei-line {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+  }
+  22%,
+  78% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  92%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+/* C. the envelope opens */
+.aei__flap {
+  transform-box: view-box;
+  transform-origin: 20px 15px;
+  animation: aei-flap 4.4s ease-in-out infinite;
+}
+.aei__sheet {
+  animation: aei-sheet 4.4s ease-in-out infinite;
+}
+@keyframes aei-flap {
+  0%,
+  15% {
+    transform: scaleY(1);
+  }
+  35%,
+  65% {
+    transform: scaleY(-1);
+  }
+  85%,
+  100% {
+    transform: scaleY(1);
+  }
+}
+@keyframes aei-sheet {
+  0%,
+  25% {
+    transform: translateY(2px);
+    opacity: 0;
+  }
+  45%,
+  62% {
+    transform: translateY(-4px);
+    opacity: 1;
+  }
+  80%,
+  100% {
+    transform: translateY(2px);
+    opacity: 0;
+  }
+}
+/* D. the pencil */
+.aei--pen .aei__l {
+  animation: aei-pen-line 5s ease-in-out infinite;
+}
+.aei--pen .aei__p1 {
+  --a: 4%;
+  --b: 20%;
+}
+@keyframes aei-pen-line {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+}
+.aei--pen .aei__p1 {
+  animation-name: aei-p1;
+}
+.aei--pen .aei__p2 {
+  animation-name: aei-p2;
+  animation-delay: 0s !important;
+}
+.aei--pen .aei__p3 {
+  animation-name: aei-p3;
+  animation-delay: 0s !important;
+}
+@keyframes aei-p1 {
+  0%,
+  4% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+  }
+  20%,
+  86% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  96%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+@keyframes aei-p2 {
+  0%,
+  24% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+  }
+  40%,
+  86% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  96%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+@keyframes aei-p3 {
+  0%,
+  44% {
+    stroke-dashoffset: 1;
+    opacity: 1;
+  }
+  60%,
+  86% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+  96%,
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 0;
+  }
+}
+.aei__pencil {
+  animation: aei-pencil 5s ease-in-out infinite;
+  opacity: 0;
+}
+@keyframes aei-pencil {
+  0% {
+    transform: translate(13px, 22px);
+    opacity: 0;
+  }
+  4% {
+    transform: translate(14px, 21px);
+    opacity: 1;
+  }
+  20% {
+    transform: translate(28px, 21px);
+  }
+  24% {
+    transform: translate(14px, 26px);
+  }
+  40% {
+    transform: translate(28px, 26px);
+  }
+  44% {
+    transform: translate(14px, 31px);
+  }
+  60% {
+    transform: translate(24px, 31px);
+    opacity: 1;
+  }
+  68% {
+    transform: translate(34px, 24px);
+    opacity: 0;
+  }
+  100% {
+    transform: translate(34px, 24px);
+    opacity: 0;
+  }
+}
+/* E. the glass tile */
+.aei__float {
+  animation: aei-float 4s ease-in-out infinite;
+}
+@keyframes aei-float {
+  50% {
+    transform: translateY(-1.5px);
+  }
+}
+.aei__spark {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: aei-spark 3.2s ease-in-out infinite;
+}
+@keyframes aei-spark {
+  0%,
+  100% {
+    transform: scale(0.5);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.15);
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aei__fly,
+  .aei__trail,
+  .aei__l,
+  .aei__flap,
+  .aei__sheet,
+  .aei__pencil,
+  .aei__float,
+  .aei__spark {
+    animation: none !important;
+  }
+  .aei__l {
+    stroke-dashoffset: 0;
+  }
+  .aei__sheet {
+    opacity: 1;
+  }
 }

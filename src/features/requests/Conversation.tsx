@@ -1,7 +1,7 @@
 // The conversation on a request, shared by both sides: the client's request page and the Spark team view.
 // One thread per request; Spark's internal notes are marked and never reach the client side.
 import { useState } from 'react';
-import { Lock, Paperclip, Send } from 'lucide-react';
+import { Lock, Plus, Send } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Avatar, Badge, Button, Segmented, Textarea, cx } from '../../components/ui/primitives';
 import { personById, type State } from '../../state/store';
@@ -102,20 +102,23 @@ export function ThreadComposer({ modes, onSend, onAttach }: { modes: ComposerMod
           <Segmented value={key} onChange={setKey} label="Message type" items={modes.map((m) => ({ value: m.key, label: m.label, icon: m.icon }))} />
         </div>
       )}
-      <Textarea rows={3} value={text} onChange={(e) => setText(e.target.value)} placeholder={mode.placeholder} />
-      <div className="conv-compose__foot">
-        <span className="faint">{mode.note}</span>
-        <span className="conv-compose__acts">
-          {onAttach && (
-            <Button size="sm" icon={Paperclip} onClick={onAttach}>
-              Attach
-            </Button>
+      {/* The box holds the text, the attach "+" and the send button together. */}
+      <div className="conv-box">
+        <Textarea rows={3} value={text} onChange={(e) => setText(e.target.value)} placeholder={mode.placeholder} onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) send(); }} />
+        <div className="conv-box__bar">
+          {onAttach ? (
+            <button className="btn btn--ghost btn--sm btn--icon" aria-label="Attach a file" data-tip="Attach a file" onClick={onAttach}>
+              <Plus size={18} />
+            </button>
+          ) : (
+            <span />
           )}
           <Button variant="primary" size="sm" icon={Send} disabled={!text.trim()} onClick={send}>
             {mode.send}
           </Button>
-        </span>
+        </div>
       </div>
+      <p className="conv-compose__note faint">{mode.note}</p>
     </div>
   );
 }
