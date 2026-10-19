@@ -11,7 +11,6 @@ import { SparkInbox } from './SparkInbox';
 import { SparkRequestPage } from './SparkRequestPage';
 import { NewProposal } from './NewProposal';
 import { SparkClients } from './SparkClients';
-import { SparkIcons } from './SparkIcons';
 
 /** A notification's route is a client-portal one; the Spark team opens the same request in its own view. */
 const sparkRoute = (route: string) => {
@@ -29,7 +28,6 @@ export function SparkApp() {
   const [, section, id, sub, sub2] = parts;
   let screen;
   if (section === 'clients') screen = <SparkClients />;
-  else if (section === 'icons') screen = <SparkIcons />;
   else if (section === 'requests' && id && sub === 'proposal' && sub2 === 'new') screen = <NewProposal id={id} />;
   else if (section === 'requests' && id) screen = <SparkRequestPage id={id} tab={sub === 'conversation' ? 'conversation' : sub === 'files' ? 'files' : sub === 'activity' ? 'activity' : 'overview'} />;
   else screen = <SparkInbox initialClient={query.get('client') ?? undefined} />;

@@ -14,6 +14,7 @@ import { ThreadComposer, ThreadList, conversationItems, type ConvItem } from '..
 import { ActivityLog, StatusCard, askOf, findingsFromConversation, toneIcon } from '../requests/RequestDetail';
 import { STATUS_LABEL, clientOf, dana, sampleThread, type SparkRequest, type SparkStatus } from './data';
 import { SparkStatusChip } from './SparkInbox';
+import { EmptyProposalIcon } from './EmptyProposalIcon';
 import { useSparkRequests } from './model';
 
 type Tab = 'overview' | 'conversation' | 'files' | 'activity';
@@ -173,7 +174,7 @@ function Inner({ base, live, tab }: { base: SparkRequest; live: boolean; tab: Ta
                 </div>
               ) : (
                 <div className="ask-empty">
-                  <Send size={15} />
+                  <EmptyProposalIcon />
                   <div>
                     <div className="ask-empty__title">No proposal yet</div>
                     <div className="faint">Send one when the scope is clear.</div>
