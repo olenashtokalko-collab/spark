@@ -231,7 +231,7 @@ export function RequestDetail({ id }: { id: string }) {
               )}
               <ThreadList items={messages > 0 ? thread : []} clientName={state.brand.name} />
               <ThreadComposer
-                modes={[{ key: 'reply', label: 'Reply', icon: ReplyIcon, send: 'Send reply', placeholder: 'Write to the Spark team…', note: 'The Spark team is notified in the portal and by email.' }]}
+                modes={[{ key: 'reply', label: 'Reply', icon: ReplyIcon, send: 'Send', placeholder: 'Write to the Spark team…', note: 'The Spark team is notified in the portal and by email.' }]}
                 onSend={(_, text) => {
                   actions.clientMessage(r.id, text);
                   toast({ title: 'Message sent', body: 'Spark has been notified.' });

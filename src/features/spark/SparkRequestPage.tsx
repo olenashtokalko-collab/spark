@@ -248,7 +248,7 @@ function Inner({ base, live, tab }: { base: SparkRequest; live: boolean; tab: Ta
             <div className="req-tab">
               <ThreadList items={m.items.some((x) => x.kind === 'message') ? m.items : []} clientName={client.name} />
               <ThreadComposer
-                modes={[{ key: 'reply', label: 'Reply to client', icon: MessageSquare, send: 'Send reply', placeholder: `Reply to ${first}…`, note: '' }]}
+                modes={[{ key: 'reply', label: 'Reply to client', icon: MessageSquare, send: 'Send', placeholder: `Reply to ${first}…`, note: '' }]}
                 onSend={m.send}
                 onAttach={() => toast({ title: 'Attach a file', body: 'Files go into the client’s Documents.' })}
               />

@@ -1,7 +1,7 @@
 // The conversation on a request, shared by both sides: the client's request page and the Spark team view.
 // One thread per request; Spark's internal notes are marked and never reach the client side.
 import { useState } from 'react';
-import { Lock, Plus, Send } from 'lucide-react';
+import { Lock, Plus } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Avatar, Badge, Button, Segmented, Textarea, cx } from '../../components/ui/primitives';
 import { personById, type State } from '../../state/store';
@@ -114,7 +114,7 @@ export function ThreadComposer({ modes, onSend, onAttach }: { modes: ComposerMod
           ) : (
             <span />
           )}
-          <Button variant="primary" size="sm" icon={Send} disabled={!text.trim()} onClick={send}>
+          <Button variant="primary" size="sm" disabled={!text.trim()} onClick={send}>
             {mode.send}
           </Button>
         </div>
