@@ -9,7 +9,7 @@ import { aed, dueLabel, fmtDate, fmtDateTime, fmtRelative, fmtTime } from '../..
 import { navigate, useRoute } from '../../lib/router';
 import type { Activity, Finding, WorkRequest } from '../../data/types';
 import { ChatCut } from '../assistant/ChatCut';
-import { EmptyThread, ThreadComposer, ThreadList, conversationItems } from './Conversation';
+import { ThreadComposer, ThreadList, conversationItems } from './Conversation';
 import { MessageSquare as ReplyIcon } from 'lucide-react';
 
 type Tab = 'overview' | 'conversation' | 'context' | 'files' | 'activity';
@@ -229,7 +229,7 @@ export function RequestDetail({ id }: { id: string }) {
                   <ReplyIcon size={15} /> Spark is waiting for your reply: {r.nextStep.label}.
                 </div>
               )}
-              {messages > 0 ? <ThreadList items={thread} clientName={state.brand.name} /> : <EmptyThread body="Write to the Spark team about this request." />}
+              <ThreadList items={messages > 0 ? thread : []} clientName={state.brand.name} />
               <ThreadComposer
                 modes={[{ key: 'reply', label: 'Reply', icon: ReplyIcon, send: 'Send reply', placeholder: 'Write to the Spark team…', note: 'The Spark team is notified in the portal and by email.' }]}
                 onSend={(_, text) => {

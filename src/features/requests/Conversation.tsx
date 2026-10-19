@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Lock, Plus, Send } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { Avatar, Badge, Button, EmptyState, Segmented, Textarea, cx } from '../../components/ui/primitives';
+import { Avatar, Badge, Button, Segmented, Textarea, cx } from '../../components/ui/primitives';
 import { personById, type State } from '../../state/store';
 import { fmtDateTime } from '../../lib/format';
 import type { Person, WorkRequest } from '../../data/types';
@@ -40,23 +40,6 @@ export function conversationItems(state: State, r: WorkRequest, viewer: 'client'
     rows.push({ at: a.at, item: { id: a.id, kind: 'system', at: fmtDateTime(a.at), text: `${who.name} ${a.text}.` } });
   }
   return rows.sort((a, b) => a.at.localeCompare(b.at)).map((x) => x.item);
-}
-
-/** A conversation with nothing said yet: an empty state with a button that goes to the box below. */
-export function EmptyThread({ body }: { body: string }) {
-  return (
-    <div className="empty-thread">
-      <EmptyState
-        title="No messages yet."
-        body={body}
-        action={
-          <button className="link-btn" onClick={() => document.querySelector<HTMLTextAreaElement>('.conv-box textarea')?.focus()}>
-            Start chat
-          </button>
-        }
-      />
-    </div>
-  );
 }
 
 export function ThreadList({ items, clientName }: { items: ConvItem[]; clientName: string }) {
