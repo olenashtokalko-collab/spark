@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Lock, Plus, Send } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { Avatar, Badge, Button, Segmented, Textarea, cx } from '../../components/ui/primitives';
+import { Avatar, Badge, Button, EmptyState, Segmented, Textarea, cx } from '../../components/ui/primitives';
 import { personById, type State } from '../../state/store';
 import { fmtDateTime } from '../../lib/format';
 import type { Person, WorkRequest } from '../../data/types';
@@ -23,18 +23,12 @@ export function conversationItems(state: State, r: WorkRequest, viewer: 'client'
   // The client sees Spark's people as "Spark"; the Spark team sees their real names.
   const person = (id: string) => (viewer === 'spark' ? state.people.find((p) => p.id === id) ?? personById(state, id) : personById(state, id));
   const rows: { at: string; item: ConvItem }[] = [];
-  // The thread starts with the request itself, unless it was seeded with the client's first message. A request
-  // made from a chat with no words of its own is a note about the request, not a message.
+  // The thread starts with the request itself, unless it was seeded with the client's first message or the
+  // request was made from a chat with no words of its own (the Activity tab already says that it was).
   if (r.thread?.[0]?.by !== r.createdBy) {
     const generated = /^(Key findings from the assistant:|From the assistant:)/.test(r.description);
     const ask = generated ? (r.description.split("What we'd like from Spark:")[1] ?? '').trim() : r.description;
-    const who = person(r.createdBy);
-    rows.push({
-      at: r.createdAt,
-      item: ask
-        ? { id: 'req-' + r.id, kind: 'message', by: who, at: fmtDateTime(r.createdAt), text: ask }
-        : { id: 'req-' + r.id, kind: 'system', at: fmtDateTime(r.createdAt), text: `${who.name} created this request from a chat with the assistant.` },
-    });
+    if (ask) rows.push({ at: r.createdAt, item: { id: 'req-' + r.id, kind: 'message', by: person(r.createdBy), at: fmtDateTime(r.createdAt), text: ask } });
   }
   for (const m of r.thread ?? []) {
     if (m.kind === 'internal' && viewer !== 'spark') continue;
@@ -48,8 +42,24 @@ export function conversationItems(state: State, r: WorkRequest, viewer: 'client'
   return rows.sort((a, b) => a.at.localeCompare(b.at)).map((x) => x.item);
 }
 
+/** A conversation with nothing said yet: an empty state with a button that goes to the box below. */
+export function EmptyThread({ body }: { body: string }) {
+  return (
+    <EmptyState
+      panel
+      title="No messages yet."
+      body={body}
+      action={
+        <Button size="sm" variant="primary" onClick={() => document.querySelector<HTMLTextAreaElement>('.conv-box textarea')?.focus()}>
+          Start chat
+        </Button>
+      }
+    />
+  );
+}
+
 export function ThreadList({ items, clientName }: { items: ConvItem[]; clientName: string }) {
-  if (!items.length) return <p className="muted">No messages yet.</p>;
+  if (!items.length) return null;
   return (
     <div className="conv-thread">
       {items.map((m) =>

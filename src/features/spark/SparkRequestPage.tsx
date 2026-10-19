@@ -10,7 +10,7 @@ import { latestProposal, proposalTotal, proposalWeeks, useStore } from '../../st
 import { aed, fmtDate, fmtDateTime, fmtRelative } from '../../lib/format';
 import { navigate } from '../../lib/router';
 import type { RequestStatus, WorkRequest } from '../../data/types';
-import { ThreadComposer, ThreadList, conversationItems, type ConvItem } from '../requests/Conversation';
+import { EmptyThread, ThreadComposer, ThreadList, conversationItems, type ConvItem } from '../requests/Conversation';
 import { ActivityLog, StatusCard, askOf, findingsFromConversation, toneIcon } from '../requests/RequestDetail';
 import { STATUS_LABEL, clientOf, dana, sampleThread, type SparkRequest, type SparkStatus } from './data';
 import { SparkStatusChip } from './SparkInbox';
@@ -246,7 +246,7 @@ function Inner({ base, live, tab }: { base: SparkRequest; live: boolean; tab: Ta
 
           {tab === 'conversation' && (
             <div className="req-tab">
-              <ThreadList items={m.items} clientName={client.name} />
+              {m.items.some((x) => x.kind === 'message') ? <ThreadList items={m.items} clientName={client.name} /> : <EmptyThread body={`Start the conversation with ${first}.`} />}
               <ThreadComposer
                 modes={[{ key: 'reply', label: 'Reply to client', icon: MessageSquare, send: 'Send reply', placeholder: `Reply to ${first}…`, note: '' }]}
                 onSend={m.send}
