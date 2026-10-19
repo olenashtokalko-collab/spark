@@ -1,8 +1,9 @@
-// Screen 4 · New proposal: the section editor after the contract-review reference (menu on the left, one large
-// card on the right, what is empty highlighted). The fields are the ones the client's proposal page shows, so a
+// Screen 4 · New proposal: the section editor (a list of sections on the left, the open section on the right,
+// what is empty highlighted), after the contract-review reference. The fields are the ones the client's proposal page shows, so a
 // sent proposal opens there as it is. For Brand Co. the proposal is really sent (shared store).
 import { useState } from 'react';
-import { Button, EmptyState } from '../../components/ui/primitives';
+import { ArrowLeft } from 'lucide-react';
+import { Button, EmptyState, PageHeader } from '../../components/ui/primitives';
 import { Dialog } from '../../components/ui/overlay';
 import { useToast } from '../../components/ui/toast';
 import { useStore } from '../../state/store';
@@ -10,8 +11,8 @@ import { aed, fmtDate } from '../../lib/format';
 import { navigate } from '../../lib/router';
 import { clientOf } from './data';
 import { useSparkRequests } from './model';
-import { ReferenceEditor } from './ProposalLayouts';
-import { useProposalForm } from './ProposalSections';
+import { ProposalProgress, RailEditor } from './ProposalEditor';
+import { SECTIONS, useProposalForm } from './ProposalSections';
 
 const num = (v: string) => Number(v.replace(/[^\d]/g, '')) || 0;
 
@@ -48,14 +49,26 @@ export function NewProposal({ id }: { id: string }) {
   };
 
   return (
-    <>
-      <ReferenceEditor
-        bleed
-        f={f}
-        meta={{ requestId: r.id, clientName: client.name, ownerName: r.owner.name, requesterFirst: first, version }}
-        onBack={() => navigate(`/spark/requests/${r.id}`)}
-        onSend={() => setConfirm(true)}
+    <div className="spk-prop-page">
+      <a className="back" href={`#/spark/requests/${r.id}`} onClick={(e) => (e.preventDefault(), navigate(`/spark/requests/${r.id}`))}>
+        <ArrowLeft size={14} /> {r.id} · {r.title}
+      </a>
+      <PageHeader
+        title={`New proposal${version > 1 ? ` · version ${version}` : ''}`}
+        sub={`For ${client.name.replace(/\.$/, '')}: ${first} reviews it, comments on any section and approves, asks for changes or declines.`}
+        actions={
+          <>
+            <Button onClick={() => toast({ title: 'Draft saved', body: 'Only the Spark team sees drafts.' })}>Save draft</Button>
+            <Button variant="primary" disabled={f.ready < SECTIONS.length} onClick={() => setConfirm(true)}>
+              Send to client
+            </Button>
+          </>
+        }
       />
+      <div className="pe-bar pe-bar--end">
+        <ProposalProgress f={f} />
+      </div>
+      <RailEditor f={f} />
       <Dialog
         open={confirm}
         onClose={() => setConfirm(false)}
@@ -77,6 +90,6 @@ export function NewProposal({ id }: { id: string }) {
           Version {version} · {aed(f.total)} · {f.weeks} weeks · decision needed by {fmtDate(f.until, { weekday: true })}
         </p>
       </Dialog>
-    </>
+    </div>
   );
 }

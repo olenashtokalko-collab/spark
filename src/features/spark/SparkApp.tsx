@@ -11,7 +11,6 @@ import { SparkInbox } from './SparkInbox';
 import { SparkRequestPage } from './SparkRequestPage';
 import { NewProposal } from './NewProposal';
 import { SparkClients } from './SparkClients';
-import { ProposalLayouts } from './ProposalLayouts';
 
 /** A notification's route is a client-portal one; the Spark team opens the same request in its own view. */
 const sparkRoute = (route: string) => {
@@ -29,15 +28,12 @@ export function SparkApp() {
   const [, section, id, sub, sub2] = parts;
   let screen;
   if (section === 'clients') screen = <SparkClients />;
-  else if (section === 'layouts') screen = <ProposalLayouts />;
   else if (section === 'requests' && id && sub === 'proposal' && sub2 === 'new') screen = <NewProposal id={id} />;
   else if (section === 'requests' && id) screen = <SparkRequestPage id={id} tab={sub === 'conversation' ? 'conversation' : sub === 'files' ? 'files' : sub === 'activity' ? 'activity' : 'overview'} />;
   else screen = <SparkInbox initialClient={query.get('client') ?? undefined} />;
   const onClients = section === 'clients';
-  // The proposal editor fills the page, its menu attached to the rail.
-  const editor = section === 'requests' && sub === 'proposal' && sub2 === 'new';
   return (
-    <div className={cx('shell spk', editor && 'spk--bleed')}>
+    <div className="shell spk">
       <div className="app-bg" aria-hidden>
         <span className="app-bg__light" />
         <span className="app-bg__grain" />
