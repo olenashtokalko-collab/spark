@@ -4,6 +4,7 @@ import { AppShell } from './components/layout/AppShell';
 import { SignIn } from './features/auth/SignIn';
 import { STORAGE_KEY, useStore } from './state/store';
 import { Assistant } from './features/assistant/Assistant';
+import { SparkApp } from './features/spark/SparkApp';
 import { ComposerColorDemo } from './features/demo/ComposerColorDemo';
 import { NoteStripDemo } from './features/demo/NoteStripDemo';
 import { ModalSpacingDemo } from './features/demo/ModalSpacingDemo';
@@ -78,6 +79,7 @@ export default function App() {
     if (!path.startsWith('/assistant')) window.scrollTo({ top: 0 });
   }, [path]);
   if (!state.signedIn) return <SignIn />;
+  if (path === '/spark' || path.startsWith('/spark/')) return <SparkApp />;
   return (
     <AppShell>
       <div className="screen" key={path.split('/').slice(0, 3).join('/')}>

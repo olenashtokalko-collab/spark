@@ -8,6 +8,7 @@ import './styles/tokens.css';
 import './styles/base.css';
 import './styles/features.css';
 import './styles/brand-a.css';
+import './styles/spark.css';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
