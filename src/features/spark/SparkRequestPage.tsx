@@ -98,7 +98,6 @@ function Inner({ base, live, tab }: { base: SparkRequest; live: boolean; tab: Ta
               <span className="mono faint">{base.id}</span>
               <SparkStatusChip r={{ ...base, status: m.status }} />
               <span className="spk__client">{client.name}</span>
-              {live && <span className="spk__live" title="Shared with the client portal">Live</span>}
             </div>
             <h1 className="req-head__title">{base.title}</h1>
           </header>

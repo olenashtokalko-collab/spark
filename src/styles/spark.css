@@ -489,19 +489,7 @@
 .req-tab .conv-thread {
   margin-bottom: 20px;
 }
-.spk__live {
-  display: inline-flex;
-  align-items: center;
-  height: 20px;
-  padding: 0 8px;
-  border-radius: 999px;
-  background: color-mix(in srgb, #19a672 14%, #fff);
-  font-family: var(--font-mono, ui-monospace, monospace);
-  font-size: 10px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: #138a5a;
-}
+
 .spk-rowfields--one {
   grid-template-columns: 1fr 36px;
 }
