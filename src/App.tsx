@@ -24,6 +24,8 @@ function Screen() {
 
   switch (section) {
     case undefined:
+      // On this branch the Spark team's view is the start page.
+      return <Redirect to="/spark" />;
     case 'assistant':
       return <Assistant convId={a} />;
     case 'requests':

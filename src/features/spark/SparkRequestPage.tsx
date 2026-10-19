@@ -2,7 +2,7 @@
 // conversation with the client. Brand Co.'s requests are live from the shared store; others keep local state.
 import { useState } from 'react';
 import { ArrowLeft, FileText, HelpCircle, Lock, MessageSquare, Paperclip, Plus } from 'lucide-react';
-import { Avatar, Button, EmptyState, Select, Tabs, Textarea } from '../../components/ui/primitives';
+import { Avatar, Badge, Button, EmptyState, Select, Tabs, Textarea } from '../../components/ui/primitives';
 import { useToast } from '../../components/ui/toast';
 import { useStore } from '../../state/store';
 import { aed } from '../../lib/format';
@@ -149,7 +149,7 @@ function Inner({ base, live, tab }: { base: SparkRequest; live: boolean; tab: Ta
                     </div>
                     <div className="faint">Sent {base.proposal.sent}</div>
                   </div>
-                  <span className="spk__wait">{base.proposal.state}</span>
+                  <Badge>{base.proposal.state}</Badge>
                 </div>
               ) : (
                 <p className="muted">No proposal yet. Send one when the scope is clear.</p>

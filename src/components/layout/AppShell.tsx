@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react';
 import {
-  ArrowUpRight,
   Bell,
   Check,
   CheckCheck,
@@ -82,10 +81,6 @@ export function AppShell({ children }: { children: ReactNode }) {
           <img className="topbar__icon brand-only" src="/brand/spark-app-icon.jpg" alt="" />
         </a>
         <div className="topbar__spacer" />
-        {/* Prototype: a way over to the Spark team's side of the portal. */}
-        <a className="spk__switch" href="#/spark">
-          Spark team view <ArrowUpRight size={14} />
-        </a>
         <TeamMenu team={team} />
         <UserMenu />
       </header>

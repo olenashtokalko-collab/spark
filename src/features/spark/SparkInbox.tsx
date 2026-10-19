@@ -17,13 +17,10 @@ export const SparkStatusChip = ({ r }: { r: SparkRequest }) => (
 );
 
 const WaitingBadge = ({ r }: { r: SparkRequest }) =>
-  r.waiting === 'spark' ? (
-    <span className="spk__wait spk__wait--spark" title={r.waitingFor}>
-      On Spark
-    </span>
-  ) : r.waiting === 'client' ? (
-    <span className="spk__wait" title={r.waitingFor}>
-      On client
+  r.waiting ? (
+    <span className={`rstatus rstatus--${r.waiting === 'spark' ? 'you' : 'submitted'}`} title={r.waitingFor}>
+      <span className="rstatus__dot" />
+      {r.waiting === 'spark' ? 'On Spark' : 'On client'}
     </span>
   ) : (
     <span className="faint">—</span>
@@ -93,8 +90,8 @@ export function SparkInbox({ initialClient }: { initialClient?: string }) {
       {list.length === 0 ? (
         <EmptyState title="Nothing here." body="Try another tab or clear the filters." />
       ) : (
-        <div className="spk-table" role="table" aria-label="Requests from all clients">
-          <div className="spk-row spk-row--head" role="row">
+        <div className="req-table spk-table" role="table" aria-label="Requests from all clients">
+          <div className="req-row req-row--head spk-row" role="row">
             <span role="columnheader">Request</span>
             <span role="columnheader">Client</span>
             <span role="columnheader">Status</span>
@@ -104,10 +101,11 @@ export function SparkInbox({ initialClient }: { initialClient?: string }) {
             <span role="columnheader">Updated</span>
           </div>
           {list.map((r) => (
-            <a key={r.id} role="row" className="spk-row" href={`#/spark/requests/${r.id}`} onClick={(e) => (e.preventDefault(), navigate(`/spark/requests/${r.id}`))}>
+            <a key={r.id} role="row" className="req-row spk-row" href={`#/spark/requests/${r.id}`} onClick={(e) => (e.preventDefault(), navigate(`/spark/requests/${r.id}`))}>
               <span role="cell" className="req-row__main">
                 <span className="mono faint">{r.id}</span>
                 <span className="req-row__title">{r.title}</span>
+                <span className="req-row__type">{r.type}</span>
               </span>
               <span role="cell" className="spk-row__client">
                 <span className="spk-row__co">{clientOf(r.clientId).name}</span>

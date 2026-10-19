@@ -28,7 +28,7 @@ export function NewProposal({ id }: { id: string }) {
   const r = list.find((x) => x.id === id);
   const version = (r?.proposal?.version ?? 0) + 1;
   const [title, setTitle] = useState(r ? r.title : '');
-  const [summary, setSummary] = useState(r ? `A proposal for ${r.title.toLowerCase()}, with the scope, the timeline and the price.` : '');
+  const [summary, setSummary] = useState(r ? `A proposal for “${r.title}”: the scope, the timeline and the price.` : '');
   const [objectives, setObjectives] = useState(['Deliver one clear idea, adapted to every location.']);
   const [scope, setScope] = useState([{ title: 'Concept and design', detail: 'One idea, adapted per store.' }]);
   const [phases, setPhases] = useState([
@@ -79,7 +79,7 @@ export function NewProposal({ id }: { id: string }) {
       </a>
       <PageHeader
         title={`New proposal${version > 1 ? ` · version ${version}` : ''}`}
-        sub={`For ${client.name}. ${first} reviews it, comments on any section and approves, asks for changes or declines.`}
+        sub={`For ${client.name.replace(/\.$/, '')}: ${first} reviews it, comments on any section and approves, asks for changes or declines.`}
         actions={
           <>
             <Button onClick={() => toast({ title: 'Draft saved', body: 'Only the Spark team sees drafts.' })}>Save draft</Button>

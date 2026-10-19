@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { Lock, Paperclip, Send } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
-import { Avatar, Button, Textarea, cx } from '../../components/ui/primitives';
+import { Avatar, Badge, Button, Segmented, Textarea, cx } from '../../components/ui/primitives';
 import { personById, type State } from '../../state/store';
 import { fmtDateTime } from '../../lib/format';
 import type { Person, WorkRequest } from '../../data/types';
@@ -63,7 +63,7 @@ export function ThreadList({ items, clientName }: { items: ConvItem[]; clientNam
                     <Lock size={12} /> Internal note
                   </span>
                 )}
-                {m.question && <span className="spk__wait spk__wait--spark">Question</span>}
+                {m.question && <Badge tone="warning">Question</Badge>}
                 <span className="faint conv-msg__at">{m.at}</span>
               </div>
               <p>{m.text}</p>
@@ -98,12 +98,8 @@ export function ThreadComposer({ modes, onSend, onAttach }: { modes: ComposerMod
   return (
     <div className="conv-compose">
       {modes.length > 1 && (
-        <div className="conv-compose__modes" role="tablist" aria-label="Message type">
-          {modes.map((m) => (
-            <button key={m.key} role="tab" aria-selected={key === m.key} className={cx('conv-compose__mode', key === m.key && 'is-on')} onClick={() => setKey(m.key)}>
-              <m.icon size={14} /> {m.label}
-            </button>
-          ))}
+        <div className="conv-compose__modes">
+          <Segmented value={key} onChange={setKey} label="Message type" items={modes.map((m) => ({ value: m.key, label: m.label, icon: m.icon }))} />
         </div>
       )}
       <Textarea rows={3} value={text} onChange={(e) => setText(e.target.value)} placeholder={mode.placeholder} />

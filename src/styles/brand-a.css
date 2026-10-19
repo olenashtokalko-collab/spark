@@ -434,23 +434,23 @@
   background: #ffffff;
   box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.06), 0 30px 70px -24px rgba(14, 17, 22, 0.35);
 }
-/* Fields in a modal take the panel's colour: no fill, a hairline edge that
-   darkens on hover, the Cobalt ring on focus. */
-:root[data-theme='sand'] .dialog :is(.input, .select select),
-:root[data-theme='sand'] .dialog :is(.input, .select select):hover,
-:root[data-theme='sand'] .dialog .input:focus {
+/* Fields in a modal, and in the Spark team's forms, take the panel's colour: no fill, a hairline edge that
+   darkens on hover, the ring on focus. */
+:root[data-theme='sand'] :is(.dialog, .spk-form, .spk-noteform, .conv-compose) :is(.input, .select select),
+:root[data-theme='sand'] :is(.dialog, .spk-form, .spk-noteform, .conv-compose) :is(.input, .select select):hover,
+:root[data-theme='sand'] :is(.dialog, .spk-form, .spk-noteform, .conv-compose) .input:focus {
   background: transparent;
 }
-:root[data-theme='sand'] .dialog :is(.input, .select select) {
+:root[data-theme='sand'] :is(.dialog, .spk-form, .spk-noteform, .conv-compose) :is(.input, .select select) {
   box-shadow: inset 0 0 0 1px var(--line-strong);
 }
-:root[data-theme='sand'] .dialog :is(.input, .select select):hover {
+:root[data-theme='sand'] :is(.dialog, .spk-form, .spk-noteform, .conv-compose) :is(.input, .select select):hover {
   box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.24);
 }
-:root[data-theme='sand'] .dialog :is(.input, .select select):focus {
+:root[data-theme='sand'] :is(.dialog, .spk-form, .spk-noteform, .conv-compose) :is(.input, .select select):focus {
   box-shadow: 0 0 0 1.5px var(--accent);
 }
-:root[data-theme='sand'] .dialog .field--error .input {
+:root[data-theme='sand'] :is(.dialog, .spk-form, .spk-noteform, .conv-compose) .field--error .input {
   box-shadow: 0 0 0 1.5px var(--danger);
 }
 /* Modal icon tiles: "Frosted + light beneath" (picked on #/demo/modals, 2), after
@@ -2369,7 +2369,7 @@ button.proposal__tool:hover {
 :root[data-theme='sand'] .input:focus,
 :root[data-theme='sand'] .select select:focus,
 :root[data-theme='sand'] .token-input:focus-within,
-:root[data-theme='sand'] .dialog :is(.input, .select select):focus,
+:root[data-theme='sand'] :is(.dialog, .spk-form, .spk-noteform, .conv-compose) :is(.input, .select select):focus,
 :root[data-theme='sand'] .dialog .token-input:focus-within {
   box-shadow: 0 0 0 1.5px var(--ink);
 }
