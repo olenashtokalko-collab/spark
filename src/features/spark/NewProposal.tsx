@@ -3,7 +3,7 @@
 // sent proposal opens there as it is. For Brand Co. the proposal is really sent (shared store).
 import { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { Button, EmptyState, PageHeader } from '../../components/ui/primitives';
+import { Badge, Button, EmptyState } from '../../components/ui/primitives';
 import { Dialog } from '../../components/ui/overlay';
 import { useToast } from '../../components/ui/toast';
 import { useStore } from '../../state/store';
@@ -49,23 +49,28 @@ export function NewProposal({ id }: { id: string }) {
   };
 
   return (
-    <div className="spk-prop-page">
+    <div className="req-detail">
       <a className="back" href={`#/spark/requests/${r.id}`} onClick={(e) => (e.preventDefault(), navigate(`/spark/requests/${r.id}`))}>
-        <ArrowLeft size={14} /> {r.id} · {r.title}
+        <ArrowLeft size={15} /> Back
       </a>
-      <PageHeader
-        title={`New proposal${version > 1 ? ` · version ${version}` : ''}`}
-        sub={`For ${client.name.replace(/\.$/, '')}: ${first} reviews it, comments on any section and approves, asks for changes or declines.`}
-        actions={
-          <>
-            <Button onClick={() => toast({ title: 'Draft saved', body: 'Only the Spark team sees drafts.' })}>Save draft</Button>
-            <Button variant="primary" disabled={f.ready < SECTIONS.length} onClick={() => setConfirm(true)}>
-              Send to client
-            </Button>
-          </>
-        }
-      />
-      <div className="pe-bar pe-bar--end">
+      <header className="req-head spk-prophead">
+        <div>
+          <div className="req-head__top">
+            <span className="mono faint">{r.id}</span>
+            <Badge>Draft</Badge>
+            <span className="spk__client">{client.name}</span>
+          </div>
+          <h1 className="req-head__title">New proposal{version > 1 ? ` · version ${version}` : ''}</h1>
+        </div>
+        <div className="spk-prophead__actions">
+          <Button onClick={() => toast({ title: 'Draft saved', body: 'Only the Spark team sees drafts.' })}>Save draft</Button>
+          <Button variant="primary" disabled={f.ready < SECTIONS.length} onClick={() => setConfirm(true)}>
+            Send to client
+          </Button>
+        </div>
+      </header>
+      <div className="pe-bar">
+        <p className="muted pe-bar__hint">{first} reviews it, comments on any section and approves, asks for changes or declines.</p>
         <ProposalProgress f={f} />
       </div>
       <RailEditor f={f} />
