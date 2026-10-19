@@ -6,14 +6,17 @@
 //   C  One page: every section as a card, a sticky index on the left; empty cards are outlined.
 //   D  Needs content first: the left list is split into what is empty and what is ready.
 import { useRef, useState } from 'react';
-import { AlertCircle, ArrowRight, Check } from 'lucide-react';
-import { Button, PageHeader, Segmented, cx } from '../../components/ui/primitives';
+import { AlertCircle, ArrowLeft, ArrowRight, Banknote, Building2, Calendar, CalendarCheck, Check, Clock, FileText, LayoutGrid, Lightbulb, Pencil, Sparkles, Trash2, UserRound, History, StickyNote } from 'lucide-react';
+import { Avatar, Button, PageHeader, Segmented, cx } from '../../components/ui/primitives';
 import { aed, fmtDate } from '../../lib/format';
 import { SECTIONS, SectionEditor, useProposalForm, type ProposalForm, type SectionId } from './ProposalSections';
+import { dana, youssef } from './data';
+import { navigate } from '../../lib/router';
 
-type Layout = 'a' | 'b' | 'c' | 'd';
+type Layout = 'e' | 'a' | 'b' | 'c' | 'd';
 
 const LAYOUTS: { value: Layout; label: string }[] = [
+  { value: 'e', label: 'E · Like the reference' },
   { value: 'a', label: 'A · Section rail' },
   { value: 'b', label: 'B · With the client’s view' },
   { value: 'c', label: 'C · One page' },
@@ -21,6 +24,7 @@ const LAYOUTS: { value: Layout; label: string }[] = [
 ];
 
 const NOTES: Record<Layout, string> = {
+  e: 'Built after the reference: a section menu attached to the left with a mark on each item, a header strip with the page’s purpose and actions, and on the right one large card. It opens on a key overview (title, status chips, the six key facts, the summary and a completeness box that works like the risk box) and each menu item opens that section for editing.',
   a: 'The reference: the sections as a list on the left, each with a mark (an amber ! while it is empty, a check when it is ready), and one section at a time on the right. The open section says so when it is empty.',
   b: 'The same rail and editor, plus a third column that is the proposal as the client will see it. A section that is not filled yet shows as a dashed amber block there; click it to open that section.',
   c: 'No switching: all sections are on one page as cards, with a sticky index on the left that jumps to a card. Empty cards have an amber outline and a “Needs content” tag.',
@@ -54,10 +58,10 @@ function SectionList({ f, active, onPick, numbered }: { f: ProposalForm; active?
   );
 }
 
-function Pane({ id, f, onNext }: { id: SectionId; f: ProposalForm; onNext?: () => void }) {
+function Pane({ id, f, onNext, bare }: { id: SectionId; f: ProposalForm; onNext?: () => void; bare?: boolean }) {
   const s = SECTIONS.find((x) => x.id === id)!;
   return (
-    <section className={cx('pe-pane', !f.done[id] && 'is-empty')}>
+    <section className={cx('pe-pane', !f.done[id] && 'is-empty', bare && 'pe-pane--bare')}>
       <header className="pe-pane__head">
         <div>
           <h3>{s.label}</h3>
@@ -83,6 +87,146 @@ function Pane({ id, f, onNext }: { id: SectionId; f: ProposalForm; onNext?: () =
 }
 
 const next = (id: SectionId) => SECTIONS[(SECTIONS.findIndex((s) => s.id === id) + 1) % SECTIONS.length].id;
+
+
+const FACT_ICON = { client: Building2, owner: UserRound, total: Banknote, duration: Clock, starts: Calendar, decision: CalendarCheck };
+// In this layout the sections are named like the reference's menu.
+const NAME: Partial<Record<SectionId, string>> = { overview: 'General', file: 'Documents' };
+const nameOf = (id: SectionId) => NAME[id] ?? SECTIONS.find((s) => s.id === id)!.label;
+
+function LayoutE({ f }: { f: ProposalForm }) {
+  const [active, setActive] = useState<SectionId | 'key'>('key');
+  const [tab, setTab] = useState<'contents' | 'ideas'>('contents');
+  const missing = SECTIONS.filter((s) => !f.done[s.id]);
+  const facts: { k: keyof typeof FACT_ICON; label: string; value: string | null; to?: SectionId }[] = [
+    { k: 'client', label: 'Client', value: 'Brand Co.' },
+    { k: 'owner', label: 'Owner', value: 'Dana Kareem' },
+    { k: 'total', label: 'Total value', value: f.done.investment ? aed(f.total) : null, to: 'investment' },
+    { k: 'duration', label: 'Duration', value: f.done.timeline ? `${f.weeks} weeks` : null, to: 'timeline' },
+    { k: 'starts', label: 'Work starts', value: f.start ? fmtDate(f.start) : null, to: 'timeline' },
+    { k: 'decision', label: 'Decision needed by', value: f.until ? fmtDate(f.until, { weekday: true }) : null, to: 'timeline' },
+  ];
+  const item = (id: SectionId | 'key', label: string, Icon: typeof FileText, ok?: boolean) => (
+    <li key={id}>
+      <button className={cx('pe-ref__item', active === id && 'is-active')} onClick={() => setActive(id)}>
+        <Icon size={16} strokeWidth={1.7} />
+        <span>{label}</span>
+        {ok === false && <Mark ok={false} />}
+      </button>
+    </li>
+  );
+  return (
+    <div className="pe-ref">
+      <nav className="pe-ref__side" aria-label="Proposal sections">
+        <h2 className="pe-ref__heading">Proposal</h2>
+        <ul>
+          {item('key', 'Key overview', LayoutGrid)}
+          {SECTIONS.map((s) => item(s.id, nameOf(s.id), s.icon, f.done[s.id]))}
+        </ul>
+        <ul className="pe-ref__foot">
+          <li><button className="pe-ref__item"><History size={16} strokeWidth={1.7} /><span>Activity</span></button></li>
+          <li><button className="pe-ref__item"><StickyNote size={16} strokeWidth={1.7} /><span>Internal notes</span></button></li>
+          <li><button className="pe-ref__item"><Trash2 size={16} strokeWidth={1.7} /><span>Discard draft</span></button></li>
+        </ul>
+      </nav>
+      <div className="pe-ref__main">
+        <header className="pe-ref__bar">
+          <span className="pe-ref__badge"><FileText size={20} /></span>
+          <div className="pe-ref__bartext">
+            <strong>Proposal review</strong>
+            <span>Here you can review all sections before sending to the client</span>
+          </div>
+          <div className="pe-ref__actions">
+            <Button icon={ArrowLeft} onClick={() => navigate('/spark')}>Back to inbox</Button>
+            <Button icon={Sparkles}>Ask Spark AI</Button>
+            <Button variant="primary" disabled={missing.length > 0}>Send to client</Button>
+            <span className="pe-ref__people">
+              <Avatar person={dana} size={30} />
+              <Avatar person={youssef} size={30} />
+            </span>
+          </div>
+        </header>
+
+        <div className="pe-ref__card">
+          {active === 'key' ? (
+            <>
+              <h2 className="pe-ref__title">{f.title || 'Untitled proposal'}</h2>
+              <div className="pe-ref__chips">
+                <span className="pe-chip-s pe-chip-s--draft">DRAFT</span>
+                <span className="pe-chip-s">V1</span>
+                <span className="pe-chip-s">REQ-105</span>
+                <span className="faint">Created today by Dana Kareem</span>
+              </div>
+              <div className="pe-ref__facts">
+                {facts.map((x) => {
+                  const Icon = FACT_ICON[x.k];
+                  return (
+                    <button key={x.k} className={cx('pe-fact', !x.value && 'is-empty')} onClick={() => x.to && setActive(x.to)} disabled={!x.to}>
+                      <span className="pe-fact__ic"><Icon size={18} strokeWidth={1.6} /></span>
+                      <span className="pe-fact__t">
+                        <span className="pe-fact__l">{x.label}</span>
+                        <span className="pe-fact__v">{x.value ?? 'Not filled yet'}</span>
+                      </span>
+                    </button>
+                  );
+                })}
+              </div>
+
+              <h3 className="pe-ref__h">Summary <button className="pe-ref__pencil" aria-label="Edit the summary" onClick={() => setActive('overview')}><Pencil size={15} /></button></h3>
+              <p className={cx('pe-ref__summary', !f.summary.trim() && 'is-empty')}>{f.summary.trim() || 'Not filled yet. Write the two sentences the client reads first.'}</p>
+
+              <h3 className="pe-ref__h">Completeness <span className="muted">{f.ready} of {SECTIONS.length} sections ready</span></h3>
+              <div className={cx('pe-ref__risk', missing.length === 0 && 'is-ok')}>
+                {missing.length > 0 ? <AlertCircle size={20} /> : <Check size={20} />}
+                <span className="pe-ref__risktext">
+                  {missing.length > 0 ? <><strong>{missing.length} to fill:</strong> {missing.map((s) => nameOf(s.id)).join(' · ')}</> : 'Every section is ready. You can send the proposal.'}
+                </span>
+                {missing.length > 0 && (
+                  <button className="link-btn" onClick={() => setActive(missing[0].id)}>
+                    <ArrowRight size={14} /> Fill the next one
+                  </button>
+                )}
+              </div>
+
+              <div className="pe-ref__tabs" role="tablist">
+                <button role="tab" aria-selected={tab === 'contents'} className={cx(tab === 'contents' && 'is-on')} onClick={() => setTab('contents')}>Contents</button>
+                <button role="tab" aria-selected={tab === 'ideas'} className={cx(tab === 'ideas' && 'is-on')} onClick={() => setTab('ideas')}>Suggestions</button>
+              </div>
+              {tab === 'contents' ? (
+                <div className="pe-ref__clauses">
+                  {SECTIONS.filter((s) => s.id !== 'overview').map((s) => {
+                    const g = gist(s.id, f);
+                    return (
+                      <button key={s.id} className={cx('pe-clause', !g && 'is-empty')} onClick={() => setActive(s.id)}>
+                        <span className="pe-clause__l">{nameOf(s.id)}</span>
+                        <span className="pe-clause__v">{g ?? 'Not filled yet'}</span>
+                        <Pencil size={14} className="pe-clause__pen" />
+                      </button>
+                    );
+                  })}
+                </div>
+              ) : (
+                <div className="pe-ref__clauses">
+                  {['Layla asked for a price per store in an earlier message: show it as line items.', 'The budget is up to AED 60,000: keep the total under it or explain the difference.', 'Add one objective that can be measured, such as a response time.', 'Attach last quarter’s delivery-fee mentions as an appendix.'].map((t) => (
+                    <div key={t} className="pe-clause pe-clause--idea">
+                      <span className="pe-clause__l"><Lightbulb size={14} /> Suggestion</span>
+                      <span className="pe-clause__v">{t}</span>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <button className="pe-ref__back" onClick={() => setActive('key')}><ArrowLeft size={14} /> Key overview</button>
+              <Pane id={active} f={f} onNext={() => setActive(next(active))} bare />
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
 function LayoutA({ f }: { f: ProposalForm }) {
   const [active, setActive] = useState<SectionId>('objectives');
@@ -221,7 +365,7 @@ function LayoutD({ f }: { f: ProposalForm }) {
 
 export function ProposalLayouts() {
   const f = useProposalForm();
-  const [layout, setLayout] = useState<Layout>('a');
+  const [layout, setLayout] = useState<Layout>('e');
   const all = f.ready === SECTIONS.length;
   return (
     <div className="pe">
@@ -229,12 +373,14 @@ export function ProposalLayouts() {
         title="Proposal editor: layouts"
         sub="Four ways to build the proposal section by section, after the reference. The form is shared, so type in one layout and switch to see the same data in another."
         actions={
-          <>
-            <Button>Save draft</Button>
-            <Button variant="primary" disabled={!all}>
-              Send to client
-            </Button>
-          </>
+          layout === 'e' ? undefined : (
+            <>
+              <Button>Save draft</Button>
+              <Button variant="primary" disabled={!all}>
+                Send to client
+              </Button>
+            </>
+          )
         }
       />
       <div className="pe-bar">
@@ -247,6 +393,7 @@ export function ProposalLayouts() {
         </span>
       </div>
       <p className="pe-note muted">{NOTES[layout]}</p>
+      {layout === 'e' && <LayoutE f={f} />}
       {layout === 'a' && <LayoutA f={f} />}
       {layout === 'b' && <LayoutB f={f} />}
       {layout === 'c' && <LayoutC f={f} />}

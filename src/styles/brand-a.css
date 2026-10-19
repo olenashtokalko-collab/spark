@@ -2542,3 +2542,20 @@ button.proposal__tool:hover {
 :root[data-theme='sand'] .dialog .icon-tile {
   display: none;
 }
+
+/* ---- Ink, not Cobalt: links, text buttons, the timeline bars and the role pills --------------- */
+:root[data-theme='sand'] .link,
+:root[data-theme='sand'] .link-btn:not(:disabled) {
+  color: var(--ink);
+}
+:root[data-theme='sand'] .gantt__bar {
+  background: rgba(14, 17, 22, 0.06);
+  box-shadow: inset 2px 0 0 var(--ink);
+  color: var(--ink);
+}
+:root[data-theme='sand'] .role-pill--owner {
+  color: var(--ink);
+}
+:root[data-theme='sand'] .role-pill--member {
+  color: #4a5160;
+}
