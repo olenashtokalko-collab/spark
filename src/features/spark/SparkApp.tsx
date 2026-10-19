@@ -1,7 +1,7 @@
 // The Spark team view (prototype): a separate shell for Spark staff, next to the client portal.
 // Routes: #/spark (inbox) · #/spark/requests/:id[/conversation] · #/spark/requests/:id/proposal/new · #/spark/clients
 import { useEffect } from 'react';
-import { Building2, Inbox as InboxIcon, ArrowUpRight } from 'lucide-react';
+import { Building2, Inbox as InboxIcon } from 'lucide-react';
 import { Avatar, cx } from '../../components/ui/primitives';
 import { useRoute } from '../../lib/router';
 import { useStore } from '../../state/store';
@@ -44,9 +44,6 @@ export function SparkApp() {
         </a>
         <span className="spk__badge">Spark team view</span>
         <div className="topbar__spacer" />
-        <a className="spk__switch" href="#/requests">
-          Open client view <ArrowUpRight size={14} />
-        </a>
         <span className="spk__me">
           <Avatar person={dana} size={28} />
           <span>{dana.name}</span>
