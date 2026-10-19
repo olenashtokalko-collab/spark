@@ -644,3 +644,36 @@
   justify-content: flex-end;
   margin: 4px 0 18px;
 }
+
+/* Spark's additions on the shared request page */
+.conv-wait--btn {
+  width: 100%;
+  text-align: left;
+  cursor: pointer;
+}
+.conv-wait--btn span {
+  margin-left: auto;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  white-space: nowrap;
+}
+.spk-manage {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 10px;
+}
+.spk-manage label {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.spk-uploadrow {
+  margin-top: 16px;
+}
+.req-detail .spk-note {
+  margin-bottom: 12px;
+}

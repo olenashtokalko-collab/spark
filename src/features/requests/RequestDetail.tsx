@@ -18,12 +18,12 @@ type Tab = 'overview' | 'conversation' | 'context' | 'files' | 'activity';
 // the assistant: … What we'd like from Spark: …"). The findings are shown as
 // cards, so the brief keeps only what the client wrote after the prompt.
 const GENERATED = /^(Key findings from the assistant:|From the assistant:)/;
-function askOf(description: string) {
+export function askOf(description: string) {
   if (!GENERATED.test(description)) return description.trim();
   return (description.split("What we'd like from Spark:")[1] ?? '').trim();
 }
 
-const toneIcon: Record<Finding['tone'], typeof Check> = {
+export const toneIcon: Record<Finding['tone'], typeof Check> = {
   neutral: Lightbulb,
   positive: TrendingUp,
   attention: Eye,
@@ -336,7 +336,7 @@ export function RequestDetail({ id }: { id: string }) {
 
 // Requests created before findings were stored on the excerpt: look them up on
 // the assistant message the excerpt was taken from.
-function findingsFromConversation(r: WorkRequest, conversation: { messages: { role: string; text: string; findings?: Finding[] }[] } | undefined) {
+export function findingsFromConversation(r: WorkRequest, conversation: { messages: { role: string; text: string; findings?: Finding[] }[] } | undefined) {
   const answer = r.excerpt?.messages.find((m) => m.role === 'assistant')?.text;
   if (!conversation || !answer) return undefined;
   const plain = (t: string) => t.replace(/\*\*/g, '');
@@ -501,7 +501,8 @@ const FOLD_AFTER = 6; // events shown before the older ones fold
 // The stage a "started …" event moves the request away from.
 const FROM_STAGE: Record<string, string> = { 'In review': 'Submitted', 'In progress': 'Approved' };
 
-export function ActivityLog({ items, requestId }: { items: Activity[]; requestId: string }) {
+/** `realNames`: the Spark team's view names its own people; the client sees them as "Spark". */
+export function ActivityLog({ items, requestId, realNames }: { items: Activity[]; requestId: string; realNames?: boolean }) {
   const [open, setOpen] = useState(false);
   const sorted = [...items].sort((a, b) => b.at.localeCompare(a.at));
   const hidden = sorted.length - FOLD_AFTER;
@@ -515,7 +516,7 @@ export function ActivityLog({ items, requestId }: { items: Activity[]; requestId
           <li key={g.key} className="axb__daylabel" role="separator">
             <span>{g.label}</span>
           </li>,
-          ...g.items.map((a) => <LogItem key={a.id} a={a} requestId={requestId} />),
+          ...g.items.map((a) => <LogItem key={a.id} a={a} requestId={requestId} realNames={realNames} />),
         ])}
       </ol>
       {hidden > 0 && (
@@ -538,10 +539,10 @@ function markIcon(a: Activity, declined: boolean) {
   return Paperclip;
 }
 
-function LogItem({ a, requestId }: { a: Activity; requestId: string }) {
+function LogItem({ a, requestId, realNames }: { a: Activity; requestId: string; realNames?: boolean }) {
   const { state } = useStore();
   const { openDoc } = useUI();
-  const p = personById(state, a.by);
+  const p = (realNames && state.people.find((x) => x.id === a.by)) || personById(state, a.by);
   const { verb, chips, tail, quote, tone } = describe(a);
   const comment = a.kind === 'comment';
   const declined = a.kind === 'decision' && tone === 'negative';
