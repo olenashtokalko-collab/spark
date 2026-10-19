@@ -3,7 +3,7 @@
 // Brand Co.'s requests are live from the shared store; the other clients keep local state.
 import { useState } from 'react';
 import { ArrowLeft, HelpCircle, Lock, MessageSquare, Plus, Send } from 'lucide-react';
-import { Avatar, Button, EmptyState, Select, Tabs, Textarea } from '../../components/ui/primitives';
+import { Avatar, Button, EmptyState, Tabs, Textarea } from '../../components/ui/primitives';
 import { FileIcon } from '../../components/domain';
 import { useToast } from '../../components/ui/toast';
 import { latestProposal, proposalTotal, proposalWeeks, useStore } from '../../state/store';
@@ -12,7 +12,7 @@ import { navigate } from '../../lib/router';
 import type { RequestStatus, WorkRequest } from '../../data/types';
 import { ThreadComposer, ThreadList, conversationItems, type ConvItem } from '../requests/Conversation';
 import { ActivityLog, StatusCard, askOf, findingsFromConversation, toneIcon } from '../requests/RequestDetail';
-import { STATUS_LABEL, clientOf, dana, sampleThread, sparkTeam, type SparkRequest, type SparkStatus } from './data';
+import { STATUS_LABEL, clientOf, dana, sampleThread, type SparkRequest, type SparkStatus } from './data';
 import { SparkStatusChip } from './SparkInbox';
 import { useSparkRequests } from './model';
 
@@ -70,7 +70,6 @@ function Inner({ base, live, tab }: { base: SparkRequest; live: boolean; tab: Ta
   const first = base.requester.name.split(' ')[0];
   const open = (t: Tab) => navigate(`/spark/requests/${base.id}${t === 'overview' ? '' : '/' + t}`);
   const messages = m.items.filter((x) => x.kind !== 'system').length;
-  const waitingOnSpark = base.waiting === 'spark' && m.items.some((x) => x.kind === 'message' && x.by?.org === 'client');
   const [note, setNote] = useState('');
 
   // The same Stages card as the client's page; sample clients get an equivalent built from their row.
@@ -117,12 +116,6 @@ function Inner({ base, live, tab }: { base: SparkRequest; live: boolean; tab: Ta
 
           {tab === 'overview' && (
             <div className="req-tab">
-              {waitingOnSpark && (
-                <button className="conv-wait conv-wait--btn" onClick={() => open('conversation')}>
-                  <HelpCircle size={15} /> {first} is waiting for your reply: {base.waitingFor?.toLowerCase()}. <span>Open the conversation</span>
-                </button>
-              )}
-
               <section className="block brief">
                 <div className="brief__head">
                   <h2 className="brief__title">{first}’s request</h2>
@@ -326,31 +319,6 @@ function Inner({ base, live, tab }: { base: SparkRequest; live: boolean; tab: Ta
         </div>
 
         <aside className="req-side">
-          <section className="side-card">
-            <h3 className="side-card__title">Manage</h3>
-            <div className="spk-manage">
-              <label>
-                <span>Status</span>
-                <Select value={m.status} onChange={(e) => m.setStatus(e.target.value as SparkStatus)}>
-                  {(Object.keys(STATUS_LABEL) as SparkStatus[]).map((s) => (
-                    <option key={s} value={s}>
-                      {STATUS_LABEL[s]}
-                    </option>
-                  ))}
-                </Select>
-              </label>
-              <label>
-                <span>Owner</span>
-                <Select value={m.owner} onChange={(e) => m.setOwner(e.target.value)}>
-                  {sparkTeam.map((x) => (
-                    <option key={x.id} value={x.id}>
-                      {x.name}
-                    </option>
-                  ))}
-                </Select>
-              </label>
-            </div>
-          </section>
           <StatusCard r={stageReq} perspective="spark" />
           <section className="side-card">
             <h3 className="side-card__title">Details</h3>
