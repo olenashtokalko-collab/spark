@@ -3,7 +3,7 @@
 // sent proposal opens there as it is. For Brand Co. the proposal is really sent (shared store).
 import { useState } from 'react';
 import { ArrowLeft } from 'lucide-react';
-import { Badge, Button, EmptyState } from '../../components/ui/primitives';
+import { Button, EmptyState } from '../../components/ui/primitives';
 import { Dialog } from '../../components/ui/overlay';
 import { useToast } from '../../components/ui/toast';
 import { useStore } from '../../state/store';
@@ -57,7 +57,6 @@ export function NewProposal({ id }: { id: string }) {
         <div>
           <div className="req-head__top">
             <span className="mono faint">{r.id}</span>
-            <Badge>Draft</Badge>
             <span className="spk__client">{client.name}</span>
           </div>
           <h1 className="req-head__title">New proposal{version > 1 ? ` · version ${version}` : ''}</h1>

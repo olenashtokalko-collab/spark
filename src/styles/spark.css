@@ -350,7 +350,7 @@
 .spk-form {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 12px;
 }
 .spk-form .field {
   margin-top: 14px;
@@ -360,10 +360,14 @@
   grid-template-columns: 1fr 1.6fr 36px;
   gap: 10px;
   align-items: center;
-  margin: 12px 0;
+  margin: 0;
 }
 .spk-rowfields--price {
-  grid-template-columns: 1.6fr 1fr 36px;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) 36px;
+}
+.spk-rowfields--dates {
+  align-items: start;
+  margin-top: 8px;
 }
 .spk-three {
   display: grid;
@@ -603,13 +607,6 @@
   place-items: center;
   flex: none;
 }
-.pe-mark--ok {
-  width: 18px;
-  height: 18px;
-  border-radius: 50%;
-  background: var(--ink);
-  color: #fff;
-}
 .pe-mark--todo {
   color: var(--warning);
 }
@@ -618,9 +615,6 @@
   border-radius: var(--radius-md);
   background: #fff;
   box-shadow: inset 0 0 0 1px var(--line);
-}
-.pe-pane.is-empty {
-  box-shadow: inset 0 0 0 1.5px color-mix(in srgb, var(--warning) 70%, #fff);
 }
 .pe-pane__head {
   display: flex;
@@ -637,20 +631,6 @@
 .pe-pane__head p {
   margin: 4px 0 0;
   font-size: 14px;
-}
-.pe-alert {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 18px;
-  padding: 10px 14px;
-  border-radius: 12px;
-  background: color-mix(in srgb, var(--warning) 12%, #fff);
-  font-size: 14px;
-  color: var(--ink);
-}
-.pe-alert svg {
-  color: var(--warning);
 }
 .pe-pane__foot {
   display: flex;
@@ -787,4 +767,28 @@
   margin-left: auto;
   display: inline-grid;
   place-items: center;
+}
+
+/* The hint of a mark in a card header opens to the left, so it stays on the page. */
+.pe-pane__head .pe-mark[data-tip]::after {
+  left: auto;
+  right: 0;
+  transform: translate(0, 3px);
+}
+.pe-pane__head .pe-mark[data-tip]:hover::after {
+  transform: translate(0, 0);
+}
+.pe-pane__head .pe-mark[data-tip]::after,
+.ptoc__trail .pe-mark[data-tip]::after {
+  white-space: normal;
+  width: 220px;
+  line-height: 1.35;
+}
+.ptoc__trail .pe-mark[data-tip]::after {
+  left: auto;
+  right: 0;
+  transform: translate(0, 3px);
+}
+.ptoc__trail .pe-mark[data-tip]:hover::after {
+  transform: translate(0, 0);
 }

@@ -9,7 +9,7 @@ import { addDays, aed, nowIso } from '../../lib/format';
 export type SectionId = 'overview' | 'objectives' | 'scope' | 'timeline' | 'investment' | 'terms' | 'file';
 
 export const SECTIONS: { id: SectionId; label: string; hint: string; icon: LucideIcon }[] = [
-  { id: 'overview', label: 'Overview', hint: 'The title and the two sentences the client reads first.', icon: FileText },
+  { id: 'overview', label: 'Overview', hint: 'The essentials of the proposal.', icon: FileText },
   { id: 'objectives', label: 'Objectives', hint: 'What the client and Spark agreed to achieve.', icon: Target },
   { id: 'scope', label: 'Scope and deliverables', hint: 'What the client gets, one line per deliverable.', icon: Package },
   { id: 'timeline', label: 'Timeline and decision', hint: 'The phases, when work starts and when the client must decide.', icon: Calendar },
@@ -91,7 +91,7 @@ export function SectionEditor({ id, f }: { id: SectionId; f: ProposalForm }) {
           <Field label="Title" htmlFor="pe-title">
             <Input id="pe-title" value={f.title} onChange={(e) => f.setTitle(e.target.value)} />
           </Field>
-          <Field label="Summary" htmlFor="pe-sum" hint="Two sentences the client reads first.">
+          <Field label="Summary" htmlFor="pe-sum">
             <Textarea id="pe-sum" rows={4} value={f.summary} onChange={(e) => f.setSummary(e.target.value)} />
           </Field>
         </div>
@@ -144,13 +144,14 @@ export function SectionEditor({ id, f }: { id: SectionId; f: ProposalForm }) {
               Add a phase
             </Button>
           </div>
-          <div className="spk-three spk-three--two">
+          <div className="spk-rowfields spk-rowfields--price spk-rowfields--dates">
             <Field label="Work starts" htmlFor="pe-s">
               <Input id="pe-s" type="date" value={f.start} onChange={(e) => f.setStart(e.target.value)} />
             </Field>
             <Field label="Decision needed by" htmlFor="pe-u" hint="Shown as a countdown to the client.">
               <Input id="pe-u" type="date" value={f.until} onChange={(e) => f.setUntil(e.target.value)} />
             </Field>
+            <span />
           </div>
         </div>
       );
