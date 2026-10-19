@@ -23,11 +23,18 @@ export function conversationItems(state: State, r: WorkRequest, viewer: 'client'
   // The client sees Spark's people as "Spark"; the Spark team sees their real names.
   const person = (id: string) => (viewer === 'spark' ? state.people.find((p) => p.id === id) ?? personById(state, id) : personById(state, id));
   const rows: { at: string; item: ConvItem }[] = [];
-  // The thread starts with the request itself, unless it was seeded with the client's first message.
+  // The thread starts with the request itself, unless it was seeded with the client's first message. A request
+  // made from a chat with no words of its own is a note about the request, not a message.
   if (r.thread?.[0]?.by !== r.createdBy) {
     const generated = /^(Key findings from the assistant:|From the assistant:)/.test(r.description);
-    const text = generated ? (r.description.split("What we'd like from Spark:")[1] ?? '').trim() || 'Created this request from a chat with the assistant.' : r.description;
-    rows.push({ at: r.createdAt, item: { id: 'req-' + r.id, kind: 'message', by: person(r.createdBy), at: fmtDateTime(r.createdAt), text } });
+    const ask = generated ? (r.description.split("What we'd like from Spark:")[1] ?? '').trim() : r.description;
+    const who = person(r.createdBy);
+    rows.push({
+      at: r.createdAt,
+      item: ask
+        ? { id: 'req-' + r.id, kind: 'message', by: who, at: fmtDateTime(r.createdAt), text: ask }
+        : { id: 'req-' + r.id, kind: 'system', at: fmtDateTime(r.createdAt), text: `${who.name} created this request from a chat with the assistant.` },
+    });
   }
   for (const m of r.thread ?? []) {
     if (m.kind === 'internal' && viewer !== 'spark') continue;
@@ -118,7 +125,7 @@ export function ThreadComposer({ modes, onSend, onAttach }: { modes: ComposerMod
           </Button>
         </div>
       </div>
-      <p className="conv-compose__note faint">{mode.note}</p>
+      {mode.note && <p className="conv-compose__note faint">{mode.note}</p>}
     </div>
   );
 }

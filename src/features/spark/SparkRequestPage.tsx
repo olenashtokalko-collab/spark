@@ -88,7 +88,7 @@ function Inner({ base, live, tab }: { base: SparkRequest; live: boolean; tab: Ta
   return (
     <div className="req-detail">
       <a className="back" href="#/spark" onClick={(e) => (e.preventDefault(), navigate('/spark'))}>
-        <ArrowLeft size={15} /> Inbox
+        <ArrowLeft size={15} /> Back
       </a>
 
       <div className="req-layout">
@@ -248,7 +248,7 @@ function Inner({ base, live, tab }: { base: SparkRequest; live: boolean; tab: Ta
             <div className="req-tab">
               <ThreadList items={m.items} clientName={client.name} />
               <ThreadComposer
-                modes={[{ key: 'reply', label: 'Reply to client', icon: MessageSquare, send: 'Send reply', placeholder: `Reply to ${first}…`, note: `${first} and the client team are notified in the portal and by email.` }]}
+                modes={[{ key: 'reply', label: 'Reply to client', icon: MessageSquare, send: 'Send reply', placeholder: `Reply to ${first}…`, note: '' }]}
                 onSend={m.send}
                 onAttach={() => toast({ title: 'Attach a file', body: 'Files go into the client’s Documents.' })}
               />
