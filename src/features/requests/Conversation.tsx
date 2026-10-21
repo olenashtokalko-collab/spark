@@ -1,7 +1,7 @@
 // The conversation on a request, shared by both sides: the client's request page and the Spark team view.
 // One thread per request; Spark's internal notes are marked and never reach the client side.
 import { useState } from 'react';
-import { Lock, Plus } from 'lucide-react';
+import { Lock, Plus, Send } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import { Avatar, Badge, Button, Segmented, Textarea, cx } from '../../components/ui/primitives';
 import { personById, type State } from '../../state/store';
@@ -120,6 +120,38 @@ export function ThreadComposer({ modes, onSend, onAttach }: { modes: ComposerMod
         </div>
       </div>
       {mode.note && <p className="conv-compose__note faint">{mode.note}</p>}
+    </div>
+  );
+}
+
+/** The comment box: the writer's avatar, the text, and the button under it on the right. Used for the Spark
+ *  team's internal notes and its replies to the client. */
+export function CommentBox({ person, placeholder, label, send, onSend, onAttach }: { person: Person; placeholder: string; label: string; send: string; onSend: (text: string) => void; onAttach?: () => void }) {
+  const [text, setText] = useState('');
+  const submit = () => {
+    if (!text.trim()) return;
+    onSend(text.trim());
+    setText('');
+  };
+  return (
+    <div className="comment-box">
+      <Avatar person={person} size={28} />
+      <div className="comment-box__field">
+        {/* The attach "+" sits inside the field, bottom left. */}
+        <div className={cx('comment-box__input', onAttach && 'comment-box__input--attach')}>
+          <Textarea rows={2} value={text} onChange={(e) => setText(e.target.value)} placeholder={placeholder} aria-label={label} onKeyDown={(e) => { if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) submit(); }} />
+          {onAttach && (
+            <button className="btn btn--ghost btn--sm btn--icon comment-box__attach" aria-label="Attach a file" data-tip="Attach a file" onClick={onAttach}>
+              <Plus size={16} />
+            </button>
+          )}
+        </div>
+        <div className="comment-box__bar">
+          <Button size="sm" variant="primary" icon={Send} disabled={!text.trim()} onClick={submit}>
+            {send}
+          </Button>
+        </div>
+      </div>
     </div>
   );
 }

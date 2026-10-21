@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { ArrowLeft, BadgeCheck, Check, CircleDot, ChevronDown, CircleX, Clock, Eye, FileText, Hammer, Lightbulb, MessageSquare, PackageCheck, Paperclip, PenLine, Plus, ScanSearch, Send, TrendingUp, TriangleAlert } from 'lucide-react';
+import { ArrowLeft, Check, CircleDot, ChevronDown, CircleX, Clock, Eye, FileText, Hammer, Lightbulb, MessageSquare, PackageCheck, Paperclip, PenLine, Plus, Send, TrendingUp, TriangleAlert } from 'lucide-react';
 import { latestProposal, personById, proposalTotal, proposalWeeks, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { Avatar, Button, EmptyState, Tabs, Textarea, cx } from '../../components/ui/primitives';
@@ -347,7 +347,7 @@ export function findingsFromConversation(r: WorkRequest, conversation: { message
 // marked Now (with when it started and the next step), the one after it Next.
 // Spark people aren't named: the client doesn't know who picks a request up.
 // One icon per stage, in a raised disc on the line (picked on #/demo/stages, 2).
-const STAGE_ICONS = [Send, ScanSearch, FileText, BadgeCheck, Hammer, PackageCheck];
+const STAGE_ICONS = [Send, FileText, Hammer, PackageCheck];
 
 /** `perspective` is who is looking: the client (the default) or the Spark team, which reads the same path
  *  with its own wording and amber when the next step is on Spark. */
@@ -499,7 +499,7 @@ export const whenLine = (a: Activity) => (startOfDay(a.at) === todayStart() ? fm
 const FOLD_AFTER = 6; // events shown before the older ones fold
 
 // The stage a "started …" event moves the request away from.
-const FROM_STAGE: Record<string, string> = { 'In review': 'Submitted', 'In progress': 'Approved' };
+const FROM_STAGE: Record<string, string> = { 'In review': 'New', 'In progress': 'Approved' };
 
 /** `realNames`: the Spark team's view names its own people; the client sees them as "Spark". */
 export function ActivityLog({ items, requestId, realNames }: { items: Activity[]; requestId: string; realNames?: boolean }) {

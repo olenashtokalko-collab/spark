@@ -47,6 +47,33 @@ export interface State {
   conversations: Conversation[];
   notifications: Notification[];
   prefs: Record<NotifKey, { inApp: boolean; email: boolean }>;
+  /** Proposals the Spark team saved but has not sent yet, by request. Only the Spark team sees them. */
+  proposalDrafts: Record<ID, ProposalDraft>;
+  /** The next proposal version the Spark team is writing on the proposal page, by request. Not sent, client can't see it. */
+  sparkDrafts: Record<ID, SparkDraft>;
+}
+
+/** A proposal being written on the proposal page: its contents, and the sent version it started from. */
+export interface SparkDraft {
+  data: NewProposal;
+  basedOn?: number;
+  createdAt: string;
+  savedAt: string;
+}
+
+/** The proposal form as the Spark team left it: the fields as typed, plus when it was saved. */
+export interface ProposalDraft {
+  title: string;
+  summary: string;
+  objectives: string[];
+  scope: { title: string; detail: string }[];
+  phases: { name: string; weeks: string }[];
+  start: string;
+  until: string;
+  lines: { item: string; amount: string }[];
+  terms: string[];
+  file: string | null;
+  savedAt: string;
 }
 
 export const STORAGE_KEY = 'spark-portal-v10';
@@ -75,6 +102,8 @@ const initial = (): State => ({
     files: { inApp: true, email: false },
     team: { inApp: true, email: false },
   },
+  proposalDrafts: {},
+  sparkDrafts: {},
 });
 
 function load(): State {
@@ -90,6 +119,14 @@ function load(): State {
       const requests = missing(saved.requests, seed.requests);
       const proposals = missing(saved.proposals, seed.proposals);
       const notifications = missing(saved.notifications, seed.notifications);
+      // The Riyadh request's three proposal versions come from the seed, even in saved demos.
+      const SEED_WINS = ['P-104-1', 'P-104-2', 'P-104-3'];
+      if (proposals) for (let k = 0; k < proposals.length; k++) if (SEED_WINS.includes(proposals[k].id)) proposals[k] = seed.proposals.find((x) => x.id === proposals[k].id)!;
+      const riyadh = seed.requests.find((r) => r.id === 'REQ-104');
+      if (requests && riyadh)
+        for (let k = 0; k < requests.length; k++)
+          if (requests[k].id === 'REQ-104')
+            requests[k] = { ...requests[k], status: riyadh.status, proposalIds: riyadh.proposalIds, nextStep: riyadh.nextStep, activity: riyadh.activity, updatedAt: riyadh.updatedAt };
       // Light is the only theme for now (dark is switched off); saved demos open in it too.
       saved.theme = 'sand';
       return { ...seed, ...saved, ...(folders && { folders }), ...(requests && { requests }), ...(proposals && { proposals }), ...(notifications && { notifications }) };
@@ -479,6 +516,31 @@ function useStoreValue() {
   const setRequestOwner = useCallback((id: ID, ownerId: ID) => set((s) => ({ requests: patchRequest(s, id, (r) => ({ ...r, ownerId })) })), [set]);
 
   /** Spark sends a proposal (or a new version, which replaces the earlier one). */
+  const saveProposalDraft = useCallback((requestId: ID, draft: Omit<ProposalDraft, 'savedAt'>) => {
+    set((s) => ({ proposalDrafts: { ...s.proposalDrafts, [requestId]: { ...draft, savedAt: nowIso() } } }));
+  }, []);
+  const clearProposalDraft = useCallback((requestId: ID) => {
+    set((s) => {
+      const { [requestId]: _sent, ...rest } = s.proposalDrafts;
+      return { proposalDrafts: rest };
+    });
+  }, []);
+
+  /** Start writing a proposal (or its next version) as a draft. */
+  const startSparkDraft = useCallback((requestId: ID, data: NewProposal, basedOn?: number) => {
+    const at = nowIso();
+    set((s) => ({ sparkDrafts: { ...s.sparkDrafts, [requestId]: { data, basedOn, createdAt: at, savedAt: at } } }));
+  }, []);
+  const saveSparkDraft = useCallback((requestId: ID, data: NewProposal) => {
+    set((s) => (s.sparkDrafts[requestId] ? { sparkDrafts: { ...s.sparkDrafts, [requestId]: { ...s.sparkDrafts[requestId], data, savedAt: nowIso() } } } : {}));
+  }, []);
+  const discardSparkDraft = useCallback((requestId: ID) => {
+    set((s) => {
+      const { [requestId]: _gone, ...rest } = s.sparkDrafts;
+      return { sparkDrafts: rest };
+    });
+  }, []);
+
   const sendProposal = useCallback(
     (requestId: ID, input: NewProposal): ID => {
       const at = nowIso();
@@ -507,6 +569,7 @@ function useStoreValue() {
       const total = input.investment.reduce((a, l) => a + l.amount, 0);
       const weeks = input.phases.reduce((a, p) => a + p.weeks, 0);
       set((s) => ({
+        sparkDrafts: Object.fromEntries(Object.entries(s.sparkDrafts).filter(([k]) => k !== requestId)),
         proposals: [...s.proposals.map((p) => (p.requestId === requestId && p.status === 'awaiting' ? { ...p, status: 'superseded' as const } : p)), proposal],
         requests: patchRequest(s, requestId, (r) => ({
           ...r,
@@ -571,8 +634,9 @@ function useStoreValue() {
   );
 
   const commentOnProposal = useCallback(
-    (id: ID, text: string, section?: string) => {
-      const meId = 'u-layla';
+    (id: ID, text: string, section?: string, by?: ID) => {
+      // The client comments by default; the Spark team view passes its own person.
+      const meId = by ?? 'u-layla';
       set((s) => ({
         proposals: s.proposals.map((p) =>
           p.id === id ? { ...p, comments: [...p.comments, { id: uid('pc'), by: meId, at: nowIso(), text, section }] } : p,
@@ -734,6 +798,11 @@ function useStoreValue() {
       clientMessage,
       setRequestStatus,
       setRequestOwner,
+      saveProposalDraft,
+      clearProposalDraft,
+      startSparkDraft,
+      saveSparkDraft,
+      discardSparkDraft,
       sendProposal,
       decideProposal,
       commentOnProposal,

@@ -22,7 +22,7 @@ const SCOPE_ICONS: [RegExp, typeof Package][] = [
   [/event|launch|campaign|activation/i, CalendarDays],
   [/manage|plan|coordinat|report/i, ListChecks],
 ];
-const scopeIcon = (title: string) => SCOPE_ICONS.find(([re]) => re.test(title))?.[1] ?? Package;
+export const scopeIcon = (title: string) => SCOPE_ICONS.find(([re]) => re.test(title))?.[1] ?? Package;
 
 const SECTIONS = ['Summary', 'Objectives', 'Scope & deliverables', 'Timeline', 'Investment', 'Terms'] as const;
 type Section = (typeof SECTIONS)[number];
@@ -377,7 +377,7 @@ export function ProposalView({ requestId }: { requestId: string }) {
 // proposal is on its way after the client asked for changes.
 /** In-page contents for the proposal: jumps to a section and marks the one
  *  in view, so the document stays whole while still easy to move around. */
-export function ProposalToc({ items, title = 'On this page' }: { items: { id: string; label: string; count?: number; trail?: ReactNode }[]; title?: string }) {
+export function ProposalToc({ items, title = 'On this page', head }: { items: { id: string; label: string; count?: number; trail?: ReactNode }[]; title?: string; head?: ReactNode }) {
   const [active, setActive] = useState(items[0]?.id);
   // After a click, hold the picked section while the smooth scroll runs, so a
   // short section near the end isn't overruled when the page hits the bottom.
@@ -411,9 +411,11 @@ export function ProposalToc({ items, title = 'On this page' }: { items: { id: st
 
   return (
     <nav className="ptoc ptoc--rail" style={{ ['--i' as string]: idx }} aria-label="Proposal sections">
-      <div className="ptoc__title">
-        <AlignLeft size={15} strokeWidth={1.8} /> {title}
-      </div>
+      {head ?? (
+        <div className="ptoc__title">
+          <AlignLeft size={15} strokeWidth={1.8} /> {title}
+        </div>
+      )}
       {/* A hairline rail; one accent bar slides to the section in view, a pale bar shows on hover. */}
       <div className="ptoc__items">
         {items.map((i) => (
@@ -431,7 +433,14 @@ export function ProposalToc({ items, title = 'On this page' }: { items: { id: st
             }}
           >
             {i.label}
-            {i.count ? <span className="ptoc__count">{i.count}</span> : null}
+            {i.count ? (
+              <span className="ptoc__count" title={`${i.count} comment${i.count === 1 ? '' : 's'}`}>
+                <i className="ptoc__badge">
+                  <MessageSquare size={9} strokeWidth={2.6} />
+                </i>{' '}
+                {i.count}
+              </span>
+            ) : null}
             {i.trail ? <span className="ptoc__trail">{i.trail}</span> : null}
           </a>
         ))}
@@ -450,7 +459,20 @@ function StatusBanner({ p }: { p: Proposal }) {
   );
 }
 
-function CommentList({ p }: { p: Proposal }) {
+/** Scrolls to the section a comment was left on and flashes it briefly. */
+const SECTION_ID: Record<string, string> = { Summary: 'overview', 'Scope & deliverables': 'scope' };
+function goToSection(section: string) {
+  const id = SECTION_ID[section] ?? section.toLowerCase();
+  const el = document.getElementById(`sec-${id}`) ?? document.querySelector<HTMLElement>('.proposal__head');
+  if (!el) return;
+  el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  el.classList.remove('is-flash');
+  void el.offsetWidth;
+  el.classList.add('is-flash');
+  window.setTimeout(() => el.classList.remove('is-flash'), 1600);
+}
+
+export function CommentList({ p }: { p: Proposal }) {
   const { state } = useStore();
   const list = p.comments;
   if (list.length === 0) return <div className="pcomments__empty faint">No comments yet.</div>;
@@ -466,7 +488,11 @@ function CommentList({ p }: { p: Proposal }) {
                 {who.name}
                 <span className="faint"> · {fmtRelative(c.at)}</span>
               </div>
-              {c.section && <div className="pcomment__section">on {c.section}</div>}
+              {c.section && (
+                <button className="pcomment__section" onClick={() => goToSection(c.section!)}>
+                  on {c.section}
+                </button>
+              )}
               <p>{c.text}</p>
             </div>
           </div>
@@ -493,7 +519,7 @@ function InlineComment({ section, onPost, onCancel }: { section: Section; onPost
   );
 }
 
-function GeneralComment({ onPost }: { onPost: (t: string) => void }) {
+export function GeneralComment({ onPost }: { onPost: (t: string) => void }) {
   const [t, setT] = useState('');
   return (
     <div className="general-comment">

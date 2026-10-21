@@ -22,6 +22,10 @@ const real = (state: State, id: string) => state.people.find((p) => p.id === id)
 export function toSparkRequest(state: State, r: WorkRequest): SparkRequest {
   const p = latestProposal(state, r.id);
   const w = waitingOf(r);
+  const feedback =
+    p?.status === 'changes_requested' && p.decision
+      ? { by: real(state, p.decision.by), at: fmtDate(p.decision.at), note: p.decision.note, comments: p.comments.map((c) => ({ by: real(state, c.by), text: c.text, section: c.section })) }
+      : undefined;
   return {
     id: r.id,
     title: r.title,
@@ -38,7 +42,7 @@ export function toSparkRequest(state: State, r: WorkRequest): SparkRequest {
     timing: r.timing,
     created: fmtDate(r.createdAt),
     description: r.description,
-    proposal: p ? { version: p.version, total: proposalTotal(p), sent: fmtDate(p.sentAt), state: p.status === 'awaiting' ? 'Awaiting decision' : p.status === 'approved' ? 'Approved' : p.status === 'declined' ? 'Declined' : p.status === 'changes_requested' ? 'Changes requested' : 'Superseded' } : undefined,
+    proposal: p ? { version: p.version, total: proposalTotal(p), sent: fmtDate(p.sentAt), state: p.status === 'awaiting' ? 'Awaiting decision' : p.status === 'approved' ? 'Approved' : p.status === 'declined' ? 'Declined' : p.status === 'changes_requested' ? 'Changes requested' : 'Superseded', feedback } : undefined,
   };
 }
 

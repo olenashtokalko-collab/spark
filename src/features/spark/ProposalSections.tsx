@@ -5,6 +5,9 @@ import { Calendar, FileText, Package, Paperclip, Plus, ScrollText, Banknote, Tar
 import type { LucideIcon } from 'lucide-react';
 import { Button, Field, Input, Textarea } from '../../components/ui/primitives';
 import { addDays, aed, nowIso } from '../../lib/format';
+import type { ProposalDraft } from '../../state/store';
+
+export type ProposalFields = Omit<ProposalDraft, 'savedAt'>;
 
 export type SectionId = 'overview' | 'objectives' | 'scope' | 'timeline' | 'investment' | 'terms' | 'file';
 
@@ -21,20 +24,22 @@ export const SECTIONS: { id: SectionId; label: string; hint: string; icon: Lucid
 const today = () => nowIso().slice(0, 10);
 const num = (v: string) => Number(v.replace(/[^\d]/g, '')) || 0;
 
-export function useProposalForm(initial?: { title?: string; summary?: string }) {
+export function useProposalForm(initial?: Partial<ProposalFields>) {
   const [title, setTitle] = useState(initial?.title ?? 'Response plan for delivery fee complaints');
   const [summary, setSummary] = useState(initial?.summary ?? 'A reply approach for the community team and a view on the pricing message before Riyadh.');
-  const [objectives, setObjectives] = useState(['']);
-  const [scope, setScope] = useState([{ title: '', detail: '' }]);
-  const [phases, setPhases] = useState([
-    { name: 'Analysis', weeks: '2' },
-    { name: 'Reply plan and playbook', weeks: '3' },
-  ]);
-  const [start, setStart] = useState(addDays(today(), 7));
-  const [until, setUntil] = useState(addDays(today(), 5));
-  const [lines, setLines] = useState([{ item: '', amount: '' }]);
-  const [terms, setTerms] = useState(['50% is invoiced on approval and 50% on delivery.', 'Prices exclude VAT.']);
-  const [file, setFile] = useState<string | null>(null);
+  const [objectives, setObjectives] = useState(initial?.objectives ?? ['']);
+  const [scope, setScope] = useState(initial?.scope ?? [{ title: '', detail: '' }]);
+  const [phases, setPhases] = useState(
+    initial?.phases ?? [
+      { name: 'Analysis', weeks: '2' },
+      { name: 'Reply plan and playbook', weeks: '3' },
+    ],
+  );
+  const [start, setStart] = useState(initial?.start ?? addDays(today(), 7));
+  const [until, setUntil] = useState(initial?.until ?? addDays(today(), 5));
+  const [lines, setLines] = useState(initial?.lines ?? [{ item: '', amount: '' }]);
+  const [terms, setTerms] = useState(initial?.terms ?? ['50% is invoiced on approval and 50% on delivery.', 'Prices exclude VAT.']);
+  const [file, setFile] = useState<string | null>(initial?.file ?? null);
 
   const done: Record<SectionId, boolean> = {
     overview: !!title.trim() && !!summary.trim(),
@@ -72,7 +77,9 @@ export function useProposalForm(initial?: { title?: string; summary?: string }) 
   const ready = SECTIONS.filter((s) => done[s.id]).length;
   const total = useMemo(() => lines.reduce((a, l) => a + num(l.amount), 0), [lines]);
   const weeks = useMemo(() => phases.reduce((a, p) => a + num(p.weeks), 0), [phases]);
-  return { title, setTitle, summary, setSummary, objectives, setObjectives, scope, setScope, phases, setPhases, start, setStart, until, setUntil, lines, setLines, terms, setTerms, file, setFile, done, ready, total, weeks, dirty, save };
+  // The fields as typed, to save as a draft.
+  const fields: ProposalFields = { title, summary, objectives, scope, phases, start, until, lines, terms, file };
+  return { fields, title, setTitle, summary, setSummary, objectives, setObjectives, scope, setScope, phases, setPhases, start, setStart, until, setUntil, lines, setLines, terms, setTerms, file, setFile, done, ready, total, weeks, dirty, save };
 }
 export type ProposalForm = ReturnType<typeof useProposalForm>;
 
@@ -106,7 +113,7 @@ export function SectionEditor({ id, f }: { id: SectionId; f: ProposalForm }) {
             </div>
           ))}
           <div>
-            <Button size="sm" icon={Plus} onClick={() => f.setObjectives((a) => [...a, ''])}>
+            <Button variant="ghost" size="sm" icon={Plus} className="spk-addrow" onClick={() => f.setObjectives((a) => [...a, ''])}>
               Add an objective
             </Button>
           </div>
@@ -123,7 +130,7 @@ export function SectionEditor({ id, f }: { id: SectionId; f: ProposalForm }) {
             </div>
           ))}
           <div>
-            <Button size="sm" icon={Plus} onClick={() => f.setScope((a) => [...a, { title: '', detail: '' }])}>
+            <Button variant="ghost" size="sm" icon={Plus} className="spk-addrow" onClick={() => f.setScope((a) => [...a, { title: '', detail: '' }])}>
               Add a deliverable
             </Button>
           </div>
@@ -140,7 +147,7 @@ export function SectionEditor({ id, f }: { id: SectionId; f: ProposalForm }) {
             </div>
           ))}
           <div>
-            <Button size="sm" icon={Plus} onClick={() => f.setPhases((a) => [...a, { name: '', weeks: '' }])}>
+            <Button variant="ghost" size="sm" icon={Plus} className="spk-addrow" onClick={() => f.setPhases((a) => [...a, { name: '', weeks: '' }])}>
               Add a phase
             </Button>
           </div>
@@ -166,7 +173,7 @@ export function SectionEditor({ id, f }: { id: SectionId; f: ProposalForm }) {
             </div>
           ))}
           <div className="spk-total">
-            <Button size="sm" icon={Plus} onClick={() => f.setLines((a) => [...a, { item: '', amount: '' }])}>
+            <Button variant="ghost" size="sm" icon={Plus} className="spk-addrow" onClick={() => f.setLines((a) => [...a, { item: '', amount: '' }])}>
               Add a line
             </Button>
             <span>
@@ -185,7 +192,7 @@ export function SectionEditor({ id, f }: { id: SectionId; f: ProposalForm }) {
             </div>
           ))}
           <div>
-            <Button size="sm" icon={Plus} onClick={() => f.setTerms((a) => [...a, ''])}>
+            <Button variant="ghost" size="sm" icon={Plus} className="spk-addrow" onClick={() => f.setTerms((a) => [...a, ''])}>
               Add a term
             </Button>
           </div>

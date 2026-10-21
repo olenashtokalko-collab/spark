@@ -8,7 +8,7 @@ export { kindOf } from '../lib/files';
 // One name per state everywhere (badges, filters, status card). Whatever waits
 // on the client reads "Needs your decision", for requests and proposals alike.
 export const requestStatusMeta: Record<RequestStatus, { label: string; tone: Tone }> = {
-  submitted: { label: 'Submitted', tone: 'neutral' },
+  submitted: { label: 'New', tone: 'neutral' },
   in_review: { label: 'In review', tone: 'accent' },
   proposal: { label: 'Needs your decision', tone: 'warning' },
   changes_requested: { label: 'Changes requested', tone: 'neutral' },
@@ -18,12 +18,12 @@ export const requestStatusMeta: Record<RequestStatus, { label: string; tone: Ton
   declined: { label: 'Declined', tone: 'neutral' },
 };
 
-/** The same states named from the Spark team's side: whatever waits on the client is "Awaiting client decision",
+/** The same states named from the Spark team's side: whatever waits on the client is "Waiting for client",
  *  where the client reads "Needs your decision". One state, two points of view. */
 export const sparkStatusLabel: Record<RequestStatus, string> = {
   submitted: 'New',
   in_review: 'In review',
-  proposal: 'Awaiting client decision',
+  proposal: 'Waiting for client',
   changes_requested: 'Changes requested',
   approved: 'Approved',
   in_progress: 'In progress',
@@ -31,24 +31,23 @@ export const sparkStatusLabel: Record<RequestStatus, string> = {
   declined: 'Declined',
 };
 
-export const STAGES = ['Submitted', 'In review', 'Proposal', 'Approved', 'In progress', 'Delivered'] as const;
+/** Four stages; the status in the badge says what is happening inside one:
+ *  New (new, in review) → Proposal (waiting for the client, changes requested, declined)
+ *  → In progress (approved, in progress) → Delivered. */
+export const STAGES = ['New', 'Proposal', 'In progress', 'Delivered'] as const;
 
 // What each stage means for the client, shown in the request's stage list.
 export const STAGE_INFO: Record<(typeof STAGES)[number], string> = {
-  Submitted: 'Your request is in Spark’s queue.',
-  'In review': 'Spark scopes the work and may come back with questions.',
+  New: 'Spark reviews your request and may come back with questions.',
   Proposal: 'You get scope, price and timeline to approve or change.',
-  Approved: 'Spark schedules the kick-off.',
   'In progress': 'Spark works on the deliverables; you review drafts.',
   Delivered: 'Final files land in Documents.',
 };
 
 /** The same stages, described from the Spark team's side. */
 export const SPARK_STAGE_INFO: Record<(typeof STAGES)[number], string> = {
-  Submitted: 'The client’s request is in your queue. It needs a first reply.',
-  'In review': 'Scope the work and ask the client any questions.',
-  Proposal: 'Send scope, price and timeline for the client to approve or change.',
-  Approved: 'Schedule the kick-off.',
+  New: 'Scope the work, ask the client any questions and send a proposal.',
+  Proposal: 'The client approves the proposal or asks for changes.',
   'In progress': 'Work on the deliverables; the client reviews drafts.',
   Delivered: 'Final files land in the client’s Documents.',
 };
@@ -56,20 +55,17 @@ export const SPARK_STAGE_INFO: Record<(typeof STAGES)[number], string> = {
 export function stageIndex(s: RequestStatus) {
   switch (s) {
     case 'submitted':
-      return 0;
     case 'in_review':
-    case 'changes_requested':
-      return 1;
+      return 0;
     case 'proposal':
-      return 2;
-    case 'approved':
-      return 3;
-    case 'in_progress':
-      return 4;
-    case 'delivered':
-      return 5;
+    case 'changes_requested':
     case 'declined':
+      return 1;
+    case 'approved':
+    case 'in_progress':
       return 2;
+    case 'delivered':
+      return 3;
   }
 }
 

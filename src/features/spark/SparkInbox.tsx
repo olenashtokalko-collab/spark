@@ -9,22 +9,14 @@ import { useSparkRequests } from './model';
 
 type Tab = 'all' | 'reply' | 'new' | 'client' | 'done';
 
+// New is yellow: the manager has to pick it up. Awaiting the client's decision is grey: nothing to do on Spark's side.
+const chipTone = (s: SparkRequest['status']) => (s === 'submitted' ? 'you' : s === 'proposal' ? 'submitted' : s);
 export const SparkStatusChip = ({ r }: { r: SparkRequest }) => (
-  <span className={`rstatus rstatus--${r.status === 'proposal' ? 'you' : r.status}`}>
+  <span className={`rstatus rstatus--${chipTone(r.status)}`}>
     <span className="rstatus__dot" />
     {STATUS_LABEL[r.status]}
   </span>
 );
-
-const WaitingBadge = ({ r }: { r: SparkRequest }) =>
-  r.waiting ? (
-    <span className={`rstatus rstatus--${r.waiting === 'spark' ? 'you' : 'submitted'}`} title={r.waitingFor}>
-      <span className="rstatus__dot" />
-      {r.waiting === 'spark' ? 'On Spark' : 'On client'}
-    </span>
-  ) : (
-    <span className="faint">—</span>
-  );
 
 export function SparkInbox({ initialClient }: { initialClient?: string }) {
   const { list: requests } = useSparkRequests();
@@ -73,7 +65,7 @@ export function SparkInbox({ initialClient }: { initialClient?: string }) {
       <div className="filter-bar">
         <Input icon={Search} placeholder="Search requests or clients" value={q} onChange={(e) => setQ(e.target.value)} className="filter-bar__search" aria-label="Search requests" />
         <FilterMenu icon={Building2} label="Client" value={client} onChange={setClient} options={[{ value: 'any', label: 'All clients' }, ...clients.map((c) => ({ value: c.id, label: c.name }))]} />
-        <FilterMenu icon={UserRound} label="Owner" value={owner} onChange={setOwner} options={[{ value: 'any', label: 'Anyone' }, ...sparkTeam.map((p) => ({ value: p.id, label: p.name }))]} />
+        <FilterMenu icon={UserRound} label="Manager" value={owner} onChange={setOwner} options={[{ value: 'any', label: 'Anyone' }, ...sparkTeam.map((p) => ({ value: p.id, label: p.name }))]} />
         {narrowed && (
           <button
             className="link-btn filter-bar__clear"
@@ -95,8 +87,7 @@ export function SparkInbox({ initialClient }: { initialClient?: string }) {
             <span role="columnheader">Request</span>
             <span role="columnheader">Client</span>
             <span role="columnheader">Status</span>
-            <span role="columnheader">Waiting</span>
-            <span role="columnheader">Owner</span>
+            <span role="columnheader">Manager</span>
             <span role="columnheader">Due</span>
             <span role="columnheader">Updated</span>
           </div>
@@ -113,9 +104,6 @@ export function SparkInbox({ initialClient }: { initialClient?: string }) {
               </span>
               <span role="cell">
                 <SparkStatusChip r={r} />
-              </span>
-              <span role="cell">
-                <WaitingBadge r={r} />
               </span>
               <span role="cell" className="spk-row__owner">
                 <Avatar person={r.owner} size={22} />

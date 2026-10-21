@@ -42,7 +42,7 @@
 
 /* ---- Inbox table ------------------------------------------------------------------------ */
 .spk-row {
-  grid-template-columns: minmax(0, 2.4fr) minmax(0, 1.2fr) 190px 100px 110px 100px 90px;
+  grid-template-columns: minmax(0, 2.4fr) minmax(0, 1.2fr) 190px 110px 100px 90px;
 }
 .spk-row__client {
   display: flex;
@@ -60,7 +60,7 @@
 }
 @media (max-width: 1100px) {
   .spk-row {
-    grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr) 170px 90px;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1.2fr) 170px 110px;
   }
   .spk-row > :nth-child(n + 5) {
     display: none;
@@ -354,6 +354,10 @@
 }
 .spk-form .field {
   margin-top: 14px;
+}
+/* "Add a …" under a list of inputs: the + lines up with the text inside the inputs above. */
+.btn--sm.spk-addrow {
+  padding-left: 9px;
 }
 .spk-rowfields {
   display: grid;
@@ -730,8 +734,8 @@
 /* ---- The editor: the contents menu and the sections one under another ------------------------- */
 .pe-layout {
   display: grid;
-  grid-template-columns: 230px minmax(0, 1fr);
-  gap: 48px;
+  grid-template-columns: 264px minmax(0, 1fr);
+  gap: 32px;
   align-items: start;
 }
 .pe-menu {
@@ -775,3 +779,5067 @@
   transform: translate(0, 0);
 }
 
+
+/* ---- The client's feedback on a proposal: on the request's proposal card and in the new version's editor ---- */
+.prop-feedback {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  font-size: 13px;
+}
+.prop-feedback__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.prop-feedback__note {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-1);
+}
+.pe-thread {
+  margin-top: 20px;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+}
+.pe-feedback {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.pe-feedback li {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+/* ---- Demo (#/demo/section-changes): marks for sections the client asked to change ---- */
+.scd__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 640px), 1fr));
+  gap: 20px;
+}
+.scd__row {
+  display: grid;
+  grid-template-columns: 220px 1fr;
+  gap: 20px;
+  align-items: start;
+}
+@media (max-width: 640px) {
+  .scd__row {
+    grid-template-columns: 1fr;
+  }
+}
+.scd__menu {
+  position: static;
+}
+.scd-mark {
+  --violet: #6c3fc4;
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+  color: var(--violet);
+}
+.scd-mark--a {
+  gap: 3px;
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.scd-mark--b {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--violet);
+}
+.scd-mark--c {
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  background: color-mix(in srgb, var(--violet) 11%, transparent);
+}
+.scd__grid .gdemo__card {
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.scd__grid .gdemo__card > header {
+  margin-bottom: 16px;
+}
+.scd__grid .gdemo__card > header p {
+  color: var(--text-3);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+/* A section the client commented on: a Cobalt comment icon (the colour of people) that gives a small nudge every
+   few seconds, next to the amber "!" if both apply. */
+.pe-mark--comments {
+  color: var(--cobalt, #1e3bd6);
+}
+.pe-mark--comments svg {
+  transform-origin: 20% 90%;
+  animation: pe-nudge 3.2s ease-in-out infinite;
+}
+@keyframes pe-nudge {
+  0%,
+  70%,
+  100% {
+    transform: rotate(0) translateY(0);
+  }
+  76% {
+    transform: rotate(-12deg) translateY(-1px);
+  }
+  82% {
+    transform: rotate(9deg) translateY(-1px);
+  }
+  88% {
+    transform: rotate(-5deg);
+  }
+  94% {
+    transform: rotate(0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pe-mark--comments svg {
+    animation: none;
+  }
+}
+.pe-pane__marks,
+/* The speech bubble is always last in the row, so the bubbles line up flush right. */
+.ptoc__trail:has(.pe-mark--comments) {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.pe-mark--comments {
+  width: 18px;
+  height: 18px;
+}
+
+
+/* ---- The editor's sections menu: a framed box with "Proposal creation" and how much is filled in ---- */
+:root[data-theme='sand'] .proposal__side.pe-menu .ptoc--rail,
+.pe-menu .ptoc {
+  padding: 16px 16px 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.pe-progress {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 12px;
+  font-size: 14px;
+}
+.pe-progress__label {
+  flex: 1;
+  font-weight: 500;
+  color: var(--ink);
+}
+.pe-progress__pct {
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.pe-progress__bar {
+  position: relative;
+  flex: none;
+  width: 40px;
+  height: 14px;
+  border-radius: 999px;
+  background: rgba(14, 17, 22, 0.08);
+  overflow: hidden;
+}
+.pe-progress__bar > i {
+  position: absolute;
+  inset: 3px auto 3px 3px;
+  border-radius: 999px;
+  background: var(--cobalt, #1e3bd6);
+  transition: width 0.3s ease;
+}
+
+/* ---- The 3D speech bubble (ChatBuddy) and its demo (#/demo/changes-banner) ---- */
+.cb {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+}
+.cb svg {
+  overflow: visible;
+}
+.cb__float,
+.cb__tilt,
+.cb__eyes,
+.cb__mouth,
+.cb__dot,
+.cb__shadow {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+/* Every look floats, and the shadow under it shrinks as it rises. */
+.cb__float {
+  animation: cb-float 3.6s ease-in-out infinite;
+}
+.cb__shadow {
+  animation: cb-shadow 3.6s ease-in-out infinite;
+}
+@keyframes cb-float {
+  50% {
+    transform: translateY(-3px);
+  }
+}
+@keyframes cb-shadow {
+  50% {
+    transform: scaleX(0.8);
+    opacity: 0.07;
+  }
+}
+/* Blinking: lavender, spectrum, peach. */
+.cb--lavender .cb__eyes,
+.cb--spectrum .cb__eyes,
+.cb--peach .cb__eyes {
+  animation: cb-blink 4.2s ease-in-out infinite;
+}
+@keyframes cb-blink {
+  0%,
+  44%,
+  50%,
+  100% {
+    transform: scaleY(1);
+  }
+  47% {
+    transform: scaleY(0.12);
+  }
+}
+/* Spectrum: the face glances to the right, at the text, and back. */
+.cb--spectrum .cb__face {
+  animation: cb-glance 5s ease-in-out infinite;
+}
+@keyframes cb-glance {
+  0%,
+  30%,
+  75%,
+  100% {
+    transform: translateX(0);
+  }
+  40%,
+  65% {
+    transform: translateX(3px);
+  }
+}
+/* Cobalt: the mouth opens and closes as if it speaks; the bubble bobs a little faster. */
+.cb--cobalt .cb__mouth {
+  animation: cb-talk 1.6s ease-in-out infinite;
+}
+.cb--cobalt .cb__float {
+  animation-duration: 1.6s;
+}
+@keyframes cb-talk {
+  0%,
+  100% {
+    transform: scaleY(1);
+  }
+  20% {
+    transform: scaleY(2.2);
+  }
+  40% {
+    transform: scaleY(0.8);
+  }
+  60% {
+    transform: scaleY(1.8);
+  }
+}
+/* Peach: nods by tilting round the tail. */
+.cb--peach .cb__tilt {
+  transform-origin: 50% 90%;
+  animation: cb-tilt 3s ease-in-out infinite;
+}
+@keyframes cb-tilt {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  25% {
+    transform: rotate(-6deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+/* Typing: three dots rise one after another. */
+.cb__dot {
+  animation: cb-dot 1.4s ease-in-out infinite;
+}
+.cb__dot2 {
+  animation-delay: 0.18s;
+}
+.cb__dot3 {
+  animation-delay: 0.36s;
+}
+@keyframes cb-dot {
+  0%,
+  60%,
+  100% {
+    transform: translateY(0);
+    opacity: 0.45;
+  }
+  30% {
+    transform: translateY(-3px);
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cb * {
+    animation: none !important;
+  }
+}
+
+.cbd__grid {
+  display: grid;
+  gap: 20px;
+}
+.cbd__card {
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.cbd__card > header p {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.cbd__row {
+  display: grid;
+  grid-template-columns: 160px 1fr;
+  gap: 20px;
+  align-items: center;
+  margin-top: 16px;
+}
+@media (max-width: 640px) {
+  .cbd__row {
+    grid-template-columns: 1fr;
+  }
+}
+.cbd__big {
+  display: grid;
+  place-items: center;
+  height: 160px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+/* The banner, as in the reference: bubble, a title and a line of text, a dashed line under it. */
+.cbd-banner {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding: 18px 20px;
+  border-radius: 16px;
+  background: #fff;
+  border-bottom: 1px dashed var(--line-strong);
+}
+.cbd-banner__title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.cbd-banner__text {
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--text-3);
+}
+
+/* ---- On top of the new version's editor when the client asked for changes ---- */
+.changes-banner {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  margin-bottom: 24px;
+  padding: 18px 22px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.changes-banner__body {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.changes-banner__title {
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.changes-banner__title .faint {
+  font-size: 13px;
+  font-weight: 400;
+}
+.changes-banner__note {
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-1);
+}
+.changes-banner__hint {
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+/* A client's comment on a section: a small panel with a tinted head (who said it)
+   and the comment below, after the product's notice panels. */
+.pe-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pe-comment {
+  overflow: hidden;
+  border-radius: var(--radius-md);
+  background: var(--surface-1);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.pe-comment__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  font-size: 14px;
+  background: var(--surface-2);
+}
+.pe-comment__head {
+  font-weight: 500;
+}
+/* The icon takes the avatar's 20px column, so it sits right above the avatar and
+   "Changes requested" lines up with the name below. */
+.pe-comment__icon {
+  flex: none;
+  box-sizing: content-box;
+  width: 17px;
+  height: 17px;
+  padding: 0 1.5px;
+  color: var(--warning);
+}
+.pe-comment__body {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 12px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+.pe-comment__body p {
+  flex: 1;
+  min-width: 0;
+}
+.pe-comment__at {
+  flex: none;
+  font-size: 13px;
+  line-height: 21px;
+  color: var(--text-3);
+}
+.pe-comment__body p {
+  margin: 0;
+}
+.pe-comment__by {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--text);
+}
+
+/* ---- Demo: the client's comment in a section (#/demo/comment) ---------------------------- */
+.cmddemo__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
+  gap: 16px;
+  padding: 8px 0 48px;
+}
+.cmddemo .gdemo__card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border-radius: var(--radius-xl);
+  background: color-mix(in srgb, #0e1116 3%, var(--bg));
+}
+.cmddemo .gdemo__card h3 {
+  font-size: 15px;
+  font-weight: 600;
+}
+.cmddemo .gdemo__card p {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.cmddemo__stage {
+  padding: 20px;
+  border-radius: var(--radius-md);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.cmddemo__field {
+  padding-bottom: 16px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  color: var(--text-3);
+  border-bottom: 1px solid var(--line);
+}
+.cmddemo .cmddemo__stage p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+.cmd-by {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  font-size: 13px;
+  color: var(--text);
+}
+.cmd-icon {
+  flex: none;
+  color: var(--warning);
+}
+/* 2 · Quote */
+.cmd--quote {
+  position: relative;
+  padding: 2px 0 2px 18px;
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--warning) 70%, transparent);
+}
+.cmd-quote__mark {
+  margin-bottom: 4px;
+  color: var(--warning);
+}
+.cmddemo .cmd--quote p {
+  font-size: 15px;
+  color: var(--text);
+}
+/* 3 · Speech bubble */
+.cmd--bubble {
+  display: flex;
+  align-items: flex-end;
+  gap: 10px;
+}
+.cmd-bubble {
+  padding: 11px 16px;
+  border-radius: 20px 20px 20px 6px;
+  font-size: 14px;
+  line-height: 1.5;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), color-mix(in srgb, var(--warning) 6%, #ffffff));
+  box-shadow: inset 0 0 0 1.5px #ffffff, 0 0 0 1px rgba(14, 17, 22, 0.08), 0 6px 16px -8px rgba(14, 17, 22, 0.2);
+}
+.cmd-bubble__meta {
+  margin: 6px 0 0 4px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.cmd-tag {
+  padding: 1px 7px;
+  border-radius: 999px;
+  color: var(--warning);
+  background: var(--warning-soft);
+}
+/* 4 · Warm note */
+.cmd--note {
+  display: flex;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  background: var(--warning-soft);
+}
+.cmd--note .cmd-icon {
+  margin-top: 2px;
+}
+.cmddemo .cmd--note p {
+  color: var(--text);
+}
+/* 5 · One line */
+.cmd--line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 12px;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}
+.cmddemo .cmd--line p {
+  flex: 1;
+  min-width: 0;
+  color: var(--text);
+}
+.cmd-done {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex: none;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.cmd-done:hover {
+  color: var(--text);
+}
+/* 6 · With actions */
+.cmd-actions {
+  display: flex;
+  gap: 6px;
+  margin-top: 14px;
+}
+
+/* The comment without a frame or a tinted head: the "Changes requested" line,
+   then avatar, comment and date. Icon and avatar share one 20px column. */
+.pe-comment {
+  overflow: visible;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+.pe-comment .pe-comment__head {
+  padding: 0;
+  background: none;
+}
+.pe-comment .pe-comment__body {
+  padding: 8px 0 0;
+}
+/* The animated speech bubble in front of "Changes requested", in the avatar's 20px column. */
+.pe-comment .pe-comment__icon {
+  display: inline-grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+}
+/* Thread layout, after the reference: name line, then the text indented to the name. */
+.pe-comment__item {
+  margin-top: 12px;
+}
+.pe-comment__who {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+}
+.pe-comment__who strong {
+  font-weight: 600;
+  color: var(--text);
+}
+.pe-comment .pe-comment__at {
+  font-size: 13px;
+  line-height: inherit;
+  color: var(--text-3);
+}
+.pe-comment__text {
+  margin: 4px 0 0 30px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+/* Hierarchy: "Changes requested" is a small status label with a pulsing dot;
+   the name and the comment carry the weight. */
+.pe-comment .pe-comment__head {
+  gap: 8px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--warning);
+}
+.pe-comment__dot {
+  position: relative;
+  flex: none;
+  width: 8px;
+  height: 8px;
+  /* centred in the avatar's 22px column */
+  margin: 0 7px;
+  border-radius: 50%;
+  background: var(--warning);
+}
+.pe-comment__dot::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  background: var(--warning);
+  animation: pe-pulse 1.8s ease-out infinite;
+}
+@keyframes pe-pulse {
+  from {
+    transform: scale(1);
+    opacity: 0.55;
+  }
+  to {
+    transform: scale(2.6);
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pe-comment__dot::after {
+    animation: none;
+  }
+}
+.pe-comment__item {
+  margin-top: 10px;
+}
+/* The comment text stays grey: the name leads, the words follow. */
+.pe-comment__text {
+  color: var(--text-2);
+}
+
+/* ---- Demo: request → proposal flow (#/demo/request-flow) --------------------------------- */
+.rfdemo__list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 16px 0 48px;
+}
+.rfdemo .gdemo__card {
+  padding: 20px;
+  border-radius: var(--radius-xl);
+  background: color-mix(in srgb, #0e1116 3%, var(--bg));
+}
+.rfdemo .gdemo__card > header h3 {
+  font-size: 15px;
+  font-weight: 600;
+}
+.rfdemo .gdemo__card > header p {
+  margin: 4px 0 14px;
+  max-width: 860px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.rfdemo__stage {
+  padding: 24px;
+  border-radius: var(--radius-lg);
+  background: var(--bg);
+}
+.rfd-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--warning);
+  background: var(--warning-soft);
+}
+.rfd-pill i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* Step 1 cards: the whole block is the link. */
+.rfd-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  max-width: 760px;
+  padding: 22px 24px;
+  border-radius: var(--radius-lg);
+  color: var(--text);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.rfd-card:hover,
+.rfd-row:hover {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent), 0 10px 24px -16px rgba(30, 59, 214, 0.45);
+}
+.rfd-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-right: 28px;
+}
+.rfd-card__eyebrow {
+  font-size: 12px;
+  color: var(--text-3);
+}
+.rfd-card__title {
+  margin-top: 2px;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.rfd-card__facts {
+  display: flex;
+  gap: 18px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.rfd-card__facts b {
+  font-weight: 600;
+  color: var(--text);
+}
+.rfd-card__note {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--text-2);
+}
+.rfd-card__note p {
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.rfd-card__note strong {
+  color: var(--text);
+}
+.rfd-card__chev {
+  position: absolute;
+  right: 20px;
+  top: 24px;
+  color: var(--text-3);
+}
+.rfd-card--status {
+  padding: 0;
+  overflow: hidden;
+  gap: 0;
+}
+.rfd-band {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 24px;
+  font-size: 14px;
+  background: var(--warning-soft);
+}
+.rfd-band__next {
+  margin-left: auto;
+  font-size: 13px;
+  color: var(--warning);
+  font-weight: 500;
+}
+.rfd-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px 24px 22px;
+}
+.rfd-quote {
+  margin: 0;
+  padding-left: 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-2);
+  box-shadow: inset 2px 0 0 color-mix(in srgb, var(--warning) 60%, transparent);
+}
+.rfd-card__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 13px;
+}
+.rfd-open {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  color: var(--accent);
+}
+.rfd-row {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  max-width: 760px;
+  padding: 14px 18px;
+  border-radius: var(--radius-md);
+  color: var(--text);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-size: 14px;
+}
+.rfd-row__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+.rfd-row__title {
+  flex: 1;
+  font-weight: 500;
+}
+.rfd-row__num {
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.rfd-row__comments {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  color: var(--text-3);
+  font-size: 13px;
+}
+
+/* Step 2: the opened proposal */
+.rfd-view {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.rfd-phead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+}
+.rfd-phead__title {
+  margin-top: 4px;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.rfd-phead__right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.rfd-btn {
+  display: inline-flex;
+  align-items: center;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #ffffff;
+  background: var(--accent);
+}
+.rfd-banner {
+  display: flex;
+  gap: 12px;
+  padding: 16px 18px;
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line), inset 3px 0 0 var(--warning);
+}
+.rfd-banner p {
+  margin: 4px 0 0;
+  color: var(--text-2);
+  line-height: 1.5;
+}
+.rfd-body {
+  display: grid;
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+.rfd-body--margin {
+  grid-template-columns: 200px minmax(0, 1fr) 260px;
+}
+.rfd-menu {
+  position: sticky;
+  top: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px;
+  border-radius: var(--radius-lg);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.rfd-menu__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.rfd-menu__item.is-active {
+  color: var(--text);
+  background: var(--surface-2);
+}
+.rfd-menu__item.has-edge {
+  box-shadow: inset 2px 0 0 var(--warning);
+}
+.rfd-menu__count {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--warning);
+}
+.rfd-menu__count i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.rfd-doc {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rfd-sec {
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  font-size: 14px;
+  line-height: 1.5;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.rfd-sec.has-edge {
+  box-shadow: inset 0 0 0 1px var(--line), inset 3px 0 0 var(--warning);
+}
+.rfd-sec h4 {
+  margin: 0 0 6px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.rfd-sec p,
+.rfd-sec ul {
+  margin: 0;
+  color: var(--text-2);
+}
+.rfd-sec ul {
+  padding-left: 18px;
+}
+.rfd-comment {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+.rfd-comment__who {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.rfd-comment p {
+  margin: 4px 0 0 28px;
+  color: var(--text-2);
+}
+.rfd-margin {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rfd-note,
+.rfd-mcomment {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  line-height: 1.45;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.rfd-note {
+  box-shadow: inset 0 0 0 1px var(--line), inset 3px 0 0 var(--warning);
+}
+.rfd-note p,
+.rfd-mcomment p {
+  margin: 6px 0 0;
+  color: var(--text-2);
+}
+.rfd-mcomment .faint {
+  display: block;
+  margin-top: 6px;
+  font-size: 12px;
+}
+/* push the margin comments level with their sections (timeline, investment) */
+.rfd-mcomment:nth-of-type(2) {
+  margin-top: 202px;
+}
+.rfd-todo {
+  padding: 14px 18px;
+  border-radius: var(--radius-lg);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.rfd-todo__head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+}
+.rfd-todo__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 8px 0;
+  font-size: 14px;
+  border-top: 1px solid var(--line);
+  cursor: pointer;
+}
+.rfd-todo__item.is-done .rfd-todo__text {
+  color: var(--text-3);
+  text-decoration: line-through;
+}
+.rfd-tick {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 18px;
+  height: 18px;
+  margin-top: 1px;
+  border-radius: 50%;
+  color: #ffffff;
+  box-shadow: inset 0 0 0 1.5px var(--line-strong);
+}
+.rfd-todo__item.is-done .rfd-tick {
+  background: var(--positive);
+  box-shadow: none;
+}
+.rfd-todo__where {
+  flex: none;
+  width: 110px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--warning);
+}
+.rfd-todo__text {
+  flex: 1;
+  color: var(--text-2);
+}
+
+/* ---- The proposal on the request page: one clickable summary card (A, #/demo/request-flow) ---- */
+.psum {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 22px 24px;
+  border-radius: var(--radius-lg);
+  color: var(--text);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: box-shadow 0.15s;
+}
+.psum:hover {
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 40%, transparent), 0 10px 24px -16px rgba(30, 59, 214, 0.45);
+}
+.psum__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  padding-right: 30px;
+}
+.psum__eyebrow {
+  font-size: 12px;
+  color: var(--text-3);
+}
+.psum__title {
+  margin-top: 2px;
+  font-size: 18px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.psum__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  background: var(--surface-2);
+}
+.psum__pill.is-changes {
+  color: var(--warning);
+  background: var(--warning-soft);
+}
+.psum__pill i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.psum__facts {
+  display: flex;
+  gap: 18px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.psum__facts b {
+  font-weight: 600;
+  color: var(--text);
+}
+.psum__note {
+  display: flex;
+  gap: 8px;
+  align-items: flex-start;
+  padding-top: 14px;
+  border-top: 1px solid var(--line);
+  font-size: 14px;
+  color: var(--text-2);
+}
+.psum__note p {
+  margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 1;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.psum__note strong {
+  color: var(--text);
+}
+.psum__chev {
+  position: absolute;
+  right: 20px;
+  top: 24px;
+  color: var(--text-3);
+}
+
+/* ---- The manager's replies under a client comment ---- */
+.pe-replies {
+  margin: 8px 0 0 30px;
+}
+.pe-reply {
+  margin-top: 10px;
+}
+.pe-reply__open {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+.pe-reply__open:hover {
+  color: var(--accent);
+}
+.pe-reply__box {
+  margin-top: 10px;
+}
+.pe-reply__actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+/* ---- The proposal for the Spark manager (#/spark/requests/<id>/proposal) ----------------------
+   The client's proposal page, plus an Edit button on every block. */
+.spv-head__tools {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.spv-edit {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  transition: background 0.15s, color 0.15s;
+}
+.spv-edit:hover {
+  color: var(--accent);
+  background: var(--accent-softer);
+}
+.spv-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--warning);
+}
+.spv-tag {
+  margin-left: 10px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  vertical-align: middle;
+  letter-spacing: 0;
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+/* While editing, the block gets a frame that sits outside the text column,
+   so nothing in it moves. */
+.spv-sec.is-editing {
+  margin-left: -18px;
+  margin-right: -18px;
+  padding: 18px;
+  border-radius: var(--radius-lg);
+  background: #ffffff;
+  box-shadow: 0 0 0 1.5px color-mix(in srgb, var(--accent) 45%, transparent), 0 16px 32px -24px rgba(30, 59, 214, 0.5);
+}
+.spv-summary {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+.spv-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.spv-label {
+  margin-top: 6px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.spv-editor__bar {
+  display: flex;
+  justify-content: flex-end;
+  gap: 6px;
+  margin-top: 8px;
+}
+.spv-rows {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.spv-row {
+  display: grid;
+  grid-template-columns: 1fr 32px;
+  gap: 8px;
+  align-items: center;
+}
+.spv-del {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 8px;
+  color: var(--text-3);
+}
+.spv-del:hover {
+  color: var(--danger);
+  background: var(--danger-soft);
+}
+.spv-add {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 0;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent);
+}
+.spv-total {
+  align-self: flex-end;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.spv-total b {
+  color: var(--text);
+}
+/* The client's comments under the section they belong to, with a reply. */
+.spv-comments {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: var(--radius-md);
+  /* The same grey as the client's answer in the side card, so every comment reads alike. */
+  background: var(--surface-2);
+}
+.spv-comment + .spv-comment {
+  margin-top: 12px;
+}
+.spv-comment__who {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.spv-comment p {
+  margin: 4px 0 0 28px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+.spv-reply {
+  margin-top: 12px;
+}
+.spv-reply__open {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin: 10px 0 0 28px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+.spv-reply__open:hover {
+  color: var(--accent);
+}
+.spv-card .decision__total {
+  margin-top: 6px;
+}
+.spv-card__edits {
+  font-size: 12px;
+  color: var(--text-3);
+  text-align: center;
+}
+.spv-card .decision__btns {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+.spv-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--accent);
+}
+
+/* ---- Manager proposal: versions and what changed ---------------------------------------------- */
+.spv-versions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+}
+.spv-arrow {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--surface-2);
+  color: var(--text);
+  cursor: pointer;
+}
+.spv-arrow:hover:not(:disabled) {
+  background: var(--surface-3, var(--surface-2));
+  color: var(--accent);
+}
+.spv-arrow:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.spv-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+}
+.spv-toggle input {
+  accent-color: var(--accent);
+}
+.spv-tag--diff {
+  color: var(--text);
+  background: color-mix(in srgb, var(--accent) 22%, transparent);
+}
+/* Text that changed against the previous version. */
+.spv-mark {
+  background: color-mix(in srgb, var(--accent) 16%, transparent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--accent) 16%, transparent);
+  border-radius: 4px;
+  color: var(--text);
+}
+.spv-new {
+  background: color-mix(in srgb, var(--positive, #3a9a6a) 12%, transparent);
+  border-radius: var(--radius-sm);
+}
+li.spv-new,
+li.spv-removed {
+  padding: 2px 6px;
+  margin-left: -6px;
+}
+.spv-changed {
+  border-radius: var(--radius-sm);
+}
+.spv-removed,
+.spv-removed * {
+  color: var(--text-3) !important;
+  text-decoration: line-through;
+  text-decoration-color: color-mix(in srgb, var(--danger, #c0504d) 60%, transparent);
+}
+.spv-removed .scope__icon,
+.spv-removed .spv-badge {
+  text-decoration: none;
+}
+.spv-badge {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  vertical-align: middle;
+  color: var(--positive, #3a9a6a) !important;
+  background: color-mix(in srgb, var(--positive, #3a9a6a) 14%, transparent);
+}
+.spv-badge--removed {
+  color: var(--danger, #c0504d) !important;
+  background: color-mix(in srgb, var(--danger, #c0504d) 12%, transparent);
+}
+.spv-old {
+  margin-right: 8px;
+  color: var(--text-3);
+  font-weight: 400;
+}
+.spv-was {
+  margin-left: 6px;
+  font-size: 12px;
+  color: var(--text-3);
+  text-decoration: line-through;
+}
+.spv-card__diff {
+  margin-top: 12px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.spv-latest {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent);
+  cursor: pointer;
+}
+.spv-dot--diff {
+  background: rgba(14, 17, 22, 0.35);
+}
+
+.spv-card > .badge {
+  align-self: flex-start;
+  margin-bottom: 12px;
+}
+
+/* ---- Demo: the comment mark next to a section title (#/demo/comment-mark) ---------------- */
+.cmk-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+.cmk-btn {
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  font: inherit;
+}
+.cmk-gantt {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cmk-gantt span {
+  display: block;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--surface-2);
+}
+.cmk {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+.cmk--icon {
+  color: var(--text-2);
+}
+.cmk-btn:hover .cmk--icon {
+  color: var(--text);
+}
+.cmk--pill {
+  padding: 3px 10px 3px 8px;
+  border-radius: 999px;
+  background: var(--warning-soft);
+  color: var(--text);
+}
+.cmk--bubble {
+  gap: 4px;
+  color: var(--text);
+}
+.cmk--badge {
+  position: relative;
+  color: var(--text-2);
+}
+.cmk--badge i {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  display: grid;
+  place-items: center;
+  min-width: 15px;
+  height: 15px;
+  padding: 0 4px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-style: normal;
+  font-weight: 600;
+  color: #fff;
+  background: var(--text);
+}
+.cmk--avatar {
+  gap: 8px;
+  color: var(--text-2);
+}
+.cmk__av {
+  position: relative;
+  display: inline-flex;
+}
+.cmk__av i {
+  position: absolute;
+  right: -4px;
+  bottom: -3px;
+  display: grid;
+  place-items: center;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--text);
+  box-shadow: 0 0 0 2px #fff;
+}
+.cmk--dot {
+  gap: 8px;
+  color: var(--text-2);
+}
+.spv-head__title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.spv-toggle > span:last-child {
+  cursor: pointer;
+  user-select: none;
+}
+
+/* ---- Demo: marking changes between versions (#/demo/change-highlight) ------------------------- */
+.chd-tools {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  padding-bottom: 14px;
+  margin-bottom: 16px;
+  font-size: 13px;
+  font-weight: 500;
+  border-bottom: 1px solid var(--line);
+}
+.chd__title {
+  margin: 0 0 8px;
+  font-size: 15px;
+  font-weight: 600;
+}
+.cmddemo .cmddemo__stage .chd__p {
+  margin: 0 0 18px;
+  color: var(--text);
+}
+.chd-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.chd-table td {
+  padding: 8px 0;
+  border-bottom: 1px solid var(--line);
+}
+.chd-table td.num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+}
+.chd-label {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  vertical-align: middle;
+  color: var(--text);
+  background: rgba(14, 17, 22, 0.07);
+}
+.chd-label--removed {
+  color: var(--text-3);
+}
+.chd-removed td {
+  color: var(--text-3);
+}
+.chd-removed td:first-child,
+.chd-removed td.num {
+  text-decoration: line-through;
+}
+.chd-removed .chd-label {
+  text-decoration: none;
+}
+/* 1 · Ink tint */
+.chd-mark--tint {
+  background: rgba(14, 17, 22, 0.07);
+  box-shadow: 0 0 0 3px rgba(14, 17, 22, 0.07);
+  border-radius: 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+/* 2 · Marker */
+.chd-mark--marker {
+  background: linear-gradient(transparent 58%, rgba(244, 170, 90, 0.38) 58%, rgba(244, 170, 90, 0.38) 92%, transparent 92%);
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+/* 3 · Margin bar */
+.chd--bar .chd-mark--bar {
+  background: none;
+}
+.chd--bar .chd__p.chd-bar,
+.chd--bar tr.chd-bar td:first-child {
+  position: relative;
+}
+.chd--bar .chd__p.chd-bar::before,
+.chd--bar tr.chd-bar td:first-child::before {
+  content: '';
+  position: absolute;
+  left: -12px;
+  top: 4px;
+  bottom: 4px;
+  width: 3px;
+  border-radius: 2px;
+  background: var(--ink, #0e1116);
+}
+.chd--bar tr.chd-bar td:first-child::before {
+  top: 9px;
+  bottom: 9px;
+}
+/* 4 · Track changes */
+.chd-add {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--ink, #0e1116);
+}
+.chd-del {
+  color: var(--text-3);
+  text-decoration: line-through;
+}
+/* 5 · Dotted underline */
+.chd-mark--dotted {
+  text-decoration: underline dotted;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
+  text-decoration-color: var(--text-3);
+  cursor: help;
+}
+/* 6 · Before → after */
+.chd-mark--chip {
+  background: rgba(14, 17, 22, 0.05);
+  border-radius: 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.chd-was {
+  margin-right: 8px;
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--text-3);
+  background: rgba(14, 17, 22, 0.05);
+  text-decoration: line-through;
+}
+
+/* Changes from the previous version, as tracked changes: added underlined in ink, removed struck in grey. */
+.spv-ins {
+  color: var(--text);
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--ink, #0e1116);
+}
+.spv-cut {
+  margin-right: 2px;
+  color: var(--text-3);
+  text-decoration: line-through;
+}
+s.spv-cut {
+  margin-right: 6px;
+}
+.spv-weeks {
+  white-space: nowrap;
+}
+.spv-new {
+  background: none;
+}
+li.spv-new {
+  padding: 0;
+  margin-left: 0;
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--ink, #0e1116);
+}
+.spv-removed,
+.spv-removed * {
+  text-decoration-color: currentColor;
+}
+li.spv-removed {
+  padding: 0;
+  margin-left: 0;
+}
+.spv-badge,
+.spv-badge--removed {
+  color: var(--text) !important;
+  background: rgba(14, 17, 22, 0.07);
+  text-decoration: none !important;
+}
+.spv-badge--removed {
+  color: var(--text-3) !important;
+}
+.gantt__label .spv-weeks,
+.gantt__label .spv-weeks > * {
+  display: inline;
+}
+s.spv-cut,
+td .spv-ins,
+.gantt__foot .spv-ins {
+  white-space: nowrap;
+}
+
+/* ---- Demo: comments in "On this page" (#/demo/toc-comments) ---------------------------------- */
+.tcd-ref {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 16px;
+  font-size: 13px;
+}
+.tcd-toc .ptoc__item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.tcd {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+.tcd-badge {
+  display: grid;
+  place-items: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--text);
+}
+.cmk__av .tcd-badge {
+  position: absolute;
+  right: -4px;
+  bottom: -3px;
+  width: 14px;
+  height: 14px;
+  box-shadow: 0 0 0 2px #fff;
+}
+.tcd--avatar .cmk__av .tcd-badge {
+  width: 12px;
+  height: 12px;
+}
+.tcd--avatar .cmk__av .tcd-badge svg {
+  width: 7px;
+  height: 7px;
+}
+.tcd-stack {
+  display: inline-flex;
+}
+.tcd-stack > * + * {
+  margin-left: -6px;
+}
+.tcd-stack > * {
+  box-shadow: 0 0 0 2px #fff;
+  border-radius: 50%;
+}
+.tcd-num {
+  display: grid;
+  place-items: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 5px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-style: normal;
+  font-weight: 600;
+  color: #fff;
+  background: var(--text);
+}
+
+/* ---- Demo: version dropdown next to the proposal title (#/demo/version-picker) ---------------- */
+.vpd-list-demo {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 820px;
+  padding: 8px 0 48px;
+}
+.vpd-stage {
+  padding: 28px 32px 22px;
+}
+.vpd-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.vpd-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.vpd-title {
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.vpd-meta {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.vpd-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 10px 0 12px;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0;
+  color: var(--text);
+  background: rgba(14, 17, 22, 0.05);
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, color 0.15s;
+}
+.vpd-trigger:hover,
+.vpd-trigger.is-open {
+  background: rgba(14, 17, 22, 0.09);
+}
+.vpd-chev {
+  color: var(--text-3);
+  transition: transform 0.15s;
+}
+.vpd-trigger.is-open .vpd-chev {
+  transform: rotate(180deg);
+}
+.vpd-trigger--text {
+  padding: 0 4px;
+  background: none;
+  color: var(--text-2);
+}
+.vpd-trigger--text:hover,
+.vpd-trigger--text.is-open {
+  background: none;
+  color: var(--text);
+}
+.vpd-of {
+  color: var(--text-3);
+}
+.vpd-sep {
+  color: var(--text-3);
+}
+.vpd-trigger--inline {
+  height: 24px;
+  padding: 0 6px 0 8px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+.vpd-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-3);
+}
+.vpd-dot--positive {
+  background: var(--positive);
+}
+.vpd-menu {
+  padding: 6px;
+}
+.vpd-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.vpd-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  padding: 9px 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  text-align: left;
+  background: none;
+  cursor: pointer;
+}
+.vpd-item:hover {
+  background: rgba(14, 17, 22, 0.05);
+}
+.vpd-item.is-current {
+  background: rgba(14, 17, 22, 0.06);
+}
+.vpd-item__main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.vpd-item__v {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+.vpd-item__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.vpd-latest {
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--text-2);
+  background: rgba(14, 17, 22, 0.07);
+}
+.vpd-check {
+  color: var(--text);
+}
+.vpd-item__total {
+  font-size: 12px;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+/* 5 · the menu as a small history */
+.vpd-list--timeline .vpd-item {
+  padding-left: 30px;
+}
+.vpd-node {
+  position: absolute;
+  left: 12px;
+  top: 15px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: inset 0 0 0 1.5px var(--text-3);
+}
+.vpd-item.is-current .vpd-node {
+  background: var(--text);
+  box-shadow: none;
+}
+.vpd-list--timeline .vpd-item:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 15.5px;
+  top: 25px;
+  bottom: -13px;
+  width: 1px;
+  background: var(--line-strong, rgba(14, 17, 22, 0.15));
+}
+.vpd-item__meta {
+  white-space: nowrap;
+}
+.spv .proposal__head .vpd-meta {
+  margin-top: 10px;
+}
+.spv-card__note {
+  margin-top: 14px;
+}
+.spv-card__status {
+  align-self: flex-start;
+  margin-bottom: 10px;
+  font-size: 13px;
+}
+
+/* ---- Demo: creating and editing a proposal (#/demo/proposal-flow) ----------------------------- */
+.pfldemo__list {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 16px 0 48px;
+}
+.pfldemo .gdemo__card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 20px;
+  border-radius: var(--radius-xl);
+  background: color-mix(in srgb, #0e1116 3%, var(--bg));
+}
+.pfldemo .gdemo__card h3 {
+  font-size: 15px;
+  font-weight: 600;
+}
+.pfldemo .gdemo__card header p {
+  max-width: 760px;
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.pfldemo__stage {
+  padding: 28px 32px;
+  border-radius: var(--radius-md);
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.pfl-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 40px;
+  align-items: start;
+}
+.pfl-page--editor {
+  grid-template-columns: 220px minmax(0, 1fr);
+}
+.pfl-doc {
+  display: flex;
+  flex-direction: column;
+  gap: 26px;
+  min-width: 0;
+}
+.pfl-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid var(--line);
+}
+.pfl-head .proposal__title {
+  font-size: 22px;
+}
+.pfl-head-tools {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.pfl-draft-pill {
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+  box-shadow: inset 0 0 0 1px var(--line-strong, rgba(14, 17, 22, 0.15));
+  border: 1px dashed transparent;
+}
+.pfl-sec__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.pfl-p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+.pfl-list {
+  margin: 0;
+  padding-left: 18px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+.pfl-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pfl-chips span {
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  font-size: 13px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.pfl-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
+}
+.pfl-table td {
+  padding: 7px 0;
+  border-bottom: 1px solid var(--line);
+}
+.pfl-table td:last-child {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+/* An empty section on the page: a quiet dashed place to start. */
+.pfl-add {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px dashed rgba(14, 17, 22, 0.18);
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-size: 14px;
+  color: var(--text-3);
+  background: none;
+  cursor: pointer;
+  text-align: left;
+}
+.pfl-add:hover {
+  color: var(--text);
+  border-color: rgba(14, 17, 22, 0.35);
+  background: rgba(14, 17, 22, 0.02);
+}
+.pfl-side {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.pfl-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pfl-card .btn {
+  width: 100%;
+  justify-content: center;
+}
+.pfl-card .decision__note {
+  margin: 0;
+}
+.pfl-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 4px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.pfl-progress strong {
+  font-size: 15px;
+  color: var(--text);
+}
+.pfl-bar {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(14, 17, 22, 0.08);
+  overflow: hidden;
+}
+.pfl-bar i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--text);
+}
+.pfl-toc {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.pfl-toc .ptoc__title {
+  margin-bottom: 8px;
+}
+.pfl-toc__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 5px 0 5px 14px;
+  font-size: 13px;
+  color: var(--text-2);
+  border-left: 1px solid var(--line);
+}
+.pfl-toc__item.is-active {
+  color: var(--text);
+  border-left: 2px solid var(--text);
+  padding-left: 13px;
+}
+.pfl-empty-mark {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--text-3);
+}
+/* Today's editor: a form card per section. */
+.pfl-editor-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.pfl-route {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 12px;
+  color: var(--text-3);
+}
+.pfl-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.pfl-form.is-empty {
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.25);
+}
+.pfl-form__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 14px;
+}
+.pfl-form__todo {
+  font-size: 12px;
+  color: var(--text-3);
+}
+/* The draft in the version menu: a dashed node, not a sent version yet. */
+.vpd-item.pfl-draft-item .vpd-node {
+  background: #fff;
+  box-shadow: none;
+  border: 1.5px dashed var(--text);
+  width: 10px;
+  height: 10px;
+  left: 11px;
+  top: 14px;
+}
+.pfl-switch {
+  display: inline-block;
+  width: 28px;
+  height: 16px;
+  border-radius: 999px;
+  background: var(--text);
+  position: relative;
+}
+.pfl-switch::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: #fff;
+}
+@media (max-width: 900px) {
+  .pfl-page,
+  .pfl-page--editor {
+    grid-template-columns: 1fr;
+  }
+}
+.pfl-card.decision {
+  padding: 20px;
+  border-radius: var(--radius-lg, 16px);
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--line);
+}
+
+/* ---- Demo: the previous version's comment next to what changed (#/demo/prev-comment) ---------- */
+.pcd-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 900px;
+  padding: 8px 0 48px;
+}
+.pcd-stage {
+  padding: 24px 28px;
+}
+.pcd-body--margin {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 240px;
+  gap: 28px;
+  align-items: start;
+}
+.pcd-gantt {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 14px;
+}
+.pcd-gantt__row {
+  display: grid;
+  grid-template-columns: 90px 44px 1fr;
+  align-items: center;
+  gap: 10px;
+}
+.pcd-gantt__track {
+  position: relative;
+  height: 18px;
+  border-radius: 5px;
+  background: var(--surface-2);
+}
+.pcd-gantt__track i {
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  border-radius: 5px;
+  background: rgba(14, 17, 22, 0.14);
+}
+.pcd-gantt__foot {
+  margin-top: 4px;
+  font-size: 13px;
+}
+/* 1 · one quiet line */
+.pcd-line {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  width: 100%;
+  margin-top: 16px;
+  padding: 8px 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 13px;
+  line-height: 1.5;
+  text-align: left;
+  color: var(--text-3);
+  background: none;
+  cursor: pointer;
+}
+.pcd-line:hover,
+.pcd-line.is-open {
+  background: var(--surface-2);
+  color: var(--text-2);
+}
+.pcd-line__icon,
+.pcd-line__chev {
+  flex: none;
+  margin-top: 3px;
+}
+.pcd-line > .avatar,
+.pcd-line > span:nth-child(2) {
+  flex: none;
+}
+.pcd-line__text {
+  flex: 1;
+}
+.pcd-line__text strong {
+  font-weight: 500;
+  color: var(--text-2);
+}
+.pcd-line.is-open .pcd-line__chev {
+  transform: rotate(180deg);
+}
+/* 2 · asked → changed */
+.pcd-answer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(14, 17, 22, 0.08);
+  font-size: 13px;
+  color: var(--text-2);
+}
+.pcd-answer strong {
+  font-weight: 500;
+  color: var(--text);
+}
+.pcd-answer__icon {
+  display: grid;
+  place-items: center;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--text);
+}
+/* 3 · in the margin */
+.pcd-note {
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+  opacity: 0.75;
+  transition: opacity 0.15s;
+}
+.pcd-note:hover {
+  opacity: 1;
+}
+.pcd-note .spv-comment__who {
+  font-size: 12px;
+}
+.cmddemo .cmddemo__stage .pcd-note p {
+  margin: 6px 0 8px;
+  font-size: 13px;
+}
+.pcd-note__done {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+
+/* ---- Manager proposal: the draft, empty sections and the edit box ------------------------------- */
+/* Editing a section: a plain white form card, as in the editor (no accent frame). */
+.spv-sec.is-editing {
+  box-shadow: inset 0 0 0 1px var(--line), 0 12px 28px -22px rgba(14, 17, 22, 0.35);
+  border-radius: var(--radius-md);
+}
+/* An empty section on the draft: a quiet dashed place to start. */
+.spv-empty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 16px 18px;
+  border: 1px dashed rgba(14, 17, 22, 0.2);
+  border-radius: var(--radius-md);
+  font: inherit;
+  font-size: 14px;
+  color: var(--text-3);
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  transition: color 0.15s, border-color 0.15s, background 0.15s;
+}
+.spv-empty:hover {
+  color: var(--text);
+  border-color: rgba(14, 17, 22, 0.4);
+  background: rgba(14, 17, 22, 0.02);
+}
+.spv-progress {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 6px 0 2px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.spv-progress strong {
+  font-size: 15px;
+  color: var(--text);
+}
+.spv-progress__bar {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(14, 17, 22, 0.08);
+  overflow: hidden;
+}
+.spv-progress__bar i {
+  display: block;
+  height: 100%;
+  border-radius: 999px;
+  background: var(--text);
+  transition: width 0.3s;
+}
+.spv-empty-mark {
+  display: block;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px var(--text-3);
+}
+/* The draft in the version menu: a dashed node, not sent yet. */
+.vpd-item.spv-draft-item .vpd-node {
+  left: 11px;
+  top: 14px;
+  width: 10px;
+  height: 10px;
+  background: #fff;
+  box-shadow: none;
+  border: 1.5px dashed var(--text);
+}
+.proposal .psec.spv-sec.is-editing {
+  padding: 18px 20px 16px;
+  margin-top: 12px;
+  margin-bottom: 12px;
+}
+:root[data-theme] .proposal__doc > .psec.spv-sec.is-editing {
+  padding: 18px 20px 16px;
+}
+.spv-tag {
+  color: var(--text);
+  background: rgba(14, 17, 22, 0.07);
+}
+
+.spv-discard {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 6px 0 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  color: var(--text-3);
+  cursor: pointer;
+}
+.spv-discard:hover {
+  color: var(--text);
+}
+/* The proposal card on a live request: status as a dot and grey text, a quiet line under the facts. */
+.lpc-status {
+  flex: none;
+  font-size: 13px;
+}
+.lpc-line {
+  margin: 10px 0 0;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.lpc-line--draft {
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  color: var(--text-2);
+}
+/* Demo: proposal states on the request page (#/demo/proposal-states) */
+.psd-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 820px;
+  padding: 8px 0 48px;
+}
+.psd-stage {
+  background: var(--bg);
+}
+.vpd-dot--danger {
+  background: var(--danger);
+}
+.vpd-dot--warning {
+  background: var(--warning);
+}
+.psum--static {
+  cursor: default;
+}
+.psum--static:hover {
+  transform: none;
+}
+.lpc-actions {
+  display: flex;
+  margin-top: 14px;
+}
+.psum .lpc-line {
+  margin: 0;
+}
+.psum .lpc-actions {
+  margin-top: 0;
+}
+.psum:hover {
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.18), 0 10px 24px -18px rgba(14, 17, 22, 0.35);
+}
+.psum.psum--static:hover {
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+/* ---- Sent proposal icons: envelope and bell (#/demo/proposal-sent) ----------------------------- */
+.psn-h {
+  margin: 28px 0 12px;
+  font-size: 17px;
+  font-weight: 600;
+}
+.psn-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  max-width: 820px;
+}
+.sic {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+}
+.sic--flat svg {
+  border-radius: 10px;
+}
+.sic__lift {
+  animation: sic-lift 4s ease-in-out infinite;
+  transform-origin: center;
+}
+@keyframes sic-lift {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-1.5px); }
+}
+/* the bell */
+.sic-bell {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  border-radius: 50%;
+  background: var(--text);
+  box-shadow: 0 0 0 2px #fff;
+  vertical-align: middle;
+}
+.sic-bell svg,
+.sic__ring {
+  transform-origin: 50% 15%;
+  animation: sic-ring 4.5s ease-in-out infinite;
+}
+.sic__ring {
+  transform-box: fill-box;
+}
+@keyframes sic-ring {
+  0%, 70%, 100% { rotate: 0deg; }
+  74% { rotate: 16deg; }
+  78% { rotate: -14deg; }
+  82% { rotate: 10deg; }
+  86% { rotate: -6deg; }
+  90% { rotate: 0deg; }
+}
+/* 1 · the bell on the envelope's corner */
+.sic-stack {
+  position: relative;
+  display: inline-flex;
+  flex: none;
+}
+.sic-stack__bell {
+  position: absolute;
+  top: -5px;
+  right: -6px;
+}
+/* 2 · envelope, then bell */
+.sic-pair {
+  display: inline-flex;
+  align-items: center;
+  flex: none;
+}
+.sic-pair__in {
+  display: inline-flex;
+  margin-left: -10px;
+  animation: sic-in 0.6s cubic-bezier(0.2, 0.9, 0.3, 1.3) 0.3s both;
+}
+.sic-pair__in .aei {
+  filter: drop-shadow(-2px 0 0 #fff);
+}
+@keyframes sic-in {
+  from { opacity: 0; transform: translateX(-12px) scale(0.6); }
+  to { opacity: 1; transform: none; }
+}
+/* 3 · bell by the title */
+.sic-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.sic-title .sic-bell {
+  box-shadow: none;
+}
+.sic-new {
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text);
+  background: rgba(14, 17, 22, 0.07);
+}
+.sic-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  color: var(--text-2);
+}
+/* The bell tile tucked after the envelope, with a thin gap ring so they read as two. */
+.sic-pair__in .sic--flat {
+  border-radius: 10px;
+  box-shadow: 0 0 0 2px #f8f7f4;
+}
+.sic-pair .sic-pair__in {
+  margin-left: -12px;
+}
+.psd-bell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 4px 0 8px;
+  font-size: 13px;
+}
+/* A soft sway for the small bell: eases out, settles, rests. */
+.sic__sway {
+  transform-box: fill-box;
+  transform-origin: 50% 0;
+  animation: sic-sway 3.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+@keyframes sic-sway {
+  0% { rotate: 0deg; }
+  12% { rotate: 12deg; }
+  26% { rotate: -9deg; }
+  40% { rotate: 5deg; }
+  52% { rotate: -2deg; }
+  62%, 100% { rotate: 0deg; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sic__sway { animation: none; }
+}
+/* The request page header: the title, then a quiet meta line (client · request · status). */
+.req-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  margin-top: 16px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.req-meta b {
+  font-weight: 500;
+  color: var(--text-2);
+}
+.req-meta__sep {
+  width: 1px;
+  height: 12px;
+  background: var(--line-strong, rgba(14, 17, 22, 0.15));
+}
+.rcd-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.req-meta--details {
+  margin-top: 6px;
+}
+.req-meta__who {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+.req-head__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 14px;
+}
+.req-head__row .req-head__title {
+  margin: 0;
+}
+
+/* ---- Demo: status, stages and time to send the proposal (#/demo/status-deadline) -------------- */
+.sdd-list {
+  max-width: 1100px;
+}
+.sdd-page {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 32px;
+  align-items: start;
+}
+.sdd-title {
+  font-size: 22px;
+}
+.sdd-gap {
+  height: 20px;
+}
+/* urgency tones: calm grey, soon amber, late red */
+.sdd-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+.sdd-pill--calm {
+  color: var(--text-2);
+  background: rgba(14, 17, 22, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.1);
+}
+.sdd-pill--soon {
+  color: #8a5a00;
+  background: #fbe7bd;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #8a5a00 28%, transparent);
+}
+.sdd-pill--late {
+  color: #b2362f;
+  background: #f7dcd8;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, #b2362f 28%, transparent);
+}
+.sdd-chip--soon {
+  color: #8a5a00 !important;
+  background: #fbe7bd !important;
+}
+.sdd-chip--late {
+  color: #b2362f !important;
+  background: #f7dcd8 !important;
+}
+.sdd-chip__due {
+  font-weight: 400;
+}
+.sdd-due {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.sdd-due--calm {
+  color: var(--text-2);
+}
+.sdd-due--soon {
+  color: #a36a00;
+}
+.sdd-due--late {
+  color: #b2362f;
+}
+.sdd-stages {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  border-radius: var(--radius-lg, 16px);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.sdd-stages__head {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.sdd-stages__head .faint {
+  font-weight: 400;
+}
+.sdd-stage {
+  display: grid;
+  grid-template-columns: 14px 1fr;
+  gap: 10px;
+  padding: 6px 0;
+  font-size: 13px;
+}
+.sdd-stage__mark {
+  width: 10px;
+  height: 10px;
+  margin-top: 4px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.5px rgba(14, 17, 22, 0.2);
+}
+.sdd-stage.is-done .sdd-stage__mark {
+  background: rgba(14, 17, 22, 0.25);
+  box-shadow: none;
+}
+.sdd-stage.is-current .sdd-stage__mark {
+  background: var(--text);
+  box-shadow: none;
+}
+.sdd-stage__label {
+  color: var(--text-3);
+}
+.sdd-stage.is-current .sdd-stage__label {
+  font-weight: 500;
+  color: var(--text);
+}
+.sdd-stage__info {
+  margin: 2px 0 6px;
+  color: var(--text-2);
+  line-height: 1.45;
+}
+
+/* ---- Demo: stages across the top of the request page (#/demo/stages-row) ---------------------- */
+.srd-page {
+  max-width: 860px;
+}
+.srd-stages {
+  margin: 24px 0 16px;
+}
+.srd-now {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 16px;
+  margin-top: 14px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.srd-now b {
+  font-weight: 500;
+  color: var(--text);
+}
+/* A · dots on a line */
+.srd-dots__row {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+}
+.srd-dot {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.srd-dot:not(:last-child)::before {
+  content: '';
+  position: absolute;
+  top: 7px;
+  left: 16px;
+  right: 2px;
+  height: 1px;
+  background: rgba(14, 17, 22, 0.14);
+}
+.srd-dot.is-done:not(:last-child)::before {
+  background: rgba(14, 17, 22, 0.35);
+}
+.srd-dot i {
+  display: grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  color: #fff;
+  box-shadow: inset 0 0 0 1.5px rgba(14, 17, 22, 0.2);
+}
+.srd-dot.is-done i {
+  background: rgba(14, 17, 22, 0.35);
+  box-shadow: none;
+}
+.srd-dot.is-current i {
+  background: var(--text);
+  box-shadow: 0 0 0 4px rgba(14, 17, 22, 0.08);
+}
+.srd-dot.is-current span {
+  font-weight: 500;
+  color: var(--text);
+}
+/* B · segmented bar */
+.srd-bar__track {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+}
+.srd-bar__seg {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.srd-bar__seg i {
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(14, 17, 22, 0.08);
+}
+.srd-bar__seg.is-done i {
+  background: rgba(14, 17, 22, 0.35);
+}
+.srd-bar__seg.is-current i {
+  background: var(--text);
+}
+.srd-bar__seg.is-current span {
+  font-weight: 500;
+  color: var(--text);
+}
+/* C · steps as chips */
+.srd-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 6px;
+}
+.srd-chips__item {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.srd-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--text-3);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.12);
+}
+.srd-chip.is-done {
+  color: var(--text-2);
+  background: rgba(14, 17, 22, 0.05);
+  box-shadow: none;
+}
+.srd-chip.is-current {
+  font-weight: 500;
+  color: #fff;
+  background: var(--text);
+  box-shadow: none;
+}
+.srd-chips__sep {
+  color: var(--text-3);
+}
+/* D · one card */
+.srd-card {
+  margin: 24px 0 16px;
+  padding: 18px 20px;
+  border-radius: var(--radius-lg, 16px);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.srd-card__divider {
+  height: 1px;
+  margin: 16px 0;
+  background: var(--line);
+}
+.srd-card .ask-empty {
+  border: 0;
+  padding: 0;
+}
+.srd-tabs {
+  margin-top: 24px;
+}
+.srd-ghost {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 18px;
+  padding: 14px 18px;
+  border-radius: 16px;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+  font-size: 13px;
+}
+.srd-ghost i {
+  display: block;
+  height: 8px;
+  border-radius: 999px;
+  background: rgba(14, 17, 22, 0.06);
+}
+
+/* ---- Demo: livelier stages across the top (#/demo/stages-row) --------------------------------- */
+.srx-stages {
+  margin: 26px 0 18px;
+}
+/* 1 · journey tiles */
+.srx-tiles {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 8px;
+  align-items: stretch;
+}
+.srx-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 12px;
+  border-radius: 14px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.srx-tile.is-todo {
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.12);
+  background-image: none;
+  border: 1px dashed rgba(14, 17, 22, 0.16);
+  box-shadow: none;
+}
+.srx-tile.is-done {
+  background: rgba(169, 191, 217, 0.22);
+  color: var(--text-2);
+}
+.srx-tile.is-current {
+  color: var(--text);
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--line), 0 14px 28px -18px rgba(45, 67, 120, 0.55);
+  transform: translateY(-3px);
+}
+.srx-tile__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  color: rgba(14, 17, 22, 0.35);
+  background: rgba(14, 17, 22, 0.04);
+}
+.srx-tile.is-done .srx-tile__icon,
+.srx-tile.is-current .srx-tile__icon {
+  color: #fff;
+  background: #a9bfd9;
+}
+.srx-tile.is-current .srx-tile__icon {
+  background: #2d4378;
+}
+.srx-tile__tick {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  display: grid;
+  place-items: center;
+  width: 15px;
+  height: 15px;
+  border-radius: 50%;
+  color: #fff;
+  background: #2d4378;
+  box-shadow: 0 0 0 2px #f8f7f4;
+}
+.srx-tile__label {
+  font-weight: 500;
+}
+.srx-tile__due {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+}
+/* 2 · track with the orb */
+.srx-orb {
+  padding: 40px 14px 0;
+}
+.srx-orb__rail {
+  position: relative;
+  height: 6px;
+  border-radius: 999px;
+  background: rgba(14, 17, 22, 0.07);
+}
+.srx-orb__fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #a9bfd9, #7a6fd6 70%, #c58ad8);
+}
+.srx-orb__stop {
+  position: absolute;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: #f8f7f4;
+  box-shadow: inset 0 0 0 1.5px rgba(14, 17, 22, 0.18);
+  transform: translate(-50%, -50%);
+}
+.srx-orb__stop.is-done {
+  background: #7a6fd6;
+  box-shadow: 0 0 0 2px #f8f7f4;
+}
+.srx-orb__me {
+  position: absolute;
+  top: 50%;
+  display: grid;
+  place-items: center;
+  transform: translate(-50%, -50%);
+}
+.srx-orb__bubble {
+  position: absolute;
+  bottom: calc(100% + 8px);
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: #fff;
+  background: var(--text);
+}
+.srx-orb__bubble::after {
+  content: '';
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: inherit;
+  transform: translateX(-50%) rotate(45deg);
+}
+.srx-orb__bubble.is-late {
+  background: #b2362f;
+}
+.srx-orb__bubble.is-soon {
+  background: #a36a00;
+}
+.srx-orb__me .srx-orb__bubble {
+  left: 50%;
+  transform: translateX(-50%);
+}
+.srx-orb__labels {
+  position: relative;
+  height: 20px;
+  margin-top: 14px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.srx-orb__labels span {
+  position: absolute;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+.srx-orb__labels span:first-child {
+  transform: none;
+  margin-left: -14px;
+}
+.srx-orb__labels span:last-child {
+  transform: translateX(-100%);
+  margin-left: 14px;
+}
+.srx-orb__labels .is-current {
+  font-weight: 600;
+  color: var(--text);
+}
+.srx-orb__labels .is-done {
+  color: var(--text-2);
+}
+/* 3 · countdown first */
+.srx-ring {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 16px 20px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.srx-ring__dial {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  color: var(--text);
+}
+.srx-ring__dial.is-soon {
+  color: #c98a10;
+}
+.srx-ring__dial.is-late {
+  color: #c2453d;
+}
+.srx-ring__dial.is-late circle:first-child {
+  stroke: color-mix(in srgb, #c2453d 22%, transparent);
+}
+.srx-ring__num {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 22px;
+  font-weight: 700;
+  line-height: 1;
+  letter-spacing: -0.02em;
+}
+.srx-ring__num small {
+  margin-top: 2px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.srx-ring__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.srx-ring__title {
+  font-size: 17px;
+  font-weight: 600;
+}
+.srx-ring__line {
+  font-size: 13px;
+  color: var(--text-2);
+}
+.srx-mini {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  font-size: 12px;
+  color: var(--text);
+}
+.srx-mini__step {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+}
+.srx-mini__step i {
+  width: 22px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(14, 17, 22, 0.08);
+}
+.srx-mini__step.is-done i {
+  background: rgba(14, 17, 22, 0.3);
+}
+.srx-mini__step.is-current i {
+  width: 36px;
+  background: var(--text);
+}
+.srx-mini__count {
+  margin-left: auto;
+  color: var(--text-3);
+}
+/* 4 · timeline with dates */
+.srx-tl__strip {
+  position: relative;
+  height: 74px;
+  margin: 0 8px;
+  border-bottom: 1px solid rgba(14, 17, 22, 0.12);
+}
+.srx-tl__day {
+  position: absolute;
+  bottom: 0;
+  width: 1px;
+  height: 6px;
+  background: rgba(14, 17, 22, 0.14);
+}
+.srx-tl__band {
+  position: absolute;
+  bottom: 10px;
+  height: 22px;
+  display: grid;
+  place-items: center;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.srx-tl__band.is-calm,
+.srx-tl__band.is-soon {
+  color: #2d4378;
+  background: rgba(169, 191, 217, 0.45);
+}
+.srx-tl__band.is-soon {
+  color: #8a5a00;
+  background: #fbe7bd;
+}
+.srx-tl__band.is-late {
+  color: #fff;
+  background: repeating-linear-gradient(135deg, #c2453d 0 6px, #cf5b52 6px 12px);
+}
+.srx-tl__mark {
+  position: absolute;
+  top: 0;
+  display: flex;
+  flex-direction: column;
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--text-3);
+  transform: translateX(-50%);
+}
+.srx-tl__mark b {
+  font-weight: 500;
+  color: var(--text-2);
+}
+.srx-tl__mark--due b {
+  color: inherit;
+  font-weight: 600;
+}
+.srx-tl__mark::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 30px;
+  width: 1px;
+  height: 44px;
+  background: rgba(14, 17, 22, 0.14);
+}
+.srx-tl__mark--due::after {
+  background: currentColor;
+  opacity: 0.6;
+}
+.srx-tl__mark:first-of-type {
+  transform: none;
+}
+.srx-tl__mark:first-of-type::after {
+  left: 0;
+}
+.srx-tl__today {
+  position: absolute;
+  bottom: -22px;
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #fff;
+  background: var(--text);
+  transform: translateX(-50%);
+}
+.srx-tl__today::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  width: 2px;
+  height: 52px;
+  background: var(--text);
+  transform: translateX(-50%);
+}
+.srx-tl__stage {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 34px;
+  font-size: 13px;
+}
+.srx-tl__next {
+  margin-left: auto;
+}
+.srx-tl__next b {
+  font-weight: 500;
+  color: var(--text-2);
+}
+.srx-orb__me .srx-orb__bubble.is-start {
+  left: -6px;
+  transform: none;
+}
+.srx-orb__bubble.is-start::after {
+  left: 19px;
+}
+/* 4 · the four new stages as a strip; the current one opens up into days */
+.srt__row {
+  display: grid;
+  grid-template-columns: 2.6fr 1fr 1fr 1fr;
+  gap: 6px;
+}
+.srt__seg {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+}
+.srt__label {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.srt__label b {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+.srt__seg.is-current .srt__label b {
+  font-weight: 600;
+  color: var(--text);
+}
+.srt__bar {
+  position: relative;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(14, 17, 22, 0.05);
+}
+.srt__seg.is-current .srt__bar {
+  margin: 0;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.srt__tick {
+  position: absolute;
+  bottom: 6px;
+  width: 1px;
+  height: 5px;
+  background: rgba(14, 17, 22, 0.16);
+}
+.srt__band {
+  position: absolute;
+  top: 8px;
+  height: 18px;
+  display: grid;
+  place-items: center;
+  border-radius: 5px;
+  font-size: 10.5px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+}
+.srt__band.is-calm {
+  color: #2d4378;
+  background: rgba(169, 191, 217, 0.5);
+}
+.srt__band.is-soon {
+  color: #8a5a00;
+  background: #fbe7bd;
+}
+.srt__band.is-late {
+  color: #fff;
+  background: repeating-linear-gradient(135deg, #c2453d 0 6px, #cf5b52 6px 12px);
+}
+.srt__due {
+  position: absolute;
+  bottom: calc(100% + 4px);
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+  transform: translateX(-50%);
+}
+.srt__due::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 100%;
+  width: 1px;
+  height: 44px;
+  background: currentColor;
+  opacity: 0.5;
+}
+.srt__today {
+  position: absolute;
+  bottom: -9px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  font-size: 9.5px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--text);
+  transform: translateX(-50%);
+}
+.srt__today::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: 100%;
+  width: 2px;
+  height: 36px;
+  background: var(--text);
+  transform: translateX(-50%);
+}
+.srt + .srx-tl__stage,
+.srt .srx-tl__stage {
+  margin-top: 22px;
+}
+.srt__seg {
+  gap: 24px;
+}
+/* 4 · the strip scrolls sideways: the dated New stage first, then the stages still waiting */
+.srx-tl--scroll {
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 0 4px 30px;
+  margin: 0 -4px;
+  scrollbar-width: thin;
+  -webkit-mask-image: linear-gradient(90deg, #000 85%, transparent);
+  mask-image: linear-gradient(90deg, #000 85%, transparent);
+}
+.srx-tl--scroll .srx-tl__strip {
+  height: 92px;
+  margin: 0;
+}
+.srx-tl__mark--px,
+.srx-tl__mark--px:first-of-type {
+  top: 18px;
+  transform: translateX(-50%);
+}
+.srx-tl__mark--px:first-of-type::after {
+  left: 50%;
+}
+.srx-tl__mark--px::after {
+  top: 30px;
+  height: 44px;
+}
+.srx-tl__stagename {
+  position: absolute;
+  top: 0;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+}
+.srx-tl__later {
+  position: absolute;
+  bottom: -1px;
+  height: 1px;
+  background: repeating-linear-gradient(90deg, rgba(14, 17, 22, 0.25) 0 4px, transparent 4px 8px);
+}
+.srx-tl--scroll .srx-tl__strip {
+  border-bottom-color: transparent;
+  background: linear-gradient(rgba(14, 17, 22, 0.12), rgba(14, 17, 22, 0.12)) left bottom / var(--dated, 0) 1px no-repeat;
+}
+.srx-tl__stop {
+  position: absolute;
+  bottom: -5px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  font-size: 11px;
+  white-space: nowrap;
+  color: var(--text-3);
+  transform: translateX(-50%);
+}
+.srx-tl__stop b {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+.srx-tl__stop i {
+  width: 9px;
+  height: 9px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: #f8f7f4;
+  box-shadow: inset 0 0 0 1.5px rgba(14, 17, 22, 0.25);
+}
+/* Scrolls sideways without showing a scrollbar. */
+.srx-tl--scroll {
+  scrollbar-width: none;
+}
+.srx-tl--scroll::-webkit-scrollbar {
+  display: none;
+}
+/* A narrow window (a day or so): a red warning sign on the strip, the details on hover. */
+.srx-tl__warn {
+  position: absolute;
+  bottom: 10px;
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 22px;
+  color: #fff;
+  background: #c2453d;
+  border-radius: 6px;
+  transform: translateX(-50%);
+  cursor: help;
+  box-shadow: 0 4px 10px -4px rgba(194, 69, 61, 0.7);
+}
+/* The Today line stops under the labels. */
+.srx-tl--scroll .srx-tl__today::before {
+  height: 40px;
+}
+/* Each label sits centred over its day: the line runs down from the middle of the label. */
+.srx-tl--scroll .srx-tl__mark--px,
+.srx-tl--scroll .srx-tl__mark--px:first-of-type {
+  align-items: center;
+  text-align: center;
+  transform: translateX(-50%);
+}
+.srx-tl--scroll .srx-tl__mark--px::after,
+.srx-tl--scroll .srx-tl__mark--px:first-of-type::after {
+  left: 50%;
+}
+/* A short Today line, and a dashed stem from each waiting stage down to its dot. */
+.srx-tl--scroll .srx-tl__today::before {
+  height: 22px;
+}
+.srx-tl__stem {
+  width: 0;
+  height: 18px;
+  margin-top: 4px;
+  border-left: 1px dashed rgba(14, 17, 22, 0.3);
+}
+.srx-tl__stop i {
+  margin-top: 0;
+}
+/* The waiting stages: same label as the dated marks, a dashed line down to a hollow dot on the strip. */
+.srx-tl--scroll .srx-tl__mark--later::after {
+  height: 58px;
+  background: none;
+  border-left: 1px dashed rgba(14, 17, 22, 0.28);
+}
+.srx-tl__mark--later i {
+  position: absolute;
+  left: 50%;
+  top: 86px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #f8f7f4;
+  box-shadow: inset 0 0 0 1.5px rgba(14, 17, 22, 0.28);
+  transform: translateX(-50%);
+}
+/* The timeline scroller: fades and arrows only on the sides where the strip continues. */
+.srx-scroll {
+  position: relative;
+}
+.srx-scroll .srx-tl--scroll {
+  -webkit-mask-image: none;
+  mask-image: none;
+  cursor: grab;
+  user-select: none;
+}
+.srx-scroll .srx-tl--scroll:active {
+  cursor: grabbing;
+}
+.srx-scroll.has-right .srx-tl--scroll {
+  -webkit-mask-image: linear-gradient(90deg, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, #000 88%, transparent);
+}
+.srx-scroll.has-left .srx-tl--scroll {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%);
+  mask-image: linear-gradient(90deg, transparent, #000 12%);
+}
+.srx-scroll.has-left.has-right .srx-tl--scroll {
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 12%, #000 88%, transparent);
+}
+.srx-scroll__btn {
+  position: absolute;
+  top: 44px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 50%;
+  color: var(--text);
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--line), 0 4px 12px -6px rgba(14, 17, 22, 0.35);
+  cursor: pointer;
+  z-index: 2;
+}
+.srx-scroll__btn:hover {
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.2), 0 6px 14px -6px rgba(14, 17, 22, 0.45);
+}
+.srx-scroll__btn--left {
+  left: -6px;
+}
+.srx-scroll__btn--right {
+  right: -6px;
+}
+/* Solid everywhere: the waiting stages' stems and the strip after the dated part; their dots sit on the line. */
+.srx-tl--scroll .srx-tl__mark--later::after {
+  height: 61px;
+  border-left: 0;
+  background: rgba(14, 17, 22, 0.14);
+}
+.srx-tl__mark--later i {
+  top: 91px;
+  transform: translate(-50%, -50%);
+}
+.srx-tl__later {
+  background: rgba(14, 17, 22, 0.12);
+}
+/* The mark starts 18px down the strip, so the strip's line is 73px into it. */
+.srx-tl__mark--later i {
+  top: 73.5px;
+}
+.srx-tl--scroll .srx-tl__mark--later::after {
+  height: 39px;
+}
+/* The scroll arrows show only while the pointer is over the timeline (and on keyboard focus). */
+.srx-scroll__btn {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.15s;
+}
+.srx-scroll:hover .srx-scroll__btn,
+.srx-scroll:focus-within .srx-scroll__btn {
+  opacity: 1;
+  pointer-events: auto;
+}
+@media (hover: none) {
+  .srx-scroll__btn {
+    opacity: 1;
+    pointer-events: auto;
+  }
+}
+/* One line style for the whole strip: a single solid baseline from the first day to the last stage. */
+.srx-tl--scroll .srx-tl__strip {
+  background: none;
+  border-bottom: 1px solid rgba(14, 17, 22, 0.14);
+}
+.srx-tl--scroll .srx-tl__later {
+  display: none;
+}
+.srx-tl--scroll .srx-tl__day {
+  background: rgba(14, 17, 22, 0.14);
+}
+.srx-tl--scroll .srx-tl__mark--later::after {
+  background: rgba(14, 17, 22, 0.14);
+}
+.srx-tl--scroll .srx-tl__mark--later i {
+  top: 74px;
+  background: #f8f7f4;
+  box-shadow: inset 0 0 0 1.5px rgba(14, 17, 22, 0.28);
+}
+/* One language on the line: every point is a dot (no day ticks). Done: filled; due: in the urgency's colour; waiting: hollow. */
+.srx-tl--scroll .srx-tl__day {
+  display: none;
+}
+.srx-tl__dot {
+  position: absolute;
+  left: 50%;
+  top: 74px;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+.srx-tl__dot.is-done {
+  background: rgba(14, 17, 22, 0.4);
+  box-shadow: 0 0 0 2px #f8f7f4;
+}
+.srx-tl__dot.is-due {
+  background: #f8f7f4;
+  box-shadow: inset 0 0 0 2px currentColor;
+}
+/* The Spark request page in one column: header, timeline, proposal, tabs. */
+:root[data-theme] .req-layout.req-layout--single {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 960px;
+}
+.req-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 22px 0 8px;
+}
+/* The stage under way now (client deciding, or the work in progress): an ink ring. */
+.srx-tl__mark--later.is-current b {
+  color: var(--text);
+}
+.srx-tl--scroll .srx-tl__mark--later.is-current i {
+  background: #f8f7f4;
+  box-shadow: inset 0 0 0 2px var(--text);
+}
+/* Proposal page header: title and its line on the left, the version menu and Send on the right. */
+.spv-headrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+.spv-headrow__text {
+  min-width: 0;
+}
+.spv-headrow__actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+}
+/* The sections under the progress (first draft): a warning on each one still empty. */
+.spv-checklist {
+  display: flex;
+  flex-direction: column;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+}
+.spv-checklist__item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  padding: 7px 0;
+  font-size: 14px;
+  color: var(--text);
+  text-decoration: none;
+}
+.spv-checklist__item:hover {
+  color: var(--text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.spv-checklist__item.is-ready {
+  color: var(--text-2);
+}
+.spv-checklist__warn {
+  flex: none;
+  color: #c98a10;
+}
+/* Send at the end of the draft, under all the sections. */
+.spv-send {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  margin-top: 36px;
+  padding-top: 20px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+}
+.spv-crumbs {
+  margin-bottom: 4px;
+  font-size: 13px;
+}
+.spv-create-title {
+  margin: 14px 0 6px;
+}
+/* Create page: the side card starts level with the first section's title (its top padding). */
+:root[data-theme] .spv.is-create .proposal__side {
+  margin-top: 28px;
+}
+/* "Add a row" in the edit box: in the product's ink (no blue), at the bottom left, by Cancel and Save. */
+.spv-add {
+  color: var(--text);
+  background: none;
+  border: 0;
+  cursor: pointer;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+}
+.spv-add:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.spv-add--bar {
+  margin-right: auto;
+  align-self: center;
+}
+.spv-editor__bar {
+  align-items: center;
+}
+/* The proposal page title: "Proposal" with the version menu beside it, the sent line under it. */
+.spv-titlerow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.spv-title {
+  margin: 0;
+}
+.spv-sentline {
+  margin-top: 8px;
+}
+/* Edit on a section: just the pen, a round hit area. */
+.spv-edit--icon {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  padding: 0;
+  border-radius: 50%;
+}
+.spv-edit--icon:hover {
+  background: rgba(14, 17, 22, 0.06);
+}
+/* Header: the "Draft" pill while creating is just a label, nothing to pick. */
+.spv-static {
+  cursor: default;
+}
+.spv-static:hover {
+  background: rgba(14, 17, 22, 0.05);
+}
+.spv-headrow .spv-titlerow {
+  flex: 1;
+}
+/* Version menu: the note when there's only one version, and the changes switch. */
+.spv-menu-note {
+  margin: 4px 10px 6px;
+  font-size: 12px;
+  line-height: 1.45;
+  color: var(--text-3);
+}
+.spv-menu-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 4px;
+  padding: 10px 10px 6px;
+  border-top: 1px solid var(--line);
+  font-size: 13px;
+  color: var(--text-2);
+  cursor: pointer;
+}
+/* The pen sits right after the section title. */
+.spv-head__title .spv-edit--icon {
+  margin-left: -4px;
+  color: var(--text-3);
+}
+.spv-head__title .spv-edit--icon:hover {
+  color: var(--text);
+}
+/* The title has no top margin here, so "Proposal", the version pill and Send share one centre line. */
+:root[data-theme] .spv .spv-titlerow .proposal__title {
+  margin: 0;
+}
+/* A section changed since it was sent: a clear label in the section's top right corner. */
+.spv-updated {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--text);
+}
+.spv-updated::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #f4b860;
+}
+/* The pen shows when the pointer is over the section (or it has keyboard focus). */
+.spv-head__title .spv-edit--icon {
+  opacity: 0;
+  transition: opacity 0.15s, background 0.15s, color 0.15s;
+}
+.spv-sec:hover .spv-edit--icon,
+.spv-edit--icon:focus-visible {
+  opacity: 1;
+}
+@media (hover: none) {
+  .spv-head__title .spv-edit--icon {
+    opacity: 1;
+  }
+}
+/* Version menu: the line joins versions only (not the note under them); text wraps instead of
+   running under the price; "updated, not sent" is a small tag by the version name. */
+.vpd-list--timeline .vpd-item:not(:last-child)::after {
+  display: none;
+}
+.vpd-list--timeline .vpd-item:has(+ .vpd-item)::after {
+  display: block;
+}
+.vpd-menu .vpd-item__meta {
+  white-space: normal;
+}
+.vpd-menu .vpd-item__total {
+  flex: none;
+  align-self: flex-start;
+  margin-top: 2px;
+}
+.spv-menu-updated {
+  padding: 1px 7px;
+  border-radius: 999px;
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--text);
+}
+.spv-headrow {
+  flex-wrap: wrap;
+  row-gap: 12px;
+}
+/* The one action at the foot of the card. */
+.spv-card__action {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 16px;
+}
+.spv-card__action .btn {
+  width: 100%;
+  justify-content: center;
+}
+.spv-card__action .decision__note {
+  margin: 0;
+  text-align: center;
+}
+/* An older version, read only: a quiet bar with the way back. */
+.spv-oldbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 18px;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: var(--text-2);
+  background: var(--surface-2);
+}
+.spv-oldbar button {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+/* ---- Proposal page header, as in the editor: request and client, the title with versions, the action ---- */
+.spv-pagehead {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin: 18px 0 28px;
+}
+.spv-pagehead__top {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 13px;
+}
+.spv-pagehead__client {
+  font-weight: 500;
+  color: var(--text);
+}
+.spv-pagehead__title {
+  margin: 0;
+  font-size: 26px;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.2;
+}
+.spv-pagehead .spv-titlerow {
+  margin-top: 8px;
+}
+.spv-pagehead__actions {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  font-size: 13px;
+}
+/* The status at the top of the card: a clear coloured badge. */
+.spv-status {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 28px;
+  margin-bottom: 14px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-2);
+  background: rgba(14, 17, 22, 0.06);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 24%, transparent);
+}
+.spv-status i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.spv-status--awaiting {
+  color: #586579;
+}
+.spv-status--changes_requested {
+  color: #8e3b36;
+  background: #f4dfdc;
+}
+.spv-status--approved {
+  color: #2f6b45;
+  background: #dcebdd;
+}
+.spv-status--declined {
+  color: #b3332b;
+  background: #f7dcd8;
+}
+.spv-oldbar__switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text);
+  font-weight: 500;
+  cursor: pointer;
+}
+/* The old-version bar, easier to notice: white, outlined, a little lifted, darker text. */
+.spv-oldbar {
+  padding: 12px 16px;
+  color: var(--text);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line-strong), 0 8px 20px -14px rgba(14, 17, 22, 0.35);
+  font-size: 14px;
+}
+.spv-oldbar__text {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.spv-oldbar__text svg {
+  flex: none;
+  color: var(--text-2);
+}
+.spv-oldbar__text b {
+  font-weight: 600;
+}
+.spv-oldbar__text > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.spv-oldbar__text {
+  align-items: flex-start;
+}
+.spv-oldbar__text svg {
+  margin-top: 2px;
+}
+.spv-oldbar__sub {
+  font-size: 13px;
+  color: var(--text-2);
+}
+/* After sending: one column, the version info box at the top. */
+:root[data-theme] .proposal__layout.spv-layout--single {
+  grid-template-columns: minmax(0, 1fr);
+  max-width: 820px;
+}
+.spv-info {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+}
+.spv-info__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+}
+.spv-info .spv-status {
+  flex: none;
+  margin: 0;
+}
+.spv-info__note {
+  display: flex;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: var(--radius-md);
+  background: var(--surface-2);
+}
+.spv-info__note p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+/* After sending, the whole page is one column, so the header's action lines up with the content's edge. */
+
+/* The version menu, plain: just the versions. */
+.vpd-menu .vpd-list--timeline .vpd-item {
+  padding-top: 8px;
+  padding-bottom: 8px;
+}
+.vpd-menu .vpd-list--timeline .vpd-node {
+  top: 13px;
+}
+
+/* ---- Demo: the version box on the proposal (#/demo/version-info) ------------------------------ */
+.vid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 18px;
+  border-radius: var(--radius-md);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line-strong), 0 8px 20px -14px rgba(14, 17, 22, 0.3);
+  font-size: 14px;
+}
+.vid__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.vid__v {
+  font-size: 15px;
+  font-weight: 600;
+}
+.vid__date {
+  font-size: 13px;
+  color: var(--text-3);
+}
+.vid__new {
+  padding: 2px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--text);
+}
+.vid__did {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.vid__did--changes_requested {
+  color: #8e3b36;
+}
+.vid__did--approved {
+  color: #2f6b45;
+}
+.vid__did--declined {
+  color: #b3332b;
+}
+.vid__note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+.vid__line {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.vid__line svg {
+  color: var(--text-2);
+}
+/* C · coloured edge */
+.vid--rail {
+  position: relative;
+  padding-left: 22px;
+  overflow: hidden;
+}
+.vid--rail::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: rgba(14, 17, 22, 0.2);
+}
+.vid--rail-changes_requested::before {
+  background: #c97a72;
+}
+.vid--rail-approved::before {
+  background: #4f8f62;
+}
+.vid--rail-declined::before {
+  background: #c2453d;
+}
+.vid__quote {
+  margin: 0;
+  padding-left: 12px;
+  border-left: 2px solid var(--line-strong);
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+/* D · like a message */
+.vid__top {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+}
+.vid__msg {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+}
+.vid__bubble {
+  margin-top: 6px;
+  padding: 10px 14px;
+  border-radius: 4px 14px 14px 14px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+  background: var(--surface-2);
+}
+.vid__line b {
+  font-weight: 600;
+}
+.spv-info__head {
+  align-items: center;
+}
+.spv-info .vid__line {
+  font-size: 14px;
+}
+
+/* ---- Demo: comments in a column, as in Figma (#/demo/comments-panel) -------------------------- */
+.cpd__frame {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 32px;
+  align-items: start;
+  margin: 16px 0 48px;
+}
+.cpd__doc {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 720px;
+}
+.cpd__info {
+  margin: 0 0 12px;
+}
+.cpd__sec {
+  padding: 18px 20px;
+  border-radius: var(--radius-md);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.cpd__sec.is-on {
+  background: #fff;
+  box-shadow: inset 0 0 0 1.5px var(--text), 0 10px 26px -18px rgba(14, 17, 22, 0.45);
+}
+.cpd__sec-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+.cpd__sec h2 {
+  margin: 0;
+  font-size: 17px;
+  font-weight: 600;
+}
+.cpd__sec p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+/* A pin: the commenter's avatar with the comment's number, like a Figma pin. */
+.cpd__pin {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 26px;
+  padding: 0 8px 0 3px;
+  border: 0;
+  border-radius: 999px 999px 999px 4px;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text);
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--line-strong), 0 4px 10px -6px rgba(14, 17, 22, 0.4);
+  cursor: pointer;
+}
+.cpd__pin.is-active {
+  color: #fff;
+  background: var(--text);
+  box-shadow: none;
+}
+.cpd__panel {
+  position: sticky;
+  top: 80px;
+  display: flex;
+  flex-direction: column;
+  max-height: calc(100vh - 120px);
+  border-radius: var(--radius-lg, 16px);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line), 0 14px 34px -24px rgba(14, 17, 22, 0.35);
+  overflow: hidden;
+}
+.cpd__panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 18px 10px;
+  font-size: 15px;
+}
+.cpd__panel-head .faint {
+  font-size: 13px;
+}
+.cpd__search {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 14px;
+  padding: 0 10px;
+  height: 34px;
+  border-radius: var(--radius-sm);
+  color: var(--text-3);
+  background: var(--surface-2);
+}
+.cpd__search input {
+  flex: 1;
+  border: 0;
+  outline: none;
+  font: inherit;
+  font-size: 13px;
+  background: none;
+}
+.cpd__tabs {
+  margin: 10px 14px 0;
+}
+.cpd__list {
+  overflow-y: auto;
+  padding: 6px 8px 10px;
+}
+.cpd__empty {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 24px 12px;
+  font-size: 13px;
+}
+.cpd__item {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 12px;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+}
+.cpd__item + .cpd__item {
+  margin-top: 2px;
+}
+.cpd__item:hover {
+  background: rgba(14, 17, 22, 0.035);
+}
+.cpd__item.is-active {
+  background: rgba(14, 17, 22, 0.06);
+}
+.cpd__item.is-resolved .cpd__text,
+.cpd__item.is-resolved .cpd__who strong {
+  color: var(--text-3);
+}
+.cpd__item-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.cpd__ref {
+  font-size: 12px;
+  color: var(--text-3);
+}
+.cpd__resolve {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border: 0;
+  border-radius: 50%;
+  color: var(--text-3);
+  background: none;
+  box-shadow: inset 0 0 0 1.5px rgba(14, 17, 22, 0.2);
+  cursor: pointer;
+  opacity: 0;
+}
+.cpd__item:hover .cpd__resolve,
+.cpd__item.is-active .cpd__resolve,
+.cpd__resolve.is-done {
+  opacity: 1;
+}
+.cpd__resolve:hover {
+  color: var(--text);
+  box-shadow: inset 0 0 0 1.5px var(--text);
+}
+.cpd__resolve.is-done {
+  color: #fff;
+  background: #2f6b45;
+  box-shadow: none;
+}
+.cpd__who {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.cpd__who strong {
+  font-weight: 600;
+}
+.cpd__text {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text);
+}
+.cpd__count {
+  font-size: 12px;
+}
+.cpd__thread {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 6px;
+  padding-top: 10px;
+  border-top: 1px solid var(--line);
+  cursor: default;
+}
+.cpd__reply .cpd__text {
+  margin-left: 28px;
+  color: var(--text-2);
+}
+.cpd__replybox {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 10px;
+  border-radius: var(--radius-sm);
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.cpd__replybox input {
+  flex: 1;
+  border: 0;
+  outline: none;
+  font: inherit;
+  font-size: 13px;
+  background: none;
+}
+@media (max-width: 1000px) {
+  .cpd__frame {
+    grid-template-columns: 1fr;
+  }
+  .cpd__panel {
+    position: static;
+  }
+}
+
+/* ---- Demo: the proposal as a document (#/demo/proposal-doc) ----------------------------------- */
+.pdd__bar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 12px;
+  padding: 10px 0 14px;
+  border-bottom: 1px solid var(--line);
+}
+.pdd__icon {
+  display: inline-flex;
+  flex: none;
+}
+.pdd__title {
+  min-width: 0;
+  padding: 2px 6px;
+  margin-left: -6px;
+  border: 0;
+  border-radius: 6px;
+  outline: none;
+  font: inherit;
+  font-size: 20px;
+  font-weight: 500;
+  color: var(--text);
+  background: none;
+}
+.pdd__title::placeholder {
+  color: var(--text);
+}
+.pdd__title:hover {
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.pdd__title:focus {
+  box-shadow: inset 0 0 0 1.5px var(--text);
+}
+.pdd__save {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.pdd__save.is-saving {
+  color: var(--text-3);
+}
+.pdd-spin {
+  transform-origin: 12px 12px;
+  animation: pdd-spin 1s linear infinite;
+}
+@keyframes pdd-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.pdd__send {
+  margin-left: auto;
+}
+.pdd__text {
+  width: 100%;
+  padding: 0;
+  border: 0;
+  outline: none;
+  resize: none;
+  font: inherit;
+  font-size: 14px;
+  line-height: 1.6;
+  color: var(--text);
+  background: none;
+}
+.pdd__text::placeholder {
+  color: var(--text-3);
+}
+.pdd__doc .cpd__sec:focus-within {
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.pdd__list {
+  padding-top: 10px;
+}
+/* Right of the title: history and comments icons, then Send as a split pill (after Google Docs' Share). */
+.pdd__tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+}
+.pdd__iconbtn {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 50%;
+  color: var(--text-2);
+  background: none;
+  cursor: pointer;
+}
+.pdd__iconbtn:hover {
+  background: rgba(14, 17, 22, 0.06);
+}
+.pdd__iconbtn.is-on {
+  color: var(--text);
+  background: rgba(14, 17, 22, 0.08);
+}
+.pdd__split {
+  display: inline-flex;
+  margin-left: 8px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: #d8e4f3;
+}
+.pdd__split button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  border: 0;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  color: #1f3466;
+  background: none;
+  cursor: pointer;
+}
+.pdd__split button:hover,
+.pdd__split button.is-open {
+  background: #c9d9ee;
+}
+.pdd__split-main {
+  padding: 0 16px 0 18px;
+}
+.pdd__split-more {
+  padding: 0 12px;
+  border-left: 1px solid rgba(31, 52, 102, 0.18) !important;
+}
+.pdd__menu {
+  display: flex;
+  flex-direction: column;
+  padding: 4px;
+}
+.pdd__menu button {
+  padding: 9px 10px;
+  border: 0;
+  border-radius: var(--radius-sm);
+  font: inherit;
+  font-size: 13px;
+  text-align: left;
+  color: var(--text);
+  background: none;
+  cursor: pointer;
+}
+.pdd__menu button:hover {
+  background: rgba(14, 17, 22, 0.05);
+}
+/* Version history column */
+.pdd__close {
+  border: 0;
+  background: none;
+  font-size: 20px;
+  line-height: 1;
+  color: var(--text-3);
+  cursor: pointer;
+}
+.pdd__versions {
+  display: flex;
+  flex-direction: column;
+  padding: 4px 8px 10px;
+  overflow-y: auto;
+}
+.pdd__version {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 12px;
+  border: 0;
+  border-radius: var(--radius-md);
+  font: inherit;
+  text-align: left;
+  background: none;
+  cursor: pointer;
+}
+.pdd__version:hover {
+  background: rgba(14, 17, 22, 0.035);
+}
+.pdd__version.is-on {
+  background: #d8e4f3;
+}
+.pdd__version-when {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text);
+}
+.pdd__version-label {
+  font-size: 13px;
+  font-style: italic;
+  color: var(--text-2);
+}
+.pdd__version-note {
+  font-size: 12px;
+  color: var(--text-3);
+}
+.pdd__version-by {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+/* Version history drawer */
+.pdd__scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  background: rgba(14, 17, 22, 0.18);
+  animation: pdd-fade 0.18s ease-out;
+}
+.pdd__drawer {
+  position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  width: 360px;
+  max-width: 100%;
+  background: #fff;
+  box-shadow: -24px 0 60px -30px rgba(14, 17, 22, 0.45);
+  animation: pdd-slide 0.24s cubic-bezier(0.2, 0.9, 0.3, 1);
+}
+.pdd__drawer-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 12px 8px 20px;
+  font-size: 16px;
+}
+@keyframes pdd-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes pdd-slide {
+  from {
+    transform: translateX(40px);
+    opacity: 0;
+  }
+}
+.pdd__viewing {
+  margin: 0 0 12px;
+}
+.pdd__back {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+.pdd__doc .pdd__text[readonly] {
+  color: var(--text-2);
+}
+.pdd__text--diff {
+  white-space: pre-wrap;
+  color: var(--text-2);
+}
+.pdd__viewing {
+  gap: 6px;
+}
+.pdd__bar {
+  gap: 10px;
+}
+.pdd__replybtn {
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  cursor: pointer;
+}
+.pdd__replybtn:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+/* ---- The proposal page as a document (from #/demo/proposal-doc) ------------------------------- */
+.spv-docbar {
+  margin: 14px 0 22px;
+}
+.spv-docbar .spv-status {
+  margin: 0;
+}
+.pdd__title--static {
+  margin: 0;
+  padding: 2px 0;
+}
+:root[data-theme] .proposal__layout.spv-layout--comments {
+  grid-template-columns: minmax(0, 1fr) 340px;
+}
+.spv-comments-col {
+  position: sticky;
+  top: 80px;
+}
+/* The section of the picked comment: a white card with an ink edge. */
+.spv-sec.is-on {
+  margin-left: -18px;
+  margin-right: -18px;
+  padding-left: 18px;
+  padding-right: 18px;
+  border-radius: var(--radius-md);
+  background: #fff;
+  box-shadow: inset 0 0 0 1.5px var(--text), 0 10px 26px -18px rgba(14, 17, 22, 0.45);
+}

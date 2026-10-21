@@ -9,7 +9,9 @@ import { Notifications } from '../../components/layout/AppShell';
 import { dana } from './data';
 import { SparkInbox } from './SparkInbox';
 import { SparkRequestPage } from './SparkRequestPage';
-import { NewProposal } from './NewProposal';
+import { SparkProposalView } from './SparkProposalView';
+import { sampleProposalOf } from './sampleProposal';
+import { sampleRequests } from './data';
 import { SparkClients } from './SparkClients';
 
 /** A notification's route is a client-portal one; the Spark team opens the same request in its own view. */
@@ -25,10 +27,16 @@ export function SparkApp() {
   useEffect(() => {
     document.documentElement.dataset.theme = state.theme === 'system' ? (window.matchMedia('(prefers-color-scheme: light)').matches ? 'sand' : 'dark') : state.theme;
   }, [state.theme]);
-  const [, section, id, sub, sub2] = parts;
+  const [, section, id, sub] = parts;
   let screen;
   if (section === 'clients') screen = <SparkClients />;
-  else if (section === 'requests' && id && sub === 'proposal' && sub2 === 'new') screen = <NewProposal id={id} />;
+  // Every request writes and edits its proposal on the proposal page; a sample request (another client)
+  // brings its versions from the sample row.
+  else if (section === 'requests' && id && sub === 'proposal') {
+    const live = state.requests.some((r) => r.id === id);
+    const base = sampleRequests.find((r) => r.id === id);
+    screen = <SparkProposalView key={id} id={id} sample={!live && base ? sampleProposalOf(base) : undefined} />;
+  }
   else if (section === 'requests' && id) screen = <SparkRequestPage id={id} tab={sub === 'conversation' ? 'conversation' : sub === 'files' ? 'files' : sub === 'activity' ? 'activity' : 'overview'} />;
   else screen = <SparkInbox initialClient={query.get('client') ?? undefined} />;
   const onClients = section === 'clients';
