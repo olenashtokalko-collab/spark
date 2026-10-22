@@ -9720,10 +9720,11 @@ button.fdm-drop:hover {
   gap: 6px;
   font-size: 14px;
 }
-.bt__label svg {
+/* Only the arrow (the label's own last icon) nudges on hover; the mark before the label stays still. */
+.bt__label > svg:last-child {
   transition: transform 0.15s;
 }
-.bt__tile:hover .bt__label svg {
+.bt__tile:hover .bt__label > svg:last-child {
   transform: translateX(3px);
 }
 
