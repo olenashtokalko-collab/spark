@@ -19,6 +19,8 @@ export function useRoute() {
   useEffect(() => {
     const on = () => setRoute(read());
     window.addEventListener('hashchange', on);
+    // A child may have redirected (replaceState + hashchange) before this listener was added: catch up.
+    on();
     return () => window.removeEventListener('hashchange', on);
   }, []);
   return route;
