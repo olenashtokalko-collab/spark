@@ -49,6 +49,8 @@ export interface State {
 }
 
 export const STORAGE_KEY = 'spark-portal-v10';
+/** The one folder the client's team uploads to (feedback 21 Oct). Every other folder is Spark's, view only. */
+export const TEAM_FOLDER = 'f-uploads';
 
 // Files attached to a message are read like a workspace document.
 const attachedContext = (files?: Attachment[]) => (files?.length ? (files.length === 1 ? files[0].name : `${files.length} attached files`) : undefined);
@@ -213,6 +215,18 @@ function useStoreValue() {
       const userMsg: Message = { id: uid('m'), role: 'user', by: meId, at, text: prompt, attachments: files };
       const aiMsg: Message = { id: uid('m'), role: 'assistant', at, text: '', steps: [], state: 'thinking' };
       const doc = opts.docId ? s.docs.find((d) => d.id === opts.docId) : undefined;
+      // Files attached in a chat are saved to From your team, marked with the chat.
+      const saved: Doc[] = (files ?? []).map((f) => ({
+        id: uid('d'),
+        name: f.name,
+        kind: kindOf(f.name),
+        folderId: TEAM_FOLDER,
+        sizeKb: f.sizeKb,
+        uploadedBy: meId,
+        uploadedAt: at,
+        chatId: id,
+        preview: { type: 'none' },
+      }));
       setState((st) => {
         const exists = st.conversations.some((c) => c.id === id);
         const conversations = exists
@@ -229,7 +243,7 @@ function useStoreValue() {
               },
               ...st.conversations,
             ];
-        return { ...st, conversations };
+        return { ...st, conversations, docs: saved.length ? [...saved, ...st.docs] : st.docs };
       });
       const context = doc?.name ?? attachedContext(files);
       void runAnswer(id, aiMsg.id, prompt, context);

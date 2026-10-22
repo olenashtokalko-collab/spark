@@ -1,19 +1,21 @@
 import { useMemo, useState } from 'react';
-import { Calendar, Plus, Search, Tag, X } from 'lucide-react';
-import { FluidOrb } from '../../components/ui/FluidOrb';
-import { latestProposal, proposalTotal, useStore } from '../../state/store';
+import { Calendar, FileText, Plus, Search, Tag, X } from 'lucide-react';
+import { useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
-import { Button, EmptyState, Input, PageHeader, Tabs } from '../../components/ui/primitives';
+import { Button, cx, EmptyState } from '../../components/ui/primitives';
 import { FilterMenu } from '../../components/ui/overlay';
-import { RequestStatus, isOpen } from '../../components/domain';
-import { aed, fmtRelative } from '../../lib/format';
+import { isOpen, NeedsYou, RequestStatus } from '../../components/domain';
+import { fmtRelative } from '../../lib/format';
 import { navigate } from '../../lib/router';
 import type { RequestType, WorkRequest } from '../../data/types';
-import { TYPES } from './CreateRequestDialog';
+import { TYPES, TYPE_ICON } from './CreateRequestDialog';
 
 type Filter = 'all' | 'decision' | 'active' | 'closed';
 type Updated = 'any' | 'week' | 'month';
 const UPDATED_DAYS: Record<Exclude<Updated, 'any'>, number> = { week: 7, month: 30 };
+
+/** Waiting on the client: a proposal to decide on, or a question from Spark. */
+const onYou = (r: WorkRequest) => r.status === 'proposal' || !!(r.nextStep?.onClient && isOpen(r.status));
 
 /** A request sent in the last ten minutes stays at the top of the list, so the person sees it land. */
 const isFresh = (r: WorkRequest) => r.status === 'submitted' && Date.now() - new Date(r.createdAt).getTime() < 10 * 60000;
@@ -32,7 +34,7 @@ export function Requests() {
     setUpdated('any');
   };
 
-  const needsDecision = (r: WorkRequest) => r.status === 'proposal';
+  const needsDecision = onYou;
   const groups: Record<Filter, (r: WorkRequest) => boolean> = {
     all: () => true,
     decision: needsDecision,
@@ -52,106 +54,101 @@ export function Requests() {
     [state.requests, filter, q, type, updated],
   );
 
+  const tabs: [Filter, string][] = [
+    ['all', 'All'],
+    ['decision', 'Needs you'],
+    ['active', 'In progress'],
+    ['closed', 'Closed'],
+  ];
+
+  // Quiet layout (picked on #/demo/requests-ui, 5): a small title and one line, text tabs, then one row
+  // per request on hairlines: title, type with its icon, status, date.
   return (
-    <div>
-      <PageHeader
-        title="Requests"
-        sub="Ask Spark for new work and follow it to delivery. Each request shows its current status, and when Spark sends a proposal, you review and approve it here."
-        actions={
-          <>
-            <Button variant="ai" lead={<FluidOrb size={20} />} onClick={() => navigate('/assistant')}>
-              Start a chat
-            </Button>
-            <Button variant="primary" icon={Plus} onClick={() => openRequest()}>
-              New request
-            </Button>
-          </>
-        }
-      />
-      <div className="toolbar">
-        <Tabs
-          className="tabs--underline"
-          value={filter}
-          onChange={setFilter}
-          items={[
-            { value: 'all', label: 'All', count: state.requests.length },
-            { value: 'decision', label: 'Needs your decision', count: state.requests.filter(groups.decision).length },
-            { value: 'active', label: 'In progress', count: state.requests.filter(groups.active).length },
-            { value: 'closed', label: 'Closed', count: state.requests.filter(groups.closed).length },
-          ]}
-        />
-      </div>
-      <div className="filter-bar">
-        <Input icon={Search} placeholder="Search requests" value={q} onChange={(e) => setQ(e.target.value)} className="filter-bar__search" aria-label="Search requests" />
-        <FilterMenu icon={Tag} label="Type" value={type} onChange={setType} options={[{ value: 'any', label: 'Any type' }, ...TYPES.map((t) => ({ value: t, label: t }))]} />
-        <FilterMenu
-          icon={Calendar}
-          label="Updated"
-          value={updated}
-          onChange={setUpdated}
-          options={[
-            { value: 'any', label: 'Any time' },
-            { value: 'week', label: 'Past 7 days' },
-            { value: 'month', label: 'Past 30 days' },
-          ]}
-        />
-        {narrowed && (
-          <button
-            className="link-btn filter-bar__clear"
-            onClick={clearFilters}
-          >
-            <X size={13} /> Clear
+    <div className="rqp">
+      <div className="rq-head">
+        <div>
+          <h1 className="rq-head__title">Requests</h1>
+          <p className="rq-head__sub">Ask Spark for new work and follow it to delivery.</p>
+        </div>
+        <div className="rq-head__acts">
+          <button className="rq-text-btn" onClick={() => navigate('/assistant')}>
+            Start a chat
           </button>
-        )}
+          <Button size="sm" variant="primary" icon={Plus} onClick={() => openRequest()}>
+            New request
+          </Button>
+        </div>
       </div>
 
-      {list.length === 0 ? (
-        <EmptyState
-          title={narrowed ? 'No requests match these filters.' : filter === 'decision' ? 'Nothing needs your decision.' : 'No requests yet.'}
-          body={narrowed ? 'Try another word or clear the filters.' : 'Start a chat about your brand and turn a useful answer into a request.'}
-          action={
-            !narrowed && (
-              <Button size="sm" onClick={() => openRequest()}>
-                New request
-              </Button>
-            )
-          }
-        />
-      ) : (
-        <div className="req-table" role="table" aria-label="Requests">
-          <div className="req-row req-row--head" role="row">
-            <span role="columnheader">Request</span>
-            <span role="columnheader">Status</span>
-            <span role="columnheader" className="hide-sm">
-              Proposal
-            </span>
-            <span role="columnheader" className="hide-sm">
-              Updated
-            </span>
+      <div className="rq-centre rq-centre--left">
+        <div className="rq-bar">
+          <div className="rq-tabs" role="tablist" aria-label="Requests">
+            {tabs.map(([v, label]) => (
+              <button key={v} role="tab" aria-selected={filter === v} className={cx(filter === v && 'is-on')} onClick={() => setFilter(v)}>
+                {label}
+                <span>{state.requests.filter(groups[v]).length}</span>
+              </button>
+            ))}
           </div>
-          {list.map((r) => {
-            const p = latestProposal(state, r.id);
-            return (
-              <a key={r.id} role="row" className="req-row" href={`#/requests/${r.id}`}>
-                <span role="cell" className="req-row__main">
-                  <span className="mono faint">{r.id}</span>
-                  <span className="req-row__title">{r.title}</span>
-                  <span className="req-row__type">{r.type}</span>
-                </span>
-                <span role="cell">
-                  <RequestStatus status={r.status} onClient={r.nextStep?.onClient} />
-                </span>
-                <span role="cell" className="hide-sm mono muted">
-                  {p ? aed(proposalTotal(p)) : '—'}
-                </span>
-                <span role="cell" className="hide-sm faint">
-                  {fmtRelative(r.updatedAt)}
-                </span>
-              </a>
-            );
-          })}
+          <div className="rq-tools">
+            <label className="rq-search">
+              <Search size={15} />
+              <input placeholder="Search" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search requests" />
+            </label>
+            <FilterMenu icon={Tag} label="Type" value={type} onChange={setType} options={[{ value: 'any', label: 'Any type' }, ...TYPES.map((t) => ({ value: t, label: t }))]} />
+            <FilterMenu
+              icon={Calendar}
+              label="Updated"
+              value={updated}
+              onChange={setUpdated}
+              options={[
+                { value: 'any', label: 'Any time' },
+                { value: 'week', label: 'Past 7 days' },
+                { value: 'month', label: 'Past 30 days' },
+              ]}
+            />
+            {narrowed && (
+              <button className="link-btn filter-bar__clear" onClick={clearFilters}>
+                <X size={13} /> Clear
+              </button>
+            )}
+          </div>
         </div>
-      )}
+
+        {list.length === 0 ? (
+          <EmptyState
+            title={narrowed ? 'No requests match these filters.' : filter === 'decision' ? 'Nothing needs you.' : 'No requests yet.'}
+            body={narrowed ? 'Try another word or clear the filters.' : 'Start a chat about your brand and turn a useful answer into a request.'}
+            action={
+              !narrowed && (
+                <Button size="sm" onClick={() => openRequest()}>
+                  New request
+                </Button>
+              )
+            }
+          />
+        ) : (
+          <div className="rq-list" role="list" aria-label="Requests">
+            {list.map((r) => {
+              const I = TYPE_ICON[r.type] ?? FileText;
+              return (
+                <a key={r.id} role="listitem" className="rq-row3" href={`#/requests/${r.id}`}>
+                  <span className="rq-row3__name">
+                    <span className="rq-row3__title">{r.title}</span>
+                    <NeedsYou request={r} />
+                  </span>
+                  <span className="rq-row3__type">
+                    <I size={15} strokeWidth={1.7} />
+                    {r.type}
+                  </span>
+                  <RequestStatus status={r.status} onClient={r.nextStep?.onClient} />
+                  <span className="rq-row3__when">{fmtRelative(r.updatedAt)}</span>
+                </a>
+              );
+            })}
+          </div>
+        )}
+      </div>
     </div>
   );
 }

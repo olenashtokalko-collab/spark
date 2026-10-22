@@ -15,10 +15,10 @@ export type Answer = Pick<Message, 'steps' | 'text' | 'findings' | 'sources' | '
 // The other three are the checks Hassan named on 9 Oct ("background checks on
 // your brand", "what others think") plus the audience question behind REQ-110.
 export const suggestedPrompts: { label: string; prompt: string; hint: string }[] = [
-  { label: 'Shape an idea', prompt: 'I have an idea for the Riyadh launch. Help me turn it into a brief for Spark', hint: 'A few questions, then a brief to send' },
-  { label: 'Background check', prompt: 'Run a background check on our brand before the Riyadh launch', hint: 'Name risks, reviews and press' },
-  { label: 'What people say', prompt: 'What are people saying about our brand right now?', hint: 'Social posts, reviews and press' },
-  { label: 'Know the audience', prompt: 'What do Riyadh shoppers care about?', hint: 'From your strategy and personas' },
+  { label: 'Explore an idea', prompt: 'I have an idea for the Riyadh launch. Help me turn it into a brief for Spark', hint: 'A few questions, then a brief to send' },
+  { label: 'Run a background check', prompt: 'Run a background check on our brand before the Riyadh launch', hint: 'Name risks, reviews and press' },
+  { label: 'Explore public feedback', prompt: 'What are people saying about our brand right now?', hint: 'Social posts, reviews and press' },
+  { label: 'Understand your audience', prompt: 'What do Riyadh shoppers care about?', hint: 'From your strategy and personas' },
   { label: 'Explore a look', prompt: 'Show me a few visual directions for the Riyadh opening', hint: 'Rough sketches to react to' },
 ];
 

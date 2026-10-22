@@ -59,6 +59,9 @@
   border-radius: 14px;
   color: color-mix(in srgb, var(--ink) 72%, var(--sand));
 }
+:root[data-theme='sand'] .shell--rail-open .rail__btn {
+  width: 100%;
+}
 :root[data-theme='sand'] .rail__btn:hover {
   --ring: color-mix(in srgb, var(--ink) 5%, var(--sand));
   background: color-mix(in srgb, var(--ink) 5%, var(--sand));
@@ -71,16 +74,23 @@
 }
 
 /* ---- Type: display in the extended face, labels in mono, numbers in Doto -------- */
+/* Type roles (brand book V3, p. 31). Ultra (900, tracking -40) only for titles of 44px and up:
+   page titles and the chat greeting. Bold (700) for every smaller title: dialogs, cards, sections. */
 :root[data-theme='sand'] .page-head__title,
 :root[data-theme='sand'] .dialog__title,
-:root[data-theme='sand'] .req-done__title {
+:root[data-theme='sand'] .req-done__title,
+:root[data-theme='sand'] .req-head__title,
+:root[data-theme='sand'] .proposal__title {
   font-family: var(--font-display);
   font-stretch: 125%;
-  font-weight: 700;
-  letter-spacing: -0.03em;
+  font-weight: var(--sub-weight);
+  letter-spacing: var(--sub-track);
 }
 :root[data-theme='sand'] .page-head__title {
-  font-size: 34px;
+  font-size: 44px;
+  font-weight: var(--title-weight);
+  letter-spacing: var(--title-track);
+  line-height: 1.05;
 }
 :root[data-theme='sand'] .sub-eyebrow,
 :root[data-theme='sand'] .menu__label,
@@ -91,8 +101,7 @@
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
-/* Tab counts as small pills in the text face. Doto is kept for large numbers:
-   its dots are too thin to read at 13px. */
+/* Tab counts as small pills in the text face. */
 :root[data-theme='sand'] .tabs__count {
   display: inline-grid;
   place-items: center;
@@ -113,11 +122,19 @@
 }
 
 /* ---- Buttons ------------------------------------------------------------------- */
-/* Primary: solid Ink pill, like the book's "FOLLOW" pill (picked on #/demo/primary, A). Cobalt stays for selection, links and send. */
+/* Primary: solid Ink pill, like the book's "FOLLOW" pill (picked on #/demo/primary, A). Cobalt stays for selection, links and send.
+   Flat: no drop shadow, as on Requests. */
 :root[data-theme='sand'] .btn--primary {
   --pill: var(--ink);
   background: var(--ink);
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 1px 2px rgba(14, 17, 22, 0.25), 0 6px 14px -8px rgba(14, 17, 22, 0.55);
+  box-shadow: none;
+}
+:root[data-theme='sand'] .btn--danger {
+  box-shadow: none;
+}
+:root[data-theme='sand'] .btn--primary:active:not(:disabled),
+:root[data-theme='sand'] .btn--danger:active:not(:disabled) {
+  box-shadow: none;
 }
 :root[data-theme='sand'] .btn--primary:hover:not(:disabled) {
   filter: none;
@@ -127,13 +144,13 @@
 :root[data-theme='sand'] .btn--secondary {
   color: var(--ink);
   background: #ffffff;
-  box-shadow: inset 0 0 0 1px var(--line-strong), 0 1px 2px rgba(14, 17, 22, 0.06);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
 }
 /* Hover keeps the white fill and darkens the edge instead of greying the button. */
 :root[data-theme='sand'] .btn--secondary:hover:not(:disabled) {
   filter: none;
   background: #ffffff;
-  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.32), 0 1px 2px rgba(14, 17, 22, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.32);
 }
 /* AI action: the glass plaque (p. 16), picked on #/demo/ai-button. A clear
    glass pill with a bright rim; the Noor light (Cobalt left, Ember right) glows
@@ -272,10 +289,19 @@
   margin: 0 0 28px;
   font-family: var(--font-display);
   font-stretch: 125%;
-  font-weight: 700;
+  font-weight: var(--sub-weight);
   font-size: clamp(26px, 2.6vw, 34px);
-  letter-spacing: -0.03em;
+  letter-spacing: var(--sub-track);
   line-height: 1.1;
+}
+/* Room for the greeting at 44px: then it is a headline in Ultra. */
+@media (min-width: 1280px) {
+  :root[data-theme='sand'] .assistant__hello {
+    font-size: 44px;
+    font-weight: var(--title-weight);
+    letter-spacing: var(--title-track);
+    line-height: 1.05;
+  }
 }
 :root[data-theme='sand'] .assistant__start {
   gap: 22px;
@@ -386,24 +412,38 @@
   background: none;
 }
 
-/* ---- Folders: frosted glass, after the reference ------------------------------------
-   A Cobalt-tinted folder; the sheets inside show through a translucent, blurred
-   front with a bright rim. White type on the front; it sits on the darker lower
-   part of the tint so it stays readable. */
+/* ---- Folders: quiet (brand book V3, p. 33 "one cluster per frame") --------------------------------
+   Six glass folders were six clusters on one screen. Now the folder back is a shade of Sand, the
+   sheets white, the front frosted white with Ink type; the glass and the spectrum stay for the one
+   hero object of a screen. */
 :root[data-theme='sand'] .tile {
-  color: #ffffff;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--cobalt) 30%, var(--haze)), color-mix(in srgb, var(--cobalt) 44%, var(--haze)));
-  box-shadow: 0 18px 34px -22px rgba(30, 59, 214, 0.55);
+  color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 9%, var(--sand));
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+:root[data-theme='sand'] .tile:hover {
+  box-shadow: inset 0 0 0 1px var(--line-strong), 0 12px 26px -18px rgba(14, 17, 22, 0.3);
+}
+:root[data-theme='sand'] .tile__sheets > span {
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(14, 17, 22, 0.12);
+}
+:root[data-theme='sand'] .tile__sheets > span:nth-child(1),
+:root[data-theme='sand'] .tile__sheets > span:nth-child(2) {
+  background: color-mix(in srgb, var(--ink) 3%, #ffffff);
+}
+:root[data-theme='sand'] .tile__sheets i {
+  background: color-mix(in srgb, var(--ink) 10%, #ffffff);
 }
 :root[data-theme='sand'] .tile__front {
-  color: #ffffff;
-  background: linear-gradient(180deg, color-mix(in srgb, var(--cobalt) 32%, rgba(200, 216, 240, 0.25)), color-mix(in srgb, var(--cobalt) 58%, rgba(200, 216, 240, 0.35)));
-  -webkit-backdrop-filter: blur(14px) saturate(1.3);
-  backdrop-filter: blur(14px) saturate(1.3);
-  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.55), inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.66);
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 0 0 1px var(--line);
 }
 :root[data-theme='sand'] .tile__desc {
-  color: rgba(255, 255, 255, 0.88);
+  color: var(--text-3);
   opacity: 1;
 }
 :root[data-theme='sand'] .tile__badge {
@@ -496,7 +536,7 @@
     0 12px 20px -10px rgba(14, 17, 22, 0.3);
 }
 :root[data-theme='sand'] .icon-tile--danger {
-  color: #c2362f;
+  color: var(--danger, #b42347);
 }
 
 /* ---- Logo: the app icon ---------------------------------------------------------------------- */
@@ -630,12 +670,10 @@
 :root[data-theme='sand'] .assistant__composer::before {
   content: '';
   position: absolute;
-  inset: 0 -40px;
+  inset: 0 -32px;
   z-index: -1;
   pointer-events: none;
-  background-color: var(--sand);
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.95' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.22'/%3E%3C/svg%3E");
-  background-attachment: fixed;
+  background-color: var(--bg);
   -webkit-mask: linear-gradient(180deg, transparent, #000 26%);
   mask: linear-gradient(180deg, transparent, #000 26%);
 }
@@ -1238,9 +1276,9 @@ button.proposal__tool:hover {
   height: 26px;
   padding: 0 11px;
   border-radius: 999px;
-  color: #8a5a00;
-  background: #fbe7bd;
-  box-shadow: inset 0 0 0 1px rgba(196, 130, 10, 0.25);
+  color: var(--warning);
+  background: #fcf0b4;
+  box-shadow: inset 0 0 0 1px rgba(200, 160, 0, 0.28);
 }
 .st.is-spark {
   color: var(--cobalt);
@@ -1262,8 +1300,8 @@ button.proposal__tool:hover {
   background: color-mix(in srgb, currentColor 11%, #ffffff);
 }
 .st.hue-you {
-  color: #8a5a00;
-  background: #fbe7bd;
+  color: var(--warning);
+  background: #fcf0b4;
 }
 .st.hue-submitted {
   color: #586579;
@@ -1284,7 +1322,7 @@ button.proposal__tool:hover {
   color: #2b7a43;
 }
 .st.hue-declined {
-  color: #c2362f;
+  color: var(--danger);
 }
 
 /* ---- File comments (document preview side panel) ----------------------------------------
@@ -1468,7 +1506,7 @@ button.proposal__tool:hover {
     10px 14px 22px -8px rgba(232, 80, 31, 0.5);
 }
 .itile--frosted.is-danger {
-  color: #c2362f;
+  color: var(--danger, #b42347);
   box-shadow:
     inset 0 0 0 1.5px rgba(255, 255, 255, 0.95),
     inset 0 6px 10px rgba(255, 255, 255, 0.8),
@@ -1561,7 +1599,7 @@ button.proposal__tool:hover {
     8px 14px 22px -14px rgba(232, 80, 31, 0.7);
 }
 .itile--plaque.is-danger {
-  color: #c2362f;
+  color: var(--danger, #b42347);
   box-shadow: inset 0 0 0 1.5px #ffffff, inset 0 -3px 6px rgba(14, 17, 22, 0.05), 0 0 0 1px rgba(14, 17, 22, 0.07), 0 12px 20px -14px rgba(14, 17, 22, 0.4);
 }
 
@@ -1571,7 +1609,7 @@ button.proposal__tool:hover {
   border-radius: 0;
 }
 .itile--finder.is-danger {
-  color: #c2362f;
+  color: var(--danger, #b42347);
 }
 .itile__c {
   position: absolute;
@@ -2541,4 +2579,180 @@ button.proposal__tool:hover {
 /* Modals have no icon tile for now: the title leads. (The tile markup stays; delete this rule to bring it back.) */
 :root[data-theme='sand'] .dialog .icon-tile {
   display: none;
+}
+
+/* ---- Zones: sidebar and page (feedback 21 Oct, brand book V3) ---------------------------------
+   After the reference, kept in the palette: the page is Sand (the brand's ground, 35%), full height,
+   no panel; the sidebar sits a shade darker beside it. Only the new chat keeps its spectrum, as a
+   rounded panel with a white stroke and a 12px margin in the sidebar's shade round it. */
+:root[data-theme='sand'] .shell {
+  --side: color-mix(in srgb, var(--ink) 4%, var(--sand));
+  --gap: 0px;
+}
+:root[data-theme='sand'] .shell:has(.assistant__empty) {
+  --gap: 12px;
+}
+:root[data-theme='sand'] .app-bg {
+  background: var(--side);
+}
+:root[data-theme='sand'] .app-bg__grain {
+  display: none;
+}
+/* The page: Sand from the sidebar's edge to the window's. */
+:root[data-theme='sand'] .app-bg__light {
+  display: block;
+  position: absolute;
+  inset: 0 0 0 var(--rail-w);
+  width: auto;
+  height: auto;
+  transform: none;
+  filter: none;
+  opacity: 1;
+  animation: none;
+  border-radius: 0;
+  background: var(--sand);
+}
+:root[data-theme='sand'] .app-bg::before {
+  z-index: 1;
+  top: var(--gap);
+  right: var(--gap);
+  bottom: var(--gap);
+  border-radius: 20px;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+/* The new chat: the sidebar's shade round the panel. */
+:root[data-theme='sand'] body:has(.assistant__empty) .app-bg__light {
+  background: var(--side);
+}
+:root[data-theme='sand'] .topbar {
+  background: var(--side);
+}
+:root[data-theme='sand'] .topbar::before {
+  display: none;
+}
+:root[data-theme='sand'] .content:not(:has(.assistant)) {
+  padding-top: 36px;
+}
+:root[data-theme='sand'] .assistant {
+  min-height: calc(100vh - 2 * var(--gap));
+}
+:root[data-theme='sand'] .assistant__composer {
+  bottom: var(--gap);
+}
+:root[data-theme='sand'] .rail__btn {
+  --ring: var(--side);
+}
+:root[data-theme='sand'] .rail__btn:hover,
+:root[data-theme='sand'] .rail__me:hover,
+:root[data-theme='sand'] .rail__toggle:hover {
+  --ring: color-mix(in srgb, var(--ink) 8%, var(--sand));
+  background: color-mix(in srgb, var(--ink) 8%, var(--sand));
+  color: var(--ink);
+}
+:root[data-theme='sand'] .rail__btn.is-active,
+:root[data-theme='sand'] .rail__me.is-active {
+  --ring: color-mix(in srgb, var(--ink) 11%, var(--sand));
+  background: color-mix(in srgb, var(--ink) 11%, var(--sand));
+  color: var(--ink);
+}
+:root[data-theme='sand'] .shell--rail-open .rail__btn {
+  height: 36px;
+  border-radius: 10px;
+}
+/* The account at the foot of the open rail: a white card with a hairline and
+   round corners, like the "Invite members" card. Hover darkens the edge. */
+:root[data-theme='sand'] .shell--rail-open .rail__me {
+  height: 56px;
+  gap: 10px;
+  margin-bottom: 10px;
+  padding: 0 8px 0 10px;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: box-shadow 0.15s;
+}
+:root[data-theme='sand'] .shell--rail-open .rail__me:hover,
+:root[data-theme='sand'] .shell--rail-open .rail__me.is-active {
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+:root[data-theme='sand'] .shell--rail-open .rail__me-text {
+  gap: 2px;
+}
+:root[data-theme='sand'] .shell--rail-open .rail__me-name {
+  font-size: 14px;
+}
+:root[data-theme='sand'] .shell--rail-open .rail__me-sub {
+  font-size: 12px;
+}
+@media (max-width: 900px) {
+  :root[data-theme='sand'] .shell--rail-open .rail__me {
+    height: 42px;
+    padding: 0;
+    border-radius: 12px;
+    background: none;
+    box-shadow: none;
+  }
+}
+:root[data-theme='sand'] .topbar__icon {
+  width: 36px;
+  height: 36px;
+}
+@media (max-width: 900px) {
+  :root[data-theme='sand'] .shell--rail-open .rail__btn {
+    width: 44px;
+    height: 44px;
+  }
+}
+
+/* ---- Brand book V3 (Oct 2026): people, labels, Ember --------------------------------------------
+   Gulf Cobalt and Liwa Ember now carry equal weight (15% each, p. 30). Ember marks AI and the brand's
+   labels and index numbers (pp. 31, 38), and what needs you in the sidebar. */
+
+/* Avatars from the palette, not a random hue: the client's team on Corniche Haze with Ink initials,
+   the Spark team as Ink objects with Sand initials ("Ink objects carry the spark", p. 37). AI is
+   only ever the orb or the spark. */
+:root[data-theme='sand'] .avatar--client {
+  background: var(--haze);
+  color: var(--ink);
+}
+:root[data-theme='sand'] .avatar--spark {
+  background: var(--ink);
+  color: var(--sand);
+}
+
+/* Labels: Diatype Mono (here JetBrains Mono), uppercase and tracked, in Ember. */
+:root[data-theme='sand'] .eyebrow,
+:root[data-theme='sand'] .sub-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ember-text);
+}
+
+/* What needs you, in the sidebar: an Ember dot. */
+:root[data-theme='sand'] .rail__dot {
+  background: var(--ember);
+}
+
+/* AI's own marks in Ember: the research trace under an answer. */
+:root[data-theme='sand'] .steps-toggle {
+  color: var(--ember-text);
+}
+
+/* Sign-in title: below 44px, so Bold in sentence case, like every other small title. */
+:root[data-theme='sand'] .signin__title {
+  font-weight: var(--sub-weight);
+  letter-spacing: var(--sub-track);
+  text-transform: none;
+}
+
+/* The two-column request page folds to one column at 1024px and below (features.css); the Sand
+   column widths above must not undo that. */
+@media (max-width: 1024px) {
+  :root[data-theme='sand'] .req-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
 }

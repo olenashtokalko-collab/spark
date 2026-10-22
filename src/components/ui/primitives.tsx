@@ -62,7 +62,7 @@ export function Count({ n, tone = 'neutral' }: { n: number; tone?: Tone }) {
 export function Avatar({ person, size = 28, ring }: { person: Pick<Person, 'name' | 'hue' | 'org'>; size?: number; ring?: boolean }) {
   return (
     <span
-      className={cx('avatar', ring && 'avatar--ring')}
+      className={cx('avatar', `avatar--${person.org}`, ring && 'avatar--ring')}
       style={{ width: size, height: size, fontSize: Math.round(size * 0.38), ['--hue' as string]: person.hue }}
       title={person.name}
       aria-hidden
@@ -120,9 +120,11 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaHTMLAttributes<H
   return <textarea ref={ref} className={cx('input', 'textarea', className)} {...rest} />;
 });
 
-export function Select({ className, children, ...rest }: SelectHTMLAttributes<HTMLSelectElement>) {
+/** A native select; `icon` shows the chosen option's icon at the start of the field. */
+export function Select({ className, children, icon: Icon, ...rest }: SelectHTMLAttributes<HTMLSelectElement> & { icon?: LucideIcon }) {
   return (
-    <span className={cx('select', className)}>
+    <span className={cx('select', Icon && 'select--icon', className)}>
+      {Icon && <Icon size={16} strokeWidth={1.7} className="select__icon" aria-hidden />}
       <select {...rest}>{children}</select>
     </span>
   );

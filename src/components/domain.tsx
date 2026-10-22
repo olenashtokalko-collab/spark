@@ -1,16 +1,17 @@
 // Small domain-aware building blocks shared by several screens.
-import { FileArchive, FileImage, FileSpreadsheet, FileText, Presentation } from 'lucide-react';
+import { CircleAlert, FileArchive, FileImage, FileSpreadsheet, FileText, Presentation } from 'lucide-react';
 import type { CSSProperties, ReactNode } from 'react';
-import type { Doc, DocKind, DocPreview, Folder, ProposalStatus, RequestStatus } from '../data/types';
-import { Badge, cx, type Tone } from './ui/primitives';
+import type { Doc, DocKind, DocPreview, Folder, ProposalStatus, RequestStatus, WorkRequest } from '../data/types';
+import { cx, type Tone } from './ui/primitives';
 export { kindOf } from '../lib/files';
 
-// One name per state everywhere (badges, filters, status card). Whatever waits
-// on the client reads "Needs your decision", for requests and proposals alike.
+// One name per state everywhere (badges, filters, status card). A status is only the stage of the work;
+// what waits on the client is shown apart from it (the dashboard, and <NeedsYou> beside the title).
 export const requestStatusMeta: Record<RequestStatus, { label: string; tone: Tone }> = {
-  submitted: { label: 'Submitted', tone: 'neutral' },
+  // For the client a request Spark hasn't picked up yet is their new one, not a grey "Submitted".
+  submitted: { label: 'New', tone: 'warning' },
   in_review: { label: 'In review', tone: 'accent' },
-  proposal: { label: 'Needs your decision', tone: 'warning' },
+  proposal: { label: 'Proposal', tone: 'warning' },
   changes_requested: { label: 'Changes requested', tone: 'neutral' },
   approved: { label: 'Approved', tone: 'positive' },
   in_progress: { label: 'In progress', tone: 'accent' },
@@ -18,11 +19,11 @@ export const requestStatusMeta: Record<RequestStatus, { label: string; tone: Ton
   declined: { label: 'Declined', tone: 'neutral' },
 };
 
-export const STAGES = ['Submitted', 'In review', 'Proposal', 'Approved', 'In progress', 'Delivered'] as const;
+export const STAGES = ['New', 'In review', 'Proposal', 'Approved', 'In progress', 'Delivered'] as const;
 
 // What each stage means for the client, shown in the request's stage list.
 export const STAGE_INFO: Record<(typeof STAGES)[number], string> = {
-  Submitted: 'Your request is in Spark’s queue.',
+  New: 'Your request is in Spark’s queue.',
   'In review': 'Spark scopes the work and may come back with questions.',
   Proposal: 'You get scope, price and timeline to approve or change.',
   Approved: 'Spark schedules the kick-off.',
@@ -52,36 +53,54 @@ export function stageIndex(s: RequestStatus) {
 
 export const isOpen = (s: RequestStatus) => !['delivered', 'declined'].includes(s);
 
-/**
- * A request's status as a filled pill, a colour per status (picked on
- * #/demo/status, 2b). When the next step waits on the client (`onClient`),
- * it reads "Needs your feedback" in the same amber as a decision.
- */
-export function RequestStatus({ status, onClient }: { status: RequestStatus; onClient?: boolean }) {
-  const onYou = status === 'proposal' || (onClient && status !== 'delivered' && status !== 'declined');
-  const label = status === 'proposal' ? requestStatusMeta.proposal.label : onYou ? 'Needs your feedback' : requestStatusMeta[status].label;
+/** A request's status as a dot and a word: the stage of the work only, a colour per stage.
+ *  (`onClient` is kept for callers; what waits on the client is <NeedsYou>, not the status.) */
+export function RequestStatus({ status }: { status: RequestStatus; onClient?: boolean }) {
   return (
-    <span className={`rstatus rstatus--${onYou ? 'you' : status}`}>
+    <span className={`rstatus rstatus--${status}`}>
       <span className="rstatus__dot" />
-      {label}
+      {requestStatusMeta[status].label}
+    </span>
+  );
+}
+
+/** Whether a request waits on the client: a proposal to decide on, or a next step that's theirs. */
+export const needsYou = (r: Pick<WorkRequest, 'status' | 'nextStep'>) => r.status === 'proposal' || !!(r.nextStep?.onClient && isOpen(r.status));
+
+/** An amber attention mark beside a request's title when it waits on the client; says why on hover. */
+export function NeedsYou({ request: r }: { request: Pick<WorkRequest, 'status' | 'nextStep'> }) {
+  if (!needsYou(r)) return null;
+  const why = r.status === 'proposal' ? 'Needs your decision' : r.nextStep?.label ?? 'Needs your feedback';
+  return (
+    <span className="needs-you" title={why} aria-label={why} role="img">
+      <CircleAlert size={15} strokeWidth={2.2} />
     </span>
   );
 }
 
 export const proposalStatusMeta: Record<ProposalStatus, { label: string; tone: Tone }> = {
-  awaiting: { label: 'Needs your decision', tone: 'warning' },
+  awaiting: { label: 'Awaiting decision', tone: 'warning' },
   changes_requested: { label: 'Changes requested', tone: 'neutral' },
   approved: { label: 'Approved', tone: 'positive' },
   declined: { label: 'Declined', tone: 'danger' },
   superseded: { label: 'Superseded', tone: 'neutral' },
 };
 
+// A proposal's status in the request status colours.
+const proposalStatusMod: Record<ProposalStatus, string> = {
+  awaiting: 'proposal',
+  changes_requested: 'changes_requested',
+  approved: 'approved',
+  declined: 'declined',
+  superseded: 'superseded',
+};
+
 export function ProposalStatus({ status }: { status: ProposalStatus }) {
-  const m = proposalStatusMeta[status];
   return (
-    <Badge tone={m.tone} dot>
-      {m.label}
-    </Badge>
+    <span className={`rstatus rstatus--${proposalStatusMod[status]}`}>
+      <span className="rstatus__dot" />
+      {proposalStatusMeta[status].label}
+    </span>
   );
 }
 
@@ -225,7 +244,7 @@ export function folderHue(folders: Folder[], id: string): string {
 
 /** A folder drawn as a folder: sheets peek out of the back, the frosted,
  *  tabbed front carries the name and one line about what's inside. */
-export function FolderTile({ name, sub, hue, href, onClick, badge }: { name: string; sub: string; hue: string; href?: string; onClick?: () => void; badge?: ReactNode }) {
+export function FolderTile({ name, sub, hue, href, onClick, badge, tag }: { name: string; sub: string; hue: string; href?: string; onClick?: () => void; badge?: ReactNode; tag?: ReactNode }) {
   const body = (
     <>
       <span className="tile__sheets" aria-hidden>
@@ -236,6 +255,7 @@ export function FolderTile({ name, sub, hue, href, onClick, badge }: { name: str
           <i />
         </span>
       </span>
+      {tag && <span className="tile__tag">{tag}</span>}
       {badge && <span className="tile__badge">{badge}</span>}
       <span className="tile__front">
         <span className="tile__text">

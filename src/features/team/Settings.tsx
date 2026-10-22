@@ -45,165 +45,169 @@ function Team() {
 
   return (
     <div className="team">
-      {/* The invite button sits in the page header, as on Requests and Documents. */}
-      <PageHeader
-        title="Team"
-        sub="Invite colleagues to this workspace. They see requests, proposals and documents."
-        actions={
-          isOwner && (
-            <Button variant="primary" icon={UserPlus} onClick={() => setInviting(true)}>
+      {/* The Requests layout: a small title and one line, a flat 32px button on the right,
+          then one row per person on hairlines with a quiet label above each group. */}
+      <div className="rq-head">
+        <div>
+          <h1 className="rq-head__title">Team</h1>
+          <p className="rq-head__sub">Invite colleagues to this workspace. They see requests, proposals and documents.</p>
+        </div>
+        {isOwner && (
+          <div className="rq-head__acts">
+            <Button size="sm" variant="primary" icon={UserPlus} onClick={() => setInviting(true)}>
               Invite people
             </Button>
-          )
-        }
-      />
-      <section>
-        {/* One table, as on Requests: a group header row per kind of person
-            (members, then invitations), each with its own column labels. */}
-        <div className="ptable" role="table" aria-label="People">
-          <div className="ptable__group" role="row">
-            <span role="columnheader">Members</span>
-            <span role="columnheader">Email</span>
-            <span role="columnheader">Role</span>
-            <span role="columnheader">Status</span>
-            <span aria-hidden />
           </div>
-          {clients.map((p) => (
-            <div key={p.id} className="ptable__row" role="row">
-              <span role="cell" className="ptable__who">
-                <Avatar person={p} size={32} />
-                <span>
-                  <span className="ptable__name">
-                    {p.name} {p.id === me.id && <span className="faint">(you)</span>}
-                  </span>
-                  <span className="ptable__sub">{p.title}</span>
-                </span>
-              </span>
-              <span role="cell" className="ptable__email">
-                {p.email}
-              </span>
-              <span role="cell">
-                {isOwner && p.id !== me.id ? (
-                  // The status pill, with the role picker inside it.
-                  <label className={`rstatus role-pill role-pill--${p.role ?? 'member'} role-pill--edit`}>
-                    <select
-                      aria-label={`Role for ${p.name}`}
-                      value={p.role}
-                      onChange={(e) => {
-                        actions.changeRole(p.id, e.target.value as ClientRole);
-                        toast({ title: `${p.name.split(' ')[0]} is now ${ROLE_INFO[e.target.value as ClientRole].label.toLowerCase()}` });
-                      }}
-                    >
-                      {(Object.keys(ROLE_INFO) as ClientRole[]).map((r) => (
-                        <option key={r} value={r}>
-                          {ROLE_INFO[r].label}
-                        </option>
-                      ))}
-                    </select>
-                    <ChevronDown size={13} strokeWidth={2.2} aria-hidden />
-                  </label>
-                ) : (
-                  <span className={`rstatus role-pill role-pill--${p.role ?? 'member'}`}>{ROLE_INFO[p.role ?? 'member'].label}</span>
-                )}
-              </span>
-              <span role="cell">
-                <span className="rstatus rstatus--approved">
-                  <span className="rstatus__dot" />
-                  Active
-                </span>
-              </span>
-              <span role="cell" className="ptable__acts">
-                {isOwner && p.id !== me.id && (
-                  <Menu
-                    width={220}
-                    trigger={({ toggle, ref }) => (
-                      <button ref={ref} className="btn btn--ghost btn--sm btn--icon" onClick={toggle} aria-label={`More for ${p.name}`}>
-                        <MoreHorizontal size={16} />
-                      </button>
-                    )}
-                    items={[{ label: 'Remove from team', icon: UserMinus, danger: true, onSelect: () => setRemoving(p) }]}
-                  />
-                )}
-              </span>
-            </div>
-          ))}
+        )}
+      </div>
 
-          {state.invitations.length > 0 && (
-            <>
-              <div className="ptable__group" role="row">
-                <span role="columnheader">Invited</span>
-                <span role="columnheader">Email</span>
-                <span role="columnheader">Role</span>
-                <span role="columnheader">Status</span>
-                <span aria-hidden />
-              </div>
-              {state.invitations.map((inv) => (
-                <div key={inv.id} className="ptable__row" role="row">
-                  <span role="cell" className="ptable__who">
-                    {/* Not joined yet: an empty dotted ring with faint initials. */}
-                    <span className="avatar avatar--invited" aria-hidden>
-                      {inviteName(inv.email)
-                        .split(' ')
-                        .map((w) => w[0])
-                        .slice(0, 2)
-                        .join('')}
-                    </span>
-                    <span>
-                      <span className="ptable__name">{inviteName(inv.email)}</span>
-                      <span className="ptable__sub">
-                        Invited by {personById(state, inv.invitedBy).name.split(' ')[0]} · {fmtRelative(inv.invitedAt)}
-                      </span>
-                    </span>
-                  </span>
-                  <span role="cell" className="ptable__email">
-                    {inv.email}
-                  </span>
-                  <span role="cell">
-                    <span className={`rstatus role-pill role-pill--${inv.role}`}>{ROLE_INFO[inv.role].label}</span>
-                  </span>
-                  <span role="cell">
-                    <span className="rstatus rstatus--you">
-                      <span className="rstatus__dot" />
-                      Pending
-                    </span>
-                  </span>
-                  <span role="cell" className="ptable__acts">
-                    {isOwner && (
-                      <Menu
-                        width={220}
-                        trigger={({ toggle, ref }) => (
-                          <button ref={ref} className="btn btn--ghost btn--sm btn--icon" onClick={toggle} aria-label={`More for ${inv.email}`}>
-                            <MoreHorizontal size={16} />
-                          </button>
-                        )}
-                        items={[
-                          {
-                            label: 'Resend invitation',
-                            icon: RefreshCw,
-                            onSelect: () => {
-                              actions.resendInvite(inv.id);
-                              toast({ title: 'Invitation resent', body: inv.email });
-                            },
-                          },
-                          {
-                            label: 'Revoke invitation',
-                            icon: Trash2,
-                            danger: true,
-                            onSelect: () => {
-                              actions.revokeInvite(inv.id);
-                              toast({ title: 'Invitation revoked', body: inv.email });
-                            },
-                          },
-                        ]}
-                      />
-                    )}
-                  </span>
-                </div>
-              ))}
-            </>
-          )}
+      <div className="tm-list" role="table" aria-label="People">
+        <div className="tm-row tm-row--head" role="row">
+          <span role="columnheader">
+            Members <span className="tm-row__n">{clients.length}</span>
+          </span>
+          <span role="columnheader">Email</span>
+          <span role="columnheader">Role</span>
+          <span role="columnheader">Status</span>
+          <span aria-hidden />
         </div>
-      </section>
+        {clients.map((p) => (
+          <div key={p.id} className="tm-row" role="row">
+            <span role="cell" className="tm-who">
+              <Avatar person={p} size={28} />
+              <span className="tm-who__text">
+                <span className="tm-who__name">
+                  {p.name} {p.id === me.id && <span className="faint">(you)</span>}
+                </span>
+                <span className="tm-who__sub">{p.title}</span>
+              </span>
+            </span>
+            <span role="cell" className="tm-row__email">
+              {p.email}
+            </span>
+            <span role="cell">
+              {isOwner && p.id !== me.id ? (
+                // The role as text with a chevron; the picker sits inside it.
+                <label className="tm-role tm-role--edit">
+                  <select
+                    aria-label={`Role for ${p.name}`}
+                    value={p.role}
+                    onChange={(e) => {
+                      actions.changeRole(p.id, e.target.value as ClientRole);
+                      toast({ title: `${p.name.split(' ')[0]} is now ${ROLE_INFO[e.target.value as ClientRole].label.toLowerCase()}` });
+                    }}
+                  >
+                    {(Object.keys(ROLE_INFO) as ClientRole[]).map((r) => (
+                      <option key={r} value={r}>
+                        {ROLE_INFO[r].label}
+                      </option>
+                    ))}
+                  </select>
+                  <ChevronDown size={13} strokeWidth={2} aria-hidden />
+                </label>
+              ) : (
+                <span className="tm-role">{ROLE_INFO[p.role ?? 'member'].label}</span>
+              )}
+            </span>
+            <span role="cell">
+              <span className="rstatus rstatus--approved">
+                <span className="rstatus__dot" />
+                Active
+              </span>
+            </span>
+            <span role="cell" className="tm-row__acts">
+              {isOwner && p.id !== me.id && (
+                <Menu
+                  width={220}
+                  trigger={({ toggle, ref }) => (
+                    <button ref={ref} className="rq-icon-btn" onClick={toggle} aria-label={`More for ${p.name}`}>
+                      <MoreHorizontal size={16} />
+                    </button>
+                  )}
+                  items={[{ label: 'Remove from team', icon: UserMinus, danger: true, onSelect: () => setRemoving(p) }]}
+                />
+              )}
+            </span>
+          </div>
+        ))}
+
+        {state.invitations.length > 0 && (
+          <>
+            <div className="tm-row tm-row--head tm-row--group" role="row">
+              <span role="columnheader">
+                Invited <span className="tm-row__n">{state.invitations.length}</span>
+              </span>
+              <span aria-hidden />
+              <span aria-hidden />
+              <span aria-hidden />
+              <span aria-hidden />
+            </div>
+            {state.invitations.map((inv) => (
+              <div key={inv.id} className="tm-row" role="row">
+                <span role="cell" className="tm-who">
+                  {/* Not joined yet: an empty dotted ring with faint initials. */}
+                  <span className="avatar avatar--invited" aria-hidden>
+                    {inviteName(inv.email)
+                      .split(' ')
+                      .map((w) => w[0])
+                      .slice(0, 2)
+                      .join('')}
+                  </span>
+                  <span className="tm-who__text">
+                    <span className="tm-who__name">{inviteName(inv.email)}</span>
+                    <span className="tm-who__sub">
+                      Invited by {personById(state, inv.invitedBy).name.split(' ')[0]} · {fmtRelative(inv.invitedAt)}
+                    </span>
+                  </span>
+                </span>
+                <span role="cell" className="tm-row__email">
+                  {inv.email}
+                </span>
+                <span role="cell">
+                  <span className="tm-role">{ROLE_INFO[inv.role].label}</span>
+                </span>
+                <span role="cell">
+                  <span className="rstatus rstatus--you">
+                    <span className="rstatus__dot" />
+                    Pending
+                  </span>
+                </span>
+                <span role="cell" className="tm-row__acts">
+                  {isOwner && (
+                    <Menu
+                      width={220}
+                      trigger={({ toggle, ref }) => (
+                        <button ref={ref} className="rq-icon-btn" onClick={toggle} aria-label={`More for ${inv.email}`}>
+                          <MoreHorizontal size={16} />
+                        </button>
+                      )}
+                      items={[
+                        {
+                          label: 'Resend invitation',
+                          icon: RefreshCw,
+                          onSelect: () => {
+                            actions.resendInvite(inv.id);
+                            toast({ title: 'Invitation resent', body: inv.email });
+                          },
+                        },
+                        {
+                          label: 'Revoke invitation',
+                          icon: Trash2,
+                          danger: true,
+                          onSelect: () => {
+                            actions.revokeInvite(inv.id);
+                            toast({ title: 'Invitation revoked', body: inv.email });
+                          },
+                        },
+                      ]}
+                    />
+                  )}
+                </span>
+              </div>
+            ))}
+          </>
+        )}
+      </div>
 
       <InviteDialog open={inviting} onClose={() => setInviting(false)} />
       <Dialog

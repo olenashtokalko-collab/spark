@@ -85,11 +85,14 @@
 
 /*
  * Brand A · light-first (prototype). Values from Spark Studios Brand Guidelines
- * 2026, p. 11: Saadiyat Sand, Mangrove Ink, Gulf Cobalt, Liwa Ember, Corniche
- * Haze. The book gives no greys, surface steps or semantic colours: those are
- * mixed from Sand and Ink here (product decision, to be approved).
- * Fonts are stand-ins until Diatype is licensed: Archivo Expanded for Diatype
- * Extended, JetBrains Mono for Diatype Mono; Doto as specified for numbers.
+ * V3.0 (Oct 2026), p. 30: Saadiyat Sand 35%, Mangrove Ink 20%, Gulf Cobalt 15%,
+ * Liwa Ember 15%, Corniche Haze 5%, Noor 10% (glow and glass only). The book
+ * gives no greys, surface steps or semantic colours: those are mixed from Sand
+ * and Ink here (product decision, to be approved).
+ * Type (p. 31): one family, three roles. Fonts are stand-ins until Diatype is
+ * licensed: Archivo Expanded for Diatype Extended (Ultra = 900 for titles of 44px
+ * and up, Bold = 700 below that), Inter for text, JetBrains Mono for Diatype Mono
+ * labels and figures. Doto is gone from the book.
  */
 :root[data-theme='sand'] {
   color-scheme: light;
@@ -106,13 +109,21 @@
 
   --font-display: 'Archivo', 'Inter', sans-serif;
   --font-mono: 'JetBrains Mono', ui-monospace, monospace;
-  --font-num: 'Doto', 'JetBrains Mono', monospace;
+  --font-num: var(--font-mono);
+  /* Type roles (p. 31): Ultra speaks first, Bold organises, Light explains. */
+  --title-weight: 900;
+  --title-track: -0.04em;
+  --sub-weight: 700;
+  --sub-track: -0.02em;
+  /* Ember as text: darkened so small type passes AA on Sand and white. */
+  --ember-text: color-mix(in srgb, var(--ember) 78%, var(--ink));
 
   --bg: var(--sand);
   --surface-1: #ffffff;
   --surface-2: color-mix(in srgb, var(--ink) 5%, var(--sand));
   --surface-3: color-mix(in srgb, var(--ink) 9%, var(--sand));
-  --surface-hover: rgba(14, 17, 22, 0.04);
+  /* One soft grey for every hover fill (rows, menu items, icon buttons), the home prompts' resting fill. */
+  --surface-hover: rgba(14, 17, 22, 0.03);
   --surface-active: rgba(14, 17, 22, 0.07);
   --overlay: rgba(14, 17, 22, 0.32);
   --control-fill: rgba(14, 17, 22, 0.045);
@@ -147,10 +158,11 @@
   /* Semantic colours sit outside the brand palette; Ember is never "error". */
   --positive: #138a5a;
   --positive-soft: rgba(19, 138, 90, 0.1);
-  --warning: #a86a06;
-  --warning-soft: rgba(200, 130, 10, 0.12);
-  --danger: #c0352f;
-  --danger-soft: rgba(192, 53, 47, 0.1);
+  /* Kept clear of Liwa Ember: warning is a true yellow, danger a crimson. */
+  --warning: #7a6200;
+  --warning-soft: rgba(222, 184, 0, 0.18);
+  --danger: #b42347;
+  --danger-soft: rgba(180, 35, 71, 0.1);
   --neutral-soft: rgba(14, 17, 22, 0.06);
 
   --glow: 0 0 0 1px rgba(30, 59, 214, 0.5), 0 0 20px rgba(30, 59, 214, 0.2);
