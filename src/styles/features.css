@@ -10549,15 +10549,17 @@ button.fdm-drop:hover {
   position: relative;
   margin-bottom: 8px;
 }
+/* The company's tile from the Spark team's Clients page (spk-t__mono), at 64px. */
 .inv__company {
   display: grid;
   place-items: center;
   width: 64px;
   height: 64px;
-  border-radius: 18px;
-  background: linear-gradient(135deg, var(--cobalt, #1e3bd6), #8a3cf0 55%, var(--ember, #e8501f));
-  color: #fff;
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  color: var(--text-2);
   font-family: var(--font-display);
+  font-stretch: 125%;
   font-weight: 800;
   font-size: 28px;
 }
@@ -10587,7 +10589,6 @@ button.fdm-drop:hover {
 }
 .inv__note {
   width: 100%;
-  margin: 0;
   padding: 10px 14px;
   border-radius: 12px;
   background: var(--surface-2);
@@ -10604,15 +10605,6 @@ button.fdm-drop:hover {
 .inv__cta {
   width: 100%;
   margin-top: 6px;
-}
-.inv__fine {
-  font-size: 12px;
-  line-height: 1.5;
-  color: var(--text-3);
-}
-.inv__fine strong {
-  color: var(--text-2);
-  font-weight: 500;
 }
 .inv__form {
   width: 100%;

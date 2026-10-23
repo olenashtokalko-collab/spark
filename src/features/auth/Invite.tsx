@@ -50,7 +50,7 @@ export function Invite() {
     <div className="inv">
       <img className="inv__wordmark" src="/brand/spark-wordmark.png" alt="Spark Studios" />
       <div className="inv__card">
-        {/* The company's tile with the inviter's face on its corner, as Loom shows the workspace and who asked. */}
+        {/* The company's tile (as on the Spark team's Clients page) with the inviter's face on its corner, as Loom shows the workspace and who asked. */}
         <div className="inv__badge" aria-hidden>
           <span className="inv__company">{company.charAt(0)}</span>
           <span className="inv__inviter">
@@ -61,10 +61,6 @@ export function Invite() {
         {step === 'invite' ? (
           <>
             <h1 className="inv__title">Join {company} on Spark</h1>
-            <p className="inv__sub">
-              <strong>{inviter.name}</strong> invited you to {company}’s workspace: your AI agent, requests to Spark Studios, proposals and files in one place.
-            </p>
-            {inv.message && <blockquote className="inv__note">“{inv.message}”</blockquote>}
             <div className="inv__team">
               <span className="avatar-stack">
                 {team.slice(0, 4).map((p) => (
@@ -73,12 +69,13 @@ export function Invite() {
               </span>
               <span>{already} are already here</span>
             </div>
+            <p className="inv__sub">
+              <strong>{inviter.name}</strong> invited you to {company}’s workspace.
+            </p>
+            {inv.message && <p className="inv__note">You are {inv.message.charAt(0).toLowerCase() + inv.message.slice(1)}</p>}
             <Button variant="primary" size="lg" className="inv__cta" onClick={() => setStep('account')}>
               Accept invitation
             </Button>
-            <p className="inv__fine">
-              Invited as <strong>{inv.email}</strong>. Not you? Ask {inviter.name.split(' ')[0]} to send the invitation to the right address.
-            </p>
           </>
         ) : (
           <form className="inv__form" onSubmit={join} noValidate>
