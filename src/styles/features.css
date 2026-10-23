@@ -10675,3 +10675,89 @@ button.fdm-drop:hover {
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+
+/* ---- Sign-in: "Forgot password?" and the reset screens ------------------------------------------ */
+.signin-page__link {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: rgba(14, 17, 22, 0.25);
+  cursor: pointer;
+}
+.signin-page__link:hover {
+  color: var(--ink);
+  text-decoration-color: var(--ink);
+}
+.field__label .signin-page__link {
+  font-weight: 400;
+}
+.signin-page__back {
+  align-self: center;
+  text-decoration: none;
+  color: var(--text-3);
+}
+.signin-page__hint {
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.signin-page__form .itd-form__sub strong {
+  color: var(--ink);
+  font-weight: 500;
+}
+.signin-page__form .itd-form__sub {
+  text-align: center;
+}
+/* A round tile over the title of the reset screens, in place of the app icon. */
+.signin-page__glyph {
+  align-self: center;
+  display: grid;
+  place-items: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 8px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+  color: var(--ink);
+}
+.signin-page__glyph--ok {
+  background: color-mix(in srgb, #2b7a43 12%, transparent);
+  color: #2b7a43;
+}
+.signin-page__pw {
+  position: relative;
+  display: block;
+}
+.signin-page__pw .input {
+  width: 100%;
+  padding-right: 40px;
+}
+.signin-page__eye {
+  position: absolute;
+  top: 50%;
+  right: 8px;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border: 0;
+  border-radius: 8px;
+  background: none;
+  color: var(--text-3);
+  cursor: pointer;
+}
+.signin-page__eye:hover {
+  color: var(--ink);
+}
+/* The reset screens' titles a step under "Welcome to Spark", so they fit the form on one line. */
+:root[data-theme] .signin-page__form .signin-page__title.signin-page__title--sm,
+.signin-page__form .signin-page__title.signin-page__title--sm {
+  font-size: 24px;
+}
