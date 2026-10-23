@@ -61,6 +61,7 @@ export function DocPreviewDialog({ docId, onClose }: { docId: string | null; onC
   }, [docId]);
 
   if (!doc) return null;
+  const chat = doc.chatId ? state.conversations.find((c) => c.id === doc.chatId) : undefined;
   const by = personById(state, doc.uploadedBy);
   const folder = state.folders.find((f) => f.id === doc.folderId);
   const req = doc.requestId ? state.requests.find((r) => r.id === doc.requestId) : undefined;
@@ -136,6 +137,16 @@ export function DocPreviewDialog({ docId, onClose }: { docId: string | null; onC
                 {folder?.name}
               </a>
             </dd>
+            {chat && (
+              <>
+                <dt>Added in</dt>
+                <dd>
+                  <a className="link" href={`#/assistant/${chat.id}`} onClick={() => onClose()}>
+                    {chat.title}
+                  </a>
+                </dd>
+              </>
+            )}
             {req && (
               <>
                 <dt>Request</dt>

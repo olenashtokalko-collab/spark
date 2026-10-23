@@ -1,6 +1,29 @@
 # Spark — Brand Guidelines for the Platform
 
-Source: **Spark Studios Brand Guidelines 2026, V2.0** (PDF, 22 pages, Abu Dhabi). This document turns the brand book into a design reference for the Spark platform. It does not change the UI; it is the basis for doing so.
+Source: **Spark Studios Brand Guidelines 2026, V3.0** (Oct 2026, PDF, 41 pages, Abu Dhabi), which replaces V2.0 (22 pages). This document turns the brand book into a design reference for the Spark platform. It does not change the UI; it is the basis for doing so.
+
+## What changed in V3.0 (Oct 2026)
+
+Page numbers marked **V3** refer to the new book; other page numbers below still point to V2.0 and are kept where V3 says the same thing.
+
+| | V2.0 | V3.0 |
+|---|---|---|
+| Colour shares | Sand 45%, Ink 20%, Cobalt 15% ("leads"), Ember 5% ("the spark"), Haze 5%, Noor 10% | **Sand 35%**, Ink 20%, **Cobalt 15% and Ember 15%, "equal weight"**, Haze 5%, Noor 10% (V3 p. 30) |
+| Titles | Diatype Extended Bold | **Diatype Extended Ultra**, tracking −40, **never below 44 px** (V3 p. 31) |
+| Subtitles, names, key lines | — | Diatype Extended **Bold** (V3 p. 31) |
+| Text | Diatype Extended Regular, 22–30 | Diatype Extended **Light**, 18–30 (V3 p. 31) |
+| Labels | Diatype Mono 16–18 | Diatype Mono 15–18, uppercase, tracked; shown in Ember (V3 p. 31) |
+| Numbers | Doto Rounded | **Doto removed.** Figures in Ultra (large) or Mono (V3 pp. 30–31) |
+| Arabic | Hacen Casablanca | Hacen Casablanca · Heavy, Regular, Light (V3 p. 31) |
+| Logo | — | Clear space 1x (x = spark height); min 120 px digital; Ink on Sand default, Sand on Ink for night, glass only for film and events (V3 pp. 26, 29) |
+| Touchpoints | — | "Ink objects carry the spark. Glass objects carry the light. One idea per surface." (V3 p. 37) |
+
+### How the platform applies V3 (prototype, Oct 2026)
+- **Ground:** pages are Sand; the sidebar is a shade darker (Ink 4% over Sand). No white page grounds. Cards and tables stay white on Sand.
+- **Type** (stand-ins until Diatype is licensed): Archivo Expanded 900 = Ultra, only for titles of 44 px and up (page titles, the chat greeting on wide screens); Archivo Expanded 700 = Bold for every smaller title; Inter for text; JetBrains Mono for labels and figures. Doto and Instrument Serif are no longer loaded.
+- **Ember** (equal to Cobalt now): labels and eyebrows (darkened to `--ember-text` for AA), AI marks (the research trace), the "needs you" dots in the sidebar. Never an error or warning colour: warning is a true yellow (`#7A6200` on `#FCF0B4`), danger a crimson (`#B42347`).
+- **People:** client avatars on Corniche Haze with Ink initials; Spark team avatars Ink with Sand initials; AI is only the orb or the spark.
+- **Glass:** one cluster per screen. Folders in Documents are quiet (Sand back, white sheets, frosted white front, Ink type); the glass and spectrum stay for the hero object (the chat orb and panel, modal icon tiles).
 
 ## How to read this document
 
@@ -44,7 +67,7 @@ The brand book is a **brand and marketing** book: logo, colour, type, material, 
 - **[Inferred]** Human comes first in the wording; AI is the amplifier, never the hero on its own.
 
 ### Overall visual direction
-- **[Spec]** Light ground: Saadiyat Sand carries the page (45% of colour use) (p. 11).
+- **[Spec]** Light ground: Saadiyat Sand carries the page (35% of colour use; 45% in V2) (V3 p. 30).
 - **[Spec]** Material: **"frosted light"** — "soft frosted glass holding spectral light" (p. 14).
 - **[Spec]** The spectrum runs **Cobalt → Ember** (p. 14).
 - **[Inferred]** Calm editorial layouts: large flat Sand areas, one strong visual per spread, generous empty space, mono labels in the corners. The colour and glass are concentrated in one object; everything around it stays quiet.
@@ -54,14 +77,14 @@ The brand book is a **brand and marketing** book: logo, colour, type, material, 
 ## 2. Colour system
 
 ### Solid colours
-**[Spec]** "Five solid colours, each named after a place in Abu Dhabi. Sand and Ink carry the page, Gulf Cobalt leads, Liwa Ember is the spark." Proportions are given as share of use (p. 11).
+**[Spec]** "Five solid colours named after places in Abu Dhabi, sized to their share of a typical layout. Gulf Cobalt and Liwa Ember carry equal weight. Noor is the light between them." (V3 p. 30). V2 said "Gulf Cobalt leads, Liwa Ember is the spark".
 
 | Name | HEX | RGB | Share | Description in book | Role [Spec] |
 |---|---|---|---|---|---|
-| **Saadiyat Sand** | `#F8F6F2` | 248 246 242 | 45% | The cultural district ground | Carries the page (ground) |
+| **Saadiyat Sand** | `#F8F6F2` | 248 246 242 | 35% | The cultural district ground | Carries the page (ground) |
 | **Mangrove Ink** | `#0E1116` | 14 17 22 | 20% | Eastern Mangroves after dark | Carries the page (type, dark grounds) |
-| **Gulf Cobalt** | `#1E3BD6` | 30 59 214 | 15% | The Arabian Gulf at depth | **Leads** (primary accent) |
-| **Liwa Ember** | `#E8501F` | 232 80 31 | 5% | Liwa dunes at last light | **The spark** (secondary accent) |
+| **Gulf Cobalt** | `#1E3BD6` | 30 59 214 | 15% | The Arabian Gulf at depth | Accent, equal weight with Ember; human |
+| **Liwa Ember** | `#E8501F` | 232 80 31 | 15% | Liwa dunes at last light | Accent, equal weight with Cobalt; AI, labels, index numbers |
 | **Corniche Haze** | `#C8D8F0` | 200 216 240 | 5% | Dusk haze over the Corniche | ⚠ No role stated; see below |
 
 ### Noor (the light)
@@ -108,11 +131,13 @@ The brand book is a **brand and marketing** book: logo, colour, type, material, 
 ### Families and roles
 | Role | Family and cut | Sizes | Source |
 |---|---|---|---|
-| **Display** | Diatype Extended **Bold** ("its heaviest cut leads everything we say") | 80 to 120 | [Spec] p. 12 |
-| **Text** | Diatype Extended **Regular** | 22 to 30 | [Spec] p. 12 |
-| **Label** | **Diatype Mono** | 16 to 18 | [Spec] p. 12 |
-| **Highlight** | **Doto Rounded** — numbers | ⚠ not given | [Spec] p. 12 |
-| **Arabic** | **Hacen Casablanca** — Heavy, Regular, Light; "carries Arabic with the same weight and width" | ⚠ not given | [Spec] p. 12 |
+| **Titles** | Diatype Extended **Ultra**, tracking −40, every title and headline; never below 44 px | — | [Spec] V3 p. 31 |
+| **Subtitles** | Diatype Extended **Bold** · subheads, names, key lines | — | [Spec] V3 p. 31 |
+| **Text** | Diatype Extended **Light** · body | 18 to 30 | [Spec] V3 p. 31 |
+| **Labels** | **Diatype Mono**, uppercase, tracked | 15 to 18 | [Spec] V3 p. 31 |
+| **Arabic** | **Hacen Casablanca** — Heavy, Regular, Light | ⚠ not given | [Spec] V3 p. 31 |
+
+Doto (V2 "Highlight", numbers) is no longer part of the book.
 
 - ⚠ **Gap — units and context:** sizes have **no unit** (pt/px) and come from a 16:9 presentation. They are presentation sizes, not UI sizes. 80–120 cannot be used as UI heading sizes as-is.
 - ⚠ **Gap:** no line heights, letter spacing, or weights other than those listed; no Latin–Arabic pairing rules for mixed lines.
@@ -131,11 +156,10 @@ The book has no UI scale. A starting point, to be validated with the licensed fo
 
 | Token | Family | Use |
 |---|---|---|
-| `display` | Diatype Extended Bold | Page titles, empty-state headlines, the chat greeting |
-| `title` | Diatype Extended Bold | Dialog and section titles |
-| `body` | Diatype Extended Regular | Chat messages, descriptions, table cells |
-| `label` | Diatype Mono, uppercase, tracked | Eyebrows, metadata, column headers, status labels, breadcrumbs |
-| `numeric` | Doto | Only large decorative numbers (step counts, KPIs, chapter-style indexes); never for data that must be read precisely in tables |
+| `display` | Diatype Extended Ultra, tracking −40, 44 px and up (stand-in: Archivo Expanded 900) | Page titles, the chat greeting |
+| `title` | Diatype Extended Bold (stand-in: Archivo Expanded 700) | Every title below 44 px: dialogs, request and proposal titles, sections |
+| `body` | Diatype Extended Light (stand-in: Inter 400) | Chat messages, descriptions, table cells |
+| `label` | Diatype Mono, uppercase, tracked (stand-in: JetBrains Mono) | Eyebrows, metadata, IDs, counters, figures |
 
 ⚠ An **extended** typeface is wide: long UI strings (table cells, buttons, nav labels) will take noticeably more space than today's Inter. Test density before adopting it for body text in dense views; Diatype Extended for display only, with a non-extended text face for dense UI, is an option **to confirm with the brand team** — the book itself uses Extended for text.
 

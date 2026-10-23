@@ -2,7 +2,7 @@
 // it came from is attached automatically (the focused answer and the question
 // before it) and shown back to the client once the request is sent.
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, Check, Send } from 'lucide-react';
+import { ArrowRight, BarChart3, Camera, Check, FileText, Lightbulb, Megaphone, Palette, Send, type LucideIcon } from 'lucide-react';
 import { Dialog, IconTile } from '../../components/ui/overlay';
 import { Button, Field, Input, Select, Textarea, cx } from '../../components/ui/primitives';
 import { useStore } from '../../state/store';
@@ -18,6 +18,16 @@ export interface RequestPrefill {
 }
 
 export const TYPES: RequestType[] = ['Strategy', 'Creative', 'Content', 'Research', 'Social', 'Other'];
+
+// Each request type has its icon, shown beside the type's name (picked on #/demo/requests-ui, 5).
+export const TYPE_ICON: Record<RequestType, LucideIcon> = {
+  Strategy: Lightbulb,
+  Creative: Palette,
+  Content: FileText,
+  Research: BarChart3,
+  Social: Megaphone,
+  Other: Camera,
+};
 export const TIMINGS: Timing[] = ['ASAP', 'Within 2 weeks', 'This quarter', 'Flexible'];
 const plain = (t: string) => t.replace(/\*\*/g, '');
 
@@ -112,7 +122,7 @@ export function RequestFields({ value, onChange, errors, idPrefix = 'rq', compac
       </Field>
       <div className="row">
         <Field label="Type" htmlFor={`${idPrefix}-type`}>
-          <Select id={`${idPrefix}-type`} value={value.type} onChange={(e) => set({ type: e.target.value as RequestType })}>
+          <Select id={`${idPrefix}-type`} icon={TYPE_ICON[value.type]} value={value.type} onChange={(e) => set({ type: e.target.value as RequestType })}>
             {TYPES.map((t) => (
               <option key={t}>{t}</option>
             ))}

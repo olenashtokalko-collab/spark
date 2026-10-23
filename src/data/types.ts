@@ -75,6 +75,8 @@ export interface Doc {
   uploadedAt: ISODate;
   version?: number;
   requestId?: ID;
+  /** Attached in this chat; such files are saved to From your team. */
+  chatId?: ID;
   summary?: string;
   preview: DocPreview;
   review?: {

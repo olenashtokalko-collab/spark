@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, Calendar, FileText, LayoutGrid, List, Search, Upload, UserRound, X, Download } from 'lucide-react';
+import { ArrowLeft, Calendar, FileText, LayoutGrid, List, Lock, MessageSquare, Search, Upload, UserRound, X, Download } from 'lucide-react';
 import { FluidOrb } from '../../components/ui/FluidOrb';
-import { personById, useStore } from '../../state/store';
+import { personById, TEAM_FOLDER, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
-import { Button, cx, EmptyState, Input, PageHeader, Progress, Segmented, Skeleton } from '../../components/ui/primitives';
-import { DocThumb, FileIcon, FolderTile, folderHue, kindLabel } from '../../components/domain';
+import { AvatarStack, Button, cx, EmptyState, Input, PageHeader, Progress, Segmented, Skeleton } from '../../components/ui/primitives';
+import { DocThumb, FileIcon, kindLabel } from '../../components/domain';
+import { FolderCard, folderTint } from './FolderCard';
 import { useToast } from '../../components/ui/toast';
 import { FilterMenu } from '../../components/ui/overlay';
 import { fmtRelative, fmtSize } from '../../lib/format';
@@ -34,6 +35,9 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
     }
   });
   const [loading, setLoading] = useState(true);
+  // The top level splits Spark's folders from your team's (picked on #/demo/folders, D).
+  const [side, setSide] = useState<'spark' | 'team'>('spark');
+  const [over, setOver] = useState(false);
   const [uploads, setUploads] = useState<{ name: string; progress: number }[]>([]);
   const fileInput = useRef<HTMLInputElement>(null);
 
@@ -41,6 +45,15 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
   const children = state.folders.filter((f) => f.parentId === (folder?.id ?? null));
   const crumbs: Folder[] = [];
   for (let f = folder; f; f = state.folders.find((x) => x.id === f!.parentId)) crumbs.unshift(f);
+  // Uploads go only into From your team (and its subfolders); Spark's folders are view only.
+  const isTeam = (fid: string) => {
+    for (let f = state.folders.find((x) => x.id === fid); f; f = state.folders.find((x) => x.id === f!.parentId)) if (f.id === TEAM_FOLDER) return true;
+    return false;
+  };
+  const canUpload = !!folder && isTeam(folder.id);
+  const teamFolder = state.folders.find((f) => f.id === TEAM_FOLDER);
+  const team = state.people.filter((p) => p.org === 'client');
+  const shownFolders = folder ? children : children.filter((f) => (side === 'team') === isTeam(f.id));
 
   useEffect(() => {
     setLoading(true);
@@ -86,14 +99,16 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
   const reviewIn = (fid: string): number =>
     state.docs.filter((d) => d.folderId === fid && d.review?.status === 'open').length + state.folders.filter((f) => f.parentId === fid).reduce((a, f) => a + reviewIn(f.id), 0);
 
+  // Files go to the open team folder, or to From your team from the drop card at the top level.
   const onFiles = (list: FileList | null) => {
-    if (!list?.length) return;
+    const into = folder && canUpload ? folder : !folder ? teamFolder : undefined;
+    if (!list?.length || !into) return;
     const arr = Array.from(list);
     const tooBig = arr.filter((f) => f.size > MAX_MB * 1024 * 1024);
     const ok = arr.filter((f) => f.size <= MAX_MB * 1024 * 1024);
     if (tooBig.length) toast({ title: `${tooBig.length === 1 ? tooBig[0].name : `${tooBig.length} files`} too large`, body: `Files up to ${MAX_MB} MB. Share bigger files with Spark by link.`, tone: 'error' });
     if (!ok.length) return;
-    const target = folder?.id ?? 'f-uploads';
+    const target = into.id;
     setUploads(ok.map((f) => ({ name: f.name, progress: 0 })));
     let p = 0;
     const tick = setInterval(() => {
@@ -108,7 +123,7 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
         setUploads([]);
         toast({
           title: `${ok.length === 1 ? ok[0].name : `${ok.length} files`} uploaded`,
-          body: `Shared with Spark in ${state.folders.find((f) => f.id === target)?.name}.`,
+          body: `Shared with Spark in ${into.name}.`,
           action: !folder ? { label: 'Open folder', onClick: () => navigate(`/documents/${target}`) } : undefined,
         });
       }
@@ -120,7 +135,7 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
     <div
       className="docs"
       onDragOver={(e) => {
-        if (e.dataTransfer.types.includes('Files')) e.preventDefault();
+        if (canUpload && e.dataTransfer.types.includes('Files')) e.preventDefault();
       }}
       onDrop={(e) => {
         e.preventDefault();
@@ -134,16 +149,20 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
           <ArrowLeft size={15} /> {crumbs.length > 1 ? crumbs[crumbs.length - 2].name : 'Documents'}
         </a>
       )}
+      <input ref={fileInput} type="file" multiple hidden onChange={(e) => onFiles(e.target.files)} />
       <PageHeader
         title={folder ? folder.name : 'Documents'}
         sub={folder ? folder.description : 'Guidelines, strategy, proposals, creative and the files your team shares.'}
         actions={
-          <>
-            <input ref={fileInput} type="file" multiple hidden onChange={(e) => onFiles(e.target.files)} />
+          canUpload ? (
             <Button variant="primary" icon={Upload} onClick={() => fileInput.current?.click()}>
               Upload
             </Button>
-          </>
+          ) : folder ? (
+            <span className="docs__owner">
+              <Lock size={14} /> From Spark · view only
+            </span>
+          ) : undefined
         }
       />
 
@@ -156,6 +175,22 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
               </div>
             </div>
           )}
+          {!searching && !folder && (
+            <div className="pill-tabs" role="tablist" aria-label="Whose files">
+              {(
+                [
+                  ['spark', 'From Spark', children.filter((f) => !isTeam(f.id)).length],
+                  ['team', 'Your team', children.filter((f) => isTeam(f.id)).length],
+                ] as const
+              ).map(([v, label, n]) => (
+                <button key={v} role="tab" aria-selected={side === v} className={cx(side === v && 'is-on')} onClick={() => setSide(v)}>
+                  {label}
+                  <span>{n}</span>
+                </button>
+              ))}
+            </div>
+          )}
+
           <div className="filter-bar">
             <Input icon={Search} placeholder="Search all files" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search files" className="filter-bar__search" />
             <FilterMenu
@@ -218,22 +253,47 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
             </div>
           )}
 
-          {!searching && children.length > 0 && (
-            <div className="folder-grid">
-              {children.map((f) => {
+          {!searching && (shownFolders.length > 0 || (!folder && side === 'team')) && (
+            <div className="fcard-grid">
+              {shownFolders.map((f) => {
                 const n = countIn(f.id);
                 const review = reviewIn(f.id);
                 return (
-                  <FolderTile
+                  <FolderCard
                     key={f.id}
                     href={`#/documents/${f.id}`}
                     name={f.name}
                     sub={f.description ?? `${n} ${n === 1 ? 'item' : 'items'}`}
-                    hue={folderHue(state.folders, f.id)}
+                    tint={folderTint(state.folders, f.id)}
                     badge={review > 0 && `${review} to review`}
+                    mark={isTeam(f.id) ? <AvatarStack people={team} size={20} max={3} /> : undefined}
                   />
                 );
               })}
+              {/* Your team: the drop card is how files get in (drop, or click to choose). */}
+              {!folder && side === 'team' && (
+                <button
+                  type="button"
+                  className={cx('drop-card', over && 'is-over')}
+                  onClick={() => fileInput.current?.click()}
+                  onDragOver={(e) => {
+                    if (!e.dataTransfer.types.includes('Files')) return;
+                    e.preventDefault();
+                    setOver(true);
+                  }}
+                  onDragLeave={() => setOver(false)}
+                  onDrop={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    setOver(false);
+                    onFiles(e.dataTransfer.files);
+                  }}
+                >
+                  <Upload size={18} />
+                  <b>Drop files here</b>
+                  <span className="faint">Or click to choose. They go to {teamFolder?.name}.</span>
+                </button>
+              )}
             </div>
           )}
 
@@ -254,10 +314,17 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
             folder || searching || filtered ? (
               <EmptyState
                 panel
-                title={searching || filtered ? 'No files match these filters.' : 'No files added.'}
-                body={searching || filtered ? 'Search covers every folder. Try part of the name or clear the filters above.' : 'Drop files here or use Upload to share them.'}
+                title={searching || filtered ? 'No files match these filters.' : canUpload ? 'No files added.' : 'No files yet.'}
+                body={
+                  searching || filtered
+                    ? 'Search covers every folder. Try part of the name or clear the filters above.'
+                    : canUpload
+                      ? 'Drop files here or use Upload to share them with Spark. Files you add in a chat are saved here too.'
+                      : 'Spark adds files here as the work moves.'
+                }
                 action={
-                  !(searching || filtered) && (
+                  !(searching || filtered) &&
+                  canUpload && (
                     <Button size="sm" icon={Upload} onClick={() => fileInput.current?.click()}>
                       Upload
                     </Button>
@@ -296,6 +363,11 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
           <span>{d.name}</span>
         </span>
         <span className="file-card__meta">
+          {d.chatId && (
+            <>
+              <MessageSquare size={12} /> From a chat ·{' '}
+            </>
+          )}
           {showFolder ? state.folders.find((f) => f.id === d.folderId)?.name : by.name.split(' ')[0]} · {fmtRelative(d.uploadedAt)}
         </span>
       </button>
@@ -309,6 +381,11 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
         <button className="file-line__main" onClick={() => openDoc(d.id)} role="cell">
           <FileIcon kind={d.kind} />
           <span className="file-line__name">{d.name}</span>
+          {d.chatId && (
+            <span className="file-line__from" data-tip="Added in a chat">
+              <MessageSquare size={13} />
+            </span>
+          )}
           <ReviewBadge doc={d} />
         </button>
         <span className="faint hide-sm" role="cell">

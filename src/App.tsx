@@ -1,3 +1,9 @@
+import { FeedbackDemo } from './features/demo/FeedbackDemo';
+import { FoldersDemo } from './features/demo/FoldersDemo';
+import { RequestsUiDemo } from './features/demo/RequestsUiDemo';
+import { IntroDemo } from './features/demo/IntroDemo';
+import { HomeDemo } from './features/demo/HomeDemo';
+import { RecentDemo } from './features/demo/RecentDemo';
 import { useEffect } from 'react';
 import { useRoute } from './lib/router';
 import { AppShell } from './components/layout/AppShell';
@@ -74,6 +80,12 @@ function Screen() {
       if (a === 'version-info') return <VersionInfoDemo />;
       if (a === 'comments-panel') return <CommentsPanelDemo />;
       if (a === 'proposal-doc') return <ProposalDocDemo />;
+      if (a === 'feedback') return <FeedbackDemo />;
+      if (a === 'folders') return <FoldersDemo />;
+      if (a === 'requests-ui') return <RequestsUiDemo />;
+      if (a === 'intro') return <IntroDemo />;
+      if (a === 'home') return <HomeDemo />;
+      if (a === 'recent') return <RecentDemo />;
       break;
     case 'reset':
       // For rehearsals: forget everything that was done in the prototype and start from the seed data again.
@@ -116,7 +128,27 @@ export default function App() {
   useEffect(() => {
     if (!path.startsWith('/assistant')) window.scrollTo({ top: 0 });
   }, [path]);
-  if (!state.signedIn) return <SignIn />;
+  // Theme: resolve "system" to the OS preference. Set here, not in the shell, so the sign-in page
+  // (shown without the shell) opens in the brand theme too.
+  useEffect(() => {
+    const apply = () => {
+      const t = state.theme === 'system' ? (window.matchMedia('(prefers-color-scheme: light)').matches ? 'sand' : 'dark') : state.theme;
+      document.documentElement.dataset.theme = t;
+    };
+    apply();
+    const mq = window.matchMedia('(prefers-color-scheme: light)');
+    mq.addEventListener('change', apply);
+    return () => mq.removeEventListener('change', apply);
+  }, [state.theme]);
+  // Signed out: the sign-in page, except for the sign-in options demo, which is about that page.
+  if (!state.signedIn)
+    return path.startsWith('/demo/intro') ? (
+      <div className="signed-out-demo">
+        <IntroDemo />
+      </div>
+    ) : (
+      <SignIn />
+    );
   if (path === '/spark' || path.startsWith('/spark/')) return <SparkApp />;
   return (
     <AppShell>

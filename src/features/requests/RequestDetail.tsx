@@ -490,7 +490,7 @@ export const whenLine = (a: Activity) => (startOfDay(a.at) === todayStart() ? fm
 // ---- The activity tab (picked on #/demo/activity, look 2) ------------------------------
 // One tight line per event, newest first, a rule between days, the older events folded.
 // What each thing looks like follows what it does everywhere else in the app:
-//   a status or decision  → the status pill (.rstatus), as in the header and the table
+//   a status or decision  → the status dot and word (.rstatus), as in the header and the table
 //   a file                → the clickable file chip (.src-chip), as under a chat answer; it opens the file
 //   a fact (price, weeks) → the quiet tag (.req-row__type look), never clickable
 //   "n earlier activities"→ the quiet toggle (.steps-toggle), as on "Researched 4 steps"

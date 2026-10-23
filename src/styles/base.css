@@ -401,30 +401,29 @@ kbd {
   align-items: center;
   justify-content: center;
   gap: 7px;
-  height: 36px;
-  padding: 0 16px;
+  height: 32px;
+  padding: 0 14px;
   border-radius: 999px;
   font-weight: 500;
   font-size: 14px;
   white-space: nowrap;
   transition: background 0.15s, color 0.15s, box-shadow 0.2s, opacity 0.15s, filter 0.15s, transform 0.1s;
 }
+/* Every button is 32px tall; sm and lg only change the padding and text size. */
 .btn--sm {
-  height: 30px;
-  padding: 0 13px;
+  height: 32px;
+  padding: 0 12px;
   font-size: 13px;
 }
 .btn--lg {
-  height: 42px;
-  padding: 0 22px;
+  height: 32px;
+  padding: 0 16px;
   font-size: 14px;
 }
-.btn--icon {
-  padding: 0;
-  width: 36px;
-}
+.btn--icon,
 .btn--sm.btn--icon {
-  width: 30px;
+  padding: 0;
+  width: 32px;
 }
 /* Primary and danger: a muted pill with a lit top edge and a soft drop.
    --pill sets the colour. */
@@ -710,6 +709,17 @@ kbd {
   border-bottom: 1.5px solid var(--text-3);
   transform: translateY(-70%) rotate(45deg);
   pointer-events: none;
+}
+.select__icon {
+  position: absolute;
+  left: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-3);
+  pointer-events: none;
+}
+.select--icon select {
+  padding-left: 36px;
 }
 .select option {
   background: var(--surface-1);
@@ -1367,4 +1377,338 @@ kbd {
   opacity: 1;
   transform: translate(-50%, 0);
   transition-delay: 0.25s;
+}
+
+/* ---- Sidebar and panel (feedback 21 Oct) -------------------------------------------------------
+   The sidebar runs the full height: logo, sections, notifications, and the person at the foot.
+   By default it shows each icon with its name (260px, rows of 36px, after the reference); the toggle
+   by the logo collapses it to icons. The page sits beside it on a rounded panel with a 12px gap. */
+.shell {
+  --gap: 12px;
+  --top-h: var(--gap);
+}
+.topbar {
+  grid-column: 2;
+  grid-row: 1;
+  padding: 0;
+}
+.rail {
+  grid-column: 1;
+  grid-row: 1 / span 2;
+  top: 0;
+  height: 100vh;
+  padding-top: 12px;
+}
+.content {
+  grid-column: 2;
+  grid-row: 2;
+}
+/* The page scrolls under a strip at the foot too, so the panel keeps its rounded bottom. */
+.shell::after {
+  content: '';
+  position: fixed;
+  left: var(--rail-w);
+  right: 0;
+  bottom: 0;
+  height: var(--gap);
+  z-index: 15;
+  background: var(--side, var(--bg));
+  pointer-events: none;
+}
+.rail__head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+}
+.rail__logo {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+}
+.rail__toggle {
+  width: 36px;
+  height: 36px;
+  display: grid;
+  place-items: center;
+  border-radius: 10px;
+  color: var(--text-3);
+  transition: background 0.15s, color 0.15s, opacity 0.15s;
+}
+.rail__toggle:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+/* Collapsed: the toggle sits over the logo and shows on hover. */
+.shell:not(.shell--rail-open) .rail__toggle {
+  position: absolute;
+  inset: 4px;
+  width: auto;
+  height: auto;
+  opacity: 0;
+  background: var(--side, var(--bg));
+}
+.shell:not(.shell--rail-open) .rail__head:hover .rail__toggle,
+.shell:not(.shell--rail-open) .rail__toggle:focus-visible {
+  opacity: 1;
+}
+.rail__label {
+  display: none;
+}
+.rail__end {
+  margin-top: auto;
+}
+.rail > :last-child {
+  margin-bottom: var(--gap);
+}
+
+/* The account at the foot. */
+.rail__me {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 44px;
+  height: 44px;
+  justify-content: center;
+  margin-top: 6px;
+  border-radius: 12px;
+  text-align: left;
+  transition: background 0.15s;
+}
+.rail__me:hover,
+.rail__me.is-active {
+  background: var(--surface-hover);
+}
+.rail__me-text,
+.rail__me-chev {
+  display: none;
+}
+.rail__me-text {
+  flex: 1;
+  min-width: 0;
+  flex-direction: column;
+  line-height: 1.25;
+}
+.rail__me-name,
+.rail__me-sub {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rail__me-name {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+.rail__me-sub {
+  font-size: 12px;
+  color: var(--text-3);
+}
+.rail__me-chev {
+  flex: none;
+  color: var(--text-3);
+}
+
+/* The account menu (after the reference's workspace menu). */
+.acct-pop {
+  border-radius: 20px;
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.06), 0 12px 32px -8px rgba(14, 17, 22, 0.18);
+}
+.acct {
+  display: flex;
+  flex-direction: column;
+  padding: 8px;
+}
+.acct__ws {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 8px 12px;
+}
+.acct__tile {
+  flex: none;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center;
+  border-radius: 12px;
+  background: var(--text);
+  color: #ffffff;
+  font-size: 18px;
+  font-weight: 600;
+}
+.acct__ws-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+}
+.acct__ws-text b {
+  font-size: 16px;
+  font-weight: 600;
+}
+.acct__role {
+  font-size: 13px;
+  color: var(--text-3);
+}
+.acct__credits {
+  margin-bottom: 4px;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--bg);
+}
+.acct__credits-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.acct__credits-label {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+}
+.acct__credits-amount {
+  margin: 4px 0 0 25px;
+  font-size: 15px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.acct__credits-amount.is-out {
+  color: var(--ember, #e8501f);
+}
+.acct__topup {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 10px;
+  background: var(--surface-1);
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.08), 0 1px 2px rgba(14, 17, 22, 0.06);
+  font-size: 14px;
+  font-weight: 500;
+}
+.acct__topup:hover {
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.16), 0 1px 2px rgba(14, 17, 22, 0.06);
+}
+.acct__bar {
+  height: 5px;
+  margin-top: 12px;
+  border-radius: 99px;
+  background: var(--surface-3);
+  overflow: hidden;
+}
+.acct__bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--text);
+}
+.acct__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 38px;
+  padding: 0 10px;
+  border-radius: 10px;
+  font-size: 15px;
+  text-align: left;
+  color: var(--text);
+}
+.acct__item:hover {
+  background: var(--surface-hover);
+}
+.acct__item > svg {
+  flex: none;
+  color: var(--text-2);
+}
+.acct__divider {
+  height: 1px;
+  margin: 6px 10px;
+  background: var(--line);
+}
+
+/* Open: names beside the icons. The icons keep their x, so nothing jumps when it collapses. */
+.shell--rail-open {
+  --rail-w: 260px;
+}
+.shell--rail-open .rail {
+  align-items: stretch;
+  gap: 2px;
+  padding-left: 14px;
+  padding-right: 12px;
+}
+.shell--rail-open .rail__end {
+  display: flex;
+  flex-direction: column;
+}
+.shell--rail-open .rail__btn {
+  width: 100%;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 12px;
+  padding: 0 13px;
+  border-radius: 10px;
+}
+.shell--rail-open .rail__btn > svg {
+  flex: none;
+}
+.shell--rail-open .rail__label {
+  display: block;
+  font-size: 14.5px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.shell--rail-open .rail__dot {
+  top: 8px;
+  right: auto;
+  left: 26px;
+}
+/* Open: the count sits apart from the bell, at the row's right end. */
+.shell--rail-open .bell__dot {
+  top: 50%;
+  right: 10px;
+  left: auto;
+  transform: translateY(-50%);
+  box-shadow: none;
+}
+.shell--rail-open .rail__me {
+  width: 100%;
+  height: 52px;
+  justify-content: flex-start;
+  padding: 0 10px 0 8px;
+}
+.shell--rail-open .rail__me-text {
+  display: flex;
+}
+.shell--rail-open .rail__me-chev {
+  display: block;
+}
+@media (max-width: 900px) {
+  .shell.shell--rail-open {
+    --rail-w: 56px;
+  }
+  .shell--rail-open .rail {
+    align-items: center;
+    padding-left: 0;
+    padding-right: 0;
+  }
+  .shell--rail-open .rail__btn,
+  .shell--rail-open .rail__me {
+    width: 42px;
+    height: 42px;
+    padding: 0;
+    justify-content: center;
+  }
+  .shell--rail-open .rail__label,
+  .shell--rail-open .rail__me-text,
+  .shell--rail-open .rail__me-chev,
+  .rail__toggle {
+    display: none;
+  }
 }

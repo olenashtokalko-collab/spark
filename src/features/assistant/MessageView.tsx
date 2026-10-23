@@ -4,7 +4,7 @@ import type { Message, Source, Visual } from '../../data/types';
 import { Button, cx } from '../../components/ui/primitives';
 import { FluidOrb } from '../../components/ui/FluidOrb';
 import { FileIcon, kindOf } from '../../components/domain';
-import { personById, useStore } from '../../state/store';
+import { personById, TEAM_FOLDER, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { useToast } from '../../components/ui/toast';
 import { navigate } from '../../lib/router';
@@ -60,6 +60,11 @@ export function MessageView({ msg, convId, onFollowUp, isLast }: Props) {
               </li>
             ))}
           </ul>
+        )}
+        {msg.attachments && (
+          <a className="msg-user__saved" href={`#/documents/${TEAM_FOLDER}`}>
+            Saved to From your team
+          </a>
         )}
         {msg.text && <div className="msg-user__bubble">{msg.text}</div>}
         {by && (

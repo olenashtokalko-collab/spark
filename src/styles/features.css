@@ -2019,7 +2019,6 @@
 /* The secondary decisions are as tall as the primary (btn--lg), with tighter
    sides so "Request changes" fits half the card. */
 .decision__row .btn {
-  height: 42px;
   padding: 0 12px;
 }
 .decision__note {
@@ -2262,13 +2261,13 @@ button.file-card:hover .file-card__thumb {
   left: 8px;
   top: 8px;
 }
-/* On the artwork the pill needs an opaque fill (a tint over white) to stay legible on dark covers. */
+/* On the artwork the dot and word sit on a white chip to stay legible on dark covers. */
 .rstatus.file-card__badge {
-  background: color-mix(in srgb, currentColor 12%, #ffffff);
+  height: 24px;
+  padding: 0 10px;
+  border-radius: 999px;
+  background: #ffffff;
   box-shadow: 0 2px 8px -2px rgba(14, 17, 22, 0.35);
-}
-.rstatus--you.file-card__badge {
-  background: #fbe7bd;
 }
 .file-card__name {
   display: flex;
@@ -2340,15 +2339,6 @@ button.file-card:hover .file-card__thumb {
 }
 /* ---- Team & settings -------------------------------------------------------------------- */
 
-.team {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-}
-/* The page header lives inside .team (it holds the invite button): keep its own spacing. */
-.team > .page-head {
-  margin-bottom: -40px;
-}
 /* Same rhythm as the settings rows. */
 .members {
   display: flex;
@@ -2809,20 +2799,19 @@ button.file-card:hover .file-card__thumb {
 /* Chats open as a panel beside the rail, under the top bar. */
 .history-scrim {
   position: fixed;
-  inset: var(--top-h) 0 0 var(--rail-w);
-  z-index: 15;
-  border-top-left-radius: var(--radius-lg);
+  /* Over the whole page beside the sidebar, top strip included. */
+  inset: 0 0 0 var(--rail-w);
+  z-index: 21;
   background: var(--overlay);
   animation: fade-in 0.15s;
 }
 .history-flyout {
   position: fixed;
-  top: var(--top-h);
-  /* Lined up with the notifications panel, which opens 10px right of the rail
-     buttons and ends level with the bell: same left edge, width, foot and radius. */
-  bottom: 64px;
-  left: calc(var(--rail-w) - 4px);
-  z-index: 16;
+  /* Floats beside the sidebar with the same 12px margin top and bottom. */
+  top: 12px;
+  bottom: 12px;
+  left: calc(var(--rail-w) + 8px);
+  z-index: 22;
   display: flex;
   flex-direction: column;
   width: min(380px, calc(100vw - var(--rail-w)));
@@ -2835,43 +2824,14 @@ button.file-card:hover .file-card__thumb {
 }
 
 /* ---- Sign in -------------------------------------------------------------------------- */
-.signin {
+/* The sign-in page: the intro layout (D on #/demo/intro) filling the window. */
+.itd.signin-page {
   min-height: 100vh;
-  display: grid;
-  place-items: center;
-  padding: 24px 16px;
 }
-.signin__card {
-  width: 100%;
-  max-width: 380px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  gap: 6px;
-}
-.signin__title {
-  font-family: var(--font-display);
-  font-stretch: 125%;
-  font-weight: 800;
-  text-transform: uppercase;
-  font-size: 28px;
-  margin-top: 16px;
-}
-.signin__form {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  margin-top: 24px;
-  text-align: left;
-}
-.signin__form .btn {
-  width: 100%;
-}
-.signin__note {
-  margin-top: 14px;
+.signin-page__error {
+  margin-top: -4px;
   font-size: 13px;
+  color: var(--danger, #b42347);
 }
 
 /* ---- "Sent with your request": the chat cut on the success screen ---------------------- */
@@ -3615,11 +3575,8 @@ button.file-card:hover .file-card__thumb {
   letter-spacing: -0.01em;
 }
 .edit__title em {
-  font-family: 'Instrument Serif', Georgia, serif;
-  font-style: italic;
-  font-weight: 400;
-  font-stretch: normal;
-  letter-spacing: 0;
+  font-style: normal;
+  color: var(--cobalt, #1e3bd6);
 }
 .edit__box {
   display: flex;
@@ -4680,172 +4637,155 @@ body:has(.assistant) .app-bg__light {
   padding-left: 0;
 }
 
-/* ---- Request status (picked on #/demo/status, 2b) ---------------------------------------
-   Every status the same filled pill: text and dot in the status's colour, the
-   fill a tint of it. Amber for what's on the client; one colour per stage. */
+/* ---- Status -----------------------------------------------------------------------------
+   Everywhere a status is a dot and a word, no filled pill: the word in the quiet text
+   colour, the dot in the status's colour (--st). What waits on the client: an amber
+   dot and the word in a heavier weight. */
 .rstatus {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  height: 24px;
-  padding: 0 10px;
-  border-radius: 999px;
+  gap: 8px;
   font-size: 13px;
-  font-weight: 500;
+  color: var(--text-2);
   white-space: nowrap;
-  background: color-mix(in srgb, currentColor 11%, transparent);
 }
 .rstatus__dot {
-  width: 6px;
-  height: 6px;
+  flex: none;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
-  background: currentColor;
+  background: var(--st, currentColor);
 }
 .rstatus--you {
-  color: #8a5a00;
-  background: #fbe7bd;
+  --st: #d9a400;
+  color: var(--text);
+  font-weight: 500;
 }
+/* New (submitted): a yellow dot in the regular weight; what waits on the client is bold. */
 .rstatus--submitted {
-  color: #586579;
+  --st: #d9a400;
+}
+.rstatus--superseded {
+  --st: #586579;
 }
 .rstatus--in_review {
-  color: var(--cobalt, #1e3bd6);
+  --st: var(--cobalt, #1e3bd6);
+}
+.rstatus--proposal {
+  --st: var(--ember, #e8572a);
 }
 .rstatus--changes_requested {
-  color: #6c3fc4;
+  --st: #6c3fc4;
 }
 .rstatus--approved {
-  color: #0f7a6e;
+  --st: #0f7a6e;
 }
 .rstatus--in_progress {
-  color: #b2337f;
+  --st: #b2337f;
 }
 .rstatus--delivered {
-  color: #2b7a43;
+  --st: #2b7a43;
 }
 .rstatus--declined {
-  color: #c2362f;
+  --st: var(--danger, #b42347);
 }
 
-/* ---- People table (Team page) ------------------------------------------------------------
-   One table as on Requests; a tinted group header row per kind of person
-   (members, invitations), each with its own column labels. */
-.ptable {
-  border-radius: var(--radius-md);
-  background: var(--surface-1);
-  box-shadow: inset 0 0 0 1px var(--line);
-  overflow: hidden;
+/* ---- People list (Team page) -------------------------------------------------------------
+   The Requests layout: one row per person on hairlines, no card; a quiet label row
+   above each group (members, invitations); status as a dot and a word. */
+.tm-list {
+  display: flex;
+  flex-direction: column;
 }
-.ptable__group,
-.ptable__row {
+.tm-row {
   display: grid;
-  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1.8fr) 140px 96px 32px;
-  column-gap: 14px;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1.4fr) 110px 100px 32px;
+  column-gap: 24px;
   align-items: center;
-  gap: 16px;
-  padding: 0 16px;
-}
-.ptable__group {
-  min-height: 38px;
-  font-size: 12px;
-  font-weight: 500;
-  color: var(--text-3);
-  background: color-mix(in srgb, var(--text) 3%, transparent);
-  border-top: 1px solid var(--line);
-}
-.ptable__group:first-child {
-  border-top: 0;
-}
-.ptable__group > :first-child {
-  color: var(--text-2);
-}
-.ptable__row {
   min-height: 60px;
-  border-top: 1px solid var(--line);
+  padding: 0 8px;
   font-size: 14px;
+  box-shadow: inset 0 -1px 0 var(--line);
 }
-.ptable__who {
+.tm-row--head {
+  min-height: 32px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.tm-row--head > :first-child {
+  color: var(--text-2);
+  font-weight: 500;
+}
+.tm-row--group {
+  margin-top: 28px;
+}
+.tm-row__n {
+  margin-left: 4px;
+  font-size: 12px;
+  font-weight: 400;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.tm-who {
   display: flex;
   align-items: center;
   gap: 12px;
   min-width: 0;
 }
-.ptable__who > span:last-child {
+.tm-who__text {
   display: flex;
   flex-direction: column;
   min-width: 0;
 }
-.ptable__name {
-  font-weight: 500;
-  color: var(--text);
-}
-.ptable__sub {
-  font-size: 12px;
-  color: var(--text-3);
-}
-.ptable__email {
+.tm-who__name,
+.tm-who__sub,
+.tm-row__email {
+  white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  white-space: nowrap;
-  color: var(--text-2);
 }
-.ptable__role {
-  font-size: 14px;
+.tm-who__name {
   color: var(--text);
 }
-.ptable__acts {
+.tm-who__sub {
+  font-size: 13px;
+  color: var(--text-3);
+}
+.tm-row__email {
+  font-size: 13px;
+  color: var(--text-3);
+}
+.tm-row__acts {
   display: flex;
   justify-content: flex-end;
 }
-.ptable .select select {
-  height: 32px;
-}
-@media (max-width: 900px) {
-  .ptable__group,
-  .ptable__row {
-    grid-template-columns: minmax(0, 1fr) 130px 36px;
-  }
-  .ptable__group > :nth-child(2),
-  .ptable__group > :nth-child(4),
-  .ptable__row > :nth-child(2),
-  .ptable__row > :nth-child(4) {
-    display: none;
-  }}
-/* An invited person who hasn't joined: an empty dotted ring, faint initials. */
-.avatar.avatar--invited {
-  width: 32px;
-  height: 32px;
-  flex: none;
-  font-size: 11px;
-  color: var(--text-3);
-  background: none;
-  border: 1.5px dotted color-mix(in srgb, var(--text) 28%, transparent);
-}
-/* Roles in the people table: the status pill shape, a colour per role. The
-   owner's editable rows put the picker inside the pill with a chevron. */
-.role-pill--owner {
-  color: #3b3f8f;
-}
-.role-pill--member {
-  color: var(--cobalt, #1e3bd6);
-}
-.role-pill--viewer {
-  color: #586579;
-}
-.role-pill--edit {
-  position: relative;
+/* Role: plain text; for the owner it is a picker with a chevron and a soft fill on hover. */
+.tm-role {
+  display: inline-flex;
+  align-items: center;
   gap: 4px;
-  padding-right: 8px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.tm-role--edit {
+  height: 28px;
+  margin-left: -8px;
+  padding: 0 8px;
+  border-radius: 8px;
   cursor: pointer;
-  transition: background 0.15s;
+  transition: background 0.15s, color 0.15s;
 }
-.role-pill--edit:hover {
-  background: color-mix(in srgb, currentColor 18%, transparent);
+.tm-role--edit:hover {
+  color: var(--text);
+  background: var(--control-fill-hover, var(--surface-hover));
 }
-.role-pill--edit:focus-within {
-  box-shadow: 0 0 0 1.5px var(--accent);
+.tm-role--edit:focus-within {
+  box-shadow: inset 0 0 0 1px var(--line-strong);
 }
-.role-pill select {
+.tm-role--edit svg {
+  color: var(--text-3);
+}
+.tm-role select {
   appearance: none;
   border: 0;
   padding: 0;
@@ -4856,7 +4796,26 @@ body:has(.assistant) .app-bg__light {
   cursor: pointer;
   field-sizing: content;
 }
-
+@media (max-width: 900px) {
+  .tm-row {
+    grid-template-columns: minmax(0, 1fr) 110px 32px;
+    column-gap: 20px;
+  }
+  .tm-row > :nth-child(2),
+  .tm-row > :nth-child(4) {
+    display: none;
+  }
+}
+/* An invited person who hasn't joined: an empty dotted ring, faint initials. */
+.avatar.avatar--invited {
+  width: 28px;
+  height: 28px;
+  flex: none;
+  font-size: 11px;
+  color: var(--text-3);
+  background: none;
+  border: 1.5px dotted color-mix(in srgb, var(--text) 28%, transparent);
+}
 /* ---- Thinking line (while Spark works) ---------------------------------------------------
    "Thinking 5s ›": what Spark is doing (shimmering), a live timer and a
    chevron that opens the steps. Replaced by the answer once it streams. */
@@ -4908,7 +4867,5697 @@ body:has(.assistant) .app-bg__light {
   width: 28px;
   height: 28px;
 }
-/* A light stroke in the status's own colour, so the soft fill doesn't melt into the sand background. */
-.rstatus {
+/* ---- Demo: feedback of 21 Oct, now vs will be (#/demo/feedback) ------------------------------- */
+.fbd {
+  max-width: 1100px;
+  padding-bottom: 64px;
+}
+.fbd-item {
+  margin-top: 28px;
+  padding: 22px 24px;
+  border-radius: 20px;
+  background: color-mix(in srgb, #0e1116 3%, var(--bg));
+}
+.fbd-item__head {
+  display: flex;
+  gap: 14px;
+  align-items: flex-start;
+}
+.fbd-item__n {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  font-weight: 700;
+  color: #fff;
+  background: var(--text);
+}
+.fbd-item h2 {
+  margin: 2px 0 4px;
+  font-size: 17px;
+  font-weight: 600;
+}
+.fbd-item__ask {
+  margin: 0;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.fbd-item__cols {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-top: 16px;
+}
+.fbd-label {
+  margin-bottom: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.fbd-label--next {
+  color: #2f6b45;
+}
+.fbd-stage {
+  min-height: 220px;
+  padding: 18px;
+  border-radius: 14px;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-size: 13px;
+}
+.fbd-notes {
+  margin: 14px 0 0;
+  padding-left: 18px;
+  font-size: 13px;
+  line-height: 1.6;
+  color: var(--text-2);
+}
+.fbd-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  color: #fff;
+  background: var(--text);
+}
+.fbd-btn--wide {
+  width: 100%;
+}
+.fbd-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  color: var(--text-3);
+  background: var(--surface-2);
+}
+/* 1 · rail */
+.fbd-rail {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 64px;
+  height: 260px;
+  padding: 10px 8px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.fbd-rail.is-open {
+  width: 210px;
+}
+.fbd-rail__logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 4px 10px;
+}
+.fbd-logo {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: linear-gradient(135deg, #1e3bd6, #8a3cf0 55%, #ff5c7c);
+}
+.fbd-rail__collapse {
+  margin-left: auto;
+  color: var(--text-3);
+}
+.fbd-rail__btn {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 36px;
+  padding: 0 6px;
+  border-radius: 9px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.fbd-rail__btn.is-on {
+  color: var(--text);
+  background: rgba(14, 17, 22, 0.06);
+}
+.fbd-rail__icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  flex: none;
+}
+.fbd-rail:not(.is-open) .fbd-rail__btn {
+  padding: 0;
+}
+.fbd-dot {
+  position: absolute;
+  top: -2px;
+  right: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #b9741e;
+}
+.fbd-tip {
+  position: absolute;
+  left: 50px;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 11px;
+  white-space: nowrap;
+  color: #fff;
+  background: var(--text);
+}
+.fbd-rail__end {
+  margin-top: auto;
+}
+/* 2 · intro */
+.fbd-signin {
+  display: grid;
+  place-items: center;
+  height: 220px;
+}
+.fbd-signin__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: 220px;
+  padding: 16px;
+  border-radius: 14px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.fbd-signin__card .fbd-input,
+.fbd-signin__card .fbd-btn {
+  width: 100%;
+}
+.fbd-intro {
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 14px;
+  height: 220px;
+}
+.fbd-intro__left {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 12px;
+  color: #fff;
+  background: linear-gradient(150deg, #2d4378, #6a55c8 60%, #d26d8f);
+}
+.fbd-intro__left ul {
+  margin: 0;
+  padding-left: 16px;
+  font-size: 11px;
+  line-height: 1.5;
+  opacity: 0.9;
+}
+.fbd-intro__h {
+  font-size: 15px;
+}
+.fbd-mascot {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 70px;
+  border: 1.5px dashed rgba(255, 255, 255, 0.6);
+  border-radius: 10px;
+  font-size: 12px;
+  font-weight: 600;
+}
+.fbd-mascot small {
+  font-weight: 400;
+  opacity: 0.8;
+}
+.fbd-intro__right {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+/* 3 · credits */
+.fbd-top {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 8px 4px;
+}
+.fbd-top__team {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+.fbd-av {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  font-size: 10px;
+  font-weight: 600;
+  color: #fff;
+  background: #6b4a3a;
+}
+.fbd-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
   box-shadow: inset 0 0 0 1px color-mix(in srgb, currentColor 28%, transparent);
+}
+.fbd-pill--ok {
+  color: var(--text);
+  background: #fff;
+}
+.fbd-pill--low {
+  color: var(--warning, #7a6200);
+  background: #fcf0b4;
+}
+.fbd-pill--out {
+  color: #b3332b;
+  background: #f7dcd8;
+}
+.fbd-tabs {
+  margin-bottom: 6px;
+}
+.fbd-pop {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 240px;
+  margin-left: auto;
+  padding: 14px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 0 0 1px var(--line), 0 14px 30px -18px rgba(14, 17, 22, 0.4);
+}
+.fbd-pop__head {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.fbd-pop__head b {
+  font-size: 20px;
+}
+.fbd-amount--low {
+  color: var(--warning, #7a6200);
+}
+.fbd-amount--out {
+  color: #b3332b;
+}
+/* 4 · documents */
+.fbd-docs__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 32px;
+  margin-bottom: 12px;
+  font-size: 15px;
+}
+.fbd-folders {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.fbd-folder {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  gap: 2px;
+  height: 64px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #fff;
+  background: #6f86dc;
+}
+.fbd-folder small {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 400;
+  opacity: 0.85;
+}
+.fbd-folder.is-team {
+  background: #2d4378;
+  box-shadow: 0 0 0 2px var(--bg), 0 0 0 4px #2d4378;
+}
+.fbd-chatnote {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--text-2);
+}
+/* 5 · company */
+.fbd-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  height: 200px;
+  color: var(--text-3);
+  text-align: center;
+}
+.fbd-company {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.fbd-company__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.fbd-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  color: var(--text-2);
+  background: var(--surface-2);
+}
+.fbd-company__row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.fbd-company__label {
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--text-3);
+}
+.fbd-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.fbd-chips span {
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 12px;
+  background: var(--surface-2);
+}
+.fbd-foot {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-top: 28px;
+}
+.fbd-foot .faint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+}
+
+/* ---- Documents: who owns a folder (feedback 21 Oct) ------------------------------------------
+   Uploads only in From your team; Spark's folders are view only and say so. */
+.tile__tag {
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 22px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  color: var(--text-2);
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 0 0 1px var(--line);
+  white-space: nowrap;
+}
+.docs__owner {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.file-card__meta svg {
+  vertical-align: -2px;
+}
+.file-line__from {
+  display: inline-grid;
+  place-items: center;
+  color: var(--text-3);
+}
+.msg-user__saved {
+  align-self: flex-end;
+  margin: -2px 2px 6px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.msg-user__saved:hover {
+  color: var(--text);
+  text-decoration: underline;
+}
+
+/* ---- Demo: folder cards and who uploads where (#/demo/folders) --------------------------------- */
+.fdm-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+.fdm-switch button {
+  height: 34px;
+  padding: 0 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--text-2);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.fdm-switch button.is-on {
+  color: var(--text);
+  background: var(--surface-1);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.fdm-about {
+  max-width: 760px;
+  margin: 0 0 18px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.fdm-frame {
+  padding: 24px;
+  border-radius: 20px;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.fdm-frame__title {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.fdm-frame__title b {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+}
+.fdm-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: 260px;
+  height: 36px;
+  padding: 0 12px;
+  border-radius: 10px;
+  font-size: 13px;
+  color: var(--text-3);
+  background: var(--control-fill);
+}
+.fdm-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 18px;
+}
+.fdm-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+/* Pill tabs (after the reference): plain text, the current one on a soft tile. */
+.fdm-tabs {
+  display: flex;
+  gap: 4px;
+}
+.fdm-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 38px;
+  padding: 0 14px;
+  border-radius: 12px;
+  font-size: 15px;
+  color: var(--text-2);
+  transition: background 0.15s, color 0.15s;
+}
+.fdm-tabs button:hover {
+  color: var(--text);
+}
+.fdm-tabs button.is-on {
+  color: var(--text);
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+.fdm-tabs button span {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-3);
+}
+.fdm-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+.fdm-section + .fdm-section {
+  margin-top: 28px;
+}
+.fdm-section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.fdm-section__head h3 {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+/* The card, after the reference: white, a faint hairline, a pastel folder, the name in a regular
+   weight and one grey line; below, the top files stand in a frosted folder front. */
+.fdm-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 286px;
+  padding: 22px 22px 0;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.06);
+  transition: box-shadow 0.2s;
+}
+.fdm-card:hover {
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.1), 0 16px 34px -22px rgba(14, 17, 22, 0.28);
+}
+.fdm-card__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin-bottom: 22px;
+}
+.fdm-glyph__back {
+  fill: color-mix(in srgb, var(--tint) 62%, #ffffff);
+}
+.fdm-glyph__front {
+  fill: color-mix(in srgb, var(--tint) 34%, #ffffff);
+}
+.fdm-card__name {
+  font-size: 17px;
+  font-weight: 450;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fdm-card__desc {
+  margin-top: 3px;
+  font-size: 14px;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fdm-card__peek {
+  position: relative;
+  flex: 1;
+  margin: 22px 0 0;
+}
+/* A sheet: white, a hairline, the title in the display face, a small label, a few words. */
+.fdm-paper {
+  position: absolute;
+  top: 0;
+  width: 54%;
+  height: 150px;
+  padding: 12px 12px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  overflow: hidden;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.08);
+  transition: transform 0.35s var(--ease);
+}
+.fdm-paper b {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.fdm-paper small {
+  font-family: var(--font-mono);
+  font-size: 9.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.fdm-paper > span {
+  font-size: 10.5px;
+  line-height: 1.5;
+  color: var(--text-3);
+}
+.fdm-paper--front {
+  left: 23%;
+  z-index: 2;
+}
+.fdm-paper--left {
+  left: 6%;
+  top: 22px;
+  width: 50%;
+  z-index: 1;
+}
+.fdm-paper--right {
+  left: 44%;
+  top: 22px;
+  width: 50%;
+  z-index: 1;
+}
+.fdm-card:hover .fdm-paper--front {
+  transform: translateY(-8px);
+}
+.fdm-card:hover .fdm-paper--left {
+  transform: translate(-6px, -4px) rotate(-2.5deg);
+}
+.fdm-card:hover .fdm-paper--right {
+  transform: translate(6px, -4px) rotate(2.5deg);
+}
+/* The folder front: frosted white, a thin edge, a tab on the left; it runs off the card's foot. */
+.fdm-pocket,
+.fdm-pocket__edge {
+  position: absolute;
+  left: 2%;
+  right: 2%;
+  bottom: 0;
+  height: 60%;
+  z-index: 3;
+}
+.fdm-pocket {
+  /* The folder front's shape as a mask, so the blur (backdrop-filter) is cut to it too; a clip-path
+     reference left the blur as a rectangle above the curve. */
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M0 7 Q0 0 6 0 L31 0 C37 0 38 26 47 26 L95.5 26 Q100 26 100 32 L97 100 L3 100 Z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M0 7 Q0 0 6 0 L31 0 C37 0 38 26 47 26 L95.5 26 Q100 26 100 32 L97 100 L3 100 Z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.72) 70%);
+  -webkit-backdrop-filter: blur(1.5px);
+  backdrop-filter: blur(1.5px);
+}
+.fdm-pocket__edge {
+  width: 96%;
+  overflow: visible;
+  pointer-events: none;
+}
+.fdm-pocket__edge path {
+  fill: none;
+  stroke: rgba(14, 17, 22, 0.1);
+  stroke-width: 1;
+}
+.fdm-mark {
+  display: inline-flex;
+  align-items: center;
+}
+.fdm-mark img {
+  width: 22px;
+  height: 22px;
+  border-radius: 28%;
+}
+
+/* Your team's files, on the From your team tab. */
+.fdm-team {
+  display: grid;
+  grid-template-columns: 280px 1fr;
+  gap: 16px;
+  align-items: start;
+}
+.fdm-drop {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  min-height: 180px;
+  padding: 20px;
+  border-radius: 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-2);
+  border: 1.5px dashed var(--line-strong);
+}
+.fdm-drop b {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+.fdm-drop--card {
+  height: 286px;
+}
+.fdm-list {
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.fdm-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 48px;
+  padding: 0 16px;
+  font-size: 14px;
+}
+.fdm-row + .fdm-row {
+  box-shadow: inset 0 1px 0 var(--line);
+}
+.fdm-row > span:first-of-type {
+  flex: 1;
+}
+button.fdm-drop {
+  width: 100%;
+  cursor: pointer;
+  background: none;
+  transition: border-color 0.15s, background 0.15s;
+}
+button.fdm-drop:hover {
+  border-color: color-mix(in srgb, var(--text) 30%, transparent);
+  background: color-mix(in srgb, var(--text) 3%, transparent);
+}
+.fdm-switch__label {
+  align-self: center;
+  margin-right: 4px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+/* Card in the page colour: the folder is Sand like the page around it, kept apart by its hairline;
+   the sheets stay white and the frosted front takes the Sand. */
+.fdm--ground .fdm-card {
+  background: var(--bg);
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.09);
+}
+.fdm--ground .fdm-card:hover {
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.14), 0 16px 34px -22px rgba(14, 17, 22, 0.28);
+}
+.fdm--ground .fdm-pocket {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg) 40%, transparent), color-mix(in srgb, var(--bg) 72%, transparent) 70%);
+}
+
+/* Folder with template sheets (after the folder references): the back in the folder's colour with a
+   tab, three white template sheets (lines only), a frosted front in a lighter tint, white type. */
+.fdm-tf {
+  position: relative;
+  display: block;
+  height: 286px;
+  isolation: isolate;
+  color: #ffffff;
+}
+.fdm-tf__back {
+  position: absolute;
+  inset: 26px 0 0;
+  border-radius: 22px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--tint) 86%, #000), var(--tint));
+  box-shadow: 0 18px 34px -22px color-mix(in srgb, var(--tint) 60%, #000);
+}
+/* The tab: the back's top edge, raised over its first two fifths. */
+.fdm-tf::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 42%;
+  height: 60px;
+  border-radius: 20px 24px 0 0;
+  background: color-mix(in srgb, var(--tint) 86%, #000);
+}
+.fdm-tf__sheets {
+  position: absolute;
+  left: 16%;
+  right: 16%;
+  top: 46px;
+  height: 120px;
+}
+.fdm-tf__sheets > span {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 18px;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: 0 2px 8px rgba(14, 17, 22, 0.16);
+  transition: transform 0.35s var(--ease);
+}
+.fdm-tf__sheets > span:nth-child(1) {
+  transform: rotate(-7deg) translateX(-10px);
+  background: color-mix(in srgb, var(--ink) 4%, #ffffff);
+}
+.fdm-tf__sheets > span:nth-child(2) {
+  transform: rotate(6deg) translateX(12px);
+  background: color-mix(in srgb, var(--ink) 2%, #ffffff);
+}
+.fdm-tf__sheets i {
+  height: 6px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--ink) 10%, #ffffff);
+}
+.fdm-tf__sheets i:nth-child(2) {
+  width: 78%;
+}
+.fdm-tf__sheets i:nth-child(3) {
+  width: 52%;
+}
+.fdm-tf:hover .fdm-tf__sheets > span:nth-child(1) {
+  transform: rotate(-11deg) translate(-16px, -10px);
+}
+.fdm-tf:hover .fdm-tf__sheets > span:nth-child(2) {
+  transform: rotate(10deg) translate(18px, -10px);
+}
+.fdm-tf:hover .fdm-tf__sheets > span:nth-child(3) {
+  transform: translateY(-12px);
+}
+.fdm-tf__front {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 58%;
+  display: flex;
+  align-items: flex-end;
+  gap: 12px;
+  padding: 18px 20px;
+  border-radius: 22px;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--tint) 55%, rgba(255, 255, 255, 0.35)), color-mix(in srgb, var(--tint) 82%, rgba(255, 255, 255, 0.1)));
+  -webkit-backdrop-filter: blur(14px) saturate(1.2);
+  backdrop-filter: blur(14px) saturate(1.2);
+  box-shadow: inset 0 1.5px 0 rgba(255, 255, 255, 0.45), inset 0 0 0 1px rgba(255, 255, 255, 0.18);
+}
+.fdm-tf__text {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.fdm-tf__text b {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 700;
+  font-size: 19px;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fdm-tf__text span {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.86);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fdm-tf__mark {
+  flex: none;
+  opacity: 0.85;
+}
+/* Template sheets in the card: white, a hairline, grey lines only. */
+.fdm-paper--tpl {
+  gap: 9px;
+  padding: 18px 16px 0;
+}
+.fdm-paper--tpl i {
+  height: 6px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--ink) 9%, #ffffff);
+}
+.fdm-paper--tpl i:nth-child(1) {
+  width: 62%;
+  height: 8px;
+  background: color-mix(in srgb, var(--ink) 16%, #ffffff);
+}
+.fdm-paper--tpl i:nth-child(3) {
+  width: 84%;
+}
+.fdm-paper--tpl i:nth-child(4) {
+  width: 56%;
+}
+
+/* ---- Documents: folder cards (picked on #/demo/folders: D, card in the page colour) -------------
+   The card is the page's Sand, kept apart by a hairline; a pastel folder, the name and one line;
+   white template sheets stand in a frosted folder front that runs off the card's foot. */
+.fcard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+.fcard {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  height: 286px;
+  padding: 22px 22px 0;
+  overflow: hidden;
+  border-radius: 18px;
+  background: var(--bg);
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.09);
+  transition: box-shadow 0.2s;
+}
+.fcard:hover {
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.14), 0 16px 34px -22px rgba(14, 17, 22, 0.28);
+}
+.fcard:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 3px;
+}
+.fcard__top {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 22px;
+}
+.fcard__glyph {
+  flex: none;
+  margin-right: auto;
+}
+.fcard__glyph-back {
+  fill: color-mix(in srgb, var(--tint) 62%, #ffffff);
+}
+.fcard__glyph-front {
+  fill: color-mix(in srgb, var(--tint) 34%, #ffffff);
+}
+.fcard__badge {
+  padding: 3px 9px;
+  border-radius: 999px;
+  font-size: 11px;
+  font-weight: 500;
+  color: #ffffff;
+  background: var(--ink, #0e1116);
+}
+.fcard__name {
+  font-size: 17px;
+  font-weight: 450;
+  letter-spacing: -0.01em;
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fcard__desc {
+  margin-top: 3px;
+  font-size: 14px;
+  color: var(--text-3);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fcard__peek {
+  position: relative;
+  flex: 1;
+  margin-top: 22px;
+}
+.fcard__sheet {
+  position: absolute;
+  top: 0;
+  width: 54%;
+  height: 150px;
+  padding: 18px 16px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.08);
+  transition: transform 0.35s var(--ease);
+}
+.fcard__sheet i {
+  height: 6px;
+  border-radius: 3px;
+  background: color-mix(in srgb, var(--ink, #0e1116) 9%, #ffffff);
+}
+.fcard__sheet i:nth-child(1) {
+  width: 62%;
+  height: 8px;
+  background: color-mix(in srgb, var(--ink, #0e1116) 16%, #ffffff);
+}
+.fcard__sheet i:nth-child(3) {
+  width: 84%;
+}
+.fcard__sheet i:nth-child(4) {
+  width: 56%;
+}
+.fcard__sheet--front {
+  left: 23%;
+  z-index: 2;
+}
+.fcard__sheet--left {
+  left: 6%;
+  top: 22px;
+  width: 50%;
+  z-index: 1;
+}
+.fcard__sheet--right {
+  left: 44%;
+  top: 22px;
+  width: 50%;
+  z-index: 1;
+}
+.fcard:hover .fcard__sheet--front {
+  transform: translateY(-8px);
+}
+.fcard:hover .fcard__sheet--left {
+  transform: translate(-6px, -4px) rotate(-2.5deg);
+}
+.fcard:hover .fcard__sheet--right {
+  transform: translate(6px, -4px) rotate(2.5deg);
+}
+.fcard__pocket,
+.fcard__edge {
+  position: absolute;
+  left: 2%;
+  bottom: 0;
+  width: 96%;
+  height: 60%;
+  z-index: 3;
+}
+.fcard__pocket {
+  /* The folder front's shape as a mask, so the blur (backdrop-filter) is cut to it too; a clip-path
+     reference left the blur as a rectangle above the curve. */
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M0 7 Q0 0 6 0 L31 0 C37 0 38 26 47 26 L95.5 26 Q100 26 100 32 L97 100 L3 100 Z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100' preserveAspectRatio='none'%3E%3Cpath d='M0 7 Q0 0 6 0 L31 0 C37 0 38 26 47 26 L95.5 26 Q100 26 100 32 L97 100 L3 100 Z'/%3E%3C/svg%3E") 0 0 / 100% 100% no-repeat;
+  background: linear-gradient(180deg, color-mix(in srgb, var(--bg) 40%, transparent), color-mix(in srgb, var(--bg) 72%, transparent) 70%);
+  -webkit-backdrop-filter: blur(1.5px);
+  backdrop-filter: blur(1.5px);
+}
+.fcard__edge {
+  overflow: visible;
+  pointer-events: none;
+}
+.fcard__edge path {
+  fill: none;
+  stroke: rgba(14, 17, 22, 0.1);
+  stroke-width: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .fcard__sheet {
+    transition: none;
+  }
+}
+
+/* Pill tabs on Documents (after the reference): plain text, the current one on a soft tile. */
+.pill-tabs {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 14px;
+}
+.pill-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  white-space: nowrap;
+  color: var(--text-2);
+  transition: background 0.15s, color 0.15s;
+}
+.pill-tabs button:hover {
+  color: var(--text);
+}
+.pill-tabs button.is-on {
+  color: var(--text);
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+.pill-tabs button span {
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-3);
+}
+
+/* The drop card on Your team: how files get in (drop, or click to choose). */
+.drop-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  height: 286px;
+  padding: 20px;
+  border-radius: 18px;
+  border: 1.5px dashed var(--line-strong);
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-2);
+  transition: border-color 0.15s, background 0.15s;
+}
+.drop-card b {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+.drop-card:hover,
+.drop-card.is-over {
+  border-color: color-mix(in srgb, var(--text) 32%, transparent);
+  background: color-mix(in srgb, var(--text) 3%, transparent);
+}
+
+/* ---- Demo: quieter Requests page (#/demo/requests-ui) ------------------------------------------ */
+.rq-frame {
+  padding: 36px 40px 40px;
+  border-radius: 20px;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.rq-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+.rq-head__title {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+.rq-head__sub {
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--text-3);
+}
+.rq-head__acts {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.rq-text-btn {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.rq-text-btn:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+.rq-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+.rq-tabs {
+  display: flex;
+  gap: 2px;
+}
+.rq-tabs button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 14px;
+  color: var(--text-3);
+}
+.rq-tabs button:hover {
+  color: var(--text);
+}
+.rq-tabs button.is-on {
+  color: var(--text);
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+.rq-tabs button span {
+  font-size: 12px;
+  color: var(--text-3);
+  font-variant-numeric: tabular-nums;
+}
+.rq-tools {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.rq-search {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  width: 180px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-3);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.rq-icon-btn {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: var(--text-3);
+}
+.rq-icon-btn:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+.rq-list {
+  display: flex;
+  flex-direction: column;
+}
+/* 1 · one line per request. */
+.rq-row {
+  display: grid;
+  grid-template-columns: 70px minmax(0, 1fr) 80px 170px 100px 90px;
+  align-items: center;
+  gap: 16px;
+  min-height: 52px;
+  padding: 0 8px;
+  font-size: 14px;
+  box-shadow: inset 0 -1px 0 var(--line);
+  transition: background 0.15s;
+}
+.rq-row:hover {
+  background: var(--surface-hover);
+}
+.rq-row__id {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-3);
+}
+.rq-row__title {
+  color: var(--text);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rq-row__type,
+.rq-row__when {
+  font-size: 13px;
+  color: var(--text-3);
+}
+.rq-row__when {
+  text-align: right;
+}
+.rq-row__amt {
+  font-size: 13px;
+  color: var(--text-2);
+  font-variant-numeric: tabular-nums;
+}
+/* Status: a dot and a word. */
+.rq-st {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-2);
+  white-space: nowrap;
+}
+.rq-st.is-you {
+  color: var(--text);
+  font-weight: 500;
+}
+.rq-st__dot {
+  width: 7px;
+  height: 7px;
+  padding: 0;
+  border-radius: 50%;
+  background: var(--st, currentColor);
+}
+/* 2 · two-line rows. */
+.rq-row2 {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 14px 8px;
+  box-shadow: inset 0 -1px 0 var(--line);
+  transition: background 0.15s;
+}
+.rq-row2:hover {
+  background: var(--surface-hover);
+}
+.rq-row2__main {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+}
+.rq-row2__title {
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rq-row2__meta {
+  font-size: 13px;
+  color: var(--text-3);
+}
+.rq-row2__more {
+  color: var(--text-3);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.rq-row2:hover .rq-row2__more {
+  opacity: 1;
+}
+/* 3 · grouped. */
+.rq-group + .rq-group,
+.rq-fold + .rq-group {
+  margin-top: 28px;
+}
+.rq-group__head {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  padding: 0 8px 8px;
+  box-shadow: inset 0 -1px 0 var(--line);
+}
+.rq-group__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ember-text, #b9431a);
+}
+.rq-group__n {
+  font-size: 12px;
+  color: var(--text-3);
+}
+.rq-group__note {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.rq-fold {
+  margin-top: 20px;
+  padding: 6px 8px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.rq-fold:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+/* 4 · centred column. */
+.rq-head--compact {
+  margin-bottom: 40px;
+}
+.rq-centre {
+  max-width: 760px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.rq-callout {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-size: 13px;
+  color: var(--text-3);
+}
+.rq-callout b {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+}
+.rq-list--centre {
+  margin-top: 4px;
+}
+.rq-row3 {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) auto 90px;
+  align-items: center;
+  gap: 14px;
+  min-height: 52px;
+  padding: 0 6px;
+  font-size: 14px;
+  box-shadow: inset 0 -1px 0 var(--line);
+  transition: background 0.15s;
+}
+.rq-row3:last-child {
+  box-shadow: none;
+}
+.rq-row3:hover {
+  background: var(--surface-hover);
+}
+.rq-row3__icon {
+  color: var(--text-3);
+  display: grid;
+  place-items: center;
+}
+.rq-row3__title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.rq-row3__when {
+  font-size: 13px;
+  color: var(--text-3);
+  text-align: right;
+}
+.rq-foot {
+  margin-top: 16px;
+  text-align: center;
+  font-size: 13px;
+  color: var(--text-3);
+}
+@media (max-width: 1100px) {
+  .rq-row {
+    grid-template-columns: 64px minmax(0, 1fr) 160px 80px;
+  }
+  .rq-row__type,
+  .rq-row__amt {
+    display: none;
+  }
+}
+/* 5 · variant 4 across the page, aligned left. */
+.rq-centre--left {
+  max-width: none;
+  margin: 0;
+}
+.rq-centre--left .rq-row3 {
+  grid-template-columns: minmax(0, 1fr) 130px 200px 90px;
+  column-gap: 40px;
+  padding: 0 8px;
+}
+.rq-centre--left .rq-callout {
+  align-self: flex-start;
+  min-width: 420px;
+}
+.rq-row3__type {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.rq-foot--left {
+  text-align: left;
+}
+@media (max-width: 1100px) {
+  .rq-centre--left .rq-row3 {
+    grid-template-columns: minmax(0, 1fr) 110px 180px 64px;
+    column-gap: 28px;
+  }
+}
+
+/* ---- Requests page (picked on #/demo/requests-ui, 5) ------------------------------------------- */
+.rqp .rq-head {
+  margin-bottom: 28px;
+}
+.rqp .rq-bar {
+  flex-wrap: wrap;
+}
+.rq-search input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  outline: 0;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  color: var(--text);
+}
+.rq-search input::placeholder {
+  color: var(--text-3);
+}
+.rq-search:focus-within {
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.rq-callout__link {
+  color: inherit;
+}
+.rq-callout__link:hover {
+  color: var(--text);
+  text-decoration: underline;
+}
+/* Filters beside the quiet search: the same 32px height and 8px corners. */
+.rq-tools .filter-btn {
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.rq-tools .filter-btn svg {
+  width: 15px;
+  height: 15px;
+}
+.rq-tools .filter-btn .filter-btn__chev {
+  width: 13px;
+  height: 13px;
+}
+/* The search takes the same soft fill as the filters and the current tab: no outline until focus. */
+.rqp .rq-search {
+  background: var(--control-fill);
+  box-shadow: none;
+}
+.rqp .rq-search:hover {
+  background: var(--control-fill-hover);
+}
+.rqp .rq-search:focus-within {
+  background: var(--control-fill);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+/* New request: flat (no shadow) and 32px, the same height as the tabs, search and filters. */
+:root[data-theme] .rqp .rq-head__acts .btn,
+:root[data-theme] .team .rq-head__acts .btn {
+  box-shadow: none;
+}
+
+/* Documents' filter bar in the Requests sizes: 32px, 8px corners, 13px text, the same soft fill. */
+.docs .filter-bar__search,
+.docs .filter-bar .filter-btn,
+.docs .filter-bar .segmented {
+  height: 32px;
+  border-radius: 8px;
+  font-size: 13px;
+}
+.docs .filter-bar__search input {
+  font-size: 13px;
+}
+.docs .filter-bar .filter-btn {
+  padding: 0 10px;
+}
+.docs .filter-bar .filter-btn svg {
+  width: 15px;
+  height: 15px;
+}
+.docs .filter-bar .filter-btn .filter-btn__chev {
+  width: 13px;
+  height: 13px;
+}
+.docs .filter-bar .segmented__item {
+  border-radius: 6px;
+}
+.docs .filter-bar__search {
+  flex: 0 1 200px;
+  width: 200px;
+  min-width: 140px;
+}
+/* The fill sits on the input itself, so it takes the 8px corners too. */
+:root[data-theme] .docs .filter-bar__search .input {
+  height: 32px;
+  border-radius: 8px;
+}
+
+/* ---- Demo: introduction page before sign-in (#/demo/intro) ------------------------------------ */
+.itd-frame {
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.itd {
+  min-height: 680px;
+}
+.itd-logo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 700;
+  font-size: 16px;
+  letter-spacing: -0.01em;
+}
+.itd-logo img {
+  border-radius: 8px;
+}
+.itd__h {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 700;
+  font-size: 30px;
+  line-height: 1.12;
+  letter-spacing: -0.02em;
+  max-width: 460px;
+}
+.itd__sub {
+  max-width: 440px;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-3);
+}
+/* Mascot placeholder: a still picture later, the same square now. */
+.itd-mascot {
+  display: grid;
+  place-items: center;
+  flex: none;
+  border-radius: 28%;
+  background: color-mix(in srgb, var(--text) 4%, transparent);
+  border: 1.5px dashed color-mix(in srgb, var(--text) 22%, transparent);
+  font-size: 12px;
+  color: var(--text-3);
+}
+.itd-points {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.itd-points li {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.itd-points li > span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.itd-points b {
+  font-size: 14px;
+  font-weight: 500;
+}
+.itd-points li > span:last-child > span {
+  font-size: 13px;
+  color: var(--text-3);
+}
+.itd-points__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--text-2);
+}
+.itd-points--row {
+  flex-direction: row;
+  gap: 24px;
+}
+.itd-points--row li {
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+}
+
+/* The form: one column, 32px controls, a hairline "or". */
+.itd-form {
+  width: 100%;
+  max-width: 340px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.itd-form__title {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 700;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+}
+.itd-form__sub {
+  margin-top: -8px;
+  font-size: 14px;
+  color: var(--text-3);
+}
+.itd-form .btn {
+  width: 100%;
+}
+.itd-form__forgot {
+  align-self: flex-end;
+  margin-top: -6px;
+  font-size: 13px;
+}
+.itd-form__switch {
+  font-size: 13px;
+  color: var(--text-3);
+  text-align: center;
+}
+.itd-or {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.itd-or::before,
+.itd-or::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--line);
+}
+.itd-form--sent {
+  align-items: flex-start;
+}
+.itd-sent__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+
+/* A · split: the introduction on a soft Noor wash, the form on white. */
+.itd--split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+}
+.itd__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding: 32px 48px 48px;
+  background:
+    radial-gradient(80% 60% at 0% 100%, color-mix(in srgb, var(--cobalt, #1e3bd6) 10%, transparent), transparent 70%),
+    radial-gradient(70% 50% at 100% 100%, color-mix(in srgb, var(--ember, #e8572a) 9%, transparent), transparent 70%);
+}
+.itd__intro-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  margin: auto 0;
+}
+.itd__auth {
+  display: grid;
+  place-items: center;
+  padding: 48px;
+  background: #ffffff;
+  box-shadow: inset 1px 0 0 var(--line);
+}
+
+/* B · centred: one column, the form on a white card. */
+.itd--centred {
+  display: flex;
+  flex-direction: column;
+  padding: 32px 48px 48px;
+  background: radial-gradient(60% 40% at 50% 100%, color-mix(in srgb, var(--cobalt, #1e3bd6) 8%, transparent), transparent 70%);
+}
+.itd__col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  max-width: 640px;
+  margin: 24px auto 0;
+  text-align: center;
+}
+.itd--centred .itd__h {
+  max-width: 520px;
+}
+.itd__card {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 400px;
+  padding: 28px 30px;
+  border-radius: 20px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  text-align: left;
+}
+.itd--centred .itd-points {
+  margin-top: 8px;
+  text-align: left;
+}
+
+/* C · with an example: a question, the answer with sources, the step to Spark. */
+.itd-chat {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+}
+.itd-chat__thread {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+  max-width: 420px;
+}
+.itd-chat__q {
+  align-self: flex-start;
+  padding: 10px 14px;
+  border-radius: 14px 14px 14px 4px;
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+  font-size: 14px;
+}
+.itd-chat__a {
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-size: 14px;
+  line-height: 1.5;
+}
+.itd-chat__a sup {
+  font-size: 10px;
+  color: var(--accent-text);
+}
+.itd-chat__src {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 10px;
+}
+.itd-chat__src span {
+  padding: 2px 8px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--text-3);
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+}
+.itd-chat__cta {
+  display: inline-flex;
+  align-self: flex-start;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--text);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+
+@media (max-width: 900px) {
+  .itd--split {
+    grid-template-columns: 1fr;
+  }
+  .itd__intro,
+  .itd__auth,
+  .itd--centred {
+    padding: 24px 16px 32px;
+  }
+  .itd__auth {
+    box-shadow: inset 0 1px 0 var(--line);
+  }
+  .itd__h {
+    font-size: 24px;
+  }
+  .itd-points--row {
+    flex-direction: column;
+  }
+}
+
+/* Password with a show/hide eye. */
+.itd-pw {
+  position: relative;
+  display: block;
+}
+.itd-pw .input,
+.itd-pw .input-wrap {
+  width: 100%;
+}
+.itd-pw .input {
+  padding-right: 40px;
+}
+.itd-pw__eye {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  color: var(--text-3);
+}
+.itd-pw__eye:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+
+/* D · after the reference: the form centred on white, the mascot on a tinted panel. */
+.itd--panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1.3fr) minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px;
+  background: #ffffff;
+}
+.itd-panel__main {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 16px 8px;
+}
+.itd-panel__form {
+  display: flex;
+  justify-content: center;
+  margin: auto 0;
+  padding: 40px 0;
+}
+.itd-panel__terms {
+  font-size: 13px;
+  color: var(--text-3);
+  text-align: center;
+}
+.itd-panel__terms a {
+  color: var(--text-2);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+.itd-panel__art {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 24px;
+  background:
+    radial-gradient(70% 55% at 20% 100%, color-mix(in srgb, var(--cobalt, #1e3bd6) 18%, transparent), transparent 70%),
+    radial-gradient(70% 55% at 90% 0%, color-mix(in srgb, var(--ember, #e8572a) 16%, transparent), transparent 70%),
+    color-mix(in srgb, var(--cobalt, #1e3bd6) 5%, var(--sand, #f8f6f2));
+}
+/* The bare form: a large centred title, fields without labels, 40px fields (buttons stay 32px). */
+.itd-form--bare {
+  max-width: 380px;
+  gap: 12px;
+}
+.itd-form--bare .itd-form__title {
+  font-family: inherit;
+  font-stretch: normal;
+  font-weight: 500;
+  font-size: 30px;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+.itd-form--bare .itd-form__sub {
+  margin: -4px 0 12px;
+  text-align: center;
+}
+.itd-form--bare .input {
+  height: 40px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.itd-form--bare .input:focus {
+  box-shadow: 0 0 0 1.5px var(--accent);
+}
+.itd-form--bare.itd-form--sent {
+  align-items: center;
+  text-align: center;
+}
+@media (max-width: 900px) {
+  .itd--panel {
+    grid-template-columns: 1fr;
+  }
+  .itd-panel__art {
+    order: -1;
+    min-height: 200px;
+  }
+}
+/* The picture stands in for the mascot and fills the panel. */
+.itd-panel__art img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 40% 30%;
+}
+
+/* E–G: a Log in / Sign up switch under the title. */
+.itd-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 4px;
+  padding: 4px;
+  margin-bottom: 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+.itd-tabs button {
+  height: 32px;
+  border-radius: 999px;
+  font-size: 14px;
+  color: var(--text-3);
+  transition: background 0.15s, color 0.15s;
+}
+.itd-tabs button:hover {
+  color: var(--text);
+}
+.itd-tabs button.is-on {
+  color: var(--text);
+  font-weight: 500;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(14, 17, 22, 0.08);
+}
+
+/* A brand-book picture with its line on a frosted caption. */
+.itd-photo {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 24px;
+  min-height: 100%;
+}
+.itd-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.itd-photo__cap {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 22px 24px;
+  border-radius: 18px;
+  color: #ffffff;
+  background: rgba(14, 17, 22, 0.32);
+  -webkit-backdrop-filter: blur(18px) saturate(1.3);
+  backdrop-filter: blur(18px) saturate(1.3);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+}
+.itd-photo__cap b {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+.itd-photo__cap span {
+  font-size: 14px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.82);
+}
+
+/* E and F: the form on the left, the picture on the right. */
+.itd--two {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px;
+}
+.itd-two__main {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 16px 8px;
+}
+.itd-two__form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  margin: auto 0;
+  padding: 40px 0;
+}
+.itd-two__icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 14px;
+}
+.itd--photo {
+  background: var(--sand, #f8f6f2);
+}
+
+/* E · night: Sand on Ink. A soft Noor glow in the corner, light controls on dark. */
+.itd--night {
+  --text: #f8f6f2;
+  --text-2: rgba(248, 246, 242, 0.78);
+  --text-3: rgba(248, 246, 242, 0.56);
+  --line: rgba(248, 246, 242, 0.1);
+  --line-strong: rgba(248, 246, 242, 0.18);
+  --accent-text: #9db6f0;
+  color: var(--text);
+  background:
+    radial-gradient(50% 45% at 0% 0%, rgba(30, 59, 214, 0.28), transparent 70%),
+    radial-gradient(40% 40% at 0% 100%, rgba(232, 87, 42, 0.16), transparent 70%),
+    #0e1116;
+}
+.itd--night .input {
+  color: var(--text);
+  background: rgba(248, 246, 242, 0.04);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.itd--night .input:focus {
+  box-shadow: 0 0 0 1.5px #9db6f0;
+}
+.itd--night .itd-tabs {
+  background: rgba(248, 246, 242, 0.06);
+}
+.itd--night .itd-tabs button.is-on {
+  color: #0e1116;
+  background: #f8f6f2;
+}
+:root[data-theme] .itd--night .btn--primary {
+  color: #0e1116;
+  background: #f8f6f2;
+}
+:root[data-theme] .itd--night .btn--primary:hover:not(:disabled) {
+  background: #ffffff;
+}
+:root[data-theme] .itd--night .btn--secondary {
+  color: var(--text);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+:root[data-theme] .itd--night .btn--secondary:hover:not(:disabled) {
+  background: rgba(248, 246, 242, 0.06);
+}
+.itd--night .itd-pw__eye:hover {
+  background: rgba(248, 246, 242, 0.08);
+}
+
+/* G · glass: frosted light fills the page, the form on a glass card. */
+.itd--glass {
+  position: relative;
+  display: grid;
+  place-items: center;
+  padding: 72px 24px;
+  overflow: hidden;
+}
+.itd-glass__bg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 80% 45%;
+}
+.itd-glass__veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(248, 246, 242, 0.15), rgba(248, 246, 242, 0.35));
+}
+.itd-glass__head {
+  position: absolute;
+  top: 32px;
+  left: 32px;
+}
+.itd-glass__card {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 440px;
+  padding: 36px 32px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(28px) saturate(1.4);
+  backdrop-filter: blur(28px) saturate(1.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6),
+    0 30px 60px -30px rgba(14, 17, 22, 0.35);
+}
+.itd-glass__card .itd-tabs {
+  background: rgba(14, 17, 22, 0.06);
+}
+.itd-glass__card .itd-form--bare .input {
+  background: rgba(255, 255, 255, 0.7);
+}
+.itd-pics {
+  align-items: center;
+  margin-top: -4px;
+}
+.itd-pics > span {
+  margin-right: 4px;
+  font-size: 13px;
+}
+@media (max-width: 900px) {
+  .itd--two {
+    grid-template-columns: 1fr;
+  }
+  .itd--two .itd-photo {
+    order: -1;
+    min-height: 320px;
+  }
+}
+
+/* A "remember me" row with Forgot password on the right (H, J). */
+.itd-form__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: -4px;
+  font-size: 13px;
+}
+.itd-form__row .checkbox__label {
+  font-size: 13px;
+  color: var(--text-2);
+}
+.itd-form--welcome .itd-form__title {
+  font-family: inherit;
+  font-stretch: normal;
+  font-weight: 600;
+  font-size: 30px;
+}
+
+/* H · Ember: the visor portrait, the form over Ember rings, the spark in a glowing orb. */
+.itd--ember {
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1.1fr);
+  background:
+    radial-gradient(60% 60% at 70% 30%, rgba(232, 87, 42, 0.16), transparent 70%),
+    radial-gradient(70% 60% at 50% 110%, rgba(232, 87, 42, 0.22), transparent 70%),
+    #0e1116;
+}
+.itd-ember__photo img {
+  object-position: 50% 20%;
+}
+.itd-ember__photo::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  /* The portrait sits on warm white: an Ink veil at the top and foot keeps the lines legible at night. */
+  background: linear-gradient(180deg, rgba(14, 17, 22, 0.9), rgba(14, 17, 22, 0.25) 32%, transparent 50%, rgba(14, 17, 22, 0.35) 72%, rgba(14, 17, 22, 0.92));
+}
+.itd-ember__top,
+.itd-ember__team {
+  position: absolute;
+  z-index: 1;
+  left: 24px;
+  right: 24px;
+  display: flex;
+  color: #ffffff;
+}
+.itd-ember__top {
+  top: 28px;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  text-align: center;
+}
+.itd-ember__top b {
+  font-size: 24px;
+  font-weight: 500;
+}
+.itd-ember__top span {
+  font-size: 24px;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.6);
+}
+.itd-ember__team {
+  bottom: 24px;
+  justify-content: center;
+  align-items: center;
+  gap: 12px;
+}
+.itd-ember__team > span:last-child {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.7);
+}
+.itd-ember__team b {
+  font-size: 13px;
+  font-weight: 500;
+  color: #ffffff;
+}
+.itd-ember__main {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 48px 24px;
+  overflow: hidden;
+}
+/* Soft rings spreading from the orb. */
+.itd-ember__main::before {
+  content: '';
+  position: absolute;
+  top: -120px;
+  left: 50%;
+  width: 640px;
+  height: 640px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: repeating-radial-gradient(circle, rgba(232, 87, 42, 0.16) 0 2px, transparent 3px 34px);
+  -webkit-mask-image: radial-gradient(circle, #000 20%, transparent 65%);
+  mask-image: radial-gradient(circle, #000 20%, transparent 65%);
+  pointer-events: none;
+}
+.itd-ember__orb {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 76px;
+  height: 76px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #ff8a5c, #b9431a 60%, #4a1406);
+  box-shadow: 0 0 40px 6px rgba(232, 87, 42, 0.45), inset 0 2px 6px rgba(255, 255, 255, 0.35);
+}
+.itd-ember__orb img {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+}
+.itd-ember__main .itd-form {
+  position: relative;
+}
+.itd--ember .itd-form__title {
+  text-align: center;
+}
+.itd--ember .itd-form__sub {
+  text-align: center;
+}
+:root[data-theme] .itd--ember .btn--primary {
+  color: #ffffff;
+  background: #c4461b;
+}
+:root[data-theme] .itd--ember .btn--primary:hover:not(:disabled) {
+  background: #d65524;
+}
+.itd--night .checkbox__box {
+  border-color: rgba(248, 246, 242, 0.3);
+}
+
+/* I · Soft card: a Noor haze behind one white card. */
+.itd--soft {
+  display: grid;
+  place-items: center;
+  padding: 64px 32px;
+  background:
+    radial-gradient(40% 50% at 10% 20%, rgba(30, 59, 214, 0.22), transparent 70%),
+    radial-gradient(40% 50% at 90% 10%, rgba(140, 90, 230, 0.2), transparent 70%),
+    radial-gradient(45% 50% at 85% 95%, rgba(232, 87, 42, 0.16), transparent 70%),
+    radial-gradient(40% 40% at 10% 95%, rgba(240, 200, 120, 0.22), transparent 70%),
+    #f6f4fb;
+}
+.itd-soft__card {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  max-width: 900px;
+  min-height: 560px;
+  overflow: hidden;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 30px 70px -30px rgba(60, 50, 140, 0.35);
+}
+.itd-soft__side {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 36px 40px;
+  overflow: hidden;
+  background: linear-gradient(160deg, #f7f6ff 30%, #ece8ff 70%, #e6eeff);
+  box-shadow: inset -1px 0 0 var(--line);
+}
+.itd-soft__mark {
+  position: absolute;
+  right: -40px;
+  bottom: -30px;
+  width: 300px;
+  height: 300px;
+  border-radius: 70px;
+  opacity: 0.16;
+  filter: blur(2px) saturate(0.8);
+  transform: rotate(-12deg);
+}
+.itd-soft__h {
+  position: relative;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 800;
+  font-size: 32px;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+.itd-soft__line {
+  position: relative;
+  margin-top: 10px;
+  font-size: 16px;
+  color: var(--cobalt, #1e3bd6);
+}
+.itd-soft__form {
+  display: grid;
+  place-items: center;
+  padding: 40px;
+}
+
+/* J · Picture and team: one frosted frame over a Noor haze. */
+.itd--smart {
+  padding: 28px;
+  background:
+    radial-gradient(45% 55% at 0% 0%, rgba(30, 59, 214, 0.28), transparent 70%),
+    radial-gradient(40% 50% at 100% 10%, rgba(150, 90, 230, 0.26), transparent 70%),
+    radial-gradient(45% 50% at 100% 100%, rgba(232, 87, 42, 0.2), transparent 70%),
+    radial-gradient(40% 45% at 0% 100%, rgba(157, 182, 240, 0.35), transparent 70%),
+    #efecf6;
+}
+.itd-smart__frame {
+  display: grid;
+  grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px;
+  border-radius: 32px;
+  background: rgba(255, 255, 255, 0.45);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.85), 0 30px 60px -30px rgba(60, 50, 140, 0.35);
+}
+.itd-smart__pic {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: 22px;
+  min-height: 640px;
+}
+/* The helmet is cropped below the brand book's wordmark: it sits a little down the panel, and a fade
+   in the photo's own pale grey hides what is left of the letters along its top edge. */
+.itd-smart__pic {
+  background: #eceef3;
+}
+.itd-smart__pic img {
+  position: absolute;
+  inset: 56px 0 0;
+  width: 100%;
+  height: calc(100% - 56px);
+  object-fit: cover;
+  object-position: 50% 0%;
+}
+.itd-smart__pic::before {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  inset: 0 0 auto;
+  height: 170px;
+  background: linear-gradient(180deg, #eceef3 55%, rgba(236, 238, 243, 0));
+  pointer-events: none;
+}
+/* The brand book's label: mono, uppercase, tracked, in Ember. */
+.itd-smart__label {
+  position: absolute;
+  z-index: 1;
+  top: 20px;
+  left: 20px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ember-text, #b9431a);
+  background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+}
+/* The line on frosted glass at the foot of the picture. */
+.itd-smart__pic figcaption {
+  position: absolute;
+  z-index: 1;
+  left: 12px;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 24px 24px 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(22px) saturate(1.3);
+  backdrop-filter: blur(22px) saturate(1.3);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+}
+.itd-smart__pic b {
+  display: flex;
+  flex-direction: column;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+}
+.itd-smart__pic b span {
+  color: var(--cobalt, #1e3bd6);
+}
+.itd-smart__body {
+  max-width: 440px;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+.itd-smart__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+.itd-smart__chips span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--text-2);
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.itd-smart__col {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.itd-smart__form,
+.itd-smart__team {
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.05);
+}
+.itd-smart__form {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 22px;
+  padding: 40px 56px;
+}
+.itd-smart__tile {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line), 0 8px 20px -10px rgba(30, 59, 214, 0.45);
+}
+.itd-smart__tile img {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+}
+.itd-smart__form .itd-form {
+  max-width: 380px;
+}
+.itd-smart__form .itd-form__title {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 800;
+  font-size: 28px;
+  letter-spacing: -0.03em;
+}
+/* White fields with a hairline, 40px, as in the reference. */
+.itd-smart__form .input {
+  height: 40px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.itd-smart__form .input:hover {
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.24);
+}
+.itd-smart__form .input:focus {
+  box-shadow: 0 0 0 1.5px var(--accent);
+}
+.itd-smart__team {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px 22px;
+}
+/* Light avatars in each person's hue, on a white ring. */
+:root[data-theme] .itd-smart__team .avatar {
+  background: hsl(var(--hue) 70% 90%);
+  color: hsl(var(--hue) 45% 30%);
+  box-shadow: 0 0 0 2px #ffffff;
+}
+.itd-smart__team > span:last-child {
+  display: flex;
+  flex-direction: column;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.itd-smart__team b {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text);
+}
+
+/* K · Product hero: dark, a headline with a Noor underline, the agent at work in a frame. */
+.itd--hero {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 24px 32px 0;
+  overflow: hidden;
+  text-align: center;
+  background:
+    radial-gradient(45% 40% at 50% 38%, rgba(120, 70, 220, 0.35), transparent 70%),
+    radial-gradient(30% 30% at 75% 45%, rgba(30, 59, 214, 0.3), transparent 70%),
+    #0e1116;
+}
+.itd-hero__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  align-self: stretch;
+  margin-bottom: 40px;
+}
+.itd--hero .link-btn {
+  color: var(--text);
+}
+.itd-hero__h {
+  max-width: 760px;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 700;
+  font-size: 44px;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+.itd-hero__mark {
+  background: var(--noor, linear-gradient(90deg, #1e3bd6, #e8572a)) left bottom / 100% 4px no-repeat;
+  padding-bottom: 4px;
+}
+.itd-hero__sub {
+  max-width: 560px;
+  margin-top: 16px;
+  font-size: 16px;
+  line-height: 1.5;
+  color: var(--text-3);
+}
+.itd-hero__acts {
+  display: flex;
+  gap: 10px;
+  margin: 24px 0 40px;
+}
+.itd-hero__stage {
+  position: relative;
+  width: 100%;
+  max-width: 760px;
+  height: 340px;
+  overflow: hidden;
+  border-radius: 20px 20px 0 0;
+  box-shadow: 0 0 0 1px rgba(248, 246, 242, 0.18), 0 -20px 80px -20px rgba(120, 70, 220, 0.5);
+}
+.itd-hero__stage > img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 18%;
+}
+.itd-hero__rail,
+.itd-hero__card,
+.itd-hero__composer {
+  position: absolute;
+  display: flex;
+  align-items: center;
+  color: #f8f6f2;
+  background: rgba(14, 17, 22, 0.55);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: inset 0 0 0 1px rgba(248, 246, 242, 0.16);
+}
+.itd-hero__rail {
+  left: 16px;
+  top: 50%;
+  transform: translateY(-50%);
+  flex-direction: column;
+  gap: 16px;
+  padding: 14px 10px;
+  border-radius: 14px;
+}
+.itd-hero__card {
+  right: 16px;
+  top: 40px;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 14px;
+  text-align: left;
+}
+.itd-hero__card > span:last-child {
+  display: flex;
+  flex-direction: column;
+  font-size: 12px;
+  color: rgba(248, 246, 242, 0.65);
+}
+.itd-hero__card b {
+  font-size: 13px;
+  font-weight: 500;
+  color: #f8f6f2;
+}
+.itd-hero__composer {
+  left: 50%;
+  bottom: 24px;
+  transform: translateX(-50%);
+  gap: 10px;
+  height: 44px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font-size: 14px;
+  white-space: nowrap;
+}
+.itd-hero__spin {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 2px solid rgba(157, 182, 240, 0.3);
+  border-top-color: #9db6f0;
+  animation: itd-spin 0.9s linear infinite;
+}
+@keyframes itd-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.itd-hero__overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  display: grid;
+  place-items: center;
+  background: rgba(14, 17, 22, 0.55);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+}
+.itd-hero__dialog {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 440px;
+  padding: 36px 32px;
+  border-radius: 24px;
+  text-align: left;
+  background: rgba(24, 28, 36, 0.85);
+  box-shadow: inset 0 0 0 1px rgba(248, 246, 242, 0.14), 0 30px 80px -20px rgba(0, 0, 0, 0.6);
+}
+.itd-hero__close {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  color: var(--text-3);
+}
+.itd-hero__close:hover {
+  color: var(--text);
+  background: rgba(248, 246, 242, 0.08);
+}
+@media (max-width: 900px) {
+  .itd-soft__card,
+  .itd-smart__frame {
+    grid-template-columns: 1fr;
+  }
+  .itd--smart {
+    padding: 12px;
+  }
+  .itd-smart__form {
+    padding: 28px 20px;
+  }
+  .itd-smart__pic {
+    min-height: 320px;
+  }
+  .itd-hero__h {
+    font-size: 30px;
+  }
+}
+
+/* L · H + C: the example of the agent at work on the portrait, in dark glass. */
+.itd-ex__photo img {
+  object-position: 50% 10%;
+}
+.itd-ex__photo::after {
+  background: linear-gradient(180deg, rgba(14, 17, 22, 0.9), rgba(14, 17, 22, 0.2) 30%, transparent 42%, rgba(14, 17, 22, 0.55) 60%, rgba(14, 17, 22, 0.95));
+}
+.itd-ex__chat {
+  position: absolute;
+  z-index: 1;
+  left: 20px;
+  right: 20px;
+  bottom: 20px;
+  display: flex;
+}
+.itd-ex__chat .itd-chat__thread {
+  max-width: none;
+  width: 100%;
+}
+.itd-ex__chat .itd-chat__q,
+.itd-ex__chat .itd-chat__a,
+.itd-ex__chat .itd-chat__cta {
+  color: #f8f6f2;
+  background: rgba(14, 17, 22, 0.5);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: inset 0 0 0 1px rgba(248, 246, 242, 0.16);
+}
+.itd-ex__chat .itd-chat__q {
+  align-self: flex-end;
+  border-radius: 14px 14px 4px 14px;
+}
+.itd-ex__chat .itd-chat__a {
+  font-size: 13px;
+}
+.itd-ex__chat .itd-chat__a sup {
+  color: #ff9a6e;
+}
+.itd-ex__chat .itd-chat__src span {
+  color: rgba(248, 246, 242, 0.7);
+  background: rgba(248, 246, 242, 0.08);
+}
+.itd-ex__chat .itd-chat__cta {
+  color: #ffffff;
+  background: rgba(196, 70, 27, 0.85);
+  box-shadow: none;
+}
+
+/* M · H + B: one column at night, the portrait in a circle with Ember rings. */
+.itd--ec {
+  display: flex;
+  flex-direction: column;
+  padding: 32px 48px 48px;
+  overflow: hidden;
+  background:
+    radial-gradient(50% 35% at 50% 12%, rgba(232, 87, 42, 0.22), transparent 70%),
+    radial-gradient(70% 40% at 50% 110%, rgba(232, 87, 42, 0.18), transparent 70%),
+    #0e1116;
+}
+.itd--ec .itd__col {
+  position: relative;
+}
+.itd--ec .itd__col::before {
+  content: '';
+  position: absolute;
+  top: -220px;
+  left: 50%;
+  width: 720px;
+  height: 720px;
+  transform: translateX(-50%);
+  border-radius: 50%;
+  background: repeating-radial-gradient(circle, rgba(232, 87, 42, 0.16) 0 2px, transparent 3px 36px);
+  -webkit-mask-image: radial-gradient(circle, #000 15%, transparent 60%);
+  mask-image: radial-gradient(circle, #000 15%, transparent 60%);
+  pointer-events: none;
+}
+.itd-ec__portrait {
+  position: relative;
+  width: 148px;
+  height: 148px;
+  overflow: hidden;
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px rgba(248, 246, 242, 0.18), 0 0 60px 8px rgba(232, 87, 42, 0.35);
+}
+.itd-ec__portrait img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 22%;
+  transform: scale(1.35);
+  transform-origin: 50% 30%;
+}
+.itd--ec .itd__h {
+  position: relative;
+}
+.itd-ec__card {
+  position: relative;
+  background: rgba(24, 28, 36, 0.72);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: inset 0 0 0 1px rgba(248, 246, 242, 0.12);
+}
+.itd--ec .itd-points__icon {
+  color: #ff9a6e;
+  background: rgba(248, 246, 242, 0.06);
+  box-shadow: inset 0 0 0 1px rgba(248, 246, 242, 0.12);
+}
+.itd--ec .itd-form__title,
+.itd--ec .itd-form__sub {
+  text-align: center;
+}
+
+/* N · D on the Noor haze: the grainy Cobalt → violet → peach → Ember ground of the brand book's
+   portraits (p. 34), the form on a frosted card. */
+.itd--haze {
+  position: relative;
+  background:
+    radial-gradient(38% 45% at 4% 18%, rgba(46, 72, 230, 0.85), transparent 70%),
+    radial-gradient(40% 40% at 22% 6%, rgba(150, 70, 225, 0.7), transparent 70%),
+    radial-gradient(45% 45% at 55% 30%, rgba(246, 196, 200, 0.75), transparent 70%),
+    radial-gradient(40% 50% at 96% 70%, rgba(240, 110, 40, 0.8), transparent 70%),
+    radial-gradient(45% 40% at 70% 100%, rgba(248, 190, 140, 0.6), transparent 70%),
+    #f6f1ea;
+  overflow: hidden;
+}
+/* The grain over the haze. */
+.itd--haze::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.22;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.itd--haze > * {
+  position: relative;
+}
+.itd-haze__card {
+  display: flex;
+  justify-content: center;
+  width: 100%;
+  max-width: 440px;
+  padding: 36px 32px;
+  border-radius: 28px;
+  background: rgba(255, 255, 255, 0.7);
+  -webkit-backdrop-filter: blur(24px) saturate(1.3);
+  backdrop-filter: blur(24px) saturate(1.3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.6), 0 30px 60px -30px rgba(60, 40, 120, 0.35);
+}
+.itd--haze .itd-panel__terms {
+  color: var(--text-2);
+}
+.itd--haze .itd-panel__art {
+  background: #f3f0ea;
+  box-shadow: 0 30px 60px -30px rgba(14, 17, 22, 0.4);
+}
+
+/* The three things the agent does, compact, under the form's title and line (D with the glass hood). */
+.itd-points--compact {
+  gap: 10px;
+  margin: 4px 0;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background: color-mix(in srgb, var(--text) 3%, transparent);
+  text-align: left;
+}
+.itd-points--compact li {
+  align-items: center;
+  gap: 10px;
+}
+.itd-points--compact .itd-points__icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+}
+.itd-points--compact b {
+  font-size: 13px;
+}
+.itd-points--compact li > span:last-child > span {
+  font-size: 12px;
+}
+/* The lean form (D, glass hood): 36px buttons, with room above Sign in so it doesn't read as a third field. */
+:root[data-theme] .itd-form--lean .btn {
+  height: 36px;
+}
+.itd-form--lean .btn[type='submit'] {
+  margin-top: 12px;
+}
+
+/* D, glass hood · the three points on the picture: a frosted card at its foot. */
+.itd-panel__points {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  backdrop-filter: blur(20px) saturate(1.3);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.75), 0 20px 40px -24px rgba(14, 17, 22, 0.35);
+}
+.itd-panel__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ember-text, #b9431a);
+}
+.itd-panel__points .itd-points {
+  gap: 12px;
+}
+.itd-panel__points .itd-points__icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.85);
+}
+.itd-panel__points .itd-points li > span:last-child > span {
+  color: var(--text-2);
+}
+/* · as chips under the form's line. */
+.itd-chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px;
+  margin: -2px 0 8px;
+}
+.itd-chips span {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  color: var(--text-2);
+  background: color-mix(in srgb, var(--text) 4%, transparent);
+}
+/* · as a row under the form, above the terms. */
+.itd-panel__main > .itd-points--row {
+  margin: 0 auto 24px;
+  max-width: 560px;
+  padding: 16px 18px;
+}
+
+/* D, glass hood · more ways to put the three points on the picture. */
+.itd-on {
+  position: absolute;
+  z-index: 1;
+  margin: 0;
+  list-style: none;
+}
+/* Numbered steps: a frosted column on the left, Ember numbers in mono. */
+.itd-on--steps {
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1px;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 18px;
+  /* More see-through: a light frost, the picture shows through. */
+  background: rgba(255, 255, 255, 0.18);
+  -webkit-backdrop-filter: blur(14px) saturate(1.4);
+  backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55);
+}
+.itd-on--steps li {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 16px;
+  background: rgba(255, 255, 255, 0.16);
+}
+.itd-on--steps li > span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.itd-on__n {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  letter-spacing: 0.06em;
+  color: var(--ember-text, #b9431a);
+}
+.itd-on--steps b {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+.itd-on--steps li > span:last-child > span {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-2);
+}
+/* Floating tags: three glass pills placed around the face. */
+.itd-tag {
+  position: absolute;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--text);
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.85), 0 12px 28px -14px rgba(14, 17, 22, 0.4);
+}
+.itd-tag svg {
+  color: var(--cobalt, #1e3bd6);
+}
+.itd-tag--1 {
+  top: 14%;
+  left: 7%;
+}
+.itd-tag--2 {
+  top: 47%;
+  right: 6%;
+}
+.itd-tag--3 {
+  bottom: 9%;
+  left: 12%;
+}
+/* One headline: the three as a single line in the brand's title type, second phrase in Cobalt. */
+.itd-on--headline {
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 22px 22px 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  backdrop-filter: blur(20px) saturate(1.3);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.75);
+}
+.itd-on--headline b {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 800;
+  font-size: 26px;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+.itd-on--headline b span {
+  color: var(--cobalt, #1e3bd6);
+}
+.itd-on--headline > span {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+/* Editorial list: big titles straight on the picture over a soft light fade, hairlines between. */
+.itd-on--editorial {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 80px 24px 22px;
+  background: linear-gradient(180deg, rgba(248, 246, 242, 0), rgba(248, 246, 242, 0.92) 45%);
+}
+.itd-on--editorial li {
+  padding: 10px 0;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 700;
+  font-size: 20px;
+  letter-spacing: -0.02em;
+  border-top: 1px solid rgba(14, 17, 22, 0.14);
+}
+.itd-on--editorial li:first-child {
+  border-top: 0;
+}
+/* One at a time: a frosted card that changes every few seconds, with dots. */
+.itd-on--carousel {
+  left: 14px;
+  right: 14px;
+  bottom: 14px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  column-gap: 14px;
+  row-gap: 12px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  backdrop-filter: blur(20px) saturate(1.3);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.75);
+}
+.itd-on__slide {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  animation: itd-fade 0.4s ease;
+}
+.itd-on__slide b {
+  font-size: 16px;
+  font-weight: 600;
+}
+.itd-on__slide span {
+  font-size: 13px;
+  color: var(--text-2);
+}
+.itd-on__dots {
+  grid-column: 1 / -1;
+  display: flex;
+  gap: 6px;
+}
+.itd-on__dots button {
+  width: 18px;
+  height: 4px;
+  border-radius: 999px;
+  background: rgba(14, 17, 22, 0.15);
+  transition: background 0.2s, width 0.2s;
+}
+.itd-on__dots button.is-on {
+  width: 28px;
+  background: var(--ink, #0e1116);
+}
+@keyframes itd-fade {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+
+/* Chips under the line: taller chips, one brand colour per icon (Cobalt, Noor violet, Ember),
+   and more air around the title block so title → line → chips → fields read in steps. */
+.itd-form--chips .itd-form__title {
+  font-size: 34px;
+  line-height: 1.15;
+}
+.itd-form--chips .itd-form__sub {
+  margin: 4px 0 0;
+  font-size: 15px;
+  color: var(--text-2);
+}
+.itd-form--chips .itd-chips {
+  gap: 8px;
+  margin: 20px 0 28px;
+}
+.itd-form--chips .itd-chips span {
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px 0 12px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.itd-chips__c1 svg {
+  color: var(--cobalt, #1e3bd6);
+}
+.itd-chips__c2 svg {
+  color: #8a3fd1;
+}
+.itd-chips__c3 svg {
+  color: var(--ember, #e8572a);
+}
+/* The chips keep to the width of the fields: they wrap, centred (two and one when the column is narrow). */
+.itd-form--chips .itd-chips {
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* O · Agent typing: a colourful panel where the agent "types" what it does, the form on white. */
+.itd--type {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 12px;
+  padding: 12px;
+  background: #ffffff;
+}
+.itd-type__panel {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  min-height: 656px;
+  padding: 48px 40px;
+  overflow: hidden;
+  border-radius: 22px;
+  text-align: center;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+/* The grain over every panel. */
+.itd-type__panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.2;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.itd-type__panel > * {
+  position: relative;
+  z-index: 1;
+}
+/* Like the chat page: the new chat's spectrum (a white bowl, Cobalt at the sides, Noor pink, Ember at the foot). */
+.itd-type__panel--chat {
+  --noor-pink: color-mix(in oklch, var(--cobalt, #1e3bd6), var(--ember, #e8572a));
+  background:
+    radial-gradient(48% 30% at 50% 44%, #ffffff 0%, rgba(255, 255, 255, 0.85) 35%, rgba(255, 255, 255, 0) 75%),
+    radial-gradient(50% 30% at 0% 36%, color-mix(in srgb, var(--cobalt, #1e3bd6) 55%, #ffffff), transparent 72%),
+    radial-gradient(50% 30% at 100% 32%, color-mix(in srgb, var(--cobalt, #1e3bd6) 55%, #ffffff), transparent 72%),
+    radial-gradient(70% 40% at 20% 80%, color-mix(in oklch, var(--noor-pink) 70%, #ffffff), transparent 72%),
+    radial-gradient(70% 40% at 80% 76%, color-mix(in oklch, var(--noor-pink) 85%, #ffffff), transparent 72%),
+    radial-gradient(90% 32% at 50% 108%, var(--ember, #e8572a), transparent 74%),
+    linear-gradient(180deg, var(--sand, #f8f6f2) 0%, color-mix(in srgb, var(--haze, #c8d8f0) 60%, #ffffff) 30%, color-mix(in oklch, var(--noor-pink) 40%, #ffffff) 64%, color-mix(in srgb, var(--ember, #e8572a) 50%, #ffffff) 100%);
+}
+/* Noor glow, as on the brand book's cover (p. 1): a blurred ring of Cobalt, violet and Ember round a white centre. */
+.itd-type__panel--noor {
+  background:
+    radial-gradient(30% 26% at 50% 50%, #ffffff 0%, rgba(255, 255, 255, 0.9) 45%, rgba(255, 255, 255, 0) 100%),
+    radial-gradient(42% 38% at 30% 38%, rgba(46, 72, 230, 0.85), transparent 70%),
+    radial-gradient(40% 36% at 52% 26%, rgba(150, 70, 225, 0.75), transparent 70%),
+    radial-gradient(42% 40% at 72% 56%, rgba(240, 100, 40, 0.85), transparent 70%),
+    radial-gradient(40% 34% at 42% 74%, rgba(236, 110, 160, 0.7), transparent 70%),
+    #f8f6f2;
+}
+/* Cobalt to Ember haze, as behind the portraits (p. 34). */
+.itd-type__panel--haze {
+  background:
+    radial-gradient(55% 45% at 0% 0%, rgba(46, 72, 230, 0.9), transparent 70%),
+    radial-gradient(50% 40% at 40% 0%, rgba(150, 70, 225, 0.65), transparent 70%),
+    radial-gradient(60% 50% at 100% 100%, rgba(240, 110, 40, 0.9), transparent 70%),
+    radial-gradient(50% 40% at 60% 70%, rgba(246, 190, 200, 0.7), transparent 70%),
+    #f6f1ea;
+}
+/* The mascot's place, until Spark shares it. */
+.itd-type__mascot {
+  display: grid;
+  place-items: center;
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  font-size: 12px;
+  color: var(--text-3);
+  background: rgba(255, 255, 255, 0.65);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  border: 1.5px dashed rgba(14, 17, 22, 0.22);
+}
+.itd-type__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ember-text, #b9431a);
+}
+.itd-type {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+  max-width: 460px;
+}
+/* The line the agent types: the brand's title type, two lines tall so the panel doesn't jump. */
+.itd-type__line {
+  min-height: 2.3em;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--ink, #0e1116);
+}
+.itd-type__caret {
+  display: inline-block;
+  width: 2px;
+  height: 0.95em;
+  margin-left: 3px;
+  vertical-align: -0.1em;
+  background: var(--cobalt, #1e3bd6);
+  animation: itd-caret 1s steps(1) infinite;
+}
+@keyframes itd-caret {
+  50% {
+    opacity: 0;
+  }
+}
+.itd-type__dots {
+  display: flex;
+  gap: 6px;
+}
+.itd-type__dots span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(14, 17, 22, 0.2);
+  transition: background 0.2s, width 0.2s;
+}
+.itd-type__dots span.is-on {
+  width: 18px;
+  border-radius: 999px;
+  background: var(--ink, #0e1116);
+}
+.itd-type__main {
+  display: flex;
+  flex-direction: column;
+  padding: 16px 16px 8px;
+}
+.itd-type__form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 24px;
+  margin: auto 0;
+  padding: 40px 0;
+}
+.itd-type__logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 700;
+  font-size: 15px;
+}
+.itd-type__logo img {
+  border-radius: 7px;
+}
+.itd--type .itd-form__title,
+.itd--type .itd-form__sub {
+  text-align: center;
+}
+/* White fields with a hairline, as in the reference. */
+.itd--type .input {
+  height: 40px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.itd--type .input:focus {
+  box-shadow: 0 0 0 1.5px var(--accent);
+}
+@media (prefers-reduced-motion: reduce) {
+  .itd-type__caret {
+    animation: none;
+  }
+}
+@media (max-width: 900px) {
+  .itd--type {
+    grid-template-columns: 1fr;
+  }
+  .itd-type__panel {
+    min-height: 340px;
+  }
+  .itd-type__line {
+    font-size: 22px;
+  }
+}
+
+/* The sign-in options demo opened while signed out: no shell, just page margins. */
+.signed-out-demo {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 32px 24px 48px;
+}
+
+/* O · text animations. Left-aligned ones sit in a fixed-width block so the text grows from the left. */
+.itd-type {
+  width: 100%;
+}
+.itd-type:not(.itd-type--type-centre):not(.itd-type--inplace):not(.itd-type--feed) {
+  align-items: flex-start;
+  text-align: left;
+}
+.itd-type:not(.itd-type--type-centre):not(.itd-type--inplace):not(.itd-type--feed) .itd-type__line {
+  width: 100%;
+}
+/* Light wipe: the line is lit from left to right. */
+.itd-type__line--wipe {
+  -webkit-mask-image: linear-gradient(90deg, #000 45%, transparent 55%);
+  mask-image: linear-gradient(90deg, #000 45%, transparent 55%);
+  -webkit-mask-size: 260% 100%;
+  mask-size: 260% 100%;
+  animation: itd-wipe 1.3s cubic-bezier(0.3, 0.6, 0.2, 1) both;
+}
+@keyframes itd-wipe {
+  from {
+    -webkit-mask-position: 100% 0;
+    mask-position: 100% 0;
+  }
+  to {
+    -webkit-mask-position: 0 0;
+    mask-position: 0 0;
+  }
+}
+/* Word by word: each word rises out of a blur, one after another. */
+.itd-type__line--words span {
+  display: inline-block;
+  white-space: pre;
+  animation: itd-word 0.5s cubic-bezier(0.3, 0.6, 0.2, 1) both;
+}
+@keyframes itd-word {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateY(8px);
+  }
+}
+/* Thinking shimmer: the line fades in, then a light runs through it, as Spark's "Thinking" line. */
+.itd-type__line--shimmer {
+  color: transparent;
+  background: linear-gradient(90deg, var(--ink, #0e1116) 0%, var(--ink, #0e1116) 40%, #8a9ad8 50%, var(--ink, #0e1116) 60%, var(--ink, #0e1116) 100%) 0 0 / 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: itd-shine 2.2s linear infinite, itd-fade 0.5s ease both;
+}
+@keyframes itd-shine {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -150% 0;
+  }
+}
+/* Running log: what's done sits above with a tick, the current step types underneath. */
+.itd-type__feed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  text-align: center;
+}
+.itd-type__done {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-3);
+  animation: itd-fade 0.4s ease both;
+}
+.itd-type__done svg {
+  flex: none;
+  color: #0f7a6e;
+}
+.itd-type--feed .itd-type__line {
+  font-size: 22px;
+}
+
+/* Written in place: centred, the letters appear left to right in their final places; the caption
+   comes out of a blur when the line is done; then everything fades before the next line. */
+.itd-type__placed {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  transition: opacity 0.45s ease, filter 0.45s ease;
+}
+.itd-type__placed.is-out {
+  opacity: 0;
+  filter: blur(6px);
+}
+.itd-type__ghost {
+  color: transparent;
+}
+.itd-type__caption {
+  font-size: 14px;
+  color: var(--text-2);
+  opacity: 0;
+  filter: blur(8px);
+  transition: opacity 0.6s ease, filter 0.6s ease;
+}
+.itd-type__caption.is-on {
+  opacity: 1;
+  filter: blur(0);
+}
+
+/* The sign-in page: panel and form share the width equally; past 1400px the two stay together in the
+   middle and the white grows at the sides. */
+.itd--type.signin-page {
+  padding: 16px max(16px, calc((100vw - 1200px) / 2));
+}
+@media (min-width: 1100px) {
+  .itd--type.signin-page {
+    padding-inline: max(64px, calc((100vw - 1200px) / 2));
+  }
+}
+/* More room between the parts: wordmark → title, line → fields, fields → Sign in. */
+.signin-page .itd-type__form {
+  gap: 48px;
+}
+/* The app icon over the title; the wordmark in the panel's top-left corner. */
+.signin-page__icon {
+  align-self: center;
+  width: 48px;
+  height: 48px;
+  margin-bottom: 8px;
+  border-radius: 13px;
+}
+.signin-page .itd-type__panel > .signin-page__wordmark {
+  position: absolute;
+  top: 28px;
+  left: 28px;
+  display: block;
+  height: 30px;
+  width: auto;
+}
+.signin-page__form {
+  gap: 16px;
+}
+/* "Welcome" in the page titles' type (Diatype Extended, as .page-head__title). */
+:root[data-theme] .signin-page__form .signin-page__title {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-size: clamp(24px, 2.2vw, 30px);
+  font-weight: var(--title-weight, 800);
+  letter-spacing: var(--title-track, -0.04em);
+  line-height: 1.05;
+}
+/* One line: the title may run a little wider than the fields, centred over them. */
+.signin-page__form .signin-page__title {
+  align-self: center;
+  width: max-content;
+  white-space: nowrap;
+}
+.signin-page__form .itd-form__sub {
+  margin: -10px 0 20px;
+  font-size: 15px;
+}
+.signin-page__form .btn[type='submit'] {
+  margin-top: 16px;
+}
+
+/* O · moving spots: the Cobalt-to-Ember haze as four blurred spots on Sand that float on their own
+   slow paths (different lengths so they never line up the same way twice). */
+.itd-type__panel--spots {
+  background: #f6f1ea;
+}
+.itd-spots {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.itd-spots__s {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(60px);
+  will-change: transform;
+}
+.itd-spots__s--cobalt {
+  top: -18%;
+  left: -22%;
+  width: 75%;
+  height: 50%;
+  background: radial-gradient(closest-side, rgba(46, 72, 230, 0.95), rgba(46, 72, 230, 0) 100%);
+  animation: itd-spot-a 22s ease-in-out infinite alternate;
+}
+.itd-spots__s--violet {
+  top: -12%;
+  left: 18%;
+  width: 70%;
+  height: 42%;
+  background: radial-gradient(closest-side, rgba(150, 70, 225, 0.8), rgba(150, 70, 225, 0) 100%);
+  animation: itd-spot-b 27s ease-in-out infinite alternate;
+}
+.itd-spots__s--pink {
+  top: 42%;
+  left: 18%;
+  width: 70%;
+  height: 40%;
+  background: radial-gradient(closest-side, rgba(240, 160, 185, 0.75), rgba(240, 160, 185, 0) 100%);
+  animation: itd-spot-c 31s ease-in-out infinite alternate;
+}
+.itd-spots__s--ember {
+  bottom: -20%;
+  right: -22%;
+  width: 80%;
+  height: 52%;
+  background: radial-gradient(closest-side, rgba(240, 110, 40, 0.95), rgba(240, 110, 40, 0) 100%);
+  animation: itd-spot-d 25s ease-in-out infinite alternate;
+}
+@keyframes itd-spot-a {
+  50% {
+    transform: translate(18%, 22%) scale(1.15);
+  }
+  100% {
+    transform: translate(30%, 6%) scale(0.95);
+  }
+}
+@keyframes itd-spot-b {
+  50% {
+    transform: translate(-22%, 30%) scale(0.9);
+  }
+  100% {
+    transform: translate(12%, 46%) scale(1.1);
+  }
+}
+@keyframes itd-spot-c {
+  50% {
+    transform: translate(24%, -26%) scale(1.2);
+  }
+  100% {
+    transform: translate(-18%, 20%) scale(0.9);
+  }
+}
+@keyframes itd-spot-d {
+  50% {
+    transform: translate(-26%, -24%) scale(1.1);
+  }
+  100% {
+    transform: translate(-8%, -40%) scale(0.95);
+  }
+}
+/* Livelier flow: the same paths, about twice as fast. */
+.itd-type__panel--spots.is-flow .itd-spots__s {
+  animation-duration: 11s;
+}
+.itd-type__panel--spots.is-flow .itd-spots__s--violet {
+  animation-duration: 13s;
+}
+.itd-type__panel--spots.is-flow .itd-spots__s--pink {
+  animation-duration: 15s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .itd-spots__s {
+    animation: none !important;
+  }
+}
+
+/* ---- Demo: home page options (#/demo/home) ------------------------------------------------- */
+.hd-frame {
+  overflow: hidden;
+  border-radius: 20px;
+  background: var(--bg);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.hd {
+  position: relative;
+  min-height: 680px;
+  padding: 40px 48px 48px;
+}
+.hd-title {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 800;
+  font-size: 30px;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+.hd-sub {
+  margin-top: 6px;
+  font-size: 15px;
+  color: var(--text-3);
+}
+.hd-label {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  margin-bottom: 12px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ember-text, #b9431a);
+}
+.hd-label span {
+  color: var(--text-3);
+}
+.hd-section {
+  margin-top: 36px;
+}
+.hd-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.hd-link:hover {
+  color: var(--text);
+  background: var(--surface-hover);
+}
+/* Prompts: quiet chips with an icon. */
+.hd-prompts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.hd-prompt {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--text-2);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: box-shadow 0.15s, color 0.15s;
+}
+.hd-prompt:hover {
+  color: var(--text);
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.hd-prompt svg {
+  color: var(--text-3);
+}
+
+/* A · Pick up: the box under a small greeting, then a row of cards with status. */
+.hd--pickup {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+.hd-pickup__head {
+  margin-bottom: 20px;
+}
+.hd-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 12px;
+}
+.hd-card {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  min-height: 168px;
+  padding: 18px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: box-shadow 0.15s, transform 0.15s;
+}
+.hd-card:hover {
+  box-shadow: inset 0 0 0 1px var(--line-strong), 0 10px 24px -16px rgba(14, 17, 22, 0.3);
+  transform: translateY(-1px);
+}
+.hd-card--you {
+  background: linear-gradient(180deg, #fffbea, #ffffff 60%);
+  box-shadow: inset 0 0 0 1px rgba(217, 164, 0, 0.35);
+}
+.hd-card__kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.hd-card__title {
+  font-size: 15px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.hd-card__meta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.hd-card__go {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--accent-text);
+}
+.hd-prompts--quiet .hd-prompt {
+  background: transparent;
+}
+
+/* B · Workspace: "Ask Spark" as a contained card in the spectrum; "Your work" beside it. */
+.hd--split {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 16px;
+  padding: 16px;
+}
+.hd-ask {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 20px;
+  padding: 40px;
+  border-radius: 22px;
+  background:
+    radial-gradient(55% 45% at 0% 0%, rgba(46, 72, 230, 0.55), transparent 70%),
+    radial-gradient(50% 40% at 45% 0%, rgba(150, 70, 225, 0.4), transparent 70%),
+    radial-gradient(60% 50% at 100% 100%, rgba(240, 110, 40, 0.5), transparent 70%),
+    #f6f1ea;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+.hd-ask__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ember-text, #b9431a);
+}
+.hd-ask__title {
+  max-width: 460px;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+.hd-ask .hd-prompt {
+  background: rgba(255, 255, 255, 0.7);
+}
+.hd-work {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 24px 20px;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.hd-work__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.hd-work__head .hd-label {
+  margin: 0;
+}
+.hd-work .hd-label {
+  margin-top: 16px;
+}
+.hd-rows {
+  display: flex;
+  flex-direction: column;
+}
+.hd-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-height: 56px;
+  padding: 8px;
+  border-radius: 12px;
+  transition: background 0.15s;
+}
+.hd-row:hover {
+  background: var(--surface-hover);
+}
+.hd-row__icon {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  color: var(--text-2);
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+}
+.hd-row__main {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+.hd-row__title,
+.hd-row__sub {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hd-row__title {
+  font-size: 14px;
+}
+.hd-row__sub {
+  font-size: 12px;
+  color: var(--text-3);
+}
+.hd-row__go {
+  color: var(--text-3);
+}
+
+/* C · Status first: three numbers, the latest from Spark, a slim chat bar at the foot. */
+.hd--status {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+.hd-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+.hd-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 20px;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: box-shadow 0.15s;
+}
+.hd-tile:hover {
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.hd-tile__n {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 800;
+  font-size: 44px;
+  line-height: 1;
+  letter-spacing: -0.03em;
+}
+.hd-tile--you .hd-tile__n {
+  color: #b58900;
+}
+.hd-tile--progress .hd-tile__n {
+  color: var(--cobalt, #1e3bd6);
+}
+.hd-tile--files .hd-tile__n {
+  color: var(--ember-text, #b9431a);
+}
+.hd-tile__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.hd-feed {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hd-feed a {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 14px 8px;
+  box-shadow: inset 0 -1px 0 var(--line);
+  transition: background 0.15s;
+}
+.hd-feed a:hover {
+  background: var(--surface-hover);
+}
+.hd-feed__dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: 6px;
+  border-radius: 50%;
+  background: color-mix(in srgb, var(--text) 18%, transparent);
+}
+.hd-feed__dot.is-new {
+  background: var(--ember, #e8572a);
+}
+.hd-feed__main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+  min-width: 0;
+}
+.hd-feed__main b {
+  font-size: 14px;
+  font-weight: 500;
+}
+.hd-feed__main span {
+  font-size: 13px;
+  color: var(--text-3);
+}
+.hd-feed__when {
+  flex: none;
+  font-size: 12px;
+  color: var(--text-3);
+}
+/* The chat bar stays at the foot of the view while the feed scrolls under it. */
+.hd-dock {
+  position: sticky;
+  bottom: 16px;
+  z-index: 2;
+  margin-top: 32px;
+}
+
+/* D · Board: one box with modes, then the requests on three columns. */
+.hd--board {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+.hd-board__ask {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 28px;
+  border-radius: 22px;
+  background:
+    radial-gradient(50% 80% at 0% 0%, rgba(46, 72, 230, 0.16), transparent 70%),
+    radial-gradient(50% 80% at 100% 100%, rgba(240, 110, 40, 0.16), transparent 70%),
+    #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.hd-modes {
+  display: flex;
+  gap: 6px;
+}
+.hd-modes button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--text-2);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.hd-modes button.is-on {
+  color: #ffffff;
+  background: var(--ink, #0e1116);
+  box-shadow: none;
+}
+.hd-board__alt {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 64px;
+  padding: 12px 12px 12px 18px;
+  border-radius: 16px;
+  font-size: 14px;
+  color: var(--text-2);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.hd-cols {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-top: 32px;
+}
+.hd-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 18px;
+  background: color-mix(in srgb, var(--text) 3%, transparent);
+}
+.hd-col .hd-label {
+  margin: 2px 4px 6px;
+}
+.hd-bcard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 14px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: box-shadow 0.15s;
+}
+.hd-bcard:hover {
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.hd-bcard b {
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.3;
+}
+.hd-bcard__type {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.hd-empty {
+  padding: 12px 4px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+@media (max-width: 900px) {
+  .hd {
+    padding: 24px 16px;
+  }
+  .hd--split,
+  .hd-tiles,
+  .hd-cols {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* E · This week: a timeline of what's due, "Ask Spark" as a card beside it. */
+.hd--agenda {
+  display: grid;
+  grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+  gap: 24px;
+  align-items: start;
+}
+.hd-ask--side {
+  position: sticky;
+  top: 24px;
+  padding: 28px;
+}
+.hd-ask--side .hd-ask__title {
+  font-size: 22px;
+}
+.hd-tl {
+  margin: 8px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.hd-tl li {
+  display: grid;
+  grid-template-columns: 56px minmax(0, 1fr);
+  gap: 16px;
+  position: relative;
+  padding-bottom: 12px;
+}
+/* The line that joins the dates. */
+.hd-tl li::before {
+  content: '';
+  position: absolute;
+  left: 27px;
+  top: 44px;
+  bottom: 0;
+  width: 1px;
+  background: var(--line-strong);
+}
+.hd-tl li:last-child::before {
+  display: none;
+}
+.hd-tl__date {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 14px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.hd-tl__date b {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 800;
+  font-size: 20px;
+  line-height: 1;
+}
+.hd-tl__date span {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+}
+.is-you .hd-tl__date {
+  background: #fff7d6;
+  box-shadow: inset 0 0 0 1px rgba(217, 164, 0, 0.4);
+}
+.hd-tl__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  transition: background 0.15s;
+}
+.hd-tl__item:hover {
+  background: var(--surface-hover);
+}
+.hd-tl__item b {
+  font-size: 15px;
+  font-weight: 600;
+}
+.hd-tl__item > span:last-child {
+  font-size: 13px;
+  color: var(--text-3);
+}
+.hd-tl__who {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.is-you .hd-tl__who {
+  color: #a37b00;
+}
+
+/* F · Next up: one large card for the most urgent item, with its stages and actions. */
+.hd--next {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+.hd-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 32px;
+  border-radius: 24px;
+  background:
+    radial-gradient(60% 90% at 100% 0%, rgba(240, 110, 40, 0.18), transparent 70%),
+    radial-gradient(50% 80% at 0% 100%, rgba(46, 72, 230, 0.14), transparent 70%),
+    #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.hd-hero__main {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.hd-hero__title {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 800;
+  font-size: 34px;
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+}
+.hd-hero__line {
+  font-size: 15px;
+  color: var(--text-2);
+}
+.hd-hero__acts {
+  display: flex;
+  gap: 8px;
+  margin-top: 8px;
+}
+.hd-hero__steps {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 6px;
+}
+.hd-hero__steps span {
+  padding-top: 10px;
+  font-size: 12px;
+  color: var(--text-3);
+  border-top: 3px solid color-mix(in srgb, var(--text) 10%, transparent);
+}
+.hd-hero__steps span.is-done {
+  color: var(--text-2);
+  border-color: var(--ink, #0e1116);
+}
+.hd-hero__steps span.is-now {
+  font-weight: 600;
+  color: var(--text);
+  border-color: #d9a400;
+}
+
+/* G · Brand pulse: this week's numbers, recent work, Ask Spark as a side panel. */
+.hd--pulse {
+  max-width: 1040px;
+  margin: 0 auto;
+  overflow: hidden;
+}
+.hd-pulse__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  margin-bottom: 24px;
+}
+.hd-pulse__head .hd-title {
+  max-width: 620px;
+  margin-top: 8px;
+}
+.hd-tile--up .hd-tile__n {
+  color: var(--cobalt, #1e3bd6);
+}
+.hd-tile--warn .hd-tile__n {
+  color: var(--ember-text, #b9431a);
+}
+.hd-pulse__src {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: 12px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.hd-pulse__src:hover {
+  color: var(--text);
+}
+.hd-rows--card {
+  padding: 8px;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.hd-drawer {
+  position: absolute;
+  z-index: 3;
+  top: 12px;
+  right: 12px;
+  bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: min(420px, calc(100% - 24px));
+  padding: 24px;
+  border-radius: 22px;
+  background:
+    radial-gradient(70% 40% at 0% 0%, rgba(46, 72, 230, 0.16), transparent 70%),
+    radial-gradient(70% 40% at 100% 100%, rgba(240, 110, 40, 0.16), transparent 70%),
+    #fbfaf7;
+  box-shadow: inset 0 0 0 1px var(--line), 0 30px 60px -20px rgba(14, 17, 22, 0.35);
+  animation: hd-drawer 0.25s cubic-bezier(0.3, 0.6, 0.2, 1);
+}
+@keyframes hd-drawer {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+}
+.hd-drawer__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.hd-drawer .hd-ask__title {
+  font-size: 22px;
+}
+
+/* H · Continue: a row of recent items, each with its six stages. */
+.hd--continue {
+  max-width: 1120px;
+  margin: 0 auto;
+}
+.hd-continue__ask {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.hd-strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(220px, 1fr);
+  gap: 12px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+}
+.hd-ccard {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 16px;
+  border-radius: 16px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: box-shadow 0.15s;
+}
+.hd-ccard:hover {
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.hd-ccard.is-you {
+  box-shadow: inset 0 0 0 1px rgba(217, 164, 0, 0.45);
+}
+.hd-ccard--chat svg {
+  color: var(--text-3);
+}
+.hd-progress {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 3px;
+  width: 100%;
+  margin-top: auto;
+}
+.hd-progress span {
+  height: 4px;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--text) 10%, transparent);
+}
+.hd-progress span.is-on {
+  background: var(--ink, #0e1116);
+}
+.hd-progress span.is-on.is-off {
+  background: var(--danger, #b42347);
+}
+@media (max-width: 900px) {
+  .hd--agenda {
+    grid-template-columns: 1fr;
+  }
+  .hd-hero__steps {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .hd-pulse__head {
+    flex-direction: column;
+  }
+}
+
+/* A · "Pick up where you left off" looks. */
+.hd-looks {
+  align-items: center;
+  margin-top: -4px;
+}
+.hd-looks > span {
+  margin-right: 4px;
+  font-size: 13px;
+}
+/* List: one row per item on hairlines, what waits on you marked with an amber edge. */
+.hd-plist {
+  display: flex;
+  flex-direction: column;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  overflow: hidden;
+}
+.hd-prow {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  min-height: 64px;
+  padding: 10px 18px;
+  box-shadow: inset 0 -1px 0 var(--line);
+  transition: background 0.15s;
+}
+.hd-prow:last-child {
+  box-shadow: none;
+}
+.hd-prow:hover {
+  background: color-mix(in srgb, var(--text) 3%, transparent);
+}
+.hd-prow.is-you::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 14px;
+  bottom: 14px;
+  width: 3px;
+  border-radius: 0 3px 3px 0;
+  background: #d9a400;
+}
+.hd-prow .hd-row__title {
+  font-size: 15px;
+  font-weight: 500;
+}
+.hd-prow__open {
+  font-size: 13px;
+  color: var(--text-3);
+}
+.hd-prow__go {
+  flex: none;
+  color: var(--text-3);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.15s, transform 0.15s;
+}
+.hd-prow:hover .hd-prow__go {
+  opacity: 1;
+  transform: none;
+}
+/* Waiting on you · Recent: two lists side by side. */
+.hd-two {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+}
+/* Tabs: the Requests page's text tabs beside the label. */
+.hd-tabsrow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+.hd-tabsrow .hd-label {
+  margin: 0;
+}
+/* Compact pills: one line each, wrapping. */
+.hd-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.hd-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  height: 44px;
+  padding: 0 14px 0 16px;
+  border-radius: 999px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  transition: box-shadow 0.15s;
+}
+.hd-pill:hover {
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.hd-pill.is-you {
+  box-shadow: inset 0 0 0 1px rgba(217, 164, 0, 0.45);
+}
+.hd-pill__title {
+  max-width: 240px;
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.hd-pill svg {
+  color: var(--text-3);
+}
+@media (max-width: 900px) {
+  .hd-two {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* I · Dashboard + recent: the three numbers, then plain rows (an emoji, the title, status, when). */
+.hd--dash {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+.hd-plain {
+  display: flex;
+  flex-direction: column;
+}
+.hd-plain__row {
+  display: grid;
+  grid-template-columns: 32px minmax(0, 1fr) auto 72px;
+  align-items: center;
+  column-gap: 16px;
+  min-height: 60px;
+  padding: 0 8px;
+  box-shadow: inset 0 -1px 0 var(--line);
+  transition: background 0.15s;
+}
+.hd-plain__row:last-child {
+  box-shadow: none;
+}
+.hd-plain__row:hover {
+  background: var(--surface-hover);
+}
+.hd-plain__emoji {
+  font-size: 20px;
+  line-height: 1;
+}
+.hd-plain__title {
+  overflow: hidden;
+  font-size: 16px;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.hd-plain__when {
+  font-size: 13px;
+  color: var(--text-3);
+  text-align: right;
+}
+/* A and I: the prompts sit right under the box. */
+.hd-askbox {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+/* I: the numbers right under the greeting; a clear gap before the chat. */
+.hd-dash__tiles {
+  margin-top: 4px;
+}
+.hd-dash__ask {
+  margin-top: 56px;
+}
+
+/* I · Recent rows: the type's icon in a soft square, the title over a quiet line. */
+.hd-plain__row {
+  min-height: 68px;
+}
+.hd-plain__icon {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  color: var(--text-2);
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+}
+.hd-plain__main {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.hd-plain__sub {
+  overflow: hidden;
+  font-size: 13px;
+  color: var(--text-3);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ---- Home page (a new chat before its first message), picked on #/demo/home?v=dash -------- */
+.home {
+  width: 100%;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 36px 40px 64px;
+}
+@media (max-width: 900px) {
+  .home {
+    padding: 24px 16px 48px;
+  }
+  .home .hd-tiles {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* What waits on the client, apart from the status: an amber mark beside the title. */
+.needs-you {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  color: #d9a400;
+}
+.rq-row3__name,
+.hd-plain__name {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-width: 0;
+}
+.rq-row3__name .rq-row3__title,
+.hd-plain__name .hd-plain__title {
+  min-width: 0;
+}
+
+/* Home · Recent, as the Requests table: icon, title (with the attention mark), an arrow on hover. */
+.home-recent {
+  display: flex;
+  flex-direction: column;
+}
+.home-recent__row {
+  display: grid;
+  grid-template-columns: 15px minmax(0, 1fr) 15px;
+  align-items: center;
+  column-gap: 14px;
+  min-height: 52px;
+  padding: 0 8px;
+  font-size: 14px;
+  box-shadow: inset 0 -1px 0 var(--line);
+  transition: background 0.15s;
+}
+.home-recent__row:last-child {
+  box-shadow: none;
+}
+.home-recent__row:hover {
+  background: var(--surface-hover);
+}
+.home-recent__icon {
+  color: var(--text-3);
+}
+.home-recent__go {
+  color: var(--text-3);
+  opacity: 0;
+  transform: translateX(-4px);
+  transition: opacity 0.15s, transform 0.15s;
+}
+.home-recent__row:hover .home-recent__go {
+  opacity: 1;
+  transform: none;
+}
+
+/* ---- Home dashboard looks, after the brand book V3 (#/demo/home?v=dash) ----------------------
+   Figures in Diatype Extended Ultra (large); labels in Diatype Mono, uppercase, tracked. */
+.bt {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 4px;
+}
+.bt__tile {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-height: 168px;
+  padding: 20px 22px;
+  overflow: hidden;
+  border-radius: 20px;
+  transition: transform 0.15s, box-shadow 0.15s, filter 0.15s;
+}
+.bt__tag {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.bt__n {
+  margin-top: auto;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 900;
+  font-size: 64px;
+  line-height: 0.9;
+  letter-spacing: -0.04em;
+}
+.bt__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+}
+/* Only the arrow (the label's own last icon) nudges on hover; the mark before the label stays still. */
+.bt__label > svg:last-child {
+  transition: transform 0.15s;
+}
+.bt__tile:hover .bt__label > svg:last-child {
+  transform: translateX(3px);
+}
+
+/* Colour blocks (p. 30): solid Ink, Cobalt and Ember tiles, Sand type. */
+.bt--blocks .bt__tile {
+  color: var(--sand, #f8f6f2);
+}
+.bt--blocks .bt__tile--you {
+  background: var(--ink, #0e1116);
+}
+.bt--blocks .bt__tile--progress {
+  background: var(--cobalt, #1e3bd6);
+}
+.bt--blocks .bt__tile--files {
+  background: var(--ember, #e8501f);
+}
+.bt--blocks .bt__tag,
+.bt--blocks .bt__label {
+  color: rgba(248, 246, 242, 0.8);
+}
+.bt--blocks .bt__tile:hover {
+  filter: brightness(1.08);
+}
+
+/* Three steps (p. 10): white cards with a coloured line along the top, the index in the line's colour. */
+.bt--steps .bt__tile {
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  border-radius: 16px;
+}
+.bt--steps .bt__tile::before {
+  content: '';
+  position: absolute;
+  left: 22px;
+  right: 22px;
+  top: 0;
+  height: 3px;
+  border-radius: 0 0 3px 3px;
+}
+.bt--steps .bt__tile--you::before {
+  background: var(--cobalt, #1e3bd6);
+}
+.bt--steps .bt__tile--progress::before {
+  background: #8a3fd1;
+}
+.bt--steps .bt__tile--files::before {
+  background: var(--ember, #e8501f);
+}
+.bt--steps .bt__tile--you .bt__tag {
+  color: var(--cobalt, #1e3bd6);
+}
+.bt--steps .bt__tile--progress .bt__tag {
+  color: #8a3fd1;
+}
+.bt--steps .bt__tile--files .bt__tag {
+  color: var(--ember-text, #b9431a);
+}
+.bt--steps .bt__label {
+  color: var(--text-2);
+}
+.bt--steps .bt__tile:hover {
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+
+/* Frosted glass (p. 33): the three tiles as frosted glass over a Noor glow. */
+.bt--glass {
+  position: relative;
+  padding: 14px;
+  border-radius: 26px;
+  background:
+    radial-gradient(40% 70% at 8% 20%, rgba(46, 72, 230, 0.55), transparent 70%),
+    radial-gradient(40% 70% at 50% 100%, rgba(170, 80, 220, 0.4), transparent 70%),
+    radial-gradient(40% 70% at 95% 30%, rgba(240, 100, 40, 0.55), transparent 70%),
+    #f3efe8;
+}
+.bt--glass .bt__tile {
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+.bt--glass .bt__tag {
+  color: var(--ember-text, #b9431a);
+}
+.bt--glass .bt__label {
+  color: var(--text-2);
+}
+.bt--glass .bt__tile:hover {
+  background: rgba(255, 255, 255, 0.7);
+}
+
+/* Ink band: one statement band in Ink, three columns with hairlines, Ember labels, Sand figures. */
+.bt--band {
+  gap: 0;
+  border-radius: 22px;
+  background:
+    radial-gradient(50% 120% at 100% 0%, rgba(232, 80, 31, 0.25), transparent 70%),
+    radial-gradient(40% 120% at 0% 100%, rgba(30, 59, 214, 0.3), transparent 70%),
+    var(--ink, #0e1116);
+}
+.bt--band .bt__tile {
+  border-radius: 0;
+  color: var(--sand, #f8f6f2);
+}
+.bt--band .bt__tile + .bt__tile {
+  box-shadow: inset 1px 0 0 rgba(248, 246, 242, 0.14);
+}
+.bt--band .bt__tag {
+  color: #ff8a5c;
+}
+.bt--band .bt__label {
+  color: rgba(248, 246, 242, 0.72);
+}
+.bt--band .bt__tile:hover {
+  background: rgba(248, 246, 242, 0.05);
+}
+
+/* Figures, no boxes: the numbers stand on the page, hairlines between, the index in Ember. */
+.bt--mono {
+  gap: 0;
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
+}
+.bt--mono .bt__tile {
+  min-height: 150px;
+  border-radius: 0;
+  padding: 18px 20px 18px 0;
+}
+.bt--mono .bt__tile + .bt__tile {
+  padding-left: 24px;
+  box-shadow: inset 1px 0 0 var(--line);
+}
+.bt--mono .bt__tag {
+  color: var(--ember-text, #b9431a);
+}
+.bt--mono .bt__label {
+  color: var(--text-2);
+}
+.bt--mono .bt__tile--you .bt__n {
+  color: var(--ink, #0e1116);
+}
+.bt--mono .bt__tile--progress .bt__n {
+  color: var(--cobalt, #1e3bd6);
+}
+.bt--mono .bt__tile--files .bt__n {
+  color: var(--ember, #e8501f);
+}
+.bt--mono .bt__tile:hover .bt__label {
+  color: var(--text);
+}
+@media (max-width: 900px) {
+  .bt {
+    grid-template-columns: 1fr;
+  }
+  .bt--band .bt__tile + .bt__tile,
+  .bt--mono .bt__tile + .bt__tile {
+    box-shadow: inset 0 1px 0 rgba(128, 128, 128, 0.2);
+    padding-left: 22px;
+  }
+}
+
+/* J · Colour to Sand: the Cobalt-to-Ember haze at the top of the page (the sign-in panel's spots),
+   fading into Sand from about where Recent begins; the dashboard as frosted glass on the colour. */
+/* The colours of B's "Ask Spark" card: Cobalt top left, a soft violet top centre, Ember low right
+   (here just above Recent, so Sand takes over below it). */
+.hd--glow {
+  overflow: hidden;
+  background:
+    linear-gradient(180deg, rgba(246, 241, 234, 0) 0%, rgba(246, 241, 234, 0) 52%, rgba(246, 241, 234, 0.9) 66%, #f6f1ea 74%),
+    radial-gradient(55% 40% at 0% 0%, rgba(46, 72, 230, 0.55), transparent 70%),
+    radial-gradient(50% 34% at 45% 0%, rgba(150, 70, 225, 0.4), transparent 70%),
+    radial-gradient(60% 40% at 100% 52%, rgba(240, 110, 40, 0.5), transparent 70%),
+    #f6f1ea;
+}
+.hd-glow__grain {
+  position: absolute;
+  inset: 0;
+  opacity: 0.2;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.hd--glow > * {
+  position: relative;
+}
+/* The glass tiles sit straight on the page's colour: no haze box of their own. */
+.hd--glow .bt--glass,
+.home-glow .bt--glass {
+  padding: 0;
+  background: none;
+}
+.hd--glow .bt--glass .bt__tile,
+.home-glow .bt--glass .bt__tile {
+  background: rgba(255, 255, 255, 0.42);
+}
+.hd--glow .bt--glass .bt__tile:hover,
+.home-glow .bt--glass .bt__tile:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+.hd--glow .hd-sub,
+.home-glow .hd-sub {
+  color: var(--text-2);
+}
+/* The prompts as glass chips on the colour. */
+.hd--glow .hd-prompt,
+.home-glow .hd-prompt {
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+  color: var(--text);
+}
+.hd--glow .hd-prompt svg,
+.home-glow .hd-prompt svg {
+  color: var(--text-2);
+}
+.hd--glow .hd-prompt:hover,
+.home-glow .hd-prompt:hover {
+  background: rgba(255, 255, 255, 0.75);
+}
+/* Home: the colour is the page's rounded spectrum panel (brand-a.css); the content sits on it. */
+.home-glow {
+  position: relative;
+}
+
+/* Home · the box as a card (after the reference): a quiet strip on top, the input on white, the prompts
+   as dark pills inside. */
+.home-ask {
+  padding: 4px;
+  border-radius: 26px;
+  background: rgba(14, 17, 22, 0.04);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+.home-ask__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 8px 14px 10px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.home-ask__head > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.home-ask__note {
+  color: var(--text-3);
+}
+.home-ask__card {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 6px 6px 16px;
+  border-radius: 22px;
+  background: #ffffff;
+  box-shadow: 0 1px 2px rgba(14, 17, 22, 0.04), 0 12px 32px -18px rgba(14, 17, 22, 0.25);
+}
+/* The input sits flat inside the card: no glass rim of its own. */
+/* (Stronger than the in-conversation rule, which gives the box its own white fill, rim and shadow.) */
+:root[data-theme] .assistant .home-glow .home-ask .composer.composer:not(.x) {
+  min-height: 0;
+  padding: 12px 10px 4px 14px;
+  border-radius: 18px;
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+:root[data-theme] .home-ask .composer__send:not(.is-busy) {
+  background: var(--ink, #0e1116);
+  box-shadow: none;
+}
+.home-ask__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 0 14px;
+}
+.home-ask__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 14px 0 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #ffffff;
+  background: var(--ink, #0e1116);
+  transition: background 0.15s;
+}
+.home-ask__chip:hover {
+  background: #2a2f38;
+}
+.home-ask__chip svg {
+  color: rgba(255, 255, 255, 0.8);
+}
+/* On the paler panel the glass tiles keep a little more white. */
+.home-glow .bt--glass .bt__tile {
+  background: rgba(255, 255, 255, 0.55);
+}
+
+/* ---- Home, calm (after the references): Sand, centred greeting, figures between hairlines, a white
+   box with a strip under it, light prompt pills, plain rows for Recent. ------------------------- */
+.home--calm {
+  max-width: 960px;
+  padding-top: 56px;
+}
+.home__head {
+  text-align: center;
+}
+.home__title {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 800;
+  font-size: 34px;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+}
+.home__sub {
+  margin-top: 8px;
+  font-size: 15px;
+  color: var(--text-3);
+}
+.home__figures {
+  margin-top: 36px;
+}
+/* The box: white, round, a soft shadow; a quiet strip tucked under it. */
+.home__ask {
+  margin-top: 56px;
+}
+:root[data-theme] .assistant .home--calm .home__ask .composer.composer:not(.x) {
+  position: relative;
+  z-index: 1;
+  min-height: 120px;
+  padding: 16px 12px 10px 20px;
+  border-radius: 28px;
+  background: #ffffff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: inset 0 0 0 1px var(--line), 0 12px 32px -18px rgba(14, 17, 22, 0.28);
+}
+:root[data-theme] .assistant .home--calm .home__ask .composer.is-typing:not(.x) {
+  box-shadow: inset 0 0 0 1px var(--line-strong), 0 14px 36px -18px rgba(14, 17, 22, 0.35);
+}
+:root[data-theme] .home--calm .composer__send:not(.is-busy) {
+  background: var(--ink, #0e1116);
+  box-shadow: none;
+}
+.home__tray {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: -14px 32px 0;
+  padding: 24px 16px 10px;
+  border-radius: 0 0 18px 18px;
+  font-size: 13px;
+  color: var(--text-3);
+  background: color-mix(in srgb, var(--text) 4%, transparent);
+}
+/* Prompts: light pills, centred. */
+.home__prompts {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 24px;
+}
+.home__prompt {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  color: var(--text);
+  /* At rest, the page's one hover grey. */
+  background: var(--surface-hover);
+  transition: background 0.15s;
+}
+.home__prompt:hover {
+  background: color-mix(in srgb, var(--text) 6%, transparent);
+}
+.home__prompt svg {
+  color: var(--text-2);
+}
+/* Recent: a centred heading, then plain rows with an emoji, hairlines between. */
+.home__recent {
+  margin-top: 72px;
+}
+.home__h2 {
+  margin-bottom: 20px;
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-align: center;
+}
+.home__rows {
+  display: flex;
+  flex-direction: column;
+}
+/* The rows' text in the figures' label size and colour ("Files to approve"). */
+.home__row {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr) 15px;
+  align-items: center;
+  column-gap: 14px;
+  min-height: 56px;
+  padding: 0 8px;
+  font-size: 14px;
+  color: var(--text-2);
+  box-shadow: inset 0 -1px 0 var(--line);
+  transition: background 0.15s;
+}
+.home__row:last-child {
+  box-shadow: none;
+}
+.home__row:hover {
+  background: var(--surface-hover);
+}
+.home__row:hover .home-recent__go {
+  opacity: 1;
+  transform: none;
+}
+.home__icon {
+  justify-self: center;
+  color: var(--text-3);
+}
+
+/* Home figures without the "01 · DECIDE" index: the number sits at the top. */
+.home__figures .bt__n {
+  margin-top: 0;
+}
+.home__figures .bt__tile {
+  min-height: 0;
+  padding-top: 22px;
+  padding-bottom: 22px;
+}
+.home__row:hover {
+  color: var(--text);
+}
+
+/* Home · Recent hover (after the reference): a soft rounded fill; the hairlines above and below the
+   row disappear while it's hovered. */
+/* At rest the hairline runs straight to the ends; only the hover fill is rounded. */
+.home__row:hover {
+  border-radius: 12px;
+  background: var(--surface-hover);
+  box-shadow: none;
+}
+.home__row:has(+ .home__row:hover) {
+  box-shadow: none;
+}
+
+/* ---- One hover for every table (as Home · Recent): a soft rounded fill in the page's hover grey;
+   the row's hairlines, above and below, step aside while it's hovered. At rest the hairlines run
+   straight to the ends. ------------------------------------------------------------------------- */
+.rq-row3:hover,
+.tm-row:not(.tm-row--head):hover,
+.file-line:hover,
+.file-row:hover {
+  border-radius: 12px;
+  background: var(--surface-hover);
+}
+:root[data-theme] .file-line:hover {
+  background: var(--surface-hover);
+}
+.rq-row3:hover,
+.tm-row:not(.tm-row--head):hover {
+  box-shadow: none;
+}
+.rq-row3:has(+ .rq-row3:hover),
+.tm-row:has(+ .tm-row:not(.tm-row--head):hover) {
+  box-shadow: none;
+}
+.tm-row {
+  transition: background 0.15s;
+}
+
+/* ---- Home · type, alignment and rhythm (review of 22 Oct) --------------------------------------
+   One left edge at 20px for the figures, the box's orb and the list's icons; the figures no larger
+   than the page title; the section title in the brand's display type, left with its list; one
+   spacing scale: 48 under the greeting, 64 between blocks. */
+.home__figures {
+  margin-top: 48px;
+}
+.home__figures .bt__tile,
+.home__figures .bt__tile + .bt__tile {
+  padding: 24px 20px;
+}
+.home__figures .bt__n {
+  font-size: 46px;
+  line-height: 0.95;
+}
+.home__figures .bt__label {
+  margin-top: 4px;
+}
+.home__ask {
+  margin-top: 64px;
+}
+.home__prompts {
+  margin-top: 20px;
+}
+.home__recent {
+  margin-top: 64px;
+}
+.home__h2 {
+  margin-bottom: 12px;
+  padding: 0 20px;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 800;
+  font-size: 22px;
+  letter-spacing: -0.02em;
+  text-align: left;
+}
+.home__row {
+  grid-template-columns: 16px minmax(0, 1fr) 15px;
+  column-gap: 16px;
+  padding: 0 20px;
+}
+.home__icon {
+  justify-self: start;
+}
+/* Home · Recent: on hover the arrow comes in and nudges right, as in the figures above (3px, 0.15s). */
+.home__row .home-recent__go {
+  transform: translateX(-3px);
+  transition: opacity 0.15s, transform 0.15s;
+}
+.home__row:hover .home-recent__go {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+/* ---- Linked figures (#/demo/home?v=linked, A is the home page): ink numbers, the meaning in a mark --- */
+.lf-page {
+  max-width: 960px;
+  margin: 0 auto;
+}
+/* A · ink numbers; the meaning in a mark before the label. */
+.lf .bt__n,
+.lf-groups .bt__n {
+  color: var(--ink, #0e1116);
+}
+.lf .bt__label {
+  gap: 8px;
+}
+.lf--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.lf-file {
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  color: var(--text-2);
+}
+.lf-file__dot {
+  position: absolute;
+  top: -2px;
+  right: -3px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #d9a400;
+  box-shadow: 0 0 0 1.5px var(--bg);
+}
+.lf-dots {
+  display: inline-flex;
+  gap: 3px;
+}
+.lf-dots .rstatus {
+  gap: 0;
+}
+/* B · two groups: waiting on you, with Spark. */
+.lf-groups {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  border-top: 1px solid var(--line-strong);
+  border-bottom: 1px solid var(--line-strong);
+}
+.lf-group {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 20px 22px;
+}
+.lf-group + .lf-group {
+  box-shadow: inset 1px 0 0 var(--line);
+}
+.lf-group__head {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+.lf-group__row {
+  display: flex;
+  align-items: flex-end;
+  gap: 40px;
+}
+.lf-fig {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.lf-fig .bt__n {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 900;
+  font-size: 46px;
+  line-height: 0.95;
+  letter-spacing: -0.04em;
+}
+.lf-fig .bt__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.lf-fig:hover .bt__label {
+  color: var(--text);
+}
+.lf-fig:hover .bt__label svg:last-child {
+  transform: translateX(3px);
+}
+.lf-fig .bt__label svg {
+  transition: transform 0.15s;
+}
+.lf-break {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding-bottom: 2px;
+}
+
+/* ---- Demo (#/demo/recent): "Continue where you left off", more compact ---- */
+.rcd__grid {
+  display: grid;
+  gap: 20px;
+}
+.rcd__card {
+  padding: 20px;
+  border-radius: var(--radius-lg);
+  background: rgba(255, 255, 255, 0.4);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.rcd__card > header p {
+  margin-top: 4px;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.rcd__stage.home {
+  padding: 24px 0 8px;
+  background: var(--bg, #f8f6f2);
+  border-radius: 16px;
+  margin-top: 16px;
+}
+.rcd-reset.home__recent {
+  margin-top: 0;
+}
+.rcd-label {
+  margin-bottom: 8px;
+  padding: 0 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+.rcd-ellipsis {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.rcd-meta {
+  font-size: 12px;
+  color: var(--text-3);
+  white-space: nowrap;
+}
+/* A · rows of 40px */
+.home__row.rcd-a__row {
+  min-height: 40px;
+}
+/* B · 2×2 cards */
+.rcd-b {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px;
+  padding: 0 20px;
+}
+@media (max-width: 640px) {
+  .rcd-b {
+    grid-template-columns: 1fr;
+  }
+}
+.rcd-b__card {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line);
+  color: var(--text-2);
+  font-size: 14px;
+  transition: box-shadow 0.15s;
+}
+.rcd-b__card:hover {
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+  color: var(--text);
+}
+.rcd-b__icon {
+  flex: none;
+  margin-top: 2px;
+  color: var(--text-3);
+}
+.rcd-b__text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.rcd-b__title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+/* C · one line of pills */
+.rcd-c {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 0 20px;
+}
+.rcd-c__label {
+  margin: 0 4px 0 0;
+  padding: 0;
+}
+.home__prompt.rcd-c__pill {
+  max-width: 184px;
+  min-width: 0;
+}
+/* D · rows with the kind and when */
+.rcd-d {
+  display: flex;
+  flex-direction: column;
+}
+.rcd-d__row {
+  display: grid;
+  grid-template-columns: 16px minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 16px;
+  min-height: 40px;
+  padding: 0 20px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: var(--text-2);
+  transition: background 0.15s;
+}
+.rcd-d__row:hover {
+  background: var(--surface-hover);
+  color: var(--text);
+}
+.rcd-d__title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-width: 0;
+}
+
+/* ---- Home · Recent, compact (picked on #/demo/recent, A): a quiet label and rows of 40px ---- */
+.home__label {
+  margin-bottom: 8px;
+  padding: 0 20px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+.home__recent .home__row {
+  min-height: 40px;
 }

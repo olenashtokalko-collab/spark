@@ -6,12 +6,14 @@ import {
   FileText,
   Folder,
   Inbox,
-  Monitor,
-  Moon,
   SquarePen,
+  PanelLeftClose,
+  PanelLeftOpen,
   History,
-  ChevronDown,
-  Sun,
+  ChevronsUpDown,
+  Sparkles,
+  Building2,
+  UserPlus,
   Users,
   Settings,
   LogOut,
@@ -44,17 +46,6 @@ export function AppShell({ children }: { children: ReactNode }) {
   }, [historyOpen]);
 
 
-  // Theme: resolve "system" to the OS preference.
-  useEffect(() => {
-    const apply = () => {
-      const t = state.theme === 'system' ? (window.matchMedia('(prefers-color-scheme: light)').matches ? 'sand' : 'dark') : state.theme;
-      document.documentElement.dataset.theme = t;
-    };
-    apply();
-    const mq = window.matchMedia('(prefers-color-scheme: light)');
-    mq.addEventListener('change', apply);
-    return () => mq.removeEventListener('change', apply);
-  }, [state.theme]);
 
   const counts = useMemo(() => {
     const decisions = state.requests.filter((r) => r.status === 'proposal').length;
@@ -62,59 +53,76 @@ export function AppShell({ children }: { children: ReactNode }) {
     return { requests: decisions, documents: reviews };
   }, [state.requests, state.docs]);
 
-  const team = state.people.filter((p) => p.org === 'client');
+  // The sidebar shows each icon with its name by default (feedback 21 Oct); it can be collapsed to icons,
+  // and the choice is remembered on this device.
+  const [railOpen, setRailOpen] = useState(() => {
+    try {
+      return localStorage.getItem('spark-rail') !== 'icons';
+    } catch {
+      return true;
+    }
+  });
+  const toggleRail = () =>
+    setRailOpen((o) => {
+      try {
+        localStorage.setItem('spark-rail', o ? 'icons' : 'labels');
+      } catch {
+        /* storage unavailable */
+      }
+      return !o;
+    });
+  const tip = (label: string) => (railOpen ? undefined : label);
   const onChat = route.path === '/' || route.path === '/assistant';
 
-  // Layout after the Waldo home: logo and account in a top bar, sections in a
-  // slim icon rail. Chat history opens from the rail as a panel.
+  // The sidebar holds everything around the work: logo, sections, notifications, and the person with
+  // their company at the foot (feedback 21 Oct). The page sits beside it on its own rounded panel.
+  // Chat history opens from the sidebar as a panel.
   return (
-    <div className="shell">
+    <div className={cx('shell', railOpen && 'shell--rail-open')}>
       {/* Spotlight background behind every page (light from above, grain). */}
       <div className="app-bg" aria-hidden>
         <span className="app-bg__light" />
         <span className="app-bg__grain" />
       </div>
-      <header className="topbar">
-        <a className="topbar__logo" href="#/assistant" aria-label="Spark, new chat">
-          <span className="brand-hide">SPARK</span>
-          {/* Brand A: the app icon from the brand book, the spark lit from inside (p. 9). */}
-          <img className="topbar__icon brand-only" src="/brand/spark-app-icon.jpg" alt="" />
-        </a>
-        <div className="topbar__spacer" />
-        <TeamMenu team={team} />
-        <UserMenu />
-      </header>
+      {/* A strip above the panel, so the page scrolls under its top edge. */}
+      <header className="topbar" />
 
       <nav className="rail" aria-label="Main">
-        <a className={cx('rail__btn', onChat && !historyOpen && 'is-active')} href="#/assistant" aria-label="New chat" data-tip="New chat" aria-current={onChat ? 'page' : undefined}>
+        <div className="rail__head">
+          <a className="rail__logo" href="#/assistant" aria-label="Spark, new chat">
+            <span className="brand-hide">SPARK</span>
+            {/* Brand A: the app icon from the brand book, the spark lit from inside (p. 9). */}
+            <img className="topbar__icon brand-only" src="/brand/spark-app-icon.jpg" alt="" />
+          </a>
+          {/* Collapse to icons; when collapsed it shows over the logo on hover. */}
+          <button className="rail__toggle" onClick={toggleRail} aria-label={railOpen ? 'Collapse sidebar' : 'Expand sidebar'} data-tip={railOpen ? 'Collapse' : 'Expand'}>
+            {railOpen ? <PanelLeftClose size={18} strokeWidth={1.7} /> : <PanelLeftOpen size={18} strokeWidth={1.7} />}
+          </button>
+        </div>
+        <a className={cx('rail__btn', onChat && !historyOpen && 'is-active')} href="#/assistant" aria-label="New chat" data-tip={tip('New chat')} aria-current={onChat ? 'page' : undefined}>
           <SquarePen size={18} strokeWidth={1.7} />
+          <span className="rail__label">New chat</span>
         </a>
-        <button className={cx('rail__btn', historyOpen && 'is-active')} onClick={() => setHistoryOpen((o) => !o)} aria-expanded={historyOpen} aria-label="Chats" data-tip="Chats">
+        <button className={cx('rail__btn', historyOpen && 'is-active')} onClick={() => setHistoryOpen((o) => !o)} aria-expanded={historyOpen} aria-label="Chats" data-tip={tip('Chats')}>
           <History size={18} strokeWidth={1.7} />
+          <span className="rail__label">Chats</span>
         </button>
         {NAV.map((n) => {
           const active = n.match(route.path) && !historyOpen;
           const count = n.path === '/requests' ? counts.requests : n.path === '/documents' ? counts.documents : 0;
           return (
-            <a key={n.path} href={'#' + n.path} className={cx('rail__btn', active && 'is-active')} aria-current={active ? 'page' : undefined} aria-label={count ? `${n.label}, ${count} need you` : n.label} data-tip={n.label}>
+            <a key={n.path} href={'#' + n.path} className={cx('rail__btn', active && 'is-active')} aria-current={active ? 'page' : undefined} aria-label={count ? `${n.label}, ${count} need you` : n.label} data-tip={tip(n.label)}>
               <n.icon size={18} strokeWidth={1.7} />
+              <span className="rail__label">{n.label}</span>
               {count > 0 && <span className="rail__dot" aria-hidden />}
             </a>
           );
         })}
-        {/* Notifications and settings sit at the foot of the rail, away from the daily sections. */}
+        {/* Notifications and the account sit at the foot, away from the daily sections. */}
         <span className="rail__end">
-          <Notifications />
+          <Notifications labels={railOpen} />
         </span>
-        <a
-          className={cx('rail__btn', route.path.startsWith('/settings') && 'is-active')}
-          href="#/settings"
-          aria-label="Settings"
-          data-tip="Settings"
-          aria-current={route.path.startsWith('/settings') ? 'page' : undefined}
-        >
-          <Settings size={18} strokeWidth={1.7} />
-        </a>
+        <AccountMenu labels={railOpen} active={route.path.startsWith('/settings') || route.path.startsWith('/team')} />
       </nav>
 
       {historyOpen && (
@@ -133,46 +141,6 @@ export function AppShell({ children }: { children: ReactNode }) {
       {/* keep me in scope for screen readers */}
       <span className="sr-only">Signed in as {me.name}</span>
     </div>
-  );
-}
-
-/** "Brand Co. · My team": who shares this workspace, with a way to manage it. */
-function TeamMenu({ team }: { team: ReturnType<typeof useStore>['state']['people'] }) {
-  const { state } = useStore();
-  return (
-    <Popover
-      width={280}
-      trigger={({ toggle, ref, open }) => (
-        <button ref={ref} className={cx('team-btn', open && 'is-open')} onClick={toggle} aria-haspopup="dialog">
-          {state.brand.name} · My team
-          <ChevronDown size={14} />
-        </button>
-      )}
-    >
-      {(close) => (
-        <div className="menu team-menu">
-          <div className="menu__label">{state.brand.name} · {team.length} people</div>
-          {team.map((p) => (
-            <div key={p.id} className="team-menu__row">
-              <Avatar person={p} size={26} />
-              <span className="team-menu__name">{p.name}</span>
-              <span className="faint team-menu__role">{p.role === 'owner' ? 'Owner' : p.role === 'viewer' ? 'Viewer' : 'Member'}</span>
-            </div>
-          ))}
-          <div className="menu__divider" />
-          <button
-            className="menu__item"
-            onClick={() => {
-              close();
-              navigate('/team');
-            }}
-          >
-            <Users size={15} />
-            <span>Manage team</span>
-          </button>
-        </div>
-      )}
-    </Popover>
   );
 }
 
@@ -200,7 +168,7 @@ const notifIcon: Record<Notification['kind'], typeof Bell> = {
   decision: Check,
 };
 
-export function Notifications({ audience = 'client', routeFor = (r: string) => r }: { audience?: 'client' | 'spark'; routeFor?: (route: string) => string }) {
+export function Notifications({ audience = 'client', routeFor = (r: string) => r, labels }: { audience?: 'client' | 'spark'; routeFor?: (route: string) => string; labels?: boolean }) {
   const { state, actions } = useStore();
   const list = state.notifications.filter((n) => n.audience === audience).sort((a, b) => b.at.localeCompare(a.at));
   const unread = list.filter((n) => !n.read).length;
@@ -214,9 +182,10 @@ export function Notifications({ audience = 'client', routeFor = (r: string) => r
           className={cx('rail__btn bell', open && 'is-active')}
           onClick={toggle}
           aria-label={`Notifications${unread ? `, ${unread} unread` : ''}`}
-          data-tip={open ? undefined : 'Notifications'}
+          data-tip={open || labels ? undefined : 'Notifications'}
         >
           <Bell size={18} strokeWidth={1.7} />
+          <span className="rail__label">Notifications</span>
           {unread > 0 && <span className="bell__dot">{unread}</span>}
         </button>
       )}
@@ -265,58 +234,87 @@ export function Notifications({ audience = 'client', routeFor = (r: string) => r
   );
 }
 
-function UserMenu() {
+// The company's credit balance. New companies start with USD 100 free (feedback 21 Oct); fixed for the prototype.
+const CREDITS = { left: 100, of: 100 };
+
+/** The person and their company at the foot of the sidebar. The menu follows the reference's workspace
+ *  menu: the company, its credits, the team and company profile, settings, log out. */
+function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
   const { state, me, actions } = useStore();
-  const themes = [
-    { v: 'sand' as const, icon: Sun, label: 'Light' },
-    // Dark is switched off for now (and System, which could resolve to it).
-    { v: 'dark' as const, icon: Moon, label: 'Dark', off: true },
-    { v: 'system' as const, icon: Monitor, label: 'System', off: true },
-  ];
+  const go = (close: () => void, path: string) => {
+    close();
+    navigate(path);
+  };
   return (
     <Popover
       width={300}
-      trigger={({ toggle, ref }) => (
-        <button ref={ref} className="user-btn" onClick={toggle} aria-label="Account and prototype controls">
-          <Avatar person={me} size={30} />
+      side="top"
+      align="start"
+      className="acct-pop"
+      trigger={({ toggle, ref, open }) => (
+        <button ref={ref} className={cx('rail__me', (open || active) && 'is-active')} onClick={toggle} aria-haspopup="dialog" aria-label="Account, team and settings" data-tip={labels || open ? undefined : me.name}>
+          <Avatar person={me} size={32} />
+          <span className="rail__me-text">
+            <span className="rail__me-name">{me.name}</span>
+            <span className="rail__me-sub">
+              {me.title} · {state.brand.name}
+            </span>
+          </span>
+          <ChevronsUpDown size={15} className="rail__me-chev" />
         </button>
       )}
     >
       {(close) => (
-        <div className="menu user-menu">
-          <div className="user-menu__who">
-            <Avatar person={me} size={36} />
-            <div>
-              <div className="user-menu__name">{me.name}</div>
-              <div className="user-menu__mail">
+        <div className="acct">
+          <div className="acct__ws">
+            <Avatar person={me} size={40} />
+            <div className="acct__ws-text">
+              <b>{me.name}</b>
+              <span className="acct__role">
                 {me.title} · {state.brand.name}
-              </div>
+              </span>
             </div>
           </div>
-          <div className="menu__label">Appearance</div>
-          <div className="theme-pick">
-            {themes.map((t) => (
-              <button
-                key={t.v}
-                className={cx(state.theme === t.v && 'is-active')}
-                onClick={() => actions.setTheme(t.v)}
-                aria-pressed={state.theme === t.v}
-                disabled={t.off}
-                data-tip={t.off ? 'Coming soon' : undefined}
-              >
-                <t.icon size={14} /> {t.label}
+          <div className="acct__credits">
+            <div className="acct__credits-row">
+              <div>
+                <div className="acct__credits-label">
+                  <Sparkles size={17} strokeWidth={1.8} /> Credits
+                </div>
+                <div className={cx('acct__credits-amount', CREDITS.left === 0 && 'is-out')}>USD {CREDITS.left.toFixed(2)}</div>
+              </div>
+              {/* Top-ups come with point 3 of the feedback; no action yet. */}
+              <button className="acct__topup" type="button">
+                Top up
               </button>
-            ))}
+            </div>
+            <div className="acct__bar">
+              <span style={{ width: `${(CREDITS.left / CREDITS.of) * 100}%` }} />
+            </div>
           </div>
-          <div className="menu__divider" />
+          <button className="acct__item" onClick={() => go(close, '/team')}>
+            <UserPlus size={18} strokeWidth={1.6} />
+            <span>Manage my team</span>
+          </button>
+          {/* The company's basics (website, social, competitors), kept by Spark. Opens later. */}
+          <button className="acct__item" type="button">
+            <Building2 size={18} strokeWidth={1.6} />
+            <span>Company profile</span>
+          </button>
+          <div className="acct__divider" />
+          <button className="acct__item" onClick={() => go(close, '/settings')}>
+            <Settings size={18} strokeWidth={1.6} />
+            <span>Settings</span>
+          </button>
+          <div className="acct__divider" />
           <button
-            className="menu__item"
+            className="acct__item"
             onClick={() => {
               close();
               actions.signOut();
             }}
           >
-            <LogOut size={15} />
+            <LogOut size={18} strokeWidth={1.6} />
             <span>Log out</span>
           </button>
         </div>
