@@ -8,6 +8,7 @@ import { useEffect } from 'react';
 import { useRoute } from './lib/router';
 import { AppShell } from './components/layout/AppShell';
 import { SignIn } from './features/auth/SignIn';
+import { Invite } from './features/auth/Invite';
 import { STORAGE_KEY, useStore } from './state/store';
 import { Assistant } from './features/assistant/Assistant';
 import { ComposerColorDemo } from './features/demo/ComposerColorDemo';
@@ -101,6 +102,8 @@ export default function App() {
     mq.addEventListener('change', apply);
     return () => mq.removeEventListener('change', apply);
   }, [state.theme]);
+  // The page an invitation email links to, signed in or not.
+  if (path === '/invite') return <Invite />;
   // Signed out: the sign-in page, except for the sign-in options demo, which is about that page.
   if (!state.signedIn)
     return path.startsWith('/demo/intro') ? (
