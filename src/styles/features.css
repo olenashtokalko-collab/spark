@@ -10558,13 +10558,13 @@ button.fdm-drop:hover {
   font-weight: 800;
   font-size: 24px;
 }
-/* Rhythm: tile, 28, the team, 24, title and line, 28, the button. */
+/* Rhythm: tile, 24, title and line, 24, the team, 28, the button. */
 .inv__team {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  margin-top: 28px;
+  margin-top: 24px;
 }
 .inv__team-text {
   font-size: 13px;

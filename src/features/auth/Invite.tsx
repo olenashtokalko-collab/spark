@@ -57,7 +57,14 @@ export function Invite() {
 
         {step === 'invite' ? (
           <>
-            {/* Who is already there, then what this is, then the one action. */}
+            {/* What this is, under the company's tile; then who is already there; then the one action. */}
+            <div className="inv__head">
+              <h1 className="inv__title">Join {company} on Spark</h1>
+              <p className="inv__sub">
+                <strong>{inviter.name}</strong> invited you to {company}’s workspace.
+              </p>
+            </div>
+            {/* Who is already there. */}
             <div className="inv__team">
               <span className="avatar-stack">
                 {team.slice(0, 4).map((p) => (
@@ -65,12 +72,6 @@ export function Invite() {
                 ))}
               </span>
               <span className="inv__team-text">{already} are already here</span>
-            </div>
-            <div className="inv__head">
-              <h1 className="inv__title">Join {company} on Spark</h1>
-              <p className="inv__sub">
-                <strong>{inviter.name}</strong> invited you to {company}’s workspace.
-              </p>
             </div>
             <Button variant="primary" size="lg" className="inv__cta" onClick={() => setStep('account')}>
               Accept invitation
