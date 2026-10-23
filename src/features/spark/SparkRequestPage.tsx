@@ -104,10 +104,11 @@ function Inner({ base, live, tab }: { base: SparkRequest; live: boolean; tab: Ta
             {/* The title with where the request stands, on its right. */}
             <div className="req-head__row">
               <h1 className="req-head__title">{base.title}</h1>
-              <SparkStatusChip r={{ ...base, status: m.status }} />
             </div>
-            {/* Under the title, quiet: who it's for, which request, where it stands. */}
+            {/* Under the title, quiet: where it stands first, then who it's for, which request, the rest. */}
             <div className="req-meta">
+              <SparkStatusChip r={{ ...base, status: m.status }} />
+              <span className="req-meta__sep" aria-hidden />
               <span>
                 Client: <b>{client.name}</b>
               </span>

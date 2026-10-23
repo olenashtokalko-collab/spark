@@ -4,7 +4,7 @@
 // below, edited one at a time; the client's comments in a column on the right.
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
-import { AlertCircle, ArrowLeft, History, CornerDownRight, PenLine, Plus, Send, Trash2, X } from 'lucide-react';
+import { AlertCircle, ArrowLeft, History, CornerDownRight, MessageSquare, PenLine, Plus, Send, Trash2, X } from 'lucide-react';
 import { personById, useStore, type NewProposal } from '../../state/store';
 import { Avatar, Button, EmptyState, Input, Textarea, cx } from '../../components/ui/primitives';
 import { useToast } from '../../components/ui/toast';
@@ -199,24 +199,17 @@ export function SparkProposalView({ id, sample }: { id: string; sample?: SampleP
   const client = who(req.createdBy);
   const first = client.name.split(' ')[0];
   const comments = p?.comments ?? [];
-  // The comments column: the client's answer on this version first, then each client comment as a thread,
-  // with the Spark team's answers in the same section as its replies.
+  // The comments column: each client comment on a section as a thread, with the Spark team's answers in
+  // the same section as its replies.
   const sectionOf = (name?: string) => SECTIONS.find((x) => COMMENT_SECTION[x] === name);
   const threads: { id: string; label: string; section?: SectionId; by: string; at: string; text: string; replies: Proposal['comments'] }[] = [];
-  if (cur?.decision)
-    threads.push({
-      id: 'decision',
-      label: statusOf(cur),
-      by: cur.decision.by,
-      at: cur.decision.at,
-      text: cur.decision.note || cur.decision.reason || (cur.status === 'approved' ? 'Approved the proposal.' : 'Declined the proposal.'),
-      replies: [],
-    });
+  // The client's answer on the whole proposal is not a comment: it shows above the document (see the
+  // decision block); the column holds only the comments on its sections.
   for (const c of comments) {
     const fromSpark = who(c.by).org === 'spark';
     const open = [...threads].reverse().find((t) => t.id !== 'decision' && t.section === sectionOf(c.section));
     if (fromSpark && open) open.replies.push(c);
-    else threads.push({ id: c.id, label: c.section ? LABEL[sectionOf(c.section) ?? 'overview'] : 'Whole proposal', section: sectionOf(c.section), by: c.by, at: c.at, text: c.text, replies: [] });
+    else if (c.section) threads.push({ id: c.id, label: LABEL[sectionOf(c.section) ?? 'overview'], section: sectionOf(c.section), by: c.by, at: c.at, text: c.text, replies: [] });
   }
   const activeSec = threads.find((t) => t.id === activeComment)?.section;
   const pickComment = (tid: string) => {
@@ -387,11 +380,6 @@ export function SparkProposalView({ id, sample }: { id: string; sample?: SampleP
         ) : (
           <h1 className="pdd__title pdd__title--static">{d.title || 'Untitled proposal'}</h1>
         )}
-        {cur && (
-          <span className={cx('spv-status', `spv-status--${cur.status}`)}>
-            <i /> {cur.status === 'awaiting' ? 'Waiting for client' : statusOf(cur)}
-          </span>
-        )}
         {viewingDraft && (
           <span className={cx('pdd__save', saving && 'is-saving')}>
             <SaveCloud saving={saving} />
@@ -400,8 +388,8 @@ export function SparkProposalView({ id, sample }: { id: string; sample?: SampleP
         )}
         <div className="pdd__tools">
           {versions.length > 0 && (
-            <button className={cx('pdd__iconbtn', drawer && 'is-on')} onClick={() => setDrawer(true)} data-tip="Version history" aria-label="Version history">
-              <History size={20} />
+            <button className={cx('pdd__iconbtn spv-histbtn', drawer && 'is-on')} onClick={() => setDrawer(true)} data-tip="Version history" aria-label="Version history" title="Version history">
+              <History size={16} />
             </button>
           )}
           {canEdit && (
@@ -435,6 +423,20 @@ export function SparkProposalView({ id, sample }: { id: string; sample?: SampleP
                   : `The first version sent to ${first}.`}
               </span>
             </div>
+          )}
+
+          {/* The client's answer on this version, above the document, in the request brief's style: a quiet
+              label (who did what), then their note. Which version and when show in the version history. */}
+          {cur?.decision && cur.status !== 'awaiting' && cur.status !== 'superseded' && (
+            <section className="block brief spv-decision">
+              <div className="brief__head">
+                <h2 className="brief__title spv-decision__who">
+                  <Avatar person={who(cur.decision.by)} size={22} />
+                  {who(cur.decision.by).name.split(' ')[0]} {cur.status === 'changes_requested' ? 'requested changes' : cur.status === 'approved' ? 'approved the proposal' : 'declined the proposal'}
+                </h2>
+              </div>
+              {(cur.decision.note || cur.decision.reason) && <div className="brief__text">{cur.decision.note || cur.decision.reason}</div>}
+            </section>
           )}
 
           {block(
@@ -660,7 +662,13 @@ export function SparkProposalView({ id, sample }: { id: string; sample?: SampleP
               <span className="faint">{threads.length}</span>
             </div>
             <div className="cpd__list pdd__list">
-              {threads.length === 0 && <div className="cpd__empty faint">No comments on this version.</div>}
+              {threads.length === 0 && (
+                <div className="cpd__empty spv-nocomments">
+                  <MessageSquare size={18} strokeWidth={1.6} />
+                  <span>No comments on this proposal yet.</span>
+                  <span className="faint">Comments the client leaves on a section show here.</span>
+                </div>
+              )}
               {threads.map((t) => {
                 const isOn = activeComment === t.id;
                 return (
@@ -782,6 +790,7 @@ export function SparkProposalView({ id, sample }: { id: string; sample?: SampleP
                       <span className="pdd__version-label">{x === latest ? `Version ${x.version} · current` : `Version ${x.version}`}</span>
                       <span className="pdd__version-note">
                         Sent to {first} · {statusOf(x).toLowerCase()}
+                        {x.decision && x.status !== 'awaiting' && x.status !== 'superseded' ? ` by ${who(x.decision.by).name.split(' ')[0]} · ${fmtDate(x.decision.at)}` : ''}
                         {x === latest && edits.length > 0 ? ' · updated, not sent' : ''}
                       </span>
                     </button>

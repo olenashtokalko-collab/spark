@@ -1,7 +1,7 @@
 // The Spark team view (prototype): a separate shell for Spark staff, next to the client portal.
 // Routes: #/spark (inbox) · #/spark/requests/:id[/conversation] · #/spark/requests/:id/proposal/new · #/spark/clients
-import { useEffect } from 'react';
-import { Building2, Inbox as InboxIcon } from 'lucide-react';
+import { useEffect, useState } from 'react';
+import { Building2, Inbox as InboxIcon, PanelLeftClose, PanelLeftOpen } from 'lucide-react';
 import { Avatar, cx } from '../../components/ui/primitives';
 import { useRoute } from '../../lib/router';
 import { useStore } from '../../state/store';
@@ -28,6 +28,24 @@ export function SparkApp() {
     document.documentElement.dataset.theme = state.theme === 'system' ? (window.matchMedia('(prefers-color-scheme: light)').matches ? 'sand' : 'dark') : state.theme;
   }, [state.theme]);
   const [, section, id, sub] = parts;
+  // The sidebar opens with labels; collapsing it to icons is remembered, as in the client portal.
+  const [railOpen, setRailOpen] = useState(() => {
+    try {
+      return localStorage.getItem('spark-rail') !== 'icons';
+    } catch {
+      return true;
+    }
+  });
+  const toggleRail = () =>
+    setRailOpen((o) => {
+      try {
+        localStorage.setItem('spark-rail', o ? 'icons' : 'labels');
+      } catch {
+        /* storage unavailable */
+      }
+      return !o;
+    });
+  const tip = (label: string) => (railOpen ? undefined : label);
   let screen;
   if (section === 'clients') screen = <SparkClients />;
   // Every request writes and edits its proposal on the proposal page; a sample request (another client)
@@ -40,32 +58,43 @@ export function SparkApp() {
   else if (section === 'requests' && id) screen = <SparkRequestPage id={id} tab={sub === 'conversation' ? 'conversation' : sub === 'files' ? 'files' : sub === 'activity' ? 'activity' : 'overview'} />;
   else screen = <SparkInbox initialClient={query.get('client') ?? undefined} />;
   const onClients = section === 'clients';
+  // The same shell as the client portal (feedback of 21–22 Oct): a sidebar with labels, the sections,
+  // notifications and the person at the foot; the page on Sand beside it.
   return (
-    <div className="shell spk">
+    <div className={cx('shell spk', railOpen && 'shell--rail-open')}>
       <div className="app-bg" aria-hidden>
         <span className="app-bg__light" />
         <span className="app-bg__grain" />
       </div>
-      <header className="topbar">
-        <a className="topbar__logo" href="#/spark" aria-label="Spark team view">
-          <img className="topbar__icon brand-only" src="/brand/spark-app-icon.jpg" alt="" />
-        </a>
-        <div className="topbar__spacer" />
-        <span className="spk__me">
-          <Avatar person={dana} size={28} />
-          <span>{dana.name}</span>
-        </span>
-      </header>
+      <header className="topbar" />
       <nav className="rail" aria-label="Spark team">
-        <a className={cx('rail__btn', !onClients && 'is-active')} href="#/spark" aria-label="Inbox" data-tip="Inbox">
+        <div className="rail__head">
+          <a className="rail__logo" href="#/spark" aria-label="Spark team view">
+            <img className="topbar__icon brand-only" src="/brand/spark-app-icon.jpg" alt="" />
+          </a>
+          <button className="rail__toggle" onClick={toggleRail} aria-label={railOpen ? 'Collapse sidebar' : 'Expand sidebar'} data-tip={railOpen ? 'Collapse' : 'Expand'}>
+            {railOpen ? <PanelLeftClose size={18} strokeWidth={1.7} /> : <PanelLeftOpen size={18} strokeWidth={1.7} />}
+          </button>
+        </div>
+        <a className={cx('rail__btn', !onClients && 'is-active')} href="#/spark" aria-label="Inbox" data-tip={tip('Inbox')}>
           <InboxIcon size={18} strokeWidth={1.7} />
+          <span className="rail__label">Inbox</span>
           <span className="rail__dot" aria-hidden />
         </a>
-        <a className={cx('rail__btn', onClients && 'is-active')} href="#/spark/clients" aria-label="Clients" data-tip="Clients">
+        <a className={cx('rail__btn', onClients && 'is-active')} href="#/spark/clients" aria-label="Clients" data-tip={tip('Clients')}>
           <Building2 size={18} strokeWidth={1.7} />
+          <span className="rail__label">Clients</span>
         </a>
         <span className="rail__end">
-          <Notifications audience="spark" routeFor={sparkRoute} />
+          <Notifications audience="spark" routeFor={sparkRoute} labels={railOpen} />
+        </span>
+        {/* The person at the foot, as in the client portal. */}
+        <span className="rail__me" data-tip={tip(dana.name)}>
+          <Avatar person={dana} size={32} />
+          <span className="rail__me-text">
+            <span className="rail__me-name">{dana.name}</span>
+            <span className="rail__me-sub">{dana.title} · Spark Studios</span>
+          </span>
         </span>
       </nav>
       <main className="content" id="content">

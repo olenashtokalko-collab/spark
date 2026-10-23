@@ -25,14 +25,14 @@ export interface SentProposal {
 }
 
 export function ProposalStateCard({
-  first,
   href,
   onCreate,
   draft,
   sent,
   bell = 'badge',
 }: {
-  first: string;
+  /** The client's first name (kept for callers; who answered now shows in the version history). */
+  first?: string;
   href: string;
   onCreate: () => void;
   draft?: { title: string; ready: number; savedAt: string };
@@ -54,7 +54,7 @@ export function ProposalStateCard({
       <Block
         icon={<DraftFlat />}
         title="Proposal draft"
-        body={`${draft.ready} of 6 sections ready`}
+        body={`Finish the proposal and send it to the client. ${draft.ready} of 6 sections are ready.`}
       >
         <Button size="sm" onClick={() => navigate(href)}>
           Edit
@@ -77,8 +77,6 @@ export function ProposalStateCard({
     );
 
   // The client answered: the envelope with a bell, and what they did.
-  const who = p.decider?.name.split(' ')[0] ?? first;
-  const did = p.status === 'changes_requested' ? 'requested changes to the proposal' : p.status === 'approved' ? 'approved the proposal' : 'rejected the proposal';
   return (
     <Block
       icon={bell === 'inside' ? <EnvelopeBellFlat /> : bell === 'badge' ? (
@@ -91,7 +89,14 @@ export function ProposalStateCard({
           )
         ) : <AnsweredFlat />}
       title="Proposal reviewed"
-      body={`${who} ${did}${p.decidedLabel ? ` · ${p.decidedLabel}` : p.decidedAt ? ` · ${fmtDate(p.decidedAt)}` : ''}`}
+      // Under the title, only where the proposal stands, as a dot and a word (who answered and when lives in
+      // the proposal's version history).
+      body={
+        <span className={`rstatus rstatus--${p.status}`}>
+          <span className="rstatus__dot" />
+          {p.status === 'changes_requested' ? 'Changes requested' : p.status === 'approved' ? 'Approved' : 'Declined'}
+        </span>
+      }
     >
       {view}
     </Block>

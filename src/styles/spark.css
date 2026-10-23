@@ -5843,3 +5843,251 @@ td .spv-ins,
   background: #fff;
   box-shadow: inset 0 0 0 1.5px var(--text), 0 10px 26px -18px rgba(14, 17, 22, 0.45);
 }
+
+/* ---- Spark tables in the client portal's style (Requests, Team): no card, hairlines between rows, a
+   quiet header, status as a dot and a word, the soft rounded hover. -------------------------------- */
+.spk-t {
+  display: flex;
+  flex-direction: column;
+}
+.spk-t__row {
+  display: grid;
+  grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.3fr) 170px 120px 100px;
+  align-items: center;
+  column-gap: 24px;
+  min-height: 60px;
+  padding: 8px 12px;
+  font-size: 14px;
+  box-shadow: inset 0 -1px 0 var(--line);
+  transition: background 0.15s;
+}
+.spk-t__row:last-child {
+  box-shadow: none;
+}
+.spk-t__row--head {
+  min-height: 36px;
+  padding-top: 0;
+  padding-bottom: 0;
+  font-size: 13px;
+  color: var(--text-3);
+}
+.spk-t__row:not(.spk-t__row--head):hover {
+  border-radius: 12px;
+  background: var(--surface-hover);
+  box-shadow: none;
+}
+.spk-t__row:has(+ .spk-t__row:not(.spk-t__row--head):hover) {
+  box-shadow: none;
+}
+.spk-t__req,
+.spk-t__client {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.spk-t__title,
+.spk-t__co,
+.spk-t__who {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+.spk-t__title {
+  color: var(--text);
+}
+.spk-t__meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.spk-t__meta .mono {
+  font-size: 11px;
+}
+.spk-t__type {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+}
+.spk-t__co {
+  color: var(--text);
+}
+.spk-t__who,
+.spk-t__quiet {
+  font-size: 13px;
+  color: var(--text-3);
+}
+.spk-t__owner {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.spk-t__end {
+  text-align: right;
+}
+.spk-inbox .rq-bar {
+  margin-bottom: 4px;
+}
+/* Waiting for the client: a grey dot, nothing to do on Spark's side. */
+.rstatus--superseded {
+  --st: #8a93a3;
+}
+/* Clients table. */
+.spk-t__row--clients {
+  grid-template-columns: minmax(0, 2fr) 120px 140px 130px 120px 110px;
+}
+.spk-t__who-cell {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+.spk-t__mono {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 800;
+  font-size: 14px;
+  color: var(--text-2);
+  background: color-mix(in srgb, var(--text) 5%, transparent);
+}
+.spk-t__wait {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+
+/* ---- Proposal page: the client's answer above the document, in the request brief's style. ---- */
+.spv-decision {
+  margin-bottom: 28px;
+}
+
+/* No comments on the sections yet. */
+.spv-nocomments {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 28px 12px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.spv-nocomments svg {
+  margin-bottom: 4px;
+  color: var(--text-3);
+}
+.spv-nocomments .faint {
+  font-size: 13px;
+}
+
+/* ---- Proposal page polish (review of 23 Oct): one spacing scale, the title in the brand's type, one
+   text colour for what you read, one card style, quieter comment names, a hint by a disabled Send. -- */
+/* Spacing: 48 between sections (the client's answer counts as one), 12 from a section title to its body. */
+:root[data-theme] .proposal__doc > .psec {
+  padding-top: 48px;
+}
+:root[data-theme] .proposal__doc > .psec:first-of-type {
+  padding-top: 28px;
+}
+:root[data-theme] .proposal__doc > .spv-decision + .psec {
+  padding-top: 48px;
+}
+:root[data-theme] .proposal__doc .psec__head {
+  margin-bottom: 12px;
+}
+.spv-decision {
+  margin-bottom: 0;
+}
+/* Scope cards: the icon close to its title. */
+:root[data-theme] .proposal__doc .scope__icon {
+  margin-bottom: 12px;
+}
+/* The proposal's title in the brand's display type, as the request page's title. */
+.pdd__title,
+.pdd__title--static {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-weight: 800;
+  font-size: 24px;
+  letter-spacing: -0.02em;
+}
+/* What you read is Ink; only what's secondary (a card's description, labels, dates) is grey. */
+.spv-summary {
+  color: var(--text);
+}
+/* One text size for what you read (15), 13 for labels and names. */
+.spv-decision .brief__text {
+  font-size: 15px;
+}
+/* Whose answer it is: the client's avatar before "Layla approved the proposal". */
+.spv-decision__who {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+/* In the Spark team view the team's own avatars look like people do in the client portal (Haze, Ink
+   initials); the Ink avatar only marks the Spark team inside the client's portal. */
+:root[data-theme='sand'] .spk .avatar--spark {
+  background: var(--haze);
+  color: var(--ink);
+}
+/* One card style: the comments column as the client's answer, a hairline on Sand, no shadow. */
+.cpd__panel.spv-comments-col {
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.spv-comments-col .cpd__item:hover,
+.spv-comments-col .cpd__item.is-active {
+  background: var(--surface-hover);
+}
+/* Names quieter than what was said: one person often writes every comment. */
+.spv-comments-col .cpd__who strong {
+  font-weight: 500;
+  color: var(--text-2);
+}
+.spv-comments-col .cpd__text {
+  font-size: 14px;
+  color: var(--text);
+}
+
+/* The title sizes to its text (the display type is wider than the input's character count), so
+   "Draft saved" sits right after it. */
+.pdd__title {
+  field-sizing: content;
+  max-width: 100%;
+}
+.pdd__save {
+  margin-left: 12px;
+}
+/* Version history as a round outline button beside Resend: the same 32px height, 8px apart. */
+.pdd__tools {
+  gap: 8px;
+}
+.spv-histbtn {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  color: var(--text-2);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.spv-histbtn:hover,
+.spv-histbtn.is-on {
+  color: var(--text);
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.32);
+}
