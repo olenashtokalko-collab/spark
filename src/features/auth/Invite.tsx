@@ -50,29 +50,28 @@ export function Invite() {
     <div className="inv">
       <img className="inv__wordmark" src="/brand/spark-wordmark.png" alt="Spark Studios" />
       <div className="inv__card">
-        {/* The company's tile (as on the Spark team's Clients page) with the inviter's face on its corner, as Loom shows the workspace and who asked. */}
-        <div className="inv__badge" aria-hidden>
-          <span className="inv__company">{company.charAt(0)}</span>
-          <span className="inv__inviter">
-            <Avatar person={inviter} size={34} ring />
-          </span>
-        </div>
+        {/* The company's tile, as on the Spark team's Clients page. */}
+        <span className="inv__company" aria-hidden>
+          {company.charAt(0)}
+        </span>
 
         {step === 'invite' ? (
           <>
-            <h1 className="inv__title">Join {company} on Spark</h1>
+            {/* Who is already there, then what this is, then the one action. */}
             <div className="inv__team">
               <span className="avatar-stack">
                 {team.slice(0, 4).map((p) => (
-                  <Avatar key={p.id} person={p} size={26} ring />
+                  <Avatar key={p.id} person={p} size={32} ring />
                 ))}
               </span>
-              <span>{already} are already here</span>
+              <span className="inv__team-text">{already} are already here</span>
             </div>
-            <p className="inv__sub">
-              <strong>{inviter.name}</strong> invited you to {company}’s workspace.
-            </p>
-            {inv.message && <p className="inv__note">You are {inv.message.charAt(0).toLowerCase() + inv.message.slice(1)}</p>}
+            <div className="inv__head">
+              <h1 className="inv__title">Join {company} on Spark</h1>
+              <p className="inv__sub">
+                <strong>{inviter.name}</strong> invited you to {company}’s workspace.
+              </p>
+            </div>
             <Button variant="primary" size="lg" className="inv__cta" onClick={() => setStep('account')}>
               Accept invitation
             </Button>

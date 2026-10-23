@@ -10534,52 +10534,59 @@ button.fdm-drop:hover {
 }
 .inv__card {
   width: 100%;
-  max-width: 440px;
+  max-width: 480px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 14px;
-  padding: 40px 36px 32px;
+  padding: 44px 40px 40px;
   border-radius: 24px;
   background: #fff;
   box-shadow: inset 0 0 0 1px var(--line), 0 24px 48px -32px rgba(14, 17, 22, 0.25);
   text-align: center;
 }
-.inv__badge {
-  position: relative;
-  margin-bottom: 8px;
-}
-/* The company's tile from the Spark team's Clients page (spk-t__mono), at 64px. */
+/* The company's tile from the Spark team's Clients page (spk-t__mono), at 56px. */
 .inv__company {
   display: grid;
   place-items: center;
-  width: 64px;
-  height: 64px;
-  border-radius: 20px;
+  width: 56px;
+  height: 56px;
+  border-radius: 18px;
   background: color-mix(in srgb, var(--text) 5%, transparent);
   color: var(--text-2);
   font-family: var(--font-display);
   font-stretch: 125%;
   font-weight: 800;
-  font-size: 28px;
+  font-size: 24px;
 }
-.inv__inviter {
-  position: absolute;
-  right: -12px;
-  bottom: -8px;
-  border-radius: 50%;
-  box-shadow: 0 0 0 3px #fff;
+/* Rhythm: tile, 28, the team, 24, title and line, 28, the button. */
+.inv__team {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 28px;
+}
+.inv__team-text {
+  font-size: 13px;
+  color: var(--text-3);
+}
+.inv__head {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 24px;
 }
 .inv__title {
   font-family: var(--font-display);
   font-stretch: 125%;
   font-weight: 800;
   font-size: 24px;
+  line-height: 1.15;
   letter-spacing: -0.02em;
   color: var(--ink);
 }
 .inv__sub {
-  font-size: 14px;
+  font-size: 15px;
   line-height: 1.5;
   color: var(--text-2);
 }
@@ -10587,31 +10594,26 @@ button.fdm-drop:hover {
   color: var(--ink);
   font-weight: 600;
 }
-.inv__note {
-  width: 100%;
-  padding: 10px 14px;
-  border-radius: 12px;
-  background: var(--surface-2);
-  font-size: 14px;
-  color: var(--text-1);
-}
-.inv__team {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  font-size: 13px;
-  color: var(--text-3);
-}
 .inv__cta {
   width: 100%;
-  margin-top: 6px;
+  margin-top: 28px;
+}
+/* A full, easy button: at least 44px tall. */
+.inv .btn.inv__cta {
+  height: 44px;
+  min-height: 44px;
+  font-size: 15px;
 }
 .inv__form {
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 14px;
+  margin-top: 24px;
   text-align: left;
+}
+.inv__form .inv__cta {
+  margin-top: 10px;
 }
 .inv__form .inv__title,
 .inv__form .inv__sub {
