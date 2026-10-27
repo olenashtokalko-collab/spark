@@ -98,7 +98,7 @@ export function Invite() {
               </p>
             )}
             <Button type="submit" variant="primary" size="lg" className="inv__cta" loading={busy}>
-              Continue with email
+              Continue
             </Button>
             <button type="button" className="inv__back" onClick={() => setStep('invite')}>
               Back
