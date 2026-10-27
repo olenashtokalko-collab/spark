@@ -1540,6 +1540,48 @@ function ProposalBanner({ m, art = 'sheet' }: { m: Model; art?: BannerArt }) {
   );
 }
 
+/** Every issue Spark found across its analyses, most important first, as cards on Home; nothing to open
+ *  (feedback 27 Oct: a separate analysis page lost the thread). Each card: how much it matters and where
+ *  it was found, the problem, what Spark found, and what Spark would do, set apart. */
+const IMPACT_RANK = { High: 0, Medium: 1, Low: 2 } as const;
+const fixes = (list: CompanyAnalysis[]) =>
+  list
+    .flatMap((a) => a.findings.filter((f) => !f.good).map((f) => ({ a, f })))
+    .sort((x, y) => IMPACT_RANK[x.f.impact ?? 'Low'] - IMPACT_RANK[y.f.impact ?? 'Low']);
+
+function IssueList({ analyses }: { analyses: CompanyAnalysis[] }) {
+  return (
+    <ol className="hl-fixes">
+      {fixes(analyses).map(({ a, f }) => {
+        const I = ANALYSIS_ICON[a.kind];
+        const impact = f.impact ?? 'Low';
+        return (
+          <li key={a.id + f.title} className="hl-fix">
+            {/* How much it matters, in its colour (High orange, Medium blue, Low grey); where it was found, quietly. */}
+            <span className="hl-fix__meta">
+              <span className={cx('hl-impact', `hl-impact--${impact.toLowerCase()}`)}>{impact} impact</span>
+              <span className="hl-fix__src">
+                <I size={13} strokeWidth={1.8} /> {a.title.replace(' analysis', '')}
+              </span>
+            </span>
+            <b className="hl-fix__title">{f.title}</b>
+            <p className="hl-fix__body">{f.body}</p>
+            {/* What Spark would do, in a stroked box inside the card; Spark's spark beside its label. */}
+            {f.fix && (
+              <div className="hl-fix__do">
+                <span className="hl-fix__do-label">
+                  What we’d do <Sparkles size={12} strokeWidth={2} className="hl-fix__do-mark" aria-hidden />
+                </span>
+                {f.fix}
+              </div>
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  );
+}
+
 export type ReqsLook = 'side' | 'status' | 'alert' | 'figures' | 'cards' | 'board' | 'table' | 'banner' | 'summary';
 
 export function MainSide({
@@ -1585,33 +1627,9 @@ export function MainSide({
     <>
       {reqs !== 'summary' && progress === 'line' && <InProgress m={m} look="line" />}
       <section className="hl-issues">
-        <SectionHead title="Where we think you have issues" />
+        <SectionHead title="Where we think you have issues" count={m.analyses.length ? fixes(m.analyses).length : undefined} />
         {m.analyses.length ? (
-          <ol className="hl-issues__list">
-            {m.analyses.map((a) => {
-              const f = a.findings.find((x) => x.issue) ?? a.findings[0];
-              const I = ANALYSIS_ICON[a.kind];
-              const kind = a.title.replace(' analysis', '');
-              return (
-                <li key={a.id}>
-                  {/* The whole card opens the analysis (the title's link covers it); asking Spark to fix an
-                      issue happens there, next to each finding. */}
-                  <div className="hl-issue">
-                    <span className="hl-issue__src">
-                      <I size={12} strokeWidth={1.8} /> {kind}
-                    </span>
-                    <b>
-                      <a className="hl-issue__link" href={`#/analysis/${a.kind}`}>
-                        {f.title}
-                      </a>
-                    </b>
-                    <span className="hl-issue__body">{f.body}</span>
-                    <ArrowRight size={15} className="hl-issue__arrow" aria-hidden />
-                  </div>
-                </li>
-              );
-            })}
-          </ol>
+          <IssueList analyses={m.analyses} />
         ) : (
           <NoAnalysis />
         )}

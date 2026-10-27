@@ -57,12 +57,17 @@ export interface CompanyAnalysis {
   /** spark: prepared by Spark on its own initiative; requested: the client asked for it. */
   origin: 'spark' | 'requested';
   title: string;
+  /** The verdict in a few words, for the page's title ("Calm, but slow on mobile"); the summary says it in full. */
+  headline?: string;
   summary: string;
   score?: { label: string; value: string };
   /** issue: the problem Spark leads with for this subject; good: what already works. */
-  findings: { title: string; body: string; issue?: boolean; good?: boolean }[];
+  /** impact and fix (what Spark would do) are for what doesn't work yet; they order the page and make it actionable. */
+  findings: { title: string; body: string; issue?: boolean; good?: boolean; impact?: 'High' | 'Medium' | 'Low'; fix?: string }[];
   /** What the analysis rests on, in a line ("23 pages, tested on 4G"), and who at Spark reviewed it. */
   basis: string;
+  /** The basis as separate signals ("Pages reviewed · 23"), for layouts that list what the analysis rests on. */
+  signals?: { label: string; value: string }[];
   reviewedBy: ID;
   docId?: ID;
   updatedAt: ISODate;

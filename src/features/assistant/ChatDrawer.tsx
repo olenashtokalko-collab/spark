@@ -15,8 +15,16 @@ import type { Attachment } from '../../data/types';
 
 export { Mascot };
 
-/** `initial` opens it with a question already written (e.g. Ask Spark to fix on Home), to edit and send. */
-export function ChatDrawer({ open, onClose, initial }: { open: boolean; onClose: () => void; initial?: string }) {
+/** What the drawer is about when opened from a page with a subject (an analysis): its name and the
+ *  questions that fit it, shown in place of the general ways to start. */
+export interface DrawerTopic {
+  label: string;
+  questions: { label: string; prompt: string }[];
+}
+
+/** `initial` opens it with a question already written (e.g. Ask Spark to fix on Home), to edit and send.
+ *  `topic` swaps the general suggestions for questions about what the page is about. */
+export function ChatDrawer({ open, onClose, initial, topic }: { open: boolean; onClose: () => void; initial?: string; topic?: DrawerTopic }) {
   const { actions } = useStore();
 
   useEffect(() => {
@@ -51,10 +59,11 @@ export function ChatDrawer({ open, onClose, initial }: { open: boolean; onClose:
         <div className="chat-drawer__body">
           <Mascot size={72} className="chat-drawer__mascot" />
           <h3>How can I help?</h3>
-          <p>Ask about your brand, audience or market. A good answer can become a request.</p>
-          {/* Ways to start, the same pills as on the Chats page: one click and the chat begins. */}
+          <p>{topic ? `Ask about the ${topic.label}. A good answer can become a request.` : 'Ask about your brand, audience or market. A good answer can become a request.'}</p>
+          {/* Ways to start, the same pills as on the Chats page: one click and the chat begins. On a page
+              with a subject, the questions about it. */}
           <div className="home__prompts chat-drawer__prompts">
-            {suggestedPrompts.slice(0, 4).map((p) => {
+            {(topic ? topic.questions : suggestedPrompts.slice(0, 4)).map((p) => {
               const I = CHIP_ICON[p.label] ?? Sparkles;
               return (
                 <button key={p.label} type="button" className="home__prompt" onClick={() => start(p.prompt)} title={p.prompt}>

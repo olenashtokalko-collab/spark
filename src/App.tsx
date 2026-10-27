@@ -8,6 +8,7 @@ import { HomeLayoutsDemo } from './features/demo/HomeLayoutsDemo';
 import { HomeRequestsDemo } from './features/demo/HomeRequestsDemo';
 import { HomeNextDemo } from './features/demo/HomeNextDemo';
 import { HomeHeroDemo } from './features/demo/HomeHeroDemo';
+import { AnalysisDemo } from './features/demo/AnalysisDemo';
 import { RecentDemo } from './features/demo/RecentDemo';
 import { useEffect } from 'react';
 import { useRoute } from './lib/router';
@@ -63,6 +64,7 @@ function Screen() {
       if (a === 'home-requests') return <HomeRequestsDemo />;
       if (a === 'home-next') return <HomeNextDemo />;
       if (a === 'home-hero') return <HomeHeroDemo />;
+      if (a === 'analysis') return <AnalysisDemo />;
       if (a === 'recent') return <RecentDemo />;
       break;
     case 'reset':
