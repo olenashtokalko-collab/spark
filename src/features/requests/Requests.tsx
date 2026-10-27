@@ -2,6 +2,7 @@ import { useMemo, useState } from 'react';
 import { Calendar, FileText, Plus, Search, Tag, X } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
+import { useRoute } from '../../lib/router';
 import { Button, cx, EmptyState } from '../../components/ui/primitives';
 import { FilterMenu } from '../../components/ui/overlay';
 import { isOpen, NeedsYou, RequestStatus } from '../../components/domain';
@@ -23,7 +24,12 @@ const isFresh = (r: WorkRequest) => r.status === 'submitted' && Date.now() - new
 export function Requests() {
   const { state } = useStore();
   const { openRequest } = useUI();
-  const [filter, setFilter] = useState<Filter>('all');
+  // #/requests?filter=decision opens on "Needs you" (the alert on Home links here).
+  const { query } = useRoute();
+  const [filter, setFilter] = useState<Filter>(() => {
+    const f = query.get('filter') as Filter | null;
+    return f && ['all', 'decision', 'active', 'closed'].includes(f) ? f : 'all';
+  });
   const [q, setQ] = useState('');
   const [type, setType] = useState<RequestType | 'any'>('any');
   const [updated, setUpdated] = useState<Updated>('any');
@@ -54,11 +60,12 @@ export function Requests() {
     [state.requests, filter, q, type, updated],
   );
 
-  const tabs: [Filter, string][] = [
+  // The same marks as the requests block on Home; Closed holds declined requests too, so it gets a finish flag, not a tick.
+  const tabs: [Filter, string, string?][] = [
     ['all', 'All'],
-    ['decision', 'Needs you'],
-    ['active', 'In progress'],
-    ['closed', 'Closed'],
+    ['decision', 'Needs you', '👀'],
+    ['active', 'In progress', '⏳'],
+    ['closed', 'Closed', '🏁'],
   ];
 
   // Quiet layout (picked on #/demo/requests-ui, 5): a small title and one line, text tabs, then one row
@@ -83,8 +90,13 @@ export function Requests() {
       <div className="rq-centre rq-centre--left">
         <div className="rq-bar">
           <div className="rq-tabs" role="tablist" aria-label="Requests">
-            {tabs.map(([v, label]) => (
+            {tabs.map(([v, label, mark]) => (
               <button key={v} role="tab" aria-selected={filter === v} className={cx(filter === v && 'is-on')} onClick={() => setFilter(v)}>
+                {mark && (
+                  <i className="rq-tabs__mark" aria-hidden>
+                    {mark}
+                  </i>
+                )}
                 {label}
                 <span>{state.requests.filter(groups[v]).length}</span>
               </button>

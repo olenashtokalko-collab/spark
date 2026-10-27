@@ -8,7 +8,7 @@ import { FluidOrb } from '../../components/ui/FluidOrb';
 import { StateRing } from '../../components/ui/StateTile';
 import { useToast } from '../../components/ui/toast';
 import { aed, addDays, fmtDate, fmtDateTime, fmtRelative } from '../../lib/format';
-import { navigate } from '../../lib/router';
+import { navigate, useRoute } from '../../lib/router';
 import type { Proposal } from '../../data/types';
 
 // One icon per scope block, picked from what the block is called (first match wins).
@@ -31,6 +31,8 @@ type Decision = 'approved' | 'changes_requested' | 'declined';
 export function ProposalView({ requestId }: { requestId: string }) {
   const { state, me, actions } = useStore();
   const toast = useToast();
+  // Opened from Latest from Spark on Home (?from=home): back goes to Home.
+  const fromHome = useRoute().query.get('from') === 'home';
   // One proposal per request for now: the client always sees the latest.
   const req = state.requests.find((r) => r.id === requestId);
   const p = latestProposal(state, requestId);
@@ -118,8 +120,8 @@ export function ProposalView({ requestId }: { requestId: string }) {
   return (
     <div className="proposal">
       {/* After documentation pages: a back link, the title, and a row of tools over a hairline. */}
-      <a className="back" href={`#/requests/${req.id}`}>
-        <ArrowLeft size={15} /> Back
+      <a className="back" href={fromHome ? '#/' : `#/requests/${req.id}`}>
+        <ArrowLeft size={15} /> {fromHome ? 'Home' : 'Back'}
       </a>
 
       <div className="proposal__layout">

@@ -1554,58 +1554,6 @@ kbd {
   font-size: 13px;
   color: var(--text-3);
 }
-.acct__credits {
-  margin-bottom: 4px;
-  padding: 12px;
-  border-radius: 14px;
-  background: var(--bg);
-}
-.acct__credits-row {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-.acct__credits-label {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  font-size: 15px;
-}
-.acct__credits-amount {
-  margin: 4px 0 0 25px;
-  font-size: 15px;
-  font-weight: 500;
-  font-variant-numeric: tabular-nums;
-}
-.acct__credits-amount.is-out {
-  color: var(--ember, #e8501f);
-}
-.acct__topup {
-  height: 34px;
-  padding: 0 14px;
-  border-radius: 10px;
-  background: var(--surface-1);
-  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.08), 0 1px 2px rgba(14, 17, 22, 0.06);
-  font-size: 14px;
-  font-weight: 500;
-}
-.acct__topup:hover {
-  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.16), 0 1px 2px rgba(14, 17, 22, 0.06);
-}
-.acct__bar {
-  height: 5px;
-  margin-top: 12px;
-  border-radius: 99px;
-  background: var(--surface-3);
-  overflow: hidden;
-}
-.acct__bar > span {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: var(--text);
-}
 .acct__item {
   display: flex;
   align-items: center;
@@ -1711,4 +1659,69 @@ kbd {
   .rail__toggle {
     display: none;
   }
+}
+
+/* Account menu · the company's credits: the balance, a bar for the share left, Top up. */
+.acct__credits {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 4px;
+  padding: 12px;
+  border-radius: 14px;
+  background: var(--bg);
+}
+.acct__credits-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.acct__credits-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.acct__credits-label svg {
+  color: var(--ember, #e8501f);
+}
+.acct__credits-amount {
+  font-size: 18px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+}
+.acct__credits.is-low .acct__credits-amount {
+  color: var(--danger);
+}
+.acct__topup {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  background: var(--surface-1);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.acct__topup:hover {
+  box-shadow: inset 0 0 0 1px var(--line-strong, var(--line));
+}
+.acct__bar {
+  height: 5px;
+  border-radius: 99px;
+  overflow: hidden;
+  background: color-mix(in srgb, var(--text) 10%, transparent);
+}
+.acct__bar > span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--cobalt, #1e3bd6);
+}
+.acct__credits.is-low .acct__bar > span {
+  background: var(--danger);
 }

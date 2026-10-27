@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { ArrowUp, Mic, Plus, Square, X } from 'lucide-react';
 import { cx } from '../../components/ui/primitives';
 import { FileIcon, kindOf } from '../../components/domain';
-import { FluidOrb } from '../../components/ui/FluidOrb';
+import { Mascot } from '../../components/ui/Mascot';
 import type { Attachment } from '../../data/types';
 
 interface Props {
@@ -21,10 +21,10 @@ const ACCEPT = '.pdf,.doc,.docx,.ppt,.pptx,.key,.xls,.xlsx,.csv,.txt,.png,.jpg,.
 
 const sizeLabel = (kb: number) => (kb >= 1024 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`);
 
-/** The prompt box (after the Copilot reference). The orb sits in front of
+/** The prompt box (after the Copilot reference). Spark's mascot sits in front of
  *  the text. Empty: attach + mic. With text: the edge
- *  lights up, the box grows (up to ~8 lines), the mic turns into a send button
- *  and the orb speeds up. Files can be attached with the plus or dropped onto
+ *  lights up, the box grows (up to ~8 lines) and the mic turns into a send
+ *  button. Files can be attached with the plus or dropped onto
  *  the box; the prototype keeps only name and size. */
 export function Composer({ onSubmit, busy, placeholder = 'Message Spark AI', autoFocus, size = 'md', initial = '', onTyping, className }: Props) {
   const [value, setValue] = useState(initial);
@@ -103,8 +103,8 @@ export function Composer({ onSubmit, busy, placeholder = 'Message Spark AI', aut
         </ul>
       )}
       <div className="composer__row">
-        {/* The input's orb stays at rest while Spark works; the orb beside the answer does the work. */}
-        <FluidOrb size={26} active={typing} className="composer__orb" />
+        {/* Spark's mascot at the start of the box. */}
+        <Mascot size={26} className="composer__orb" />
         <div className="composer__field">
           <textarea
             ref={ref}

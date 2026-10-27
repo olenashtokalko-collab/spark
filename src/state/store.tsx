@@ -39,6 +39,10 @@ export interface State {
   people: Person[];
   invitations: Invitation[];
   brand: typeof seed.brand;
+  /** The company's balance in USD. New companies start with 100 free (feedback 21 Oct). */
+  credits: number;
+  /** Everything added so far (the free 100 and top-ups), so the share left can be shown. */
+  creditsTotal: number;
   folders: typeof seed.folders;
   docs: Doc[];
   requests: WorkRequest[];
@@ -46,6 +50,8 @@ export interface State {
   conversations: Conversation[];
   notifications: Notification[];
   prefs: Record<NotifKey, { inApp: boolean; email: boolean }>;
+  /** Spark's files the client has opened; the others show as new in Latest from Spark on Home. */
+  seenDocs: string[];
 }
 
 export const STORAGE_KEY = 'spark-portal-v10';
@@ -64,8 +70,13 @@ const initial = (): State => ({
   people: seed.people,
   invitations: seed.invitations,
   brand: seed.brand,
+  // Prototype: some of the free 100 already spent on chats, so the indicator has something to show.
+  credits: 64.2,
+  creditsTotal: 100,
   folders: seed.folders,
   docs: seed.docs,
+  // Prototype: what Spark shared in October is still new.
+  seenDocs: seed.docs.filter((d) => d.uploadedAt < '2026-10-01').map((d) => d.id),
   requests: seed.requests,
   proposals: seed.proposals,
   conversations: seed.conversations,
@@ -93,7 +104,8 @@ function load(): State {
       const notifications = missing(saved.notifications, seed.notifications);
       // Light is the only theme for now (dark is switched off); saved demos open in it too.
       saved.theme = 'sand';
-      return { ...seed, ...saved, ...(folders && { folders }), ...(requests && { requests }), ...(proposals && { proposals }), ...(notifications && { notifications }) };
+      // The company's profile is Spark's and the portal can't edit it, so its copy always comes from the seed.
+      return { ...seed, ...saved, brand: seed.brand, ...(folders && { folders }), ...(requests && { requests }), ...(proposals && { proposals }), ...(notifications && { notifications }) };
     }
   } catch {
     /* storage unavailable: fall back to seed */
@@ -563,6 +575,8 @@ function useStoreValue() {
   const setRequestLayout = useCallback((requestLayout: RequestLayout) => set(() => ({ requestLayout })), [set]);
   const signOut = useCallback(() => set(() => ({ signedIn: false })), [set]);
   const signIn = useCallback(() => set(() => ({ signedIn: true })), [set]);
+  const seeDoc = useCallback((id: string) => set((s) => (s.seenDocs.includes(id) ? {} : { seenDocs: [...s.seenDocs, id] })), [set]);
+  const topUp = useCallback((usd: number) => set((s) => ({ credits: s.credits + usd, creditsTotal: s.creditsTotal + usd })), [set]);
   const setTheme = useCallback((theme: Theme) => set(() => ({ theme })), [set]);
   const setWeb = useCallback((web: boolean) => set(() => ({ web })), [set]);
   const setFailNext = useCallback((failNext: boolean) => set(() => ({ failNext })), [set]);
@@ -603,6 +617,8 @@ function useStoreValue() {
       signOut,
       setRequestLayout,
       signIn,
+      topUp,
+      seeDoc,
       setWeb,
       setFailNext,
       reset,

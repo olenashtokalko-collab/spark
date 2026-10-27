@@ -2,6 +2,7 @@
 // people, numbers and social posts are invented. "Today" is 9 Oct 2026.
 import type {
   Brand,
+  CompanyAnalysis,
   Conversation,
   Doc,
   Folder,
@@ -38,8 +39,9 @@ export const brand: Brand = {
   founded: '2017, Dubai',
   hq: 'Al Quoz, Dubai',
   footprint: '14 stores in the UAE · online store · 60 partner retailers',
-  positioning:
-    'Everyday products with a Gulf point of view: well-made, regionally inspired designs, sold in calm, design-led stores and online.',
+  // Shown under the company's name on Home: what the company is, then where it sells, a line each.
+  positioning: 'Brand Co. makes everyday products with a Gulf point of view.',
+  reach: 'Sold in 14 stores across the UAE and online.',
   audiences: [
     { name: 'Young professionals', detail: '25–38, buys for quality, discovers new products on Instagram and TikTok.' },
     { name: 'Weekend shoppers', detail: 'Families and friend groups visiting flagship stores at the weekend.' },
@@ -57,6 +59,60 @@ export const brand: Brand = {
 };
 
 // ---- Documents ------------------------------------------------------------
+
+// What Spark already looked at for the company, shown on Home. There's no PR analysis yet, so it isn't shown.
+export const analyses: CompanyAnalysis[] = [
+  {
+    id: 'an-website',
+    kind: 'website',
+    origin: 'spark',
+    basis: '23 pages, speed tested on 4G and broadband, Arabic and English versions',
+    reviewedBy: 's-youssef',
+    title: 'Website analysis',
+    summary: 'brandco.example looks calm and on brand, but it is slow on mobile and the Arabic version is incomplete.',
+    score: { label: 'Mobile speed', value: '41/100' },
+    findings: [
+      { title: 'Calm and on brand', good: true, body: 'The look matches the stores: quiet layouts, real product photos, prices up front. Visitors who reach a product page stay 2 min 40 s.' },
+      { title: 'Slow on mobile', issue: true, body: 'Product pages take 6.8 s to load on 4G, mostly because of uncompressed hero images. Most visits come from phones.' },
+      { title: 'Arabic is half done', body: 'Only the home page and three category pages are in Arabic. Checkout, delivery and returns are English only.' },
+      { title: 'Hard to find a store', body: 'The store locator sits in the footer. Weekend shoppers search for opening hours first.' },
+    ],
+    updatedAt: '2026-10-02T10:00:00',
+  },
+  {
+    id: 'an-social',
+    kind: 'social',
+    origin: 'requested',
+    basis: '412 posts and 3,860 comments on Instagram and TikTok, 1 Sep – 4 Oct',
+    reviewedBy: 's-mira',
+    title: 'Social media analysis',
+    summary: 'Instagram does the work: strong saves on product stories. TikTok is posted to, but not made for.',
+    score: { label: 'Engagement, Instagram', value: '3.4%' },
+    findings: [
+      { title: 'Instagram works', good: true, body: '38K followers, engagement of 3.4%, above the 1.9% typical for retail in the UAE. Behind-the-design stories are saved most.' },
+      { title: 'TikTok is reposted Reels', issue: true, body: 'Videos are cut for Instagram and reposted. Views stay under 2K; the native creator-led posts of competitors reach 20–60K.' },
+      { title: 'Replies are slow', body: 'Comments asking about stock wait 26 hours for an answer on average.' },
+    ],
+    docId: 'd-digest-w40',
+    updatedAt: '2026-10-06T10:00:00',
+  },
+  {
+    id: 'an-brand',
+    kind: 'brand',
+    origin: 'spark',
+    basis: '1,200 reviews and posts, 14 store visits, a panel of 300 shoppers in the UAE and KSA',
+    reviewedBy: 's-youssef',
+    title: 'Brand analysis',
+    summary: 'People see Brand Co. as well-made and local. The “Gulf point of view” is clear in stores, less so online.',
+    findings: [
+      { title: 'What people say', good: true, body: 'In 1,200 reviews and posts, the words used most are “quality”, “gift” and “calm store”. Price is mentioned, rarely as a complaint.' },
+      { title: 'Where it gets lost', issue: true, body: 'Online, product photos on white look like any global chain. The regional story lives only in store design.' },
+      { title: 'Ahead of Riyadh', body: 'In KSA the brand is little known: 4% unprompted recall in our panel. The flagship launch needs to introduce it, not remind.' },
+    ],
+    docId: 'd-audit',
+    updatedAt: '2026-09-22T12:00:00',
+  },
+];
 
 export const folders: Folder[] = [
   { id: 'f-guidelines', name: 'Brand guidelines', parentId: null, description: 'Logo, colour and voice' },
@@ -237,6 +293,30 @@ export const requests: WorkRequest[] = [
       { id: 'b2', at: '2026-09-17T09:00:00', by: 's-dana', kind: 'status', text: 'started reviewing' },
       { id: 'b3', at: '2026-09-17T09:05:00', by: 'u-omar', kind: 'file', text: 'attached Riyadh site plan — Al Olaya.pdf' },
       { id: 'b6', at: '2026-10-06T15:30:00', by: 's-dana', kind: 'proposal', text: 'sent a proposal · AED 186,000 · 10 weeks' },
+    ],
+  },
+  // Work Spark has in hand, so Home shows what's in progress and what comes next.
+  {
+    id: 'REQ-106', title: 'November social content', type: 'Social',
+    description: 'Twelve posts and four Reels for Instagram and TikTok in November, shot natively for each platform, around the signature collection and National Day.',
+    timing: 'Within 2 weeks', budget: 'Up to AED 28,000', status: 'in_progress', createdBy: 'u-layla', createdAt: '2026-10-02T10:00:00', updatedAt: '2026-10-22T16:40:00', ownerId: 's-mira',
+    nextStep: { label: 'First posts ready for your review', date: '2026-10-30' },
+    proposalIds: [],
+    activity: [
+      { id: 'h1', at: '2026-10-02T10:00:00', by: 'u-layla', kind: 'created', text: 'created this request' },
+      { id: 'h2', at: '2026-10-09T11:00:00', by: 'u-layla', kind: 'decision', text: 'approved the proposal' },
+      { id: 'h3', at: '2026-10-22T16:40:00', by: 's-mira', kind: 'status', text: 'finished the shoot plan and booked two creators' },
+    ],
+  },
+  {
+    id: 'REQ-107', title: 'Mobile site speed fixes', type: 'Other',
+    description: 'Compress the product images and lazy-load the galleries, so product pages load in under 3 s on 4G.',
+    timing: 'ASAP', status: 'approved', createdBy: 'u-omar', createdAt: '2026-10-15T09:30:00', updatedAt: '2026-10-21T10:15:00', ownerId: 's-youssef',
+    nextStep: { label: 'Spark starts the work', date: '2026-10-28' },
+    proposalIds: [],
+    activity: [
+      { id: 'i1', at: '2026-10-15T09:30:00', by: 'u-omar', kind: 'created', text: 'created this request from the website analysis' },
+      { id: 'i2', at: '2026-10-21T10:15:00', by: 'u-omar', kind: 'decision', text: 'approved the proposal' },
     ],
   },
   {

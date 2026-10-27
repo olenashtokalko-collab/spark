@@ -1,9 +1,9 @@
-// Chat history, opened from the rail as a panel, with a search on top. It lists
+// Chat history, the left column of Chats under "New chat" (no search for now). It lists
 // every chat in the brand workspace: Hassan wants invited teammates "to see the
 // conversation going on" (call, 8 Oct). Teammates' chats show the author and
 // can be read, not renamed or deleted.
 import { useMemo, useState } from 'react';
-import { MoreHorizontal, Pencil, Search, Trash2 } from 'lucide-react';
+import { MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import { personById, useStore } from '../../state/store';
 import { navigate, useRoute } from '../../lib/router';
 import { Button, Input, cx } from '../../components/ui/primitives';
@@ -33,7 +33,6 @@ export function ChatHistory() {
   const toast = useToast();
   const { parts } = useRoute();
   const activeId = parts[0] === 'assistant' ? parts[1] : undefined;
-  const [q, setQ] = useState('');
   const [renaming, setRenaming] = useState<string | null>(null);
   const [draft, setDraft] = useState('');
   const [confirm, setConfirm] = useState<string | null>(null);
@@ -42,18 +41,16 @@ export function ChatHistory() {
     () =>
       [...state.conversations]
         .filter((c) => c.messages.some((m) => m.role === 'user'))
-        .filter((c) => c.title.toLowerCase().includes(q.trim().toLowerCase()))
         .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)),
-    [state.conversations, q],
+    [state.conversations],
   );
   const toDelete = state.conversations.find((c) => c.id === confirm);
 
   return (
     <div className="history history--sidebar">
-      <Input icon={Search} placeholder="Search chats" value={q} onChange={(e) => setQ(e.target.value)} aria-label="Search chats" className="history__search" />
 
       <div className="history__list">
-        {list.length === 0 && <div className="history__empty">{q.trim() ? 'No chats match your search.' : 'No chats yet. Start one above.'}</div>}
+        {list.length === 0 && <div className="history__empty">No chats yet. Start one above.</div>}
         {group(list).map((g) => (
           <div key={g.label} className="history__group">
             <div className="history__label">{g.label}</div>

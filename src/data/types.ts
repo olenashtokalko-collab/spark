@@ -39,12 +39,33 @@ export interface Brand {
   hq: string;
   footprint: string;
   positioning: string;
+  /** Where the company sells, in one line; shown under the positioning on Home. */
+  reach: string;
   audiences: { name: string; detail: string }[];
   voice: string[];
   competitors: string[];
   keyDates: { date: ISODate; label: string }[];
   updatedAt: ISODate;
   updatedBy: ID;
+}
+
+/** Research Spark did on the company and shows on Home (feedback 23 Oct): website, social media, brand, PR.
+ *  Shown only when Spark has done it, for free or on request; plain text, with the report file when there is one. */
+export interface CompanyAnalysis {
+  id: ID;
+  kind: 'website' | 'social' | 'brand' | 'pr';
+  /** spark: prepared by Spark on its own initiative; requested: the client asked for it. */
+  origin: 'spark' | 'requested';
+  title: string;
+  summary: string;
+  score?: { label: string; value: string };
+  /** issue: the problem Spark leads with for this subject; good: what already works. */
+  findings: { title: string; body: string; issue?: boolean; good?: boolean }[];
+  /** What the analysis rests on, in a line ("23 pages, tested on 4G"), and who at Spark reviewed it. */
+  basis: string;
+  reviewedBy: ID;
+  docId?: ID;
+  updatedAt: ISODate;
 }
 
 // ---- Documents ----------------------------------------------------------

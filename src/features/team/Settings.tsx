@@ -1,7 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import { ChevronDown, MoreHorizontal, RefreshCw, Trash2, UserMinus, UserPlus, X, AlertTriangle } from 'lucide-react';
+import { ArrowLeft, ChevronDown, MoreHorizontal, RefreshCw, Trash2, UserMinus, UserPlus, X, AlertTriangle } from 'lucide-react';
 import { personById, useStore, type NotifKey } from '../../state/store';
-import { Avatar, Button, Field, PageHeader, Select, Switch, Textarea, cx } from '../../components/ui/primitives';
+import { useRoute } from '../../lib/router';
+import { Avatar, Button, Field, Select, Switch, Textarea, cx } from '../../components/ui/primitives';
 import { Dialog, Menu } from '../../components/ui/overlay';
 import { useToast } from '../../components/ui/toast';
 import { fmtRelative } from '../../lib/format';
@@ -14,15 +15,30 @@ export const ROLE_INFO: Record<ClientRole, { label: string; desc: string }> = {
 };
 
 export function TeamPage() {
+  // Opened from the team line on Home (#/team?from=home): a way back there, as on an analysis page.
+  const { query } = useRoute();
   return (
-    <Team />
+    <>
+      {query.get('from') === 'home' && (
+        <a className="anp__back page-back" href="#/">
+          <ArrowLeft size={16} /> Home
+        </a>
+      )}
+      <Team />
+    </>
   );
 }
 
 export function Settings() {
   return (
     <div>
-      <PageHeader title="Settings" sub="Choose how you hear about updates." />
+      {/* The small title of Team and Requests. */}
+      <div className="rq-head">
+        <div>
+          <h1 className="rq-head__title">Settings</h1>
+          <p className="rq-head__sub">Choose how you hear about updates.</p>
+        </div>
+      </div>
       <NotificationPrefs />
     </div>
   );

@@ -1,11 +1,12 @@
 // The page an invitation email links to (#/invite), after Loom's "join this workspace": who invited you,
 // to which company, who is already there; then one short step to create the account with the invited
-// email already in place. Prototype: the first pending invitation; joining signs in to the portal.
+// email already in place and a 6-digit code from that email instead of a password (feedback of 23 Oct).
+// Prototype: the first pending invitation; any code joins and signs in to the portal.
 import { useState, type FormEvent } from 'react';
-import { Eye, EyeOff } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { Avatar, Button, Field, Input } from '../../components/ui/primitives';
 import { navigate } from '../../lib/router';
+import { OtpCode, ResendCode } from './OtpCode';
 
 export function Invite() {
   const { state, actions } = useStore();
@@ -13,10 +14,8 @@ export function Invite() {
   const inviter = state.people.find((p) => p.id === inv?.invitedBy);
   const team = state.people.filter((p) => p.org === 'client');
   const company = state.brand.name;
-  const [step, setStep] = useState<'invite' | 'account'>('invite');
+  const [step, setStep] = useState<'invite' | 'account' | 'code'>('invite');
   const [name, setName] = useState('');
-  const [password, setPassword] = useState('');
-  const [show, setShow] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
@@ -35,15 +34,21 @@ export function Invite() {
   const others = team.length - firstNames.length;
   const already = others > 0 ? `${firstNames.join(', ')} and ${others} ${others === 1 ? 'other' : 'others'}` : firstNames.join(' and ');
 
-  const join = async (e: FormEvent) => {
+  const sendCode = async (e: FormEvent) => {
     e.preventDefault();
     if (!name.trim()) return setError('Enter your name.');
-    if (password.length < 8) return setError('Use at least 8 characters for your password.');
     setError(null);
     setBusy(true);
     await new Promise((r) => setTimeout(r, 700));
+    setBusy(false);
+    setStep('code');
+  };
+
+  const join = async () => {
+    setBusy(true);
+    await new Promise((r) => setTimeout(r, 600));
     actions.signIn();
-    navigate('/assistant');
+    navigate('/');
   };
 
   return (
@@ -77,8 +82,8 @@ export function Invite() {
               Accept invitation
             </Button>
           </>
-        ) : (
-          <form className="inv__form" onSubmit={join} noValidate>
+        ) : step === 'account' ? (
+          <form className="inv__form" onSubmit={sendCode} noValidate>
             <h1 className="inv__title">Create your account</h1>
             <p className="inv__sub">One step, and you’re in {company}’s workspace.</p>
             <Field label="Work email" htmlFor="inv-email">
@@ -87,26 +92,31 @@ export function Invite() {
             <Field label="Your name" htmlFor="inv-name">
               <Input id="inv-name" value={name} onChange={(e) => setName(e.target.value)} placeholder="First and last name" autoComplete="name" autoFocus />
             </Field>
-            <Field label="Create a password" htmlFor="inv-pw" hint="At least 8 characters.">
-              <span className="inv__pw">
-                <Input id="inv-pw" type={show ? 'text' : 'password'} value={password} onChange={(e) => setPassword(e.target.value)} autoComplete="new-password" />
-                <button type="button" className="inv__eye" onClick={() => setShow((s) => !s)} aria-label={show ? 'Hide password' : 'Show password'}>
-                  {show ? <EyeOff size={16} /> : <Eye size={16} />}
-                </button>
-              </span>
-            </Field>
             {error && (
               <p className="signin-page__error" role="alert">
                 {error}
               </p>
             )}
             <Button type="submit" variant="primary" size="lg" className="inv__cta" loading={busy}>
-              Join {company}
+              Continue with email
             </Button>
             <button type="button" className="inv__back" onClick={() => setStep('invite')}>
               Back
             </button>
           </form>
+        ) : (
+          <div className="inv__form">
+            <h1 className="inv__title">Check your email</h1>
+            <p className="inv__sub">
+              Enter the 6-digit code we sent to <strong>{inv.email}</strong>.
+            </p>
+            <OtpCode onComplete={join} />
+            {busy && <p className="signin-page__hint">Joining {company}…</p>}
+            <ResendCode onResend={() => undefined} />
+            <button type="button" className="inv__back" onClick={() => setStep('account')}>
+              Back
+            </button>
+          </div>
         )}
       </div>
       <p className="inv__terms">

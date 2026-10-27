@@ -3,6 +3,11 @@ import { FoldersDemo } from './features/demo/FoldersDemo';
 import { RequestsUiDemo } from './features/demo/RequestsUiDemo';
 import { IntroDemo } from './features/demo/IntroDemo';
 import { HomeDemo } from './features/demo/HomeDemo';
+import { HomeHubDemo } from './features/demo/HomeHubDemo';
+import { HomeLayoutsDemo } from './features/demo/HomeLayoutsDemo';
+import { HomeRequestsDemo } from './features/demo/HomeRequestsDemo';
+import { HomeNextDemo } from './features/demo/HomeNextDemo';
+import { HomeHeroDemo } from './features/demo/HomeHeroDemo';
 import { RecentDemo } from './features/demo/RecentDemo';
 import { useEffect } from 'react';
 import { useRoute } from './lib/router';
@@ -11,6 +16,8 @@ import { SignIn } from './features/auth/SignIn';
 import { Invite } from './features/auth/Invite';
 import { STORAGE_KEY, useStore } from './state/store';
 import { Assistant } from './features/assistant/Assistant';
+import { HomePage } from './features/home/HomeLayouts';
+import { AnalysisPage } from './features/home/AnalysisPage';
 import { ComposerColorDemo } from './features/demo/ComposerColorDemo';
 import { NoteStripDemo } from './features/demo/NoteStripDemo';
 import { ModalSpacingDemo } from './features/demo/ModalSpacingDemo';
@@ -30,6 +37,10 @@ function Screen() {
 
   switch (section) {
     case undefined:
+    case 'home':
+      return <HomePage />;
+    case 'analysis':
+      return <AnalysisPage kind={a} />;
     case 'assistant':
       return <Assistant convId={a} />;
     case 'requests':
@@ -47,6 +58,11 @@ function Screen() {
       if (a === 'requests-ui') return <RequestsUiDemo />;
       if (a === 'intro') return <IntroDemo />;
       if (a === 'home') return <HomeDemo />;
+      if (a === 'home-hub') return <HomeHubDemo />;
+      if (a === 'home-layouts') return <HomeLayoutsDemo />;
+      if (a === 'home-requests') return <HomeRequestsDemo />;
+      if (a === 'home-next') return <HomeNextDemo />;
+      if (a === 'home-hero') return <HomeHeroDemo />;
       if (a === 'recent') return <RecentDemo />;
       break;
     case 'reset':
@@ -62,7 +78,7 @@ function Screen() {
       return <Settings />;
   }
   return (
-    <EmptyState title="Page not found" body="This link doesn't match anything in the workspace." action={<Button onClick={() => navigate('/')}>Go to chats</Button>} />
+    <EmptyState title="Page not found" body="This link doesn't match anything in the workspace." action={<Button onClick={() => navigate('/')}>Go to Home</Button>} />
   );
 }
 

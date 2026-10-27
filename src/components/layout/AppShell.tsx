@@ -6,29 +6,55 @@ import {
   FileText,
   Folder,
   Inbox,
-  SquarePen,
+  House,
+  MessageSquare,
   PanelLeftClose,
   PanelLeftOpen,
-  History,
   ChevronsUpDown,
-  Sparkles,
   Building2,
   UserPlus,
   Users,
   Settings,
   LogOut,
+  Plus,
+  Sparkles,
 } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { navigate, useRoute } from '../../lib/router';
-import { ChatHistory } from '../../features/assistant/ChatHistory';
 import { Avatar, cx } from '../ui/primitives';
 import { Popover } from '../ui/overlay';
+import { TopUpDialog } from './Credits';
 import { fmtRelative } from '../../lib/format';
 import type { Notification } from '../../data/types';
 
+// Home is the start page after sign-in: the company, Spark's analysis and the work (feedback 23 Oct).
+// Chats is its own page, with the history in a column on the left and "New chat" on top of it.
 const NAV = [
-  { path: '/requests', label: 'Requests', icon: Inbox, match: (p: string) => p.startsWith('/requests') },
-  { path: '/documents', label: 'Documents', icon: Folder, match: (p: string) => p.startsWith('/documents') },
+  {
+    path: '/',
+    label: 'Home',
+    icon: House,
+    // An analysis page belongs to Home: it opens from there and goes back there.
+    match: (p: string) => p === '/' || p === '/home' || p.startsWith('/analysis'),
+  },
+  {
+    path: '/assistant',
+    label: 'Chats',
+    icon: MessageSquare,
+    match: (p: string) => p.startsWith('/assistant'),
+  },
+  {
+    path: '/requests',
+    label: 'Requests',
+    icon: Inbox,
+    match: (p: string) => p.startsWith('/requests'),
+  },
+  {
+    path: '/documents',
+    label: 'Documents',
+    icon: Folder,
+    match: (p: string) => p.startsWith('/documents'),
+  },
   // Monitoring is hidden for now; the page still opens at #/monitoring.
   // { path: '/monitoring', label: 'Monitoring', icon: Radar, match: (p: string) => p.startsWith('/monitoring') },
 ];
@@ -36,16 +62,6 @@ const NAV = [
 export function AppShell({ children }: { children: ReactNode }) {
   const { state, me } = useStore();
   const route = useRoute();
-  const [historyOpen, setHistoryOpen] = useState(false);
-  useEffect(() => setHistoryOpen(false), [route.path]);
-  useEffect(() => {
-    if (!historyOpen) return;
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setHistoryOpen(false);
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, [historyOpen]);
-
-
 
   const counts = useMemo(() => {
     const decisions = state.requests.filter((r) => r.status === 'proposal').length;
@@ -72,11 +88,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       return !o;
     });
   const tip = (label: string) => (railOpen ? undefined : label);
-  const onChat = route.path === '/' || route.path === '/assistant';
 
   // The sidebar holds everything around the work: logo, sections, notifications, and the person with
   // their company at the foot (feedback 21 Oct). The page sits beside it on its own rounded panel.
-  // Chat history opens from the sidebar as a panel.
   return (
     <div className={cx('shell', railOpen && 'shell--rail-open')}>
       {/* Spotlight background behind every page (light from above, grain). */}
@@ -84,12 +98,12 @@ export function AppShell({ children }: { children: ReactNode }) {
         <span className="app-bg__light" />
         <span className="app-bg__grain" />
       </div>
-      {/* A strip above the panel, so the page scrolls under its top edge. */}
+      {/* A strip above the panel, so the page scrolls under its top edge. The credits live on Home. */}
       <header className="topbar" />
 
       <nav className="rail" aria-label="Main">
         <div className="rail__head">
-          <a className="rail__logo" href="#/assistant" aria-label="Spark, new chat">
+          <a className="rail__logo" href="#/" aria-label="Spark, home">
             <span className="brand-hide">SPARK</span>
             {/* Brand A: the app icon from the brand book, the spark lit from inside (p. 9). */}
             <img className="topbar__icon brand-only" src="/brand/spark-app-icon.jpg" alt="" />
@@ -99,19 +113,18 @@ export function AppShell({ children }: { children: ReactNode }) {
             {railOpen ? <PanelLeftClose size={18} strokeWidth={1.7} /> : <PanelLeftOpen size={18} strokeWidth={1.7} />}
           </button>
         </div>
-        <a className={cx('rail__btn', onChat && !historyOpen && 'is-active')} href="#/assistant" aria-label="New chat" data-tip={tip('New chat')} aria-current={onChat ? 'page' : undefined}>
-          <SquarePen size={18} strokeWidth={1.7} />
-          <span className="rail__label">New chat</span>
-        </a>
-        <button className={cx('rail__btn', historyOpen && 'is-active')} onClick={() => setHistoryOpen((o) => !o)} aria-expanded={historyOpen} aria-label="Chats" data-tip={tip('Chats')}>
-          <History size={18} strokeWidth={1.7} />
-          <span className="rail__label">Chats</span>
-        </button>
         {NAV.map((n) => {
-          const active = n.match(route.path) && !historyOpen;
+          const active = n.match(route.path);
           const count = n.path === '/requests' ? counts.requests : n.path === '/documents' ? counts.documents : 0;
           return (
-            <a key={n.path} href={'#' + n.path} className={cx('rail__btn', active && 'is-active')} aria-current={active ? 'page' : undefined} aria-label={count ? `${n.label}, ${count} need you` : n.label} data-tip={tip(n.label)}>
+            <a
+              key={n.path}
+              href={'#' + n.path}
+              className={cx('rail__btn', active && 'is-active')}
+              aria-current={active ? 'page' : undefined}
+              aria-label={count ? `${n.label}, ${count} need you` : n.label}
+              data-tip={tip(n.label)}
+            >
               <n.icon size={18} strokeWidth={1.7} />
               <span className="rail__label">{n.label}</span>
               {count > 0 && <span className="rail__dot" aria-hidden />}
@@ -124,15 +137,6 @@ export function AppShell({ children }: { children: ReactNode }) {
         </span>
         <AccountMenu labels={railOpen} active={route.path.startsWith('/settings') || route.path.startsWith('/team')} />
       </nav>
-
-      {historyOpen && (
-        <>
-          <div className="history-scrim" onClick={() => setHistoryOpen(false)} />
-          <aside className="history-flyout" aria-label="Chat history">
-            <ChatHistory />
-          </aside>
-        </>
-      )}
 
       <main className="content" id="content">
         {children}
@@ -234,91 +238,112 @@ function Notifications({ labels }: { labels?: boolean }) {
   );
 }
 
-// The company's credit balance. New companies start with USD 100 free (feedback 21 Oct); fixed for the prototype.
-const CREDITS = { left: 100, of: 100 };
-
 /** The person and their company at the foot of the sidebar. The menu follows the reference's workspace
- *  menu: the company, its credits, the team and company profile, settings, log out. */
+ *  menu: the company, its credits with Top up, the team and company profile, settings, log out. */
 function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
   const { state, me, actions } = useStore();
+  // Top up opens its dialog outside the menu, so the menu can close first.
+  const [topUp, setTopUp] = useState(false);
   const go = (close: () => void, path: string) => {
     close();
     navigate(path);
   };
+  const left = Math.max(0, Math.min(1, state.credits / Math.max(state.creditsTotal, 1)));
   return (
-    <Popover
-      width={300}
-      side="top"
-      align="start"
-      className="acct-pop"
-      trigger={({ toggle, ref, open }) => (
-        <button ref={ref} className={cx('rail__me', (open || active) && 'is-active')} onClick={toggle} aria-haspopup="dialog" aria-label="Account, team and settings" data-tip={labels || open ? undefined : me.name}>
-          <Avatar person={me} size={32} />
-          <span className="rail__me-text">
-            <span className="rail__me-name">{me.name}</span>
-            <span className="rail__me-sub">
-              {me.title} · {state.brand.name}
-            </span>
-          </span>
-          <ChevronsUpDown size={15} className="rail__me-chev" />
-        </button>
-      )}
-    >
-      {(close) => (
-        <div className="acct">
-          <div className="acct__ws">
-            <Avatar person={me} size={40} />
-            <div className="acct__ws-text">
-              <b>{me.name}</b>
-              <span className="acct__role">
+    <>
+      <Popover
+        width={300}
+        side="top"
+        align="start"
+        className="acct-pop"
+        trigger={({ toggle, ref, open }) => (
+          <button
+            ref={ref}
+            className={cx('rail__me', (open || active) && 'is-active')}
+            onClick={toggle}
+            aria-haspopup="dialog"
+            aria-label="Account, team and settings"
+            data-tip={labels || open ? undefined : me.name}
+          >
+            <Avatar person={me} size={32} />
+            <span className="rail__me-text">
+              <span className="rail__me-name">{me.name}</span>
+              <span className="rail__me-sub">
                 {me.title} · {state.brand.name}
               </span>
-            </div>
-          </div>
-          <div className="acct__credits">
-            <div className="acct__credits-row">
-              <div>
-                <div className="acct__credits-label">
-                  <Sparkles size={17} strokeWidth={1.8} /> Credits
-                </div>
-                <div className={cx('acct__credits-amount', CREDITS.left === 0 && 'is-out')}>USD {CREDITS.left.toFixed(2)}</div>
+            </span>
+            <ChevronsUpDown size={15} className="rail__me-chev" />
+          </button>
+        )}
+      >
+        {(close) => (
+          <div className="acct">
+            <div className="acct__ws">
+              <Avatar person={me} size={40} />
+              <div className="acct__ws-text">
+                <b>{me.name}</b>
+                <span className="acct__role">
+                  {me.title} · {state.brand.name}
+                </span>
               </div>
-              {/* Top-ups come with point 3 of the feedback; no action yet. */}
-              <button className="acct__topup" type="button">
-                Top up
-              </button>
             </div>
-            <div className="acct__bar">
-              <span style={{ width: `${(CREDITS.left / CREDITS.of) * 100}%` }} />
+            {/* The company's credits on every page: the balance, the share left, Top up. */}
+            <div className={cx('acct__credits', left < 0.2 && 'is-low')}>
+              <div className="acct__credits-row">
+                <span className="acct__credits-label">
+                  <Sparkles size={15} strokeWidth={1.9} /> Credits
+                </span>
+                <button
+                  type="button"
+                  className="acct__topup"
+                  onClick={() => {
+                    close();
+                    setTopUp(true);
+                  }}
+                >
+                  <Plus size={14} strokeWidth={2} /> Top up
+                </button>
+              </div>
+              <b className="acct__credits-amount">
+                USD{' '}
+                {state.credits.toLocaleString('en-US', {
+                  minimumFractionDigits: 2,
+                  maximumFractionDigits: 2,
+                })}
+              </b>
+              <span className="acct__bar">
+                <span style={{ width: `${left * 100}%` }} />
+              </span>
             </div>
+            <button className="acct__item" onClick={() => go(close, '/team')}>
+              <UserPlus size={18} strokeWidth={1.6} />
+              <span>Manage my team</span>
+            </button>
+            {/* The company's basics and Spark's analysis, on Home. */}
+            <button className="acct__item" onClick={() => go(close, '/?show=company')}>
+              <Building2 size={18} strokeWidth={1.6} />
+              <span>Company profile</span>
+            </button>
+            <div className="acct__divider" />
+            <button className="acct__item" onClick={() => go(close, '/settings')}>
+              <Settings size={18} strokeWidth={1.6} />
+              <span>Settings</span>
+            </button>
+            <div className="acct__divider" />
+            <button
+              className="acct__item"
+              onClick={() => {
+                close();
+                actions.signOut();
+              }}
+            >
+              <LogOut size={18} strokeWidth={1.6} />
+              <span>Log out</span>
+            </button>
           </div>
-          <button className="acct__item" onClick={() => go(close, '/team')}>
-            <UserPlus size={18} strokeWidth={1.6} />
-            <span>Manage my team</span>
-          </button>
-          {/* The company's basics (website, social, competitors), kept by Spark. Opens later. */}
-          <button className="acct__item" type="button">
-            <Building2 size={18} strokeWidth={1.6} />
-            <span>Company profile</span>
-          </button>
-          <div className="acct__divider" />
-          <button className="acct__item" onClick={() => go(close, '/settings')}>
-            <Settings size={18} strokeWidth={1.6} />
-            <span>Settings</span>
-          </button>
-          <div className="acct__divider" />
-          <button
-            className="acct__item"
-            onClick={() => {
-              close();
-              actions.signOut();
-            }}
-          >
-            <LogOut size={18} strokeWidth={1.6} />
-            <span>Log out</span>
-          </button>
-        </div>
-      )}
-    </Popover>
+        )}
+      </Popover>
+      <TopUpDialog open={topUp} onClose={() => setTopUp(false)} />
+    </>
   );
 }

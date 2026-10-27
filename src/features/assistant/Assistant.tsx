@@ -1,11 +1,12 @@
 import { useEffect, useRef } from 'react';
-import { Eye } from 'lucide-react';
+import { Eye, Plus } from 'lucide-react';
 import { personById, useStore } from '../../state/store';
 import { navigate } from '../../lib/router';
 import { Button, EmptyState } from '../../components/ui/primitives';
 import { Composer } from './Composer';
 import { MessageView } from './MessageView';
-import { Home } from './Home';
+import { ChatStart } from './ChatStart';
+import { ChatHistory } from './ChatHistory';
 import type { Attachment } from '../../data/types';
 
 export function Assistant({ convId }: { convId?: string }) {
@@ -30,7 +31,7 @@ export function Assistant({ convId }: { convId?: string }) {
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
   useEffect(() => {
-    // A chat opens at its latest message; the home page (no chat yet) opens at the top.
+    // A chat opens at its latest message; a new chat opens at the top.
     stick.current = !!convId;
     window.scrollTo({ top: convId ? document.body.scrollHeight : 0 });
   }, [convId]);
@@ -49,7 +50,15 @@ export function Assistant({ convId }: { convId?: string }) {
   const missing = convId && !conv;
 
   return (
-    <div className="assistant">
+    // Chats: the history in a column on the left, "New chat" on top of it; the chat beside it.
+    <div className="assistant assistant--chats">
+      <aside className="chats-col" aria-label="Chats">
+        <a className={'chats-col__new' + (!convId ? ' is-active' : '')} href="#/assistant" aria-current={!convId ? 'page' : undefined}>
+          <Plus size={18} strokeWidth={1.8} />
+          New chat
+        </a>
+        <ChatHistory />
+      </aside>
       <section className="assistant__main">
         {missing ? (
           <EmptyState
@@ -58,8 +67,7 @@ export function Assistant({ convId }: { convId?: string }) {
             action={<Button onClick={() => navigate('/assistant')}>New chat</Button>}
           />
         ) : !conv ? (
-          // The home page: numbers to act on, the box with its prompts, what you touched last.
-          <Home onAsk={send} />
+          <ChatStart onAsk={send} />
         ) : (
           <div className="thread" ref={threadRef}>
             {readOnly && (

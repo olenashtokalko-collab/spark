@@ -1,6 +1,6 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Download, X, PenLine } from 'lucide-react';
-import { FluidOrb } from '../../components/ui/FluidOrb';
+import { Mascot } from '../../components/ui/Mascot';
 import { Dialog } from '../../components/ui/overlay';
 import { Avatar, Badge, Button, Textarea } from '../../components/ui/primitives';
 import { Art, FileIcon, kindLabel } from '../../components/domain';
@@ -108,9 +108,11 @@ export function DocPreviewDialog({ docId, onClose }: { docId: string | null; onC
           <h2 className="preview__title">{doc.name}</h2>
           {doc.summary && <p className="preview__summary">{doc.summary}</p>}
           <div className="preview__actions">
-            <Button variant="ai" lead={<FluidOrb size={20} />} onClick={ask}>
-              Ask about this file
-            </Button>
+            {/* The same Ask Spark button as on Home: the mascot in a white pill with a hairline. */}
+            <button type="button" className="hl-mchat preview__ask" onClick={ask}>
+              <Mascot size={28} />
+              Ask Spark about this file
+            </button>
           </div>
           <dl className="meta-list">
             <dt>Shared by</dt>

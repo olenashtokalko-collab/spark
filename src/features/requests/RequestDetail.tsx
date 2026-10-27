@@ -6,11 +6,11 @@ import { Avatar, Button, EmptyState, Tabs, Textarea, cx } from '../../components
 import { FileIcon, ProposalStatus, RequestStatus, STAGES, STAGE_INFO, stageIndex } from '../../components/domain';
 import { useToast } from '../../components/ui/toast';
 import { aed, dueLabel, fmtDate, fmtDateTime, fmtRelative, fmtTime } from '../../lib/format';
-import { navigate } from '../../lib/router';
+import { navigate, useRoute } from '../../lib/router';
 import type { Activity, Finding, WorkRequest } from '../../data/types';
 import { ChatCut } from '../assistant/ChatCut';
 
-type Tab = 'overview' | 'context' | 'files' | 'activity';
+type Tab = 'overview' | 'messages' | 'context' | 'files' | 'activity';
 
 // Requests made from a chat get a generated description ("Key findings from
 // the assistant: … What we'd like from Spark: …"). The findings are shown as
@@ -32,7 +32,9 @@ export function RequestDetail({ id }: { id: string }) {
   const { state, me, actions } = useStore();
   const { openDoc } = useUI();
   const toast = useToast();
-  const [tab, setTab] = useState<Tab>('overview');
+  // ?tab=messages opens the conversation (from a reply in Latest from Spark on Home, or "See message").
+  const { query } = useRoute();
+  const [tab, setTab] = useState<Tab>(query.get('tab') === 'messages' ? 'messages' : 'overview');
   const [comment, setComment] = useState('');
   const [draft, setDraft] = useState<string | null>(null);
   const r = state.requests.find((x) => x.id === id);
@@ -61,7 +63,7 @@ export function RequestDetail({ id }: { id: string }) {
     if (!comment.trim()) return;
     actions.commentOnRequest(r.id, comment.trim());
     setComment('');
-    toast({ title: 'Comment posted', body: 'Spark has been notified.' });
+    toast({ title: 'Message sent', body: 'Spark has been notified.' });
   };
   const saveBrief = () => {
     if (!draft?.trim()) return;
@@ -72,6 +74,7 @@ export function RequestDetail({ id }: { id: string }) {
 
   const tabs: { value: Tab; label: string; count?: number }[] = [
     { value: 'overview', label: 'Overview' },
+    { value: 'messages', label: 'Messages', count: r.activity.filter((a) => a.kind === 'comment').length || undefined },
     ...(r.excerpt ? [{ value: 'context' as const, label: 'Context' }] : []),
     { value: 'files', label: 'Files', count: allFiles.length || undefined },
     { value: 'activity', label: 'Activity', count: r.activity.length },
@@ -254,29 +257,38 @@ export function RequestDetail({ id }: { id: string }) {
             </div>
           )}
 
-          {tab === 'activity' && (
+          {tab === 'messages' && (
             <div className="req-tab">
-              <ActivityLog items={r.activity} requestId={r.id} />
-              <div className="comment-box">
+              <Messages r={r} />
+              <div className="comment-box rmsg__compose">
                 <Avatar person={me} size={28} />
                 <div className="comment-box__field">
                   <Textarea
                     rows={2}
                     value={comment}
                     onChange={(e) => setComment(e.target.value)}
-                    placeholder="Add a comment for Spark…"
-                    aria-label="Comment"
+                    placeholder="Write to Spark…"
+                    aria-label="Message to Spark"
                     onKeyDown={(e) => {
-                      if (e.key === 'Enter' && (e.metaKey || e.ctrlKey)) postComment();
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        postComment();
+                      }
                     }}
                   />
                   <div className="comment-box__bar">
                     <Button size="sm" variant="primary" icon={Send} disabled={!comment.trim()} onClick={postComment}>
-                      Comment
+                      Send
                     </Button>
                   </div>
                 </div>
               </div>
+            </div>
+          )}
+
+          {tab === 'activity' && (
+            <div className="req-tab">
+              <ActivityLog items={r.activity} requestId={r.id} onMessage={() => setTab('messages')} />
             </div>
           )}
         </div>
@@ -307,6 +319,35 @@ export function RequestDetail({ id }: { id: string }) {
         </aside>
       </div>
     </div>
+  );
+}
+
+/** The conversation about a request: the comments as a chat, oldest first. Spark speaks as one team (its
+ *  icon and "Spark", never a person's name); the client's people by first name, "You" on the right. */
+function Messages({ r }: { r: WorkRequest }) {
+  const { state, me } = useStore();
+  const msgs = r.activity.filter((a) => a.kind === 'comment').sort((a, b) => a.at.localeCompare(b.at));
+  if (!msgs.length)
+    return <EmptyState panel title="No messages yet." body="Ask Spark a question or add a note about this request; Spark replies here." />;
+  return (
+    <ol className="rmsg">
+      {msgs.map((a) => {
+        const p = personById(state, a.by);
+        const spark = p.org === 'spark';
+        const mine = p.id === me.id;
+        return (
+          <li key={a.id} className={cx('rmsg__item', mine && 'is-mine', spark && 'is-spark')}>
+            {!mine && (spark ? <img className="rmsg__spark" src="/brand/spark-app-icon.jpg" alt="" /> : <Avatar person={p} size={28} />)}
+            <div className="rmsg__body">
+              <div className="rmsg__meta">
+                <b>{mine ? 'You' : spark ? 'Spark' : p.name.split(' ')[0]}</b> {fmtDate(a.at)}, {fmtTime(a.at)}
+              </div>
+              <div className="rmsg__bubble">{a.text}</div>
+            </div>
+          </li>
+        );
+      })}
+    </ol>
   );
 }
 
@@ -471,7 +512,7 @@ const FOLD_AFTER = 6; // events shown before the older ones fold
 // The stage a "started …" event moves the request away from.
 const FROM_STAGE: Record<string, string> = { 'In review': 'New', 'In progress': 'Approved' };
 
-export function ActivityLog({ items, requestId }: { items: Activity[]; requestId: string }) {
+export function ActivityLog({ items, requestId, onMessage }: { items: Activity[]; requestId: string; onMessage?: () => void }) {
   const [open, setOpen] = useState(false);
   const sorted = [...items].sort((a, b) => b.at.localeCompare(a.at));
   const hidden = sorted.length - FOLD_AFTER;
@@ -485,7 +526,7 @@ export function ActivityLog({ items, requestId }: { items: Activity[]; requestId
           <li key={g.key} className="axb__daylabel" role="separator">
             <span>{g.label}</span>
           </li>,
-          ...g.items.map((a) => <LogItem key={a.id} a={a} requestId={requestId} />),
+          ...g.items.map((a) => <LogItem key={a.id} a={a} requestId={requestId} onMessage={onMessage} />),
         ])}
       </ol>
       {hidden > 0 && (
@@ -508,7 +549,7 @@ function markIcon(a: Activity, declined: boolean) {
   return Paperclip;
 }
 
-function LogItem({ a, requestId }: { a: Activity; requestId: string }) {
+function LogItem({ a, requestId, onMessage }: { a: Activity; requestId: string; onMessage?: () => void }) {
   const { state } = useStore();
   const { openDoc } = useUI();
   const p = personById(state, a.by);
@@ -533,7 +574,7 @@ function LogItem({ a, requestId }: { a: Activity; requestId: string }) {
           <div className="axb__sentence">
             <span className="axb__who">{p.name}</span>
             <span className="axb__text">
-              {comment && 'commented'}
+              {comment && 'left a comment'}
               {!comment && stage && (
                 <>
                   moved the request from <span className="axb__obj">{FROM_STAGE[stage]}</span> to <span className="axb__obj">{stage}</span>
@@ -568,6 +609,11 @@ function LogItem({ a, requestId }: { a: Activity; requestId: string }) {
                 See proposal
               </button>
             )}
+            {comment && onMessage && (
+              <button className="link-btn axb__act" onClick={onMessage}>
+                See message
+              </button>
+            )}
             {doc && (
               <button className="link-btn axb__act" onClick={() => openDoc(doc.id)}>
                 Open file
@@ -576,7 +622,8 @@ function LogItem({ a, requestId }: { a: Activity; requestId: string }) {
           </div>
           <span className="axb__when">{whenLine(a)}</span>
         </div>
-        {(comment || quote) && <div className="axb__msg">{comment ? a.text : quote}</div>}
+        {/* A comment's words live in Messages; here only that it was left. */}
+        {!comment && quote && <div className="axb__msg">{quote}</div>}
       </div>
     </li>
   );

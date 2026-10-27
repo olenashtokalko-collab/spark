@@ -1,22 +1,18 @@
-// The home page (a new chat with no messages yet). After the client's feedback of 22 Oct (the old start
-// screen read as ChatGPT): a greeting with the three numbers to act on, then the box with its prompts,
-// then the four things touched last, so people can pick up where they left off. Quiet, on Sand.
-import type { ReactNode } from 'react';
-import { ArrowRight, CircleAlert, FileText, Lightbulb, MessageSquare, Paperclip, MessageSquareQuote, Palette, ShieldCheck, Sparkles, UsersRound } from 'lucide-react';
+// Home, the start page after sign-in (feedback of 23 Oct: "we don't have a homepage"). The client sees
+// Spark's work before asking anything: the three figures to act on, the company's profile, the analysis
+// Spark did on the company (only what exists), and the things touched last. A chat starts from the button.
+import { useEffect, useState, type ReactNode } from 'react';
+import { ArrowRight, AtSign, ChevronDown, CircleAlert, FileText, Gem, Globe, MessageSquare, Newspaper, Paperclip, SquarePen } from 'lucide-react';
 import { useStore } from '../../state/store';
-import { suggestedPrompts } from '../../data/assistant';
+import { analyses } from '../../data/mock';
 import { NeedsYou, isOpen, needsYou } from '../../components/domain';
-import { Composer } from './Composer';
+import { Button, cx } from '../../components/ui/primitives';
+import { navigate, useRoute } from '../../lib/router';
+import { fmtDate } from '../../lib/format';
 import { TYPE_ICON } from '../requests/CreateRequestDialog';
-import type { Attachment, WorkRequest } from '../../data/types';
+import type { CompanyAnalysis, WorkRequest } from '../../data/types';
 
-const CHIP_ICON: Record<string, typeof Lightbulb> = {
-  'Explore an idea': Lightbulb,
-  'Run a background check': ShieldCheck,
-  'Explore public feedback': MessageSquareQuote,
-  'Understand your audience': UsersRound,
-  'Explore a look': Palette,
-};
+export const ANALYSIS_ICON: Record<CompanyAnalysis['kind'], typeof Globe> = { website: Globe, social: AtSign, brand: Gem, pr: Newspaper };
 
 const onYou = (r: WorkRequest) => needsYou(r);
 
@@ -49,8 +45,8 @@ export function useRecent(n = 4) {
     .slice(0, n);
 }
 
-export function Home({ onAsk, onTyping }: { onAsk: (text: string, attachments?: Attachment[]) => void; onTyping?: (typing: boolean) => void }) {
-  const { state, me } = useStore();
+export function HomeFigures({ className }: { className?: string }) {
+  const { state } = useStore();
   const needYou = state.requests.filter(onYou);
   const active = state.requests.filter((r) => isOpen(r.status) && !onYou(r));
   const toApprove = state.docs.filter((d) => d.review?.status === 'open');
@@ -92,63 +88,202 @@ export function Home({ onAsk, onTyping }: { onAsk: (text: string, attachments?: 
     },
   ];
 
-  const recent = useRecent();
+  return (
+    <div className={cx('bt bt--mono home__figures lf', className)}>
+      {tiles.map((t) => (
+        <a key={t.label} className="bt__tile" href={t.href}>
+          <span className="bt__n">{t.n}</span>
+          <span className="bt__label">
+            {t.mark}
+            {t.label}
+            <ArrowRight size={14} />
+          </span>
+        </a>
+      ))}
+    </div>
+  );
+}
+
+export function Home({ list = analyses }: { list?: CompanyAnalysis[] }) {
+  const { me } = useStore();
+  const { query } = useRoute();
+  const recent = useRecent(5);
+
+  // "Company profile" in the account menu opens Home at the profile.
+  const show = query.get('show');
+  useEffect(() => {
+    if (!show) return;
+    // After the shell's scroll to the top on a new page.
+    const t = setTimeout(() => document.getElementById(show)?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 80);
+    return () => clearTimeout(t);
+  }, [show]);
 
   return (
-    // Quiet, after the references: Sand, a centred greeting, the numbers standing on the page between
-    // hairlines, a white box, four light prompt pills, and plain rows for Recent.
-    <div className="home home--calm">
-      <div className="home__head">
-        <h1 className="home__title">Good to see you, {me.name.split(' ')[0]}</h1>
-        <p className="home__sub">Here’s what needs your attention today.</p>
+    <div className="home home--hub">
+      <div className="home__top">
+        <div>
+          <h1 className="home__title">Good to see you, {me.name.split(' ')[0]}</h1>
+          <p className="home__sub">Here’s what needs your attention today.</p>
+        </div>
+        <Button variant="primary" icon={SquarePen} onClick={() => navigate('/assistant')}>
+          New chat
+        </Button>
       </div>
 
-      <div className="bt bt--mono home__figures lf">
-        {tiles.map((t) => (
-          <a key={t.label} className="bt__tile" href={t.href}>
-            <span className="bt__n">{t.n}</span>
-            <span className="bt__label">
-              {t.mark}
-              {t.label}
-              <ArrowRight size={14} />
-            </span>
-          </a>
-        ))}
-      </div>
+      <HomeFigures />
 
-      <div className="home__ask">
-        <Composer onSubmit={onAsk} onTyping={onTyping} autoFocus placeholder="Ask about your brand, audience or market…" />
-      </div>
-      <div className="home__prompts">
-        {/* Four prompts, one line. */}
-        {suggestedPrompts.slice(0, 4).map((p) => {
-          const I = CHIP_ICON[p.label] ?? Sparkles;
-          return (
-            <button key={p.label} className="home__prompt" onClick={() => onAsk(p.prompt)} title={p.prompt}>
-              <I size={15} strokeWidth={1.7} />
-              {p.label}
-            </button>
-          );
-        })}
-      </div>
+      <div className="home__grid">
+        <div className="home__main">
+          {list.length > 0 && (
+            <section className="home__section" id="analysis" aria-labelledby="home-analysis">
+              <div className="home__section-head">
+                <h2 className="home__label" id="home-analysis">
+                  Company analysis
+                </h2>
+                <span className="home__note">By Spark</span>
+              </div>
+              <div className="ca-list">
+                {list.map((a) => (
+                  <AnalysisItem key={a.id} a={a} />
+                ))}
+              </div>
+            </section>
+          )}
 
-      {recent.length > 0 && (
-        <section className="home__recent">
-          <h2 className="home__label">Continue where you left off</h2>
-          <div className="home__rows">
-            {recent.map((i) => (
-              <a key={i.key} className="home__row" href={i.href}>
-                <i.icon size={15} strokeWidth={1.7} className="home__icon" aria-hidden />
-                <span className="rq-row3__name">
-                  <span className="rq-row3__title">{i.title}</span>
-                  {i.mark}
-                </span>
-                <ArrowRight size={15} className="home-recent__go" aria-hidden />
-              </a>
+          {recent.length > 0 && (
+            <section className="home__section">
+              <div className="home__section-head">
+                <h2 className="home__label">Continue where you left off</h2>
+              </div>
+              <div className="home__rows">
+                {recent.map((i) => (
+                  <a key={i.key} className="home__row" href={i.href}>
+                    <i.icon size={15} strokeWidth={1.7} className="home__icon" aria-hidden />
+                    <span className="rq-row3__name">
+                      <span className="rq-row3__title">{i.title}</span>
+                      {i.mark}
+                    </span>
+                    <ArrowRight size={15} className="home-recent__go" aria-hidden />
+                  </a>
+                ))}
+              </div>
+            </section>
+          )}
+        </div>
+
+        <CompanyProfile />
+      </div>
+    </div>
+  );
+}
+
+/** One piece of Spark's analysis: the summary always shows; the findings open under it. */
+export function AnalysisItem({ a }: { a: CompanyAnalysis }) {
+  const { state, actions } = useStore();
+  const [open, setOpen] = useState(false);
+  const Icon = ANALYSIS_ICON[a.kind];
+  const doc = a.docId ? state.docs.find((d) => d.id === a.docId) : undefined;
+  const discuss = () => {
+    const id = actions.ask(null, `Walk me through the ${a.title.toLowerCase()} and what we should do first.`);
+    navigate(`/assistant/${id}`);
+  };
+  return (
+    <div className={cx('ca', open && 'is-open')}>
+      <button type="button" className="ca__head" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-controls={`${a.id}-body`}>
+        <span className="ca__icon" aria-hidden>
+          <Icon size={17} strokeWidth={1.7} />
+        </span>
+        <span className="ca__text">
+          <span className="ca__title">{a.title}</span>
+          <span className="ca__summary">{a.summary}</span>
+        </span>
+        {/* Always there, so the chevrons line up when a piece has no figure. */}
+        <span className="ca__score">
+          {a.score && (
+            <>
+              <span className="ca__score-value">{a.score.value}</span>
+              <span className="ca__score-label">{a.score.label}</span>
+            </>
+          )}
+        </span>
+        <ChevronDown size={17} className="ca__chev" aria-hidden />
+      </button>
+      {open && (
+        <div className="ca__body" id={`${a.id}-body`}>
+          <ol className="ca__findings">
+            {a.findings.map((f) => (
+              <li key={f.title}>
+                <b>{f.title}</b>
+                <p>{f.body}</p>
+              </li>
             ))}
+          </ol>
+          <div className="ca__foot">
+            <span className="ca__date">
+              Updated {fmtDate(a.updatedAt)}
+              {doc && (
+                <>
+                  {' · '}
+                  <a href={`#/documents/${doc.folderId}?doc=${doc.id}`}>Full report</a>
+                </>
+              )}
+            </span>
+            <button type="button" className="ca__ask" onClick={discuss}>
+              <MessageSquare size={14} strokeWidth={1.8} />
+              Discuss in a chat
+            </button>
           </div>
-        </section>
+        </div>
       )}
     </div>
+  );
+}
+
+/** The company's basics, kept by Spark. */
+export function CompanyProfile() {
+  const { state } = useStore();
+  const b = state.brand;
+  const rows: [string, ReactNode][] = [
+    ['Website', <a href={`https://${b.website}`} target="_blank" rel="noreferrer">{b.website}</a>],
+    ['Category', b.category],
+    ['Founded', b.founded],
+    ['Head office', b.hq],
+    ['Footprint', b.footprint],
+  ];
+  return (
+    <aside className="cp" id="company" aria-labelledby="home-company">
+      <div className="cp__head">
+        <span className="cp__tile" aria-hidden>
+          {b.name.charAt(0)}
+        </span>
+        <div>
+          <h2 className="cp__name" id="home-company">
+            {b.name}
+          </h2>
+          <p className="cp__tagline">{b.tagline}</p>
+        </div>
+      </div>
+      <p className="cp__positioning">{b.positioning}</p>
+      <dl className="cp__facts">
+        {rows.map(([k, v]) => (
+          <div key={k} className="cp__fact">
+            <dt>{k}</dt>
+            <dd>{v}</dd>
+          </div>
+        ))}
+      </dl>
+      <div className="cp__block">
+        <span className="cp__label">Audiences</span>
+        <ul className="cp__audiences">
+          {b.audiences.map((x) => (
+            <li key={x.name}>
+              <b>{x.name}</b>
+              <span>{x.detail}</span>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <p className="cp__updated">Kept by Spark · updated {fmtDate(b.updatedAt)}</p>
+    </aside>
   );
 }

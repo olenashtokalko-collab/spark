@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowLeft, Calendar, FileText, LayoutGrid, List, Lock, MessageSquare, Search, Upload, UserRound, X, Download } from 'lucide-react';
-import { FluidOrb } from '../../components/ui/FluidOrb';
+import { Mascot } from '../../components/ui/Mascot';
 import { personById, TEAM_FOLDER, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { AvatarStack, Button, cx, EmptyState, Input, PageHeader, Progress, Segmented, Skeleton } from '../../components/ui/primitives';
@@ -401,7 +401,7 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
           <Button
             size="sm"
             variant="ai"
-            lead={<FluidOrb size={18} />}
+            lead={<Mascot size={18} />}
             className="file-act-ai"
             aria-label={`Ask about ${d.name}`}
             data-tip="Ask about this file"

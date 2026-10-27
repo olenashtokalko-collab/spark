@@ -1,13 +1,14 @@
 // Signed-out screen: the introduction page before sign-in (feedback of 21 Oct, point 2), picked on
 // #/demo/intro?v=typing (O): on a Cobalt-to-Ember panel the agent "types" what it does, one line at a
 // time, centred and written in place; the mascot's place sits above it until Spark shares the art.
-// The form on white on the right. Prototype only: no passwords are checked; real sign-in plugs in
-// here (see docs/02-implementation.md).
+// The form on white on the right: the work email, then the 6-digit code from the email (feedback of 23 Oct:
+// no passwords). Prototype only: any code signs in; real sign-in plugs in here (see docs/02-implementation.md).
 import { useEffect, useState } from 'react';
-import { Check, Eye, EyeOff, KeyRound, MailCheck } from 'lucide-react';
+import { MailCheck } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { Button, Field, Input, cx } from '../../components/ui/primitives';
 import { navigate } from '../../lib/router';
+import { OtpCode, ResendCode } from './OtpCode';
 
 // What the agent can do, in its own voice: general, no client's names, nothing the portal doesn't do.
 const LINES = [
@@ -64,31 +65,14 @@ function AgentLine() {
   );
 }
 
-type Mode = 'signin' | 'forgot' | 'sent' | 'reset' | 'done';
+type Mode = 'email' | 'code';
 const validEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-/** The password with a show/hide eye. */
-function PasswordInput({ id, value, onChange, autoComplete, autoFocus }: { id: string; value: string; onChange: (v: string) => void; autoComplete: string; autoFocus?: boolean }) {
-  const [show, setShow] = useState(false);
-  return (
-    <span className="signin-page__pw">
-      <Input id={id} type={show ? 'text' : 'password'} value={value} onChange={(e) => onChange(e.target.value)} autoComplete={autoComplete} autoFocus={autoFocus} />
-      <button type="button" className="signin-page__eye" onClick={() => setShow((x) => !x)} aria-label={show ? 'Hide password' : 'Show password'}>
-        {show ? <EyeOff size={16} /> : <Eye size={16} />}
-      </button>
-    </span>
-  );
-}
-
 export function SignIn() {
   const { me, actions } = useStore();
-  // The reset link in the email opens #/reset-password: straight to "Set a new password".
-  const [mode, setMode] = useState<Mode>(() => (window.location.hash.startsWith('#/reset-password') ? 'reset' : 'signin'));
+  const [mode, setMode] = useState<Mode>('email');
   const [email, setEmail] = useState(me.email);
-  const [password, setPassword] = useState('');
-  const [next, setNext] = useState('');
-  const [again, setAgain] = useState('');
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -98,46 +82,28 @@ export function SignIn() {
     setMode(m);
   };
 
-  const submit = async (e: React.FormEvent) => {
+  const sendCode = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validEmail(email)) return setError('Enter your email.');
-    if (!password) return setError('Enter your password.');
+    if (!validEmail(email)) return setError('Enter your work email.');
     setError(null);
     setBusy(true);
     await wait(700);
+    go('code');
+  };
+
+  // Prototype: any 6 digits sign in; the real check plugs in here (see docs/02-implementation.md).
+  const verify = async () => {
+    setError(null);
+    setBusy(true);
+    await wait(600);
     actions.signIn();
     navigate('/');
-  };
-
-  const sendLink = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!validEmail(email)) return setError('Enter the email you sign in with.');
-    setError(null);
-    setBusy(true);
-    await wait(700);
-    go('sent');
-  };
-
-  const savePassword = async (e: React.FormEvent) => {
-    e.preventDefault();
-    if (next.length < 8) return setError('Use at least 8 characters.');
-    if (next !== again) return setError('The passwords don’t match.');
-    setError(null);
-    setBusy(true);
-    await wait(700);
-    setPassword('');
-    go('done');
   };
 
   const err = error && (
     <p className="signin-page__error" role="alert">
       {error}
     </p>
-  );
-  const back = (
-    <button type="button" className="signin-page__link signin-page__back" onClick={() => go('signin')}>
-      Back to sign in
-    </button>
   );
 
   return (
@@ -153,104 +119,39 @@ export function SignIn() {
       </section>
       <section className="itd-type__main">
         <div className="itd-type__form">
-          {mode === 'signin' && (
-            <form className="itd-form itd-form--welcome itd-form--lean signin-page__form" onSubmit={submit} noValidate>
+          {mode === 'email' && (
+            <form className="itd-form itd-form--welcome itd-form--lean signin-page__form" onSubmit={sendCode} noValidate>
               {/* The app icon (the spark, p. 28) over the title. */}
               <img className="signin-page__icon" src="/brand/spark-app-icon.jpg" alt="" />
               <h1 className="itd-form__title signin-page__title">Welcome to Spark</h1>
               <p className="itd-form__sub">Your AI workspace for smarter work.</p>
-              <Field label="Email" htmlFor="si-email">
+              <Field label="Work email" htmlFor="si-email">
                 <Input id="si-email" type="email" placeholder="name@company.com" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" autoFocus />
               </Field>
-              {/* The password's label row holds "Forgot password?" on the right. */}
-              <div className="field">
-                <div className="field__label">
-                  <label htmlFor="si-pw">Password</label>
-                  <button type="button" className="signin-page__link" onClick={() => go('forgot')}>
-                    Forgot password?
-                  </button>
-                </div>
-                <PasswordInput id="si-pw" value={password} onChange={setPassword} autoComplete="current-password" />
-              </div>
               {err}
               <Button type="submit" variant="primary" loading={busy}>
-                Sign in
+                Continue with email
               </Button>
+              <p className="signin-page__hint">We’ll email you a 6-digit code. No password needed.</p>
             </form>
           )}
 
-          {mode === 'forgot' && (
-            <form className="itd-form itd-form--welcome itd-form--lean signin-page__form" onSubmit={sendLink} noValidate>
-              <span className="signin-page__glyph" aria-hidden>
-                <KeyRound size={22} strokeWidth={1.8} />
-              </span>
-              <h1 className="itd-form__title signin-page__title signin-page__title--sm">Reset your password</h1>
-              <p className="itd-form__sub">Enter the email you sign in with, and we’ll send you a link to set a new password.</p>
-              <Field label="Email" htmlFor="si-forgot">
-                <Input id="si-forgot" type="email" placeholder="name@company.com" value={email} onChange={(e) => setEmail(e.target.value)} autoComplete="email" autoFocus />
-              </Field>
-              {err}
-              <Button type="submit" variant="primary" loading={busy}>
-                Send reset link
-              </Button>
-              {back}
-            </form>
-          )}
-
-          {mode === 'sent' && (
+          {mode === 'code' && (
             <div className="itd-form itd-form--welcome itd-form--lean signin-page__form">
               <span className="signin-page__glyph" aria-hidden>
                 <MailCheck size={22} strokeWidth={1.8} />
               </span>
               <h1 className="itd-form__title signin-page__title signin-page__title--sm">Check your email</h1>
               <p className="itd-form__sub">
-                We sent a link to <strong>{email.trim()}</strong>. It works for 30 minutes. Don’t see it? Check your spam folder.
+                Enter the 6-digit code we sent to <strong>{email.trim()}</strong>. It works for 10 minutes.
               </p>
-              {/* Prototype: stands in for the link in the email. */}
-              <Button variant="primary" onClick={() => go('reset')}>
-                Open the link from the email
-              </Button>
-              <p className="signin-page__hint">
-                Didn’t get it?{' '}
-                <button type="button" className="signin-page__link" onClick={() => go('forgot')}>
-                  Send it again
-                </button>
-              </p>
-              {back}
-            </div>
-          )}
-
-          {mode === 'reset' && (
-            <form className="itd-form itd-form--welcome itd-form--lean signin-page__form" onSubmit={savePassword} noValidate>
-              <span className="signin-page__glyph" aria-hidden>
-                <KeyRound size={22} strokeWidth={1.8} />
-              </span>
-              <h1 className="itd-form__title signin-page__title signin-page__title--sm">Set a new password</h1>
-              <p className="itd-form__sub">For {email.trim()}. At least 8 characters.</p>
-              <Field label="New password" htmlFor="si-new">
-                <PasswordInput id="si-new" value={next} onChange={setNext} autoComplete="new-password" autoFocus />
-              </Field>
-              <Field label="Repeat the password" htmlFor="si-again">
-                <PasswordInput id="si-again" value={again} onChange={setAgain} autoComplete="new-password" />
-              </Field>
+              <OtpCode onComplete={verify} />
               {err}
-              <Button type="submit" variant="primary" loading={busy}>
-                Save password
-              </Button>
-              {back}
-            </form>
-          )}
-
-          {mode === 'done' && (
-            <div className="itd-form itd-form--welcome itd-form--lean signin-page__form">
-              <span className="signin-page__glyph signin-page__glyph--ok" aria-hidden>
-                <Check size={22} strokeWidth={2.2} />
-              </span>
-              <h1 className="itd-form__title signin-page__title signin-page__title--sm">Password updated</h1>
-              <p className="itd-form__sub">Sign in with your new password.</p>
-              <Button variant="primary" onClick={() => go('signin')}>
-                Back to sign in
-              </Button>
+              {busy && <p className="signin-page__hint">Signing you in…</p>}
+              <ResendCode onResend={() => setError(null)} />
+              <button type="button" className="signin-page__link signin-page__back" onClick={() => go('email')}>
+                Use a different email
+              </button>
             </div>
           )}
         </div>

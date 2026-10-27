@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { AlertCircle, ArrowRight, Check, Heart, ChevronDown, Copy, Globe, Inbox, Loader2, RotateCcw, FileText } from 'lucide-react';
 import type { Message, Source, Visual } from '../../data/types';
 import { Button, cx } from '../../components/ui/primitives';
-import { FluidOrb } from '../../components/ui/FluidOrb';
+import { Mascot } from '../../components/ui/Mascot';
 import { FileIcon, kindOf } from '../../components/domain';
 import { personById, TEAM_FOLDER, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
@@ -95,14 +95,9 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
 
   return (
     <div className="msg-ai">
-      {/* While Spark works its orb's light races and the logo's white spark twinkles in it. */}
+      {/* Spark's mascot; while Spark works its light breathes. */}
       <div className={cx('msg-ai__avatar', working && 'is-working')}>
-        <FluidOrb size={30} boost={working} />
-        {working && (
-          <svg className="orb-spark" viewBox="0 0 100 100" aria-hidden>
-            <path d="M50 4 C53 34 66 47 96 50 C66 53 53 66 50 96 C47 66 34 53 4 50 C34 47 47 34 50 4 Z" />
-          </svg>
-        )}
+        <Mascot size={30} working={working} />
       </div>
       <div className="msg-ai__body">
         {/* Research steps: live while working, collapsible once done */}
