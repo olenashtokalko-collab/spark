@@ -4,7 +4,7 @@
 // research dossier: raw AI reports read as generic), the report file when there is one, and a chat about it.
 // The client sees Spark as one team, so the reviewer is named by role, not by name.
 import { useState } from 'react';
-import { ArrowLeft, ArrowUpRight, BadgeCheck, FileText, MessageSquare, Search } from 'lucide-react';
+import { ArrowLeft, ArrowUpRight, BadgeCheck, FileText, Search } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { navigate } from '../../lib/router';
 import { analyses } from '../../data/mock';
@@ -17,7 +17,7 @@ import { ChatDrawer, Mascot } from '../assistant/ChatDrawer';
 const ORIGIN = { spark: 'Prepared by Spark', requested: 'You requested' } as const;
 
 export function AnalysisPage({ kind }: { kind?: string }) {
-  const { state, actions } = useStore();
+  const { state } = useStore();
   // The report opens in the preview over this page, so closing it comes back here.
   const { openDoc } = useUI();
   // Ask Spark to fix opens the chat drawer with the issue already written in, to edit and send.
@@ -35,14 +35,15 @@ export function AnalysisPage({ kind }: { kind?: string }) {
 
   const I = ANALYSIS_ICON[a.kind];
   const doc = a.docId ? state.docs.find((d) => d.id === a.docId) : undefined;
-  const discuss = () => navigate(`/assistant/${actions.ask(null, `Walk me through the ${a.title.toLowerCase()} and what we should do first.`)}`);
+  // Ask Spark opens the chat drawer over the page with the question written in, as from a proposal.
+  const discuss = () => setAsk(`Walk me through the ${a.title.toLowerCase()} and what we should do first.`);
   // What works first, then where it gets lost, as a reader would want to hear it.
   const findings = [...a.findings].sort((x, y) => Number(!!y.good) - Number(!!x.good));
 
   return (
     <article className="anp">
-      <a className="anp__back" href="#/">
-        <ArrowLeft size={16} /> Home
+      <a className="back" href="#/">
+        <ArrowLeft size={15} /> Home
       </a>
 
       <header className="anp__head">
@@ -61,9 +62,10 @@ export function AnalysisPage({ kind }: { kind?: string }) {
           </span>
         </div>
         <div className="anp__actions">
-          <Button variant="primary" icon={MessageSquare} onClick={discuss}>
-            Discuss with Spark
-          </Button>
+          <button type="button" className="hl-mchat" onClick={discuss}>
+            <Mascot size={28} />
+            Ask Spark about this analysis
+          </button>
           {doc && (
             <Button variant="secondary" icon={FileText} onClick={() => openDoc(doc.id)}>
               Open the report file

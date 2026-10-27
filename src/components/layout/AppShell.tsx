@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   Bell,
   Check,
@@ -16,14 +16,13 @@ import {
   Users,
   Settings,
   LogOut,
-  Plus,
   Sparkles,
 } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { navigate, useRoute } from '../../lib/router';
 import { Avatar, cx } from '../ui/primitives';
 import { Popover } from '../ui/overlay';
-import { TopUpDialog } from './Credits';
+import { CreditsOverlay, TopUpDialog } from './Credits';
 import { fmtRelative } from '../../lib/format';
 import type { Notification } from '../../data/types';
 
@@ -242,8 +241,19 @@ function Notifications({ labels }: { labels?: boolean }) {
  *  menu: the company, its credits with Top up, the team and company profile, settings, log out. */
 function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
   const { state, me, actions } = useStore();
-  // Top up opens its dialog outside the menu, so the menu can close first.
+  // Hovering the credits row shows Home's credits card beside the menu. It lives outside the menu, with
+  // the Top up dialog, so both outlive the menu closing; a short delay lets the pointer cross to the card.
+  const [creditsRow, setCreditsRow] = useState<HTMLElement | null>(null);
   const [topUp, setTopUp] = useState(false);
+  const hideTimer = useRef<number>();
+  const showCredits = (el: HTMLElement) => {
+    window.clearTimeout(hideTimer.current);
+    setCreditsRow(el);
+  };
+  const hideCredits = () => {
+    window.clearTimeout(hideTimer.current);
+    hideTimer.current = window.setTimeout(() => setCreditsRow(null), 160);
+  };
   const go = (close: () => void, path: string) => {
     close();
     navigate(path);
@@ -287,34 +297,27 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
                 </span>
               </div>
             </div>
-            {/* The company's credits on every page: the balance, the share left, Top up. */}
-            <div className={cx('acct__credits', left < 0.2 && 'is-low')}>
-              <div className="acct__credits-row">
-                <span className="acct__credits-label">
-                  <Sparkles size={15} strokeWidth={1.9} /> Credits
-                </span>
-                <button
-                  type="button"
-                  className="acct__topup"
-                  onClick={() => {
-                    close();
-                    setTopUp(true);
-                  }}
-                >
-                  <Plus size={14} strokeWidth={2} /> Top up
-                </button>
-              </div>
-              <b className="acct__credits-amount">
+            {/* The company's credits, as beside its name on Home: the spark, the balance, "credits". The
+                row shows the same credits card as on Home, beside the menu, on hover. */}
+            <button
+              type="button"
+              className={cx('acct__credits', left < 0.2 && 'is-low')}
+              aria-label={`Credits: USD ${state.credits.toFixed(2)}. Details and Top up`}
+              onMouseEnter={(e) => showCredits(e.currentTarget)}
+              onMouseLeave={hideCredits}
+              onFocus={(e) => showCredits(e.currentTarget)}
+              onClick={(e) => showCredits(e.currentTarget)}
+            >
+              <Sparkles size={18} strokeWidth={1.6} className="acct__credits-icon" />
+              <span className="acct__credits-amount">
                 USD{' '}
                 {state.credits.toLocaleString('en-US', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
-              </b>
-              <span className="acct__bar">
-                <span style={{ width: `${left * 100}%` }} />
               </span>
-            </div>
+              <span className="acct__credits-word">{left < 0.2 ? 'left · running low' : 'credits'}</span>
+            </button>
             <button className="acct__item" onClick={() => go(close, '/team')}>
               <UserPlus size={18} strokeWidth={1.6} />
               <span>Manage my team</span>
@@ -343,6 +346,18 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
           </div>
         )}
       </Popover>
+      {creditsRow && (
+        <CreditsOverlay
+          anchor={creditsRow}
+          onClose={() => setCreditsRow(null)}
+          onEnter={() => window.clearTimeout(hideTimer.current)}
+          onLeave={hideCredits}
+          onTopUp={() => {
+            setCreditsRow(null);
+            setTopUp(true);
+          }}
+        />
+      )}
       <TopUpDialog open={topUp} onClose={() => setTopUp(false)} />
     </>
   );

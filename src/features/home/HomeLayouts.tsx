@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react';
 import { ArrowRight, ArrowUpRight, Building2, Check, CircleDot, CheckCircle2, ChevronDown, CircleAlert, FileText, MessageSquare, Pencil, Plus, ScanSearch, Sparkles, SquarePen, X } from 'lucide-react';
 import { useUI } from '../../state/ui';
 import { ChatDrawer, Mascot } from '../assistant/ChatDrawer';
-import { TopUpDialog } from '../../components/layout/Credits';
+import { CreditsCard, TopUpDialog } from '../../components/layout/Credits';
 import { useStore } from '../../state/store';
 import { navigate, useRoute } from '../../lib/router';
 import { analyses as seedAnalyses } from '../../data/mock';
@@ -703,21 +703,13 @@ const usd = (n: number) => `USD ${n.toLocaleString('en-US', { minimumFractionDig
 /** The company's credits beside its name, after the client's reference: a soft pill (the spark, the
  *  balance, a chevron); hover or focus opens a card with what's available, where it came from, what's
  *  been used, a note on what credits pay for, and Top up (the same dialog as the corner pill elsewhere). */
-const FREE_CREDITS = 100;
 function CreditsIndicator({ balance }: { balance?: { left: number; total: number } }) {
   const { state } = useStore();
   const [topUp, setTopUp] = useState(false);
   const left = balance?.left ?? state.credits;
   const total = balance?.total ?? state.creditsTotal;
-  const used = Math.max(0, total - left);
-  const toppedUp = Math.max(0, total - FREE_CREDITS);
   // Under a fifth left: said in words with Top up beside it, calmly (no red, no Ember: it isn't an error).
   const low = left < total * 0.2;
-  const rows: [string, string][] = [
-    ['Free credits', usd(FREE_CREDITS)],
-    ['Topped up', usd(toppedUp)],
-    ['Used so far', usd(used)],
-  ];
   return (
     <>
       <span className={cx('hl-cind', low && 'is-low')}>
@@ -728,22 +720,7 @@ function CreditsIndicator({ balance }: { balance?: { left: number; total: number
           <ChevronDown size={14} strokeWidth={2} className="hl-cind__chev" aria-hidden />
         </button>
         <span className="hl-cind__card" id="hl-cind-card" role="tooltip">
-          <span className="hl-cind__big">{usd(left)}</span>
-          <span className="hl-cind__sub">credits available</span>
-          <dl className="hl-cind__rows">
-            {rows.map(([k, v]) => (
-              <div key={k}>
-                <dt>{k}</dt>
-                <dd>{v}</dd>
-              </div>
-            ))}
-          </dl>
-          <span className="hl-cind__note">
-            <b>Credits pay for chats and research.</b> Work from the Spark team is quoted in its proposals.
-          </span>
-          <Button variant="primary" icon={Plus} onClick={() => setTopUp(true)}>
-            Top up
-          </Button>
+          <CreditsCard left={left} total={total} onTopUp={() => setTopUp(true)} />
         </span>
       </span>
       {low && (

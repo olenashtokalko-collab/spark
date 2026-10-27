@@ -20,8 +20,8 @@ export function TeamPage() {
   return (
     <>
       {query.get('from') === 'home' && (
-        <a className="anp__back page-back" href="#/">
-          <ArrowLeft size={16} /> Home
+        <a className="back page-back" href="#/">
+          <ArrowLeft size={15} /> Home
         </a>
       )}
       <Team />

@@ -4,7 +4,7 @@ import { canApprove, latestProposal, personById, proposalTotal, proposalWeeks, u
 import { Avatar, Button, Checkbox, EmptyState, Field, Select, Textarea, cx } from '../../components/ui/primitives';
 import { Dialog } from '../../components/ui/overlay';
 import { deadline } from '../../components/ui/DeadlineHourglass';
-import { FluidOrb } from '../../components/ui/FluidOrb';
+import { ChatDrawer, Mascot } from '../assistant/ChatDrawer';
 import { StateRing } from '../../components/ui/StateTile';
 import { useToast } from '../../components/ui/toast';
 import { aed, addDays, fmtDate, fmtDateTime, fmtRelative } from '../../lib/format';
@@ -33,6 +33,7 @@ export function ProposalView({ requestId }: { requestId: string }) {
   const toast = useToast();
   // Opened from Latest from Spark on Home (?from=home): back goes to Home.
   const fromHome = useRoute().query.get('from') === 'home';
+  const [ask, setAsk] = useState<string | null>(null);
   // One proposal per request for now: the client always sees the latest.
   const req = state.requests.find((r) => r.id === requestId);
   const p = latestProposal(state, requestId);
@@ -88,10 +89,8 @@ export function ProposalView({ requestId }: { requestId: string }) {
     toast({ title: 'Proposal downloaded', body: 'A plain-text copy for sharing internally.' });
   };
 
-  const askSpark = () => {
-    const id = actions.ask(null, `Help me decide on the proposal for ${p.title}: what's included, what's not, and what to ask before approving.`);
-    navigate(`/assistant/${id}`);
-  };
+  // Opens the chat drawer over the proposal with the question written in, to edit and send.
+  const askSpark = () => setAsk(`Help me decide on the proposal for ${p.title}: what's included, what's not, and what to ask before approving.`);
 
   const sectionHead = (s: Section) => (
     <div className="psec__head">
@@ -120,8 +119,9 @@ export function ProposalView({ requestId }: { requestId: string }) {
   return (
     <div className="proposal">
       {/* After documentation pages: a back link, the title, and a row of tools over a hairline. */}
+      <ChatDrawer open={ask !== null} initial={ask ?? undefined} onClose={() => setAsk(null)} />
       <a className="back" href={fromHome ? '#/' : `#/requests/${req.id}`}>
-        <ArrowLeft size={15} /> {fromHome ? 'Home' : 'Back'}
+        <ArrowLeft size={15} /> {fromHome ? 'Home' : 'Request'}
       </a>
 
       <div className="proposal__layout">
@@ -132,8 +132,8 @@ export function ProposalView({ requestId }: { requestId: string }) {
               <span className="proposal__tool proposal__tool--status">
                 Sent {fmtDate(p.sentAt)} by {sender.name.split(' ')[0]}
               </span>
-              <button className="proposal__tool" onClick={askSpark} data-tip="Open chat">
-                <FluidOrb size={14} /> Ask Spark about this proposal
+              <button className="proposal__tool" onClick={askSpark}>
+                <Mascot size={20} /> Ask Spark about this proposal
               </button>
               <button className="proposal__tool" onClick={exportProposal}>
                 <Download size={14} /> Download

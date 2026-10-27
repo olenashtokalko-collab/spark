@@ -155,7 +155,7 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
         sub={folder ? folder.description : 'Guidelines, strategy, proposals, creative and the files your team shares.'}
         actions={
           canUpload ? (
-            <Button variant="primary" icon={Upload} onClick={() => fileInput.current?.click()}>
+            <Button size="sm" variant="primary" icon={Upload} onClick={() => fileInput.current?.click()}>
               Upload
             </Button>
           ) : folder ? (

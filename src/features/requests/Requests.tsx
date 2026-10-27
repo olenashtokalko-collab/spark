@@ -6,14 +6,17 @@ import { useRoute } from '../../lib/router';
 import { Button, cx, EmptyState } from '../../components/ui/primitives';
 import { FilterMenu } from '../../components/ui/overlay';
 import { isOpen, NeedsYou, RequestStatus } from '../../components/domain';
-import { fmtRelative } from '../../lib/format';
-import { navigate } from '../../lib/router';
+import { fmtDate, fmtRelative } from '../../lib/format';
 import type { RequestType, WorkRequest } from '../../data/types';
 import { TYPES, TYPE_ICON } from './CreateRequestDialog';
+import { ChatDrawer, Mascot } from '../assistant/ChatDrawer';
 
 type Filter = 'all' | 'decision' | 'active' | 'closed';
 type Updated = 'any' | 'week' | 'month';
 const UPDATED_DAYS: Record<Exclude<Updated, 'any'>, number> = { week: 7, month: 30 };
+
+/** A date as everywhere else in lists ("22 Oct"); "4 h ago" only for today, as in Activity. */
+const whenOf = (iso: string) => (new Date(iso).toDateString() === new Date().toDateString() ? fmtRelative(iso) : fmtDate(iso));
 
 /** Waiting on the client: a proposal to decide on, or a question from Spark. */
 const onYou = (r: WorkRequest) => r.status === 'proposal' || !!(r.nextStep?.onClient && isOpen(r.status));
@@ -31,6 +34,7 @@ export function Requests() {
     return f && ['all', 'decision', 'active', 'closed'].includes(f) ? f : 'all';
   });
   const [q, setQ] = useState('');
+  const [chatOpen, setChatOpen] = useState(false);
   const [type, setType] = useState<RequestType | 'any'>('any');
   const [updated, setUpdated] = useState<Updated>('any');
   const narrowed = !!q || type !== 'any' || updated !== 'any';
@@ -78,8 +82,10 @@ export function Requests() {
           <p className="rq-head__sub">Ask Spark for new work and follow it to delivery.</p>
         </div>
         <div className="rq-head__acts">
-          <button className="rq-text-btn" onClick={() => navigate('/assistant')}>
-            Start a chat
+          {/* Ask Spark as on Home: the mascot pill; it opens the chat drawer over this page. */}
+          <button type="button" className="hl-mchat rq-ask" onClick={() => setChatOpen(true)}>
+            <Mascot size={22} />
+            Ask Spark
           </button>
           <Button size="sm" variant="primary" icon={Plus} onClick={() => openRequest()}>
             New request
@@ -154,13 +160,14 @@ export function Requests() {
                     {r.type}
                   </span>
                   <RequestStatus status={r.status} onClient={r.nextStep?.onClient} />
-                  <span className="rq-row3__when">{fmtRelative(r.updatedAt)}</span>
+                  <span className="rq-row3__when">{whenOf(r.updatedAt)}</span>
                 </a>
               );
             })}
           </div>
         )}
       </div>
+      <ChatDrawer open={chatOpen} onClose={() => setChatOpen(false)} />
     </div>
   );
 }

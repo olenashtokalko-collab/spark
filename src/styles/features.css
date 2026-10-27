@@ -15756,3 +15756,99 @@ button.anp__report {
 .rmsg__compose {
   margin-top: 4px;
 }
+
+/* Requests header: Ask Spark at the height of New request beside it. */
+.rq-ask {
+  height: 32px;
+  padding: 0 12px 0 4px;
+  gap: 7px;
+  font-size: 13px;
+}
+
+/* ---- Consistency pass (27 Oct): one size for list-page titles, one underline tab, two card corners,
+   section titles in the display face. ------------------------------------------------------------- */
+
+/* Documents and its folders take the small title of Requests, Team and Settings. */
+:root[data-theme] .docs .page-head__title {
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+:root[data-theme] .docs .page-head__sub {
+  margin-top: 4px;
+  font-size: 14px;
+  color: var(--text-3);
+}
+
+/* Home's tabs as the request page's: 14px, 40px high, the rounded Ink underline. */
+.hl-tabs {
+  gap: 22px;
+}
+.hl-tabs button,
+.hl-tabs button.is-on {
+  position: relative;
+  height: 40px;
+  padding: 0;
+  font-size: 14px;
+  box-shadow: none;
+}
+.hl-tabs button::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: -1px;
+  height: 3px;
+  border-radius: 3px;
+  background: var(--ink, #0e1116);
+  box-shadow: 0 2px 8px rgba(14, 17, 22, 0.25);
+  opacity: 0;
+  transform: scaleX(0.6);
+  transition: opacity 0.2s, transform 0.25s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+.hl-tabs button.is-on::after {
+  opacity: 1;
+  transform: none;
+}
+.hl-tabs button.is-on {
+  color: var(--ink, #0e1116);
+}
+
+/* Back links: one style (base .back), with room under them as on the request page. */
+.back.page-back {
+  margin-bottom: 16px;
+  padding-top: 0;
+}
+.anp > .back {
+  align-self: flex-start;
+  padding-top: 0;
+}
+
+/* Two card corners: 14 for cards in grids and side columns, 22 for big blocks (Home's header, drawer). */
+:root[data-theme] :is(.side-card, .prop-card, .insight, .fcard, .anp__finding, .hl-issue, .proposal__side .decision) {
+  border-radius: 14px;
+}
+
+/* Section titles in the display face at 18, as on Home ("Where we think you have issues"). */
+:root[data-theme][data-theme] .proposal__doc .psec__title,
+:root[data-theme][data-theme] .req-tab .block__head .block__title {
+  font-family: var(--font-display);
+  font-stretch: 125%;
+  font-size: 18px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+/* The credits card opened from the account menu: Home's card, fixed beside the account button. */
+.hl-cind__card.credits-overlay {
+  position: fixed;
+  top: auto;
+  right: auto;
+  z-index: 130;
+  margin: 0;
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  animation: fade-up 0.14s var(--ease, ease);
+}
