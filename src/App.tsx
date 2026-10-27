@@ -100,6 +100,8 @@ function Redirect({ to }: { to: string }) {
   return null;
 }
 
+const INVITE_ONLY = import.meta.env.VITE_INVITE_ONLY === '1';
+
 export default function App() {
   const { path } = useRoute();
   const { state } = useStore();
@@ -119,7 +121,9 @@ export default function App() {
     return () => mq.removeEventListener('change', apply);
   }, [state.theme]);
   // The page an invitation email links to, signed in or not.
-  if (path === '/invite') return <Invite />;
+  if (path === '/invite') return <Invite standalone={INVITE_ONLY} />;
+  // A build with only the invitation (VITE_INVITE_ONLY=1, for sharing that flow on its own): every page is it.
+  if (INVITE_ONLY) return <Invite standalone />;
   // Signed out: the sign-in page, except for the sign-in options demo, which is about that page.
   if (!state.signedIn)
     return path.startsWith('/demo/intro') ? (

@@ -8,13 +8,14 @@ import { Avatar, Button, Field, Input } from '../../components/ui/primitives';
 import { navigate } from '../../lib/router';
 import { OtpCode, ResendCode } from './OtpCode';
 
-export function Invite() {
+/** `standalone`: shown on its own (the invite-only build), so joining ends on a confirmation, not in the portal. */
+export function Invite({ standalone }: { standalone?: boolean }) {
   const { state, actions } = useStore();
   const inv = state.invitations[0];
   const inviter = state.people.find((p) => p.id === inv?.invitedBy);
   const team = state.people.filter((p) => p.org === 'client');
   const company = state.brand.name;
-  const [step, setStep] = useState<'invite' | 'account' | 'code'>('invite');
+  const [step, setStep] = useState<'invite' | 'account' | 'code' | 'done'>('invite');
   const [name, setName] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -47,6 +48,8 @@ export function Invite() {
   const join = async () => {
     setBusy(true);
     await new Promise((r) => setTimeout(r, 600));
+    setBusy(false);
+    if (standalone) return setStep('done');
     actions.signIn();
     navigate('/');
   };
@@ -104,6 +107,16 @@ export function Invite() {
               Back
             </button>
           </form>
+        ) : step === 'done' ? (
+          <div className="inv__head">
+            <h1 className="inv__title">You’re in</h1>
+            <p className="inv__sub">
+              Welcome to {company}’s workspace{name.trim() ? `, ${name.trim().split(' ')[0]}` : ''}. Your requests, files and chats with Spark are waiting.
+            </p>
+            <Button variant="primary" size="lg" className="inv__cta" onClick={() => (setName(''), setStep('invite'))}>
+              Start again
+            </Button>
+          </div>
         ) : (
           <div className="inv__form">
             <h1 className="inv__title">Check your email</h1>
