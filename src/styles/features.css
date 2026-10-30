@@ -22864,3 +22864,17 @@ button.anp__report {
   font-size: 12px;
   color: var(--text-3);
 }
+/* The step under the bubble (30 Oct): "On it" on its own line, the step, the time and the chevron beneath it. */
+.thinking.thinking--onit {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  justify-content: start;
+  align-items: center;
+  column-gap: 8px;
+  row-gap: 8px;
+  text-align: left;
+}
+.thinking--onit > .thk-glass {
+  grid-column: 1 / -1;
+  justify-self: start;
+}

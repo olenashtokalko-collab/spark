@@ -61,7 +61,7 @@ export function Assistant({ convId }: { convId?: string }) {
     <div className={cx('assistant assistant--chats', hist && 'is-hist')}>
       <section className="assistant__main">
         <div className="chats-top">
-          <Button icon={History} onClick={() => setHist((h) => !h)} aria-expanded={hist} aria-controls="chats-hist">
+          <Button size="sm" icon={History} onClick={() => setHist((h) => !h)} aria-expanded={hist} aria-controls="chats-hist">
             Chats
           </Button>
         </div>
@@ -111,7 +111,7 @@ export function Assistant({ convId }: { convId?: string }) {
         <div className="chats-hist__in">
           <header className="chats-hist__head">
             <h2>Chat history</h2>
-            <Button icon={Plus} onClick={() => navigate('/assistant')}>
+            <Button variant="ghost" size="sm" icon={Plus} onClick={() => navigate('/assistant')}>
               New
             </Button>
           </header>

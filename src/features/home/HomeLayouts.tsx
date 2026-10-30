@@ -1852,7 +1852,10 @@ const IMPACTS = ['High', 'Medium', 'Low'] as const;
 function IssuePager({ analyses, featured, onAsk }: { analyses: CompanyAnalysis[]; featured?: boolean; onAsk?: (t: DrawerTopic) => void }) {
   const [hidden, setHidden] = useState<string[]>([]);
   const list = fixes(analyses).filter(({ a, f }) => !hidden.includes(a.id + f.title));
-  const [at, setI] = useState(0);
+  const [at, setAt] = useState(0);
+  // Which way the last arrow went, so the next card comes in from that side (#/demo/pager-motion, B).
+  const [dir, setDir] = useState<1 | -1>(1);
+  const setI = (n: number) => (setDir(n < at ? -1 : 1), setAt(n));
   const toast = useToast();
   if (!list.length) return null;
   const i = Math.min(at, list.length - 1);
@@ -1880,8 +1883,11 @@ function IssuePager({ analyses, featured, onAsk }: { analyses: CompanyAnalysis[]
   const impact = f.impact ?? 'Low';
   const pager = (
         <span className="hdc-pager">
-          <span>
-            {i + 1} / {list.length}
+          <span className="hdc-pager__count">
+            <span key={i} className={cx('hdc-pager__num', dir > 0 ? 'is-up' : 'is-down')}>
+              {i + 1}
+            </span>{' '}
+            / {list.length}
           </span>
           <button type="button" aria-label="Previous issue" disabled={i === 0} onClick={() => setI(i - 1)}>
             <ChevronDown size={15} style={{ transform: 'rotate(90deg)' }} />
@@ -1927,7 +1933,7 @@ function IssuePager({ analyses, featured, onAsk }: { analyses: CompanyAnalysis[]
           <h2>Where we think you have issues</h2>
           <span className="hdc__action">{pager}</span>
         </header>
-        <div className={cx('hdc hdc--feature', `hdc--${impact.toLowerCase()}`)}>
+        <div key={a.id + f.title} className={cx('hdc hdc--feature', `hdc--${impact.toLowerCase()}`, dir > 0 ? 'is-next' : 'is-prev')}>
           {issue}
           {/* What to do about it, at the foot of the card: talk it through, or ask for a proposal. */}
           <div className="hdc-issue__acts">
@@ -2188,8 +2194,6 @@ export function MainSide({
               {label}
             </button>
           ))}
-          {/* Groups: who keeps the profile, small on the right of the tabs, in place of a second title. */}
-          {profileLook !== 'rows' && tab === 'profile' && <span className="hl-tabs__note">Kept by Spark · updated {fmtDate(b.updatedAt)}</span>}
         </nav>
       </header>
 

@@ -19,6 +19,11 @@ import { DocumentsDemo } from './features/demo/DocumentsDemo';
 import { AskSparkDemo } from './features/demo/AskSparkDemo';
 import { ComposerSoftDemo } from './features/demo/ComposerSoftDemo';
 import { ThinkingDemo } from './features/demo/ThinkingDemo';
+import { GlassButtonsDemo } from './features/demo/GlassButtonsDemo';
+import { PagerMotionDemo } from './features/demo/PagerMotionDemo';
+import { TabLooksDemo } from './features/demo/TabLooksDemo';
+import { AskGlassDemo } from './features/demo/AskGlassDemo';
+import { RailHoverDemo } from './features/demo/RailHoverDemo';
 import { useEffect } from 'react';
 import { useRoute } from './lib/router';
 import { AppShell } from './components/layout/AppShell';
@@ -84,6 +89,11 @@ function Screen() {
       if (a === 'ask-spark') return <AskSparkDemo />;
       if (a === 'composer-soft') return <ComposerSoftDemo />;
       if (a === 'thinking') return <ThinkingDemo />;
+      if (a === 'glass-buttons') return <GlassButtonsDemo />;
+      if (a === 'pager-motion') return <PagerMotionDemo />;
+      if (a === 'tab-looks') return <TabLooksDemo />;
+      if (a === 'ask-glass') return <AskGlassDemo />;
+      if (a === 'rail-hover') return <RailHoverDemo />;
       break;
     case 'reset':
       // For rehearsals: forget everything that was done in the prototype and start from the seed data again.

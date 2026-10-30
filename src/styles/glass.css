@@ -1,0 +1,1714 @@
+/* ---- Glass variant (branch glass-variant, 30 Oct) ----------------------------------------------------------
+   A second look to show the client beside the first: after their dashboard references (frosted white cards on a
+   pale field of light) in Spark's own colours, and after the glass tiles in the brand book (pp. 34, 36): the light
+   lives in the glass's edge, Cobalt on one side, Ember on the other, white where it catches the top.
+   Loaded last, so it sits over the brand layer. */
+
+/* The ground: Sand, with the Noor light gathered softly at the corners (Cobalt high on the left, Ember low on the
+   right, a breath of violet between), fixed while the page scrolls. */
+:root[data-theme][data-theme] body {
+  background:
+    radial-gradient(38% 42% at 4% 0%, rgba(30, 59, 214, 0.14), transparent 70%),
+    radial-gradient(30% 36% at 46% 8%, rgba(122, 69, 230, 0.06), transparent 70%),
+    radial-gradient(40% 46% at 100% 100%, rgba(232, 80, 31, 0.14), transparent 70%),
+    radial-gradient(30% 34% at 70% 70%, rgba(233, 88, 142, 0.05), transparent 70%),
+    var(--sand, #f8f6f2);
+  background-attachment: fixed;
+}
+
+/* ---- Everything in glass (30 Oct, after the dashboard references and the client's Ask Spark example) ----------
+   The ground carries the light across the whole window; the sidebar, the cards, the tabs and the buttons sit on
+   it as clear containers. */
+:root[data-theme][data-theme] .app-bg {
+  background:
+    radial-gradient(34% 40% at 0% 0%, rgba(30, 59, 214, 0.16), transparent 70%),
+    radial-gradient(28% 34% at 40% 6%, rgba(122, 69, 230, 0.08), transparent 70%),
+    radial-gradient(40% 46% at 100% 100%, rgba(232, 80, 31, 0.16), transparent 70%),
+    radial-gradient(30% 34% at 72% 64%, rgba(233, 88, 142, 0.07), transparent 70%),
+    var(--sand, #f8f6f2);
+}
+:root[data-theme][data-theme] .app-bg__light {
+  display: none;
+}
+
+/* The glass recipe, shared: frost, a bright white rim, the spectrum refracted inside the edge. */
+:root[data-theme][data-theme] :is(.rail, .hl-tabs) {
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    inset 12px 0 22px -18px rgba(30, 59, 214, 0.3),
+    inset -12px 0 22px -18px rgba(232, 80, 31, 0.26),
+    0 12px 32px -20px rgba(40, 30, 90, 0.2);
+}
+
+/* The sidebar: a floating glass panel, 12px off the window's edges. */
+:root[data-theme][data-theme] .rail {
+  top: 12px;
+  height: calc(100vh - 24px);
+  margin: 12px 0 12px 12px;
+  border-radius: 24px;
+}
+:root[data-theme][data-theme] .rail__btn.is-active,
+:root[data-theme][data-theme] .rail__me {
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: inset 0 0 0 1px #fff, 0 2px 8px -4px rgba(40, 30, 90, 0.18);
+}
+:root[data-theme][data-theme] .rail__btn {
+  border-radius: 12px;
+}
+
+/* Tabs: a glass track, the picked tab a white glass pill (as the filter tabs' bubble), no underline. */
+:root[data-theme][data-theme] .hl-tabs {
+  display: inline-flex;
+  width: fit-content;
+  gap: 2px;
+  padding: 4px;
+  border: 0;
+  border-radius: 999px;
+}
+:root[data-theme][data-theme] .hl-tabs button {
+  height: 36px;
+  padding: 0 18px;
+  border-radius: 999px;
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .hl-tabs button::after {
+  display: none;
+}
+:root[data-theme][data-theme] .hl-tabs button.is-on {
+  background: linear-gradient(180deg, #fff, rgba(255, 255, 255, 0.8));
+  box-shadow:
+    inset 0 0 0 1px #fff,
+    inset 8px 0 12px -10px rgba(30, 59, 214, 0.35),
+    inset -8px 0 12px -10px rgba(232, 80, 31, 0.3),
+    0 2px 8px -4px rgba(40, 30, 90, 0.2);
+}
+
+/* Buttons as the client's Ask Spark: a white glass pill, a bright rim, the light inside its edge (Cobalt at the
+   left, Ember at the right, a blush of pink at the foot) and a soft shadow. */
+:root[data-theme][data-theme] :is(.btn--secondary, .hl-mchat, .hl-cind, .hl-fix__make, .hl-fix__more, .hdc-pager button, .hl-fix__tools .hl-fix__tool:has(.spark-disc), .followup, .sources__toggle) {
+  border: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.7));
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 10px 0 14px -12px rgba(30, 59, 214, 0.4),
+    inset -10px 0 14px -12px rgba(232, 80, 31, 0.36),
+    inset 0 -8px 12px -10px rgba(233, 88, 142, 0.32),
+    0 0 0 1px rgba(14, 17, 22, 0.04),
+    0 4px 12px -6px rgba(40, 30, 90, 0.2);
+}
+:root[data-theme][data-theme] :is(.btn--secondary, .hl-mchat, .hl-fix__make, .hl-fix__more, .hdc-pager button, .hl-fix__tools .hl-fix__tool:has(.spark-disc), .followup, .sources__toggle):hover:not(:disabled) {
+  background: linear-gradient(180deg, #fff, rgba(255, 255, 255, 0.85));
+  box-shadow:
+    inset 0 0 0 1px #fff,
+    inset 12px 0 16px -12px rgba(30, 59, 214, 0.5),
+    inset -12px 0 16px -12px rgba(232, 80, 31, 0.45),
+    inset 0 -10px 14px -10px rgba(233, 88, 142, 0.4),
+    0 0 0 1px rgba(14, 17, 22, 0.04),
+    0 6px 16px -6px rgba(40, 30, 90, 0.24);
+}
+:root[data-theme][data-theme] .hl-cind {
+  padding: 0 14px;
+  height: 36px;
+  border-radius: 999px;
+}
+:root[data-theme][data-theme] .hl-fix__tools .hl-fix__tool:has(.spark-disc) {
+  padding-right: 14px;
+  border-radius: 999px;
+}
+/* Ask Spark as the example: the spark on its own, no disc. */
+:root[data-theme][data-theme] :is(.hl-mchat, .hl-fix__tool) .spark-disc {
+  background: none;
+}
+
+/* ---- Closer to the dashboard reference (30 Oct) -----------------------------------------------------------------
+   A pale field of light behind everything (Haze, a blush of violet and pink, Ember low), white cards that are
+   mostly white with no coloured edge, titles inside the cards with their controls, and the rows inside as white
+   cards of their own; light type, room to breathe. */
+:root[data-theme][data-theme] .app-bg {
+  background:
+    radial-gradient(60% 55% at 10% 0%, rgba(200, 216, 240, 0.75), transparent 75%),
+    radial-gradient(45% 45% at 55% 18%, rgba(122, 69, 230, 0.1), transparent 75%),
+    radial-gradient(50% 50% at 92% 40%, rgba(233, 88, 142, 0.12), transparent 75%),
+    radial-gradient(55% 50% at 80% 100%, rgba(232, 80, 31, 0.12), transparent 75%),
+    radial-gradient(50% 45% at 15% 95%, rgba(200, 216, 240, 0.5), transparent 75%),
+    var(--sand, #f8f6f2);
+}
+/* Outer cards: the company, the issues (title and pager inside), Latest from Spark. */
+:root[data-theme][data-theme] :is(.hl-hero__card, .hdc-feature, .hdc--latest.hdc--latest) {
+  position: relative;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  backdrop-filter: blur(24px) saturate(1.2);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75),
+    inset 10px 0 24px -22px rgba(30, 59, 214, 0.35),
+    inset -10px 0 24px -22px rgba(232, 80, 31, 0.3),
+    0 1px 2px rgba(40, 30, 90, 0.03);
+}
+:root[data-theme][data-theme] .hl-hero__card {
+  overflow: hidden;
+}
+:root[data-theme][data-theme] :is(.hdc-feature, .hdc--latest.hdc--latest) {
+  padding: 24px 28px 28px;
+}
+:root[data-theme][data-theme] :is(.hdc-feature, .hdc--latest) > .hdc__head {
+  margin-bottom: 18px;
+}
+:root[data-theme][data-theme] :is(.hdc-feature, .hdc--latest) > .hdc__head h2 {
+  font-size: 20px;
+  font-weight: 450;
+  letter-spacing: -0.01em;
+}
+/* Inside: the issue a white card of its own, no coloured stroke; the rows of Latest each a white card. */
+:root[data-theme][data-theme] .hdc-feature .hdc--feature {
+  padding: 20px 22px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.85);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: 0 1px 2px rgba(40, 30, 90, 0.04);
+}
+:root[data-theme][data-theme] .hdc-feature .hl-fix__do {
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.05);
+}
+:root[data-theme][data-theme] .hdc--latest .hl-latest__list {
+  display: grid;
+  gap: 8px;
+  padding: 0;
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .hdc--latest .hl-latest__row,
+:root[data-theme][data-theme] .hdc--latest .hl-latest__list > * > .hl-latest__row {
+  padding: 14px 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 1px 2px rgba(40, 30, 90, 0.04);
+}
+:root[data-theme][data-theme] .hdc--latest .hl-latest__row:hover {
+  background: #fff;
+}
+/* The page's own section titles, and the tabs, sit outside the cards with room round them. */
+:root[data-theme][data-theme] .hl-ms {
+  margin-top: 20px;
+}
+:root[data-theme][data-theme] .hdc-stack {
+  gap: 20px;
+}
+
+/* ---- After the brand book's pictures (30 Oct): Sand with grain, one cluster of light, light under the glass ------
+   The covers (pp. 1, 14): a warm white ground with visible grain and one deep-blurred cluster of Noor in one place,
+   the rest clean Sand. The series (p. 40): white glass pills on Sand with the spectrum blurred beneath them. */
+:root[data-theme][data-theme] .app-bg {
+  background:
+    radial-gradient(26% 34% at 96% 2%, rgba(232, 80, 31, 0.42), transparent 70%),
+    radial-gradient(30% 40% at 84% 10%, rgba(233, 88, 142, 0.34), transparent 70%),
+    radial-gradient(30% 42% at 70% 4%, rgba(122, 69, 230, 0.32), transparent 70%),
+    radial-gradient(26% 36% at 58% 0%, rgba(30, 59, 214, 0.3), transparent 70%),
+    radial-gradient(40% 50% at 80% 8%, rgba(255, 255, 255, 0.5), transparent 70%),
+    var(--sand, #f8f6f2);
+}
+/* The grain over everything, as on the covers. */
+:root[data-theme][data-theme] .app-bg__grain {
+  display: block;
+  z-index: 3;
+  opacity: 0.3;
+  mix-blend-mode: multiply;
+}
+
+/* Light under the AI's glass: Ask Spark sits on a blurred spectrum, Cobalt to Ember, as the pills in the series. */
+:root[data-theme][data-theme] :is(.hl-mchat, .hl-fix__tools .hl-fix__tool:has(.spark-disc)) {
+  position: relative;
+  isolation: isolate;
+}
+:root[data-theme][data-theme] :is(.hl-mchat, .hl-fix__tools .hl-fix__tool:has(.spark-disc))::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 12%;
+  right: 12%;
+  bottom: -7px;
+  height: 60%;
+  border-radius: 999px;
+  pointer-events: none;
+  background: linear-gradient(90deg in oklch, #1e3bd6, #7a45e6 35%, #e9588e 65%, #e8501f);
+  filter: blur(10px);
+  opacity: 0.45;
+  transition: opacity 0.25s ease, filter 0.25s ease;
+}
+:root[data-theme][data-theme] :is(.hl-mchat, .hl-fix__tools .hl-fix__tool:has(.spark-disc)):hover::before {
+  opacity: 0.7;
+  filter: blur(12px);
+}
+
+/* Impact as the series' pills: these are Spark's findings, so Ember, by strength. */
+:root[data-theme][data-theme] .hl-impact--high {
+  color: #fff;
+  background: var(--ember, #e8501f);
+}
+:root[data-theme][data-theme] .hl-impact--medium {
+  color: #b3400f;
+  background: color-mix(in srgb, var(--ember, #e8501f) 14%, #fff);
+}
+:root[data-theme][data-theme] .hl-impact--low {
+  color: var(--text-2);
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.08);
+}
+
+/* No colour in the company card (30 Oct): the cover's light goes; the card is glass like the rest, the light
+   stays in the ground's one cluster. */
+:root[data-theme][data-theme] .hl-hero__card .hl-hero__band {
+  height: 56px;
+  background: none;
+}
+:root[data-theme][data-theme] .hl-hero__card .hl-hero__band::before,
+:root[data-theme][data-theme] .hl-hero__card .hl-hero__band::after {
+  display: none;
+}
+/* With no cover, the company's mark sits beside its name and description, its top level with the name. */
+:root[data-theme][data-theme] .hl-hero__card {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
+  align-items: start;
+}
+:root[data-theme][data-theme] .hl-hero__card .hl-hero__band {
+  display: none;
+}
+:root[data-theme][data-theme] .hl-hero__card .hl-hero__avatar {
+  grid-column: 1;
+  margin: 28px 0 0 28px;
+}
+:root[data-theme][data-theme] .hl-hero__card .hl-hero__meta {
+  grid-column: 2;
+  padding: 28px 28px 24px 20px;
+}
+:root[data-theme][data-theme] .hl-hero__card {
+  padding-bottom: 0;
+}
+:root[data-theme][data-theme] .hl-hero__card .hl-hero__meta {
+  padding-bottom: 28px;
+}
+/* The company's name smaller beside its mark (30 Oct). */
+:root[data-theme][data-theme] .hl-hero__card .hl-hero__title {
+  font-size: 32px;
+}
+
+/* ---- Demo #/demo/glass-buttons: the issue card's actions in a few looks ------------------------------------ */
+.gbd-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+@media (max-width: 1100px) {
+  .gbd-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.gbd-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.gbd-stage {
+  padding: 28px;
+  border-radius: 20px;
+  background:
+    radial-gradient(50% 70% at 100% 0%, rgba(233, 88, 142, 0.25), transparent 70%),
+    radial-gradient(40% 60% at 80% 0%, rgba(122, 69, 230, 0.2), transparent 70%),
+    var(--sand, #f8f6f2);
+}
+.gbd-card {
+  display: grid;
+  gap: 6px;
+  padding: 20px 22px;
+  border-radius: 18px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 1px 2px rgba(40, 30, 90, 0.04);
+}
+.gbd-card > span {
+  color: var(--text-2);
+  font-weight: 300;
+}
+.gbd-acts {
+  display: flex;
+  gap: 10px;
+  margin-top: 12px;
+}
+.gbd-btn {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 450;
+  color: var(--ink);
+  transition: background 0.2s, box-shadow 0.2s;
+}
+.gbd-btn--ask .brand-spark {
+  color: var(--ember, #e8501f);
+  filter: none;
+}
+/* The light under the AI's button. */
+.gbd-btn--ask::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  left: 14%;
+  right: 14%;
+  bottom: -7px;
+  height: 60%;
+  border-radius: 999px;
+  background: linear-gradient(90deg in oklch, #1e3bd6, #7a45e6 35%, #e9588e 65%, #e8501f);
+  filter: blur(10px);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+.gbd-btn--ask:hover::before {
+  opacity: 0.6;
+}
+/* Now */
+.gbd--now .gbd-btn {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.7));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 10px 0 14px -12px rgba(30, 59, 214, 0.4),
+    inset -10px 0 14px -12px rgba(232, 80, 31, 0.36),
+    inset 0 -8px 12px -10px rgba(233, 88, 142, 0.32),
+    0 0 0 1px rgba(14, 17, 22, 0.04),
+    0 4px 12px -6px rgba(40, 30, 90, 0.2);
+}
+.gbd--now .gbd-btn--ask::before {
+  opacity: 0.45;
+}
+/* A: plain white */
+.gbd--white .gbd-btn,
+.gbd--ai .gbd-btn,
+.gbd--rim .gbd-btn--req {
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.07), 0 2px 6px -2px rgba(40, 30, 90, 0.1);
+}
+.gbd--white .gbd-btn:hover,
+.gbd--ai .gbd-btn:hover,
+.gbd--rim .gbd-btn--req:hover {
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.1), 0 4px 10px -3px rgba(40, 30, 90, 0.16);
+}
+/* B: light only for AI */
+.gbd--ai .gbd-btn--ask::before {
+  opacity: 0.5;
+}
+/* C: clear glass */
+.gbd--clear .gbd-btn {
+  background: rgba(255, 255, 255, 0.25);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), inset 0 1px 0 #fff, 0 0 0 1px rgba(14, 17, 22, 0.06);
+}
+.gbd--clear .gbd-btn:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+.gbd--clear .gbd-btn--ask::before {
+  opacity: 0.3;
+}
+/* D: Ink primary + glass Ask Spark */
+.gbd--ink .gbd-btn--req {
+  color: #fff;
+  background: var(--ink);
+}
+.gbd--ink .gbd-btn--ask {
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.07), 0 2px 6px -2px rgba(40, 30, 90, 0.1);
+}
+.gbd--ink .gbd-btn--ask::before {
+  opacity: 0.45;
+}
+/* E: a spectrum rim on the AI's button */
+.gbd--rim .gbd-btn--ask {
+  background: #fff;
+  box-shadow: 0 2px 6px -2px rgba(40, 30, 90, 0.12);
+}
+.gbd--rim .gbd-btn--ask::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(90deg in oklch, #1e3bd6, #7a45e6 35%, #e9588e 65%, #e8501f);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box exclude,
+    linear-gradient(#000 0 0);
+  opacity: 0.75;
+}
+
+/* Ways to start as clear glass chips (30 Oct): no lines; each a pane of frost with a white rim, the ground's light
+   showing through; a little whiter on hover. Chats' start and the Ask Spark drawer. */
+:root[data-theme][data-theme] .chats-start__list {
+  display: grid;
+  gap: 8px;
+}
+:root[data-theme][data-theme] .chats-start__list li,
+:root[data-theme][data-theme] .chats-start__list li + li,
+:root[data-theme][data-theme] .chats-start__list li:hover,
+:root[data-theme][data-theme] .chats-start__list li:hover + li {
+  border-top: 0;
+}
+:root[data-theme][data-theme] .chats-start__row {
+  height: 48px;
+  padding: 0 18px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.3);
+  -webkit-backdrop-filter: blur(12px) saturate(1.2);
+  backdrop-filter: blur(12px) saturate(1.2);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8), inset 0 1px 0 #fff, 0 1px 2px rgba(40, 30, 90, 0.04);
+}
+:root[data-theme][data-theme] .chats-start__row:hover {
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: inset 0 0 0 1px #fff, inset 0 1px 0 #fff, 0 4px 12px -6px rgba(40, 30, 90, 0.16);
+}
+:root[data-theme][data-theme] .chat-drawer .chats-start__row {
+  height: auto;
+  min-height: 48px;
+  padding: 12px 16px;
+  background: rgba(248, 246, 242, 0.6);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.06);
+}
+.gbd-btn {
+  white-space: nowrap;
+  flex: none;
+}
+.gbd-acts {
+  flex-wrap: wrap;
+}
+
+/* The sidebar and the tab track without the coloured light at their sides (30 Oct): white frost and a white rim. */
+:root[data-theme][data-theme] :is(.rail, .hl-tabs) {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    0 12px 32px -20px rgba(40, 30, 90, 0.16);
+}
+
+/* Tables in glass (30 Oct): the grain no longer shows through. The requests table is a white frosted card with a
+   white rim, its head a shade whiter, its lines faint. */
+:root[data-theme][data-theme] .rq-tbl {
+  border: 0;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+  backdrop-filter: blur(20px) saturate(1.2);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.85), 0 1px 2px rgba(40, 30, 90, 0.04);
+}
+:root[data-theme][data-theme] .rq-tbl > .rq-cols:first-child {
+  background: none;
+}
+
+/* Search and the filters in the glass of the tabs' bubble only when they are on (30 Oct): search in focus or with
+   words in it, a filter set to anything but its default. At rest they keep their grey, as the tabs' track; on, the
+   bubble's glass (almost no fill, a bright white rim, a highlight on top, a small lift), as the picked tab. */
+:root[data-theme][data-theme] :is(.rq-search:focus-within, .rq-search:has(input:not(:placeholder-shown)), .filter-btn.is-set, .filter-btn[aria-expanded='true']) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.16) 50%, rgba(255, 255, 255, 0.46) 100%);
+  -webkit-backdrop-filter: blur(1.5px) saturate(1.4) brightness(1.05);
+  backdrop-filter: blur(1.5px) saturate(1.4) brightness(1.05);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 0 2px 2px -1px #fff,
+    inset 0 -2px 3px -1px rgba(14, 17, 22, 0.06),
+    0 1px 3px rgba(14, 17, 22, 0.08);
+}
+
+/* Ask Spark: with no disc behind the spark, the words sit close to it (30 Oct). */
+:root[data-theme][data-theme] :is(.hl-mchat, .hl-fix__tools .hl-fix__tool:has(.spark-disc)) {
+  gap: 4px;
+  padding-left: 12px;
+}
+:root[data-theme][data-theme] :is(.hl-mchat, .hl-fix__tool) .spark-disc {
+  margin: 0 -2px 0 -4px;
+}
+
+/* Clear in the primary's colour, Ink, as a text button (30 Oct): not Cobalt. */
+:root[data-theme][data-theme] .filter-bar__clear {
+  color: var(--ink);
+  font-weight: 500;
+}
+:root[data-theme][data-theme] .filter-bar__clear:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* The new chat's box in the tabs' bubble glass (30 Oct): almost no fill of its own (whiter at the top and the foot,
+   clear in the middle), a bright white rim, a highlight on top, a faint shade at the foot, a small lift; the
+   light under it shows through. A little more blur than the tabs, so what you type stays clear over the light. */
+:root[data-theme][data-theme] :is(.assistant--chats .chats-start) .composer.composer--box,
+:root[data-theme][data-theme] :is(.assistant--chats .chats-start) .composer.composer--box:is(.is-focus, .is-typing, .is-busy) {
+  border-color: transparent;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.16) 50%, rgba(255, 255, 255, 0.46) 100%);
+  -webkit-backdrop-filter: blur(6px) saturate(1.4) brightness(1.05);
+  backdrop-filter: blur(6px) saturate(1.4) brightness(1.05);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 0 2px 2px -1px #fff,
+    inset 0 -2px 3px -1px rgba(14, 17, 22, 0.06),
+    0 1px 3px rgba(14, 17, 22, 0.08);
+}
+:root[data-theme][data-theme] :is(.assistant--chats .chats-start) .composer.composer--box.is-focus {
+  box-shadow:
+    inset 0 0 0 1px #fff,
+    inset 0 2px 2px -1px #fff,
+    inset 0 -2px 3px -1px rgba(14, 17, 22, 0.06),
+    0 2px 6px rgba(14, 17, 22, 0.1);
+}
+/* Writing (in focus or with words in it): a veil of white over the light, so the words read; the colour stays,
+   softer (30 Oct). */
+:root[data-theme][data-theme] :is(.assistant--chats .chats-start) .composer.composer--box:is(.is-focus, .is-typing) {
+  background:
+    linear-gradient(rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.5)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.16) 50%, rgba(255, 255, 255, 0.46) 100%);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Chat history as a floating glass panel, the sidebar's twin on the right (30 Oct): white frost, a white rim, 12px
+   off the window's edges, 24px corners; the light shows through its top, the words stay clear. */
+:root[data-theme][data-theme] .chats-hist {
+  top: 12px;
+  height: calc(100vh - 24px);
+  margin: 12px 12px 12px 0;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    0 12px 32px -20px rgba(40, 30, 90, 0.16);
+}
+:root[data-theme][data-theme] .assistant--chats:not(.is-hist) .chats-hist {
+  box-shadow: none;
+  background: none;
+}
+:root[data-theme][data-theme] .chats-hist__in {
+  width: 328px;
+}
+
+/* In a conversation, the solid Sand strips under the chat box and under Chats read as boxes over the glass ground
+   (30 Oct): they go. The box is near-opaque white, so the thread scrolls under it cleanly. */
+:root[data-theme][data-theme] .assistant__composer::before,
+:root[data-theme][data-theme] .assistant--chats:has(.thread) .chats-top::before {
+  display: none;
+}
+
+/* Buttons more see-through (30 Oct): the glass of the tabs' bubble (whiter at the top and foot, clear in the
+   middle, a bright white rim, a highlight, a small lift), no colour inside the edge; the ground shows through.
+   Ask Spark keeps the light beneath it. */
+:root[data-theme][data-theme] :is(.btn--secondary, .hl-mchat, .hl-cind, .hl-fix__make, .hl-fix__more, .hdc-pager button, .hl-fix__tools .hl-fix__tool:has(.spark-disc), .followup, .sources__toggle) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.16) 50%, rgba(255, 255, 255, 0.46) 100%);
+  -webkit-backdrop-filter: blur(1.5px) saturate(1.4) brightness(1.05);
+  backdrop-filter: blur(1.5px) saturate(1.4) brightness(1.05);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 0 2px 2px -1px #fff,
+    inset 0 -2px 3px -1px rgba(14, 17, 22, 0.06),
+    0 1px 3px rgba(14, 17, 22, 0.08);
+}
+:root[data-theme][data-theme] :is(.btn--secondary, .hl-mchat, .hl-fix__make, .hl-fix__more, .hdc-pager button, .hl-fix__tools .hl-fix__tool:has(.spark-disc), .followup, .sources__toggle):hover:not(:disabled) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.6) 100%);
+  box-shadow:
+    inset 0 0 0 1px #fff,
+    inset 0 2px 2px -1px #fff,
+    inset 0 -2px 3px -1px rgba(14, 17, 22, 0.06),
+    0 2px 6px rgba(14, 17, 22, 0.1);
+}
+/* The rim softer (30 Oct): white at about half, so the edge is a glint, not a line. */
+:root[data-theme][data-theme] :is(.btn--secondary, .hl-mchat, .hl-cind, .hl-fix__make, .hl-fix__more, .hdc-pager button, .hl-fix__tools .hl-fix__tool:has(.spark-disc), .followup, .sources__toggle) {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+    inset 0 2px 2px -1px rgba(255, 255, 255, 0.8),
+    inset 0 -2px 3px -1px rgba(14, 17, 22, 0.06),
+    0 1px 3px rgba(14, 17, 22, 0.08);
+}
+:root[data-theme][data-theme] :is(.btn--secondary, .hl-mchat, .hl-fix__make, .hl-fix__more, .hdc-pager button, .hl-fix__tools .hl-fix__tool:has(.spark-disc), .followup, .sources__toggle):hover:not(:disabled) {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    inset 0 2px 2px -1px #fff,
+    inset 0 -2px 3px -1px rgba(14, 17, 22, 0.06),
+    0 2px 6px rgba(14, 17, 22, 0.1);
+}
+
+/* New in the history panel as a text button (30 Oct): Ink words and the plus, no fill; a breath of white on hover. */
+:root[data-theme][data-theme] .chats-hist__head .btn--ghost {
+  color: var(--ink);
+  margin-right: -10px;
+}
+:root[data-theme][data-theme] .chats-hist__head .btn--ghost:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+
+/* The section cards in the sidebar's recipe (30 Oct): one container for everything that floats on the ground. White
+   frost at half, a white rim and a highlight on top, a soft shadow, no colour at the sides. */
+:root[data-theme][data-theme] :is(.hl-hero__card, .hdc-feature, .hdc--latest.hdc--latest, .rq-tbl) {
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    0 12px 32px -20px rgba(40, 30, 90, 0.16);
+}
+
+/* Credits read as information, not a button (30 Oct): no pill, no rim, no shadow; the ring, the amount and the
+   chevron on the card, a breath of white only on hover. Ask Spark clean: no light smeared under it. */
+:root[data-theme][data-theme] .hl-cind.hl-cind.hl-cind.hl-cind,
+:root[data-theme][data-theme] .hl-cind .hl-cind__chip {
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .hl-cind.hl-cind.hl-cind.hl-cind {
+  padding: 0;
+}
+:root[data-theme][data-theme] .hl-cind .hl-cind__chip {
+  padding: 0 10px;
+  border-radius: 999px;
+}
+:root[data-theme][data-theme] .hl-cind .hl-cind__chip:hover {
+  background: rgba(255, 255, 255, 0.4);
+}
+:root[data-theme][data-theme] :is(.hl-mchat, .hl-fix__tools .hl-fix__tool:has(.spark-disc))::before {
+  display: none;
+}
+
+/* The issue card's actions (30 Oct): Request proposal is the primary (solid Ink); Ask Spark has no fill, the spark
+   and the words on the card, a breath of white on hover. */
+:root[data-theme][data-theme] .hl-fix__tools.hl-fix__tools.hl-fix__tools .hl-fix__make,
+:root[data-theme][data-theme] .hl-fix__tools.hl-fix__tools.hl-fix__tools .hl-fix__make:hover:not(:disabled) {
+  color: #fff;
+  background: var(--ink);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .hl-fix__tools.hl-fix__tools.hl-fix__tools .hl-fix__make:hover:not(:disabled) {
+  background: #2a2f38;
+}
+:root[data-theme][data-theme] .hl-fix__tools.hl-fix__tools.hl-fix__tools .hl-fix__tool:has(.spark-disc) {
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .hl-fix__tools.hl-fix__tools.hl-fix__tools .hl-fix__tool:has(.spark-disc):hover:not(:disabled) {
+  background: rgba(14, 17, 22, 0.04);
+  box-shadow: none;
+}
+
+/* Fix (30 Oct): the credits card opened under the company card's clipped edge. With no cover to clip, the card lets
+   it out and sits above the sections below. */
+:root[data-theme][data-theme] .hl-hero__card {
+  overflow: visible;
+  z-index: 5;
+}
+
+/* Fix (30 Oct): in the floating sidebar the account card ran to (or past) the panel's bottom edge; room under it. */
+:root[data-theme][data-theme] .rail {
+  padding-bottom: 10px;
+}
+
+/* ---- Demo #/demo/pager-motion: paging the issue card ----------------------------------------------------- */
+.pmd-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+@media (max-width: 1000px) {
+  .pmd-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.pmd-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.pmd-sec {
+  padding: 20px 22px 22px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 12px 32px -20px rgba(40, 30, 90, 0.16);
+}
+.pmd-head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 14px;
+}
+.pmd-head b {
+  flex: 1;
+  font-size: 16px;
+  font-weight: 450;
+}
+.pmd-count {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-right: 4px;
+  font-size: 13px;
+  color: var(--text-3);
+  overflow: hidden;
+}
+.pmd-num {
+  display: inline-block;
+  color: var(--ink);
+}
+.pmd-num.is-up {
+  animation: pmd-up 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.pmd-num.is-down {
+  animation: pmd-down 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes pmd-up {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+}
+@keyframes pmd-down {
+  from {
+    transform: translateY(-100%);
+    opacity: 0;
+  }
+}
+.pmd-head button {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 1px 3px rgba(14, 17, 22, 0.08);
+}
+.pmd-stage {
+  position: relative;
+  overflow: hidden;
+  border-radius: 18px;
+}
+.pmd-card {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  gap: 6px;
+  min-height: 132px;
+  padding: 18px 20px;
+  border-radius: 18px;
+  font-size: 14px;
+  background: #fff;
+  box-shadow: 0 1px 2px rgba(40, 30, 90, 0.05);
+}
+.pmd-card > span:last-child {
+  color: var(--text-2);
+  font-weight: 300;
+}
+.pmd-tag {
+  justify-self: start;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  color: #b3400f;
+  background: color-mix(in srgb, var(--ember, #e8501f) 14%, #fff);
+}
+.pmd-tag.is-high {
+  color: #fff;
+  background: var(--ember, #e8501f);
+}
+/* A: slide */
+.pmd--slide .pmd-card.is-next {
+  animation: pmd-in-r 0.26s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.pmd--slide .pmd-card.is-prev {
+  animation: pmd-in-l 0.26s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes pmd-in-r {
+  from {
+    opacity: 0;
+    transform: translateX(16px);
+  }
+}
+@keyframes pmd-in-l {
+  from {
+    opacity: 0;
+    transform: translateX(-16px);
+  }
+}
+/* B: slide + blur */
+.pmd--blur .pmd-card.is-next {
+  animation: pmd-in-r-blur 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.pmd--blur .pmd-card.is-prev {
+  animation: pmd-in-l-blur 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@keyframes pmd-in-r-blur {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateX(16px);
+  }
+}
+@keyframes pmd-in-l-blur {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translateX(-16px);
+  }
+}
+/* C: deck */
+.pmd--deck {
+  overflow: visible;
+  padding-bottom: 10px;
+}
+.pmd-under {
+  position: absolute;
+  left: 14px;
+  right: 14px;
+  bottom: 0;
+  height: 40px;
+  border-radius: 0 0 16px 16px;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: 0 1px 2px rgba(40, 30, 90, 0.05);
+}
+.pmd--deck .pmd-card.is-next {
+  animation: pmd-rise 0.34s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+.pmd--deck .pmd-card.is-prev {
+  animation: pmd-drop 0.34s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+@keyframes pmd-rise {
+  from {
+    opacity: 0.4;
+    transform: translateY(10px) scale(0.96);
+  }
+}
+@keyframes pmd-drop {
+  from {
+    opacity: 0;
+    transform: translateY(-10px) scale(1.02);
+  }
+}
+/* D: glint */
+.pmd--glint .pmd-card {
+  animation: pmd-fade 0.25s ease;
+}
+.pmd--glint .pmd-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  background: linear-gradient(100deg in oklch, transparent 30%, rgba(122, 69, 230, 0.16) 42%, rgba(233, 88, 142, 0.18) 50%, rgba(232, 80, 31, 0.14) 58%, transparent 70%) 0 0 / 250% 100%;
+  animation: pmd-glint 0.7s ease-out forwards;
+}
+.pmd--glint .pmd-card.is-prev::after {
+  animation-direction: reverse;
+}
+@keyframes pmd-fade {
+  from {
+    opacity: 0.2;
+  }
+}
+@keyframes pmd-glint {
+  from {
+    background-position: 100% 0;
+    opacity: 1;
+  }
+  to {
+    background-position: 0 0;
+    opacity: 0;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .pmd-card,
+  .pmd-card::after,
+  .pmd-num {
+    animation: none !important;
+  }
+}
+
+/* Paging the issues (picked on #/demo/pager-motion, B, 30 Oct): the next card comes in 16px from the side you paged
+   towards, sharpening out of a blur; the number turns over with it. */
+.hdc-feature .hdc--feature.is-next {
+  animation: pmd-in-r-blur 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.hdc-feature .hdc--feature.is-prev {
+  animation: pmd-in-l-blur 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.hdc-pager__count {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  overflow: hidden;
+}
+.hdc-pager__num {
+  display: inline-block;
+}
+.hdc-pager__num.is-up {
+  animation: pmd-up 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.hdc-pager__num.is-down {
+  animation: pmd-down 0.28s cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+@media (prefers-reduced-motion: reduce) {
+  .hdc-feature .hdc--feature,
+  .hdc-pager__num {
+    animation: none;
+  }
+}
+
+/* ---- The request and the proposal in glass (30 Oct) ------------------------------------------------------------
+   The same containers as Home (the sidebar's recipe), the same tab track, the decision without a coloured fill
+   (the urgency in Ember words), the current stage a white plate inside the glass. */
+:root[data-theme][data-theme] :is(.block.brief, .side-card, .decision, .scope-tbl, .req-decide):is(*, *) {
+  border: 0;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    0 12px 32px -20px rgba(40, 30, 90, 0.16);
+}
+:root[data-theme][data-theme] .scope-tbl {
+  overflow: hidden;
+}
+:root[data-theme][data-theme] .scope-tbl .scope-tbl__head {
+  background: none;
+}
+:root[data-theme][data-theme] .stg .stg__item.is-current {
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 1px 2px rgba(40, 30, 90, 0.05);
+}
+/* Tabs on the request: the glass track and the white bubble, as on Home. */
+:root[data-theme][data-theme] .tabs.tabs--underline {
+  display: inline-flex;
+  width: fit-content;
+  gap: 2px;
+  padding: 4px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), inset 0 1px 0 #fff, 0 12px 32px -20px rgba(40, 30, 90, 0.16);
+}
+:root[data-theme][data-theme] .tabs.tabs--underline .tabs__tab {
+  height: 36px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .tabs.tabs--underline .tabs__tab::after {
+  display: none;
+}
+:root[data-theme][data-theme] .tabs.tabs--underline .tabs__tab.is-active {
+  background: linear-gradient(180deg, #fff, rgba(255, 255, 255, 0.8));
+  box-shadow: inset 0 0 0 1px #fff, 0 2px 8px -4px rgba(40, 30, 90, 0.2);
+}
+
+/* ---- Demo #/demo/tab-looks ------------------------------------------------------------------------------- */
+.tld-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+@media (max-width: 1000px) {
+  .tld-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.tld-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.tld-stage {
+  padding: 28px 24px;
+  border-radius: 20px;
+  background:
+    radial-gradient(50% 80% at 100% 0%, rgba(233, 88, 142, 0.18), transparent 70%),
+    radial-gradient(40% 70% at 70% 0%, rgba(122, 69, 230, 0.16), transparent 70%),
+    var(--sand, #f8f6f2);
+}
+.tld {
+  display: inline-flex;
+  gap: 2px;
+}
+.tld button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  color: var(--text-2);
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+}
+.tld button:hover,
+.tld button.is-on {
+  color: var(--ink);
+}
+.tld-n {
+  font-size: 11px;
+  color: var(--text-3);
+}
+/* Now */
+.tld--now {
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), inset 0 1px 0 #fff, 0 12px 32px -20px rgba(40, 30, 90, 0.16);
+}
+.tld--now button.is-on,
+.tld--bare button.is-on {
+  background: linear-gradient(180deg, #fff, rgba(255, 255, 255, 0.8));
+  box-shadow: inset 0 0 0 1px #fff, 0 2px 8px -4px rgba(40, 30, 90, 0.2);
+}
+/* 2: no track; the bubble is the tabs' glass */
+.tld--bare button.is-on {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.16) 50%, rgba(255, 255, 255, 0.46) 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), inset 0 2px 2px -1px #fff, 0 1px 3px rgba(14, 17, 22, 0.08);
+}
+/* 3: Ink picked */
+.tld--ink button.is-on {
+  color: #fff;
+  background: var(--ink);
+}
+.tld--ink button.is-on .tld-n {
+  color: rgba(255, 255, 255, 0.6);
+}
+/* 4: words and a dot */
+.tld--dot {
+  gap: 8px;
+}
+.tld--dot button {
+  padding: 0 6px;
+}
+.tld--dot button.is-on::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -2px;
+  width: 5px;
+  height: 5px;
+  margin-left: -2.5px;
+  border-radius: 50%;
+  background: var(--cobalt, #1e3bd6);
+}
+/* 5: underline of light */
+.tld--light {
+  gap: 4px;
+  box-shadow: inset 0 -1px 0 rgba(14, 17, 22, 0.08);
+}
+.tld--light button {
+  border-radius: 0;
+  padding: 0 10px;
+}
+.tld--light button.is-on::after {
+  content: '';
+  position: absolute;
+  left: 8px;
+  right: 8px;
+  bottom: -1px;
+  height: 2px;
+  border-radius: 2px;
+  background: linear-gradient(90deg in oklch, #1e3bd6, #7a45e6 35%, #e9588e 65%, #e8501f);
+}
+/* 1: the sliding bubble, as a pill */
+.tld-slide .gtabs {
+  padding: 4px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), inset 0 1px 0 #fff, 0 12px 32px -20px rgba(40, 30, 90, 0.16);
+}
+.tld-slide .gtabs button {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 14px;
+}
+.tld-slide .gtabs__bubble,
+.tld-slide .gtabs__trace {
+  top: 4px;
+  height: 36px;
+  border-radius: 999px;
+}
+
+/* The decision card stays white, the page's foreground (30 Oct): solid white, the containers' white rim and
+   highlight, a soft shadow; its secondary actions a hairline stroke so they read on the white. */
+:root[data-theme][data-theme] .decision.decision.decision {
+  background: #fff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    0 0 0 1px rgba(14, 17, 22, 0.04),
+    0 14px 34px -18px rgba(40, 30, 90, 0.22);
+}
+:root[data-theme][data-theme] .decision.decision.decision .btn--secondary {
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.12);
+}
+:root[data-theme][data-theme] .decision.decision.decision .btn--secondary:hover:not(:disabled) {
+  background: rgba(14, 17, 22, 0.04);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.2);
+}
+
+/* Page tabs as Ink picked (picked on #/demo/tab-looks, 3, 30 Oct): no track; the picked tab a solid Ink pill with
+   white words, the others grey words, a breath of white on hover. Home's tabs and the request's. */
+:root[data-theme][data-theme] :is(.hl-tabs, .tabs.tabs--underline) {
+  padding: 0;
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+:root[data-theme][data-theme] :is(.hl-tabs button, .tabs.tabs--underline .tabs__tab) {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  color: var(--text-2);
+  background: none;
+  box-shadow: none;
+}
+:root[data-theme][data-theme] :is(.hl-tabs button, .tabs.tabs--underline .tabs__tab):hover {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.45);
+}
+:root[data-theme][data-theme] :is(.hl-tabs button.is-on, .tabs.tabs--underline .tabs__tab.is-active),
+:root[data-theme][data-theme] :is(.hl-tabs button.is-on, .tabs.tabs--underline .tabs__tab.is-active):hover {
+  color: #fff;
+  background: var(--ink);
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .tabs.tabs--underline .tabs__tab.is-active :is(.tabs__count, .tabs__n, span) {
+  color: rgba(255, 255, 255, 0.65);
+}
+/* The picked tab read as the primary button (30 Oct): it becomes a solid white pill with Ink words and a soft
+   shadow, still no track. Ink stays for the one action per screen. */
+:root[data-theme][data-theme] :is(.hl-tabs button.is-on, .tabs.tabs--underline .tabs__tab.is-active),
+:root[data-theme][data-theme] :is(.hl-tabs button.is-on, .tabs.tabs--underline .tabs__tab.is-active):hover {
+  color: var(--ink);
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.04), 0 2px 8px -3px rgba(40, 30, 90, 0.16);
+}
+:root[data-theme][data-theme] .tabs.tabs--underline .tabs__tab.is-active :is(.tabs__count, .tabs__n, span) {
+  color: var(--text-3);
+}
+
+/* One rhythm on Home (30 Oct): 24px between the blocks (cover card, tabs, issues, Latest), 28px inside the cards
+   on every side. */
+:root[data-theme][data-theme] .hl-ms {
+  margin-top: 0;
+}
+:root[data-theme][data-theme] .hl.hl--profile {
+  row-gap: 24px;
+}
+:root[data-theme][data-theme] .hl-ms__main {
+  padding-top: 0;
+  margin-top: 0;
+}
+:root[data-theme][data-theme] .hdc-stack {
+  gap: 24px;
+}
+:root[data-theme][data-theme] .hdc-stack > * {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+:root[data-theme][data-theme] :is(.hdc-feature, .hdc--latest.hdc--latest) {
+  padding: 28px;
+}
+
+/* The ⋯ on the white issue plate as a ghost (30 Oct): glass does nothing on white. No fill, no rim, no shadow;
+   a faint grey on hover and while its menu is open. */
+:root[data-theme][data-theme] .hdc-feature .hl-fix__more.hl-fix__more.hl-fix__more {
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .hdc-feature .hl-fix__more.hl-fix__more.hl-fix__more:is(:hover, .is-open) {
+  background: rgba(14, 17, 22, 0.05);
+  box-shadow: none;
+}
+
+/* ---- Demo #/demo/ask-glass ------------------------------------------------------------------------------- */
+.agd-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+@media (max-width: 1100px) {
+  .agd-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.agd-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.agd-stage {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 14px;
+  padding: 40px 24px;
+  border-radius: 20px;
+  background:
+    radial-gradient(60% 90% at 100% 0%, rgba(233, 88, 142, 0.22), transparent 70%),
+    radial-gradient(50% 80% at 70% 0%, rgba(122, 69, 230, 0.18), transparent 70%),
+    rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 12px 32px -20px rgba(40, 30, 90, 0.16);
+}
+.agd-credits {
+  font-size: 13px;
+  color: var(--text-2);
+}
+.agd-btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 40px;
+  padding: 0 18px 0 14px;
+  border-radius: 999px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+.agd-btn .brand-spark {
+  color: var(--ember, #e8501f);
+  filter: none;
+}
+.agd-btn__light {
+  position: absolute;
+  z-index: -1;
+  inset: 0;
+  pointer-events: none;
+}
+.agd-btn:hover {
+  transform: translateY(-1px);
+}
+/* Now */
+.agd--now {
+  height: 32px;
+  font-size: 13px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.16) 50%, rgba(255, 255, 255, 0.46) 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.5), inset 0 2px 2px -1px rgba(255, 255, 255, 0.8), 0 1px 3px rgba(14, 17, 22, 0.08);
+}
+/* A: light at the ends — a thick clear rim, the light bending at the left (Cobalt) and right (Ember) */
+.agd--rim {
+  background: linear-gradient(180deg, #fff, #f6f4f8);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.95),
+    inset 7px 0 8px -5px rgba(30, 59, 214, 0.75),
+    inset -7px 0 8px -5px rgba(232, 80, 31, 0.75),
+    inset 0 3px 4px -2px #fff,
+    inset 0 -3px 5px -2px rgba(122, 69, 230, 0.18),
+    0 0 0 3px rgba(255, 255, 255, 0.55),
+    0 6px 16px -8px rgba(40, 30, 90, 0.28);
+}
+.agd--rim:hover {
+  box-shadow:
+    inset 0 0 0 1.5px #fff,
+    inset 9px 0 10px -5px rgba(30, 59, 214, 0.85),
+    inset -9px 0 10px -5px rgba(232, 80, 31, 0.85),
+    inset 0 3px 4px -2px #fff,
+    inset 0 -3px 5px -2px rgba(122, 69, 230, 0.24),
+    0 0 0 3px rgba(255, 255, 255, 0.7),
+    0 10px 20px -8px rgba(40, 30, 90, 0.32);
+}
+/* B–E: a thick frosted tile holding light */
+.agd--tile,
+.agd--ember,
+.agd--cobalt,
+.agd--flow {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.35) 55%, rgba(255, 255, 255, 0.55) 100%);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.9),
+    inset 0 3px 3px -2px #fff,
+    inset 0 -4px 8px -4px rgba(14, 17, 22, 0.1),
+    0 8px 18px -10px rgba(40, 30, 90, 0.35);
+}
+.agd--tile .agd-btn__light {
+  background:
+    radial-gradient(60% 120% at 18% 90%, rgba(30, 59, 214, 0.75), transparent 70%),
+    radial-gradient(50% 110% at 55% 100%, rgba(122, 69, 230, 0.55), transparent 70%),
+    radial-gradient(50% 110% at 90% 90%, rgba(232, 80, 31, 0.6), transparent 70%);
+  filter: blur(6px);
+}
+.agd--ember .agd-btn__light {
+  background: radial-gradient(80% 140% at 20% 100%, rgba(232, 80, 31, 0.8), rgba(243, 160, 120, 0.4) 50%, transparent 80%);
+  filter: blur(6px);
+}
+.agd--cobalt .agd-btn__light {
+  background: radial-gradient(70% 140% at 25% 100%, rgba(30, 59, 214, 0.75), rgba(122, 69, 230, 0.5) 45%, transparent 80%);
+  filter: blur(6px);
+}
+.agd--flow .agd-btn__light {
+  inset: 0 -60%;
+  background: linear-gradient(90deg in oklch, #1e3bd6, #7a45e6 25%, #e9588e 50%, #e8501f 75%, #1e3bd6);
+  opacity: 0.55;
+  filter: blur(8px);
+  transition: transform 1.6s ease;
+}
+.agd--flow:hover .agd-btn__light {
+  transform: translateX(-30%);
+}
+.agd--tile:hover,
+.agd--ember:hover,
+.agd--cobalt:hover {
+  box-shadow:
+    inset 0 0 0 1.5px #fff,
+    inset 0 3px 3px -2px #fff,
+    inset 0 -4px 8px -4px rgba(14, 17, 22, 0.1),
+    0 12px 22px -10px rgba(40, 30, 90, 0.4);
+}
+
+/* ---- One radius scale (30 Oct) ----------------------------------------------------------------------------------
+   Containers that float on the ground 24px; plates inside them 16px; small pieces inside a plate or the sidebar
+   12px; buttons, page tabs and chips pills. The filter tabs, search and filters keep their 8px (6px inside). */
+:root[data-theme][data-theme] :is(.rail, .chats-hist, .hl-hero__card, .hdc-feature, .hdc--latest.hdc--latest, .rq-tbl, .req-decide, .block.brief, .side-card, .decision, .scope-tbl):is(*, *) {
+  border-radius: 24px;
+}
+:root[data-theme][data-theme] :is(.hdc-feature .hdc--feature, .hl-latest__row, .chats-start__row, .hl-hero__avatar):is(*, *) {
+  border-radius: 16px;
+}
+:root[data-theme][data-theme] :is(.rail__btn, .rail__me, .hl-fix__do, .stg__item.is-current):is(*, *) {
+  border-radius: 12px;
+}
+:root[data-theme][data-theme] .stg .stg__item.is-current.is-current {
+  border-radius: 12px;
+}
+
+/* Ask Spark as A · Light at the ends (picked on #/demo/ask-glass, 30 Oct): a white pill in a thick clear rim, the
+   light bending at its ends, Cobalt at the left, Ember at the right. Same height as the other buttons. */
+:root[data-theme][data-theme] .hl-mchat.hl-mchat.hl-mchat,
+:root[data-theme][data-theme] .hl-mchat.hl-mchat.hl-mchat:hover {
+  background: linear-gradient(180deg, #fff, #f6f4f8);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.95),
+    inset 7px 0 8px -5px rgba(30, 59, 214, 0.75),
+    inset -7px 0 8px -5px rgba(232, 80, 31, 0.75),
+    inset 0 3px 4px -2px #fff,
+    inset 0 -3px 5px -2px rgba(122, 69, 230, 0.18),
+    0 0 0 3px rgba(255, 255, 255, 0.55),
+    0 6px 16px -8px rgba(40, 30, 90, 0.28);
+  transition: box-shadow 0.25s ease, transform 0.25s ease;
+}
+:root[data-theme][data-theme] .hl-mchat.hl-mchat.hl-mchat:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    inset 0 0 0 1.5px #fff,
+    inset 9px 0 10px -5px rgba(30, 59, 214, 0.85),
+    inset -9px 0 10px -5px rgba(232, 80, 31, 0.85),
+    inset 0 3px 4px -2px #fff,
+    inset 0 -3px 5px -2px rgba(122, 69, 230, 0.24),
+    0 0 0 3px rgba(255, 255, 255, 0.7),
+    0 10px 20px -8px rgba(40, 30, 90, 0.32);
+}
+/* Ask Spark's words closer to the spark (30 Oct): the 28px disc keeps space round the 19px spark; take it in. */
+:root[data-theme][data-theme] .hl-mchat .spark-disc {
+  margin: 0 -5px 0 -4px;
+}
+/* The account card sits 12px from the sidebar's edges on every side (30 Oct), its corners (12px) concentric with
+   the panel's (24px). */
+:root[data-theme][data-theme] .rail .rail__me {
+  margin-bottom: 0;
+}
+:root[data-theme][data-theme] .rail {
+  padding: 10px 12px 12px;
+}
+
+/* Ask Spark (30 Oct): at rest, the clear glass that showed on hover (whiter at the top and foot, a white rim and a
+   highlight) with the light bending at its ends (Cobalt left, Ember right); on hover only a little lighter. */
+:root[data-theme][data-theme] body .hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.6) 100%);
+  -webkit-backdrop-filter: blur(1.5px) saturate(1.4) brightness(1.05);
+  backdrop-filter: blur(1.5px) saturate(1.4) brightness(1.05);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.85),
+    inset 0 2px 2px -1px #fff,
+    inset 7px 0 8px -5px rgba(30, 59, 214, 0.6),
+    inset -7px 0 8px -5px rgba(232, 80, 31, 0.6),
+    0 2px 6px rgba(14, 17, 22, 0.1);
+  transform: none;
+  transition: background 0.2s ease;
+}
+:root[data-theme][data-theme] body .hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat:hover:not(:disabled) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.55) 50%, rgba(255, 255, 255, 0.78) 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.85),
+    inset 0 2px 2px -1px #fff,
+    inset 7px 0 8px -5px rgba(30, 59, 214, 0.6),
+    inset -7px 0 8px -5px rgba(232, 80, 31, 0.6),
+    0 2px 6px rgba(14, 17, 22, 0.1);
+  transform: none;
+}
+/* Closer to the clearer look (30 Oct): less white in the middle so the ground's colour shows, a softer rim and a
+   faint shade at the foot; the light at the ends kept. Hover a little whiter. */
+:root[data-theme][data-theme] body .hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.16) 50%, rgba(255, 255, 255, 0.46) 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    inset 0 2px 2px -1px #fff,
+    inset 0 -2px 3px -1px rgba(14, 17, 22, 0.06),
+    inset 7px 0 8px -5px rgba(30, 59, 214, 0.5),
+    inset -7px 0 8px -5px rgba(232, 80, 31, 0.5),
+    0 2px 6px rgba(14, 17, 22, 0.1);
+}
+:root[data-theme][data-theme] body .hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat:hover:not(:disabled) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.78) 0%, rgba(255, 255, 255, 0.3) 50%, rgba(255, 255, 255, 0.6) 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    inset 0 2px 2px -1px #fff,
+    inset 0 -2px 3px -1px rgba(14, 17, 22, 0.06),
+    inset 7px 0 8px -5px rgba(30, 59, 214, 0.5),
+    inset -7px 0 8px -5px rgba(232, 80, 31, 0.5),
+    0 2px 6px rgba(14, 17, 22, 0.1);
+}
+/* A touch clearer still (30 Oct). */
+:root[data-theme][data-theme] body .hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.08) 50%, rgba(255, 255, 255, 0.34) 100%);
+}
+:root[data-theme][data-theme] body .hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat:hover:not(:disabled) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.66) 0%, rgba(255, 255, 255, 0.2) 50%, rgba(255, 255, 255, 0.5) 100%);
+}
+/* Clearer again (30 Oct). */
+:root[data-theme][data-theme] body .hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.36) 0%, rgba(255, 255, 255, 0.03) 50%, rgba(255, 255, 255, 0.22) 100%);
+}
+:root[data-theme][data-theme] body .hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat:hover:not(:disabled) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.52) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0.38) 100%);
+}
+/* Paging the issues, slower (30 Oct): half a second for the card, the number with it. */
+.hdc-feature .hdc--feature.is-next {
+  animation-duration: 0.5s;
+}
+.hdc-feature .hdc--feature.is-prev {
+  animation-duration: 0.5s;
+}
+.hdc-pager__num:is(.is-up, .is-down) {
+  animation-duration: 0.45s;
+}
+
+/* ---- Demo #/demo/rail-hover ------------------------------------------------------------------------------ */
+.rhd-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 16px;
+}
+@media (max-width: 1200px) {
+  .rhd-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+.rhd-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rhd-rail {
+  display: grid;
+  gap: 4px;
+  padding: 12px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), inset 0 1px 0 #fff, 0 12px 32px -20px rgba(40, 30, 90, 0.16);
+}
+.rhd-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: 12px;
+  font-size: 14px;
+  color: var(--text-2);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+.rhd-item.is-on {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 0 0 1px #fff, 0 2px 8px -4px rgba(40, 30, 90, 0.18);
+}
+.rhd--grey .rhd-item:not(.is-on):is(:hover, .is-hover) {
+  color: var(--ink);
+  background: rgba(14, 17, 22, 0.06);
+}
+.rhd--half .rhd-item:not(.is-on):is(:hover, .is-hover) {
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.45);
+}
+.rhd--bubble .rhd-item:not(.is-on):is(:hover, .is-hover) {
+  color: var(--ink);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.16) 50%, rgba(255, 255, 255, 0.46) 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), inset 0 2px 2px -1px #fff, 0 1px 3px rgba(14, 17, 22, 0.08);
+}
+.rhd--text .rhd-item:not(.is-on):is(:hover, .is-hover) {
+  color: var(--ink);
+}
+.rhd--rim .rhd-item:not(.is-on):is(:hover, .is-hover) {
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95);
+}
+
+/* Sidebar hover as half white (picked on #/demo/rail-hover, 1, 30 Oct): the picked item's white at about half under
+   the pointer, no grey. */
+:root[data-theme][data-theme] .rail :is(.rail__btn:not(.is-active), .rail__toggle, .rail__end > *, .rail__me):hover {
+  --ring: transparent;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.45);
+}
+:root[data-theme][data-theme] .rail .rail__me:hover {
+  background: #fff;
+}
+/* The new chat's box takes focus when the page opens, so the white veil showed at once (30 Oct): the veil now comes
+   only when there are words in it; in focus alone the box stays clear. */
+:root[data-theme][data-theme] :is(.assistant--chats .chats-start) .composer.composer--box.is-focus:not(.is-typing) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.16) 50%, rgba(255, 255, 255, 0.46) 100%);
+}
+/* Ask Spark whiter again (30 Oct): less see-through at rest, a little whiter still on hover. */
+:root[data-theme][data-theme] body .hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.45) 50%, rgba(255, 255, 255, 0.68) 100%);
+}
+:root[data-theme][data-theme] body .hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat:hover:not(:disabled) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94) 0%, rgba(255, 255, 255, 0.65) 50%, rgba(255, 255, 255, 0.82) 100%);
+}
+
+/* Page tabs back to the underline (30 Oct): a hairline under all of them across the width, the picked tab in Ink
+   with the Ink line under it, the others grey; no pills, so they never read as buttons. Home and the request. */
+:root[data-theme][data-theme] :is(.hl-tabs, .tabs.tabs--underline):is(*, *) {
+  display: flex;
+  width: auto;
+  gap: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: inset 0 -1px 0 color-mix(in srgb, var(--ink) 10%, transparent);
+}
+:root[data-theme][data-theme] :is(.hl-tabs button, .tabs.tabs--underline .tabs__tab):is(*, *),
+:root[data-theme][data-theme] :is(.hl-tabs button, .tabs.tabs--underline .tabs__tab):is(*, *):is(:hover, .is-on, .is-active) {
+  position: relative;
+  height: 40px;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+}
+:root[data-theme][data-theme] :is(.hl-tabs button, .tabs.tabs--underline .tabs__tab):is(*, *) {
+  color: var(--text-2);
+}
+:root[data-theme][data-theme] :is(.hl-tabs button, .tabs.tabs--underline .tabs__tab):is(*, *):is(:hover, .is-on, .is-active) {
+  color: var(--ink);
+}
+:root[data-theme][data-theme] :is(.hl-tabs button, .tabs.tabs--underline .tabs__tab):is(*, *)::after {
+  display: block;
+}
+:root[data-theme][data-theme] .tabs.tabs--underline .tabs__tab.is-active :is(.tabs__count, .tabs__n, span) {
+  color: var(--text-3);
+}
+
+/* Ask Spark at the buttons' height (30 Oct): 32px and 13px, as the credits and every other button beside it. */
+:root[data-theme][data-theme] body .hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat {
+  height: 32px;
+  font-size: 13px;
+}
+:root[data-theme][data-theme] :is(.hl-tabs, .tabs.tabs--underline):is(*, *) {
+  width: 100%;
+  align-self: stretch;
+}
+
+/* Credits lighter (30 Oct): a finer ring (stroke 1.6 in place of 2.5) and the amount at a medium weight, not bold. */
+:root[data-theme][data-theme] .hl-cind .credit-ring :is(.credit-ring__track, .credit-ring__value) {
+  stroke-width: 1.6px;
+}
+:root[data-theme][data-theme] .hl-cind .hl-cind__chip > span:first-of-type {
+  font-weight: 450;
+}
+/* Sidebar hover the same as the filter tabs' hover trace (30 Oct): white at 62%, a white highlight on top, a faint
+   hairline. */
+:root[data-theme][data-theme] .rail :is(.rail__btn:not(.is-active), .rail__toggle, .rail__end > *):hover {
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: inset 0 1px 0 #fff, inset 0 0 0 1px rgba(14, 17, 22, 0.035);
+}
+/* The account card's hover without the grey ring (30 Oct): it turns solid white, with the hovers' white highlight
+   and faint hairline. */
+:root[data-theme][data-theme] .rail .rail__me.rail__me:hover {
+  --ring: transparent;
+  background: #fff;
+  box-shadow: inset 0 1px 0 #fff, inset 0 0 0 1px rgba(14, 17, 22, 0.035), 0 2px 8px -4px rgba(40, 30, 90, 0.18);
+}
+/* Tables with smaller corners (30 Oct): 16px; a table's straight rows sit badly in 24px corners. The :is() is doubled
+   on purpose: the 24px rule above carries `.hdc--latest.hdc--latest` in its list, which lifts the whole list to two
+   classes, so `:is(*, *)` (which adds nothing) lost to it and tables kept 24px. */
+:root[data-theme][data-theme] :is(.rq-tbl, .scope-tbl):is(.rq-tbl, .scope-tbl) {
+  border-radius: 16px;
+}
+
+/* Folders on Documents in the cards' recipe (30 Oct): the grey hairline stood out among the glass cards. White frost
+   at half, a white rim and a highlight on top, a soft shadow; on hover the shadow deepens. Corners as the tables
+   (16px): a grid of cards, not one floating panel. */
+:root[data-theme][data-theme] .fcard.fcard {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    0 12px 32px -20px rgba(40, 30, 90, 0.16);
+}
+:root[data-theme][data-theme] .fcard.fcard:hover {
+  box-shadow:
+    inset 0 0 0 1px #fff,
+    inset 0 1px 0 #fff,
+    0 18px 36px -18px rgba(40, 30, 90, 0.24);
+}
