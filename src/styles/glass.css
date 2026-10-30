@@ -1712,3 +1712,8 @@
     inset 0 1px 0 #fff,
     0 18px 36px -18px rgba(40, 30, 90, 0.24);
 }
+
+/* Home's tabs (30 Oct): the hairline only under the tabs, not across the page. */
+:root[data-theme][data-theme] .hl-tabs.hl-tabs {
+  width: fit-content;
+}
