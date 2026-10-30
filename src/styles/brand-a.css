@@ -3953,3 +3953,8 @@ button.proposal__tool:hover {
   padding-right: 14px;
   border-radius: 999px;
 }
+
+/* The issue card's actions at 13px (30 Oct), as the other small buttons. */
+:root[data-theme][data-theme] .hl-fix__tools.hl-fix__tools :is(.hl-fix__make, .hl-fix__tool, .hl-fix__tool:has(.spark-disc)) {
+  font-size: 13px;
+}

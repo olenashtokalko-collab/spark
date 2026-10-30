@@ -22675,3 +22675,192 @@ button.anp__report {
   border-color: color-mix(in srgb, var(--ink) 10%, transparent);
   box-shadow: none;
 }
+
+/* ---- While Spark thinks (#/demo/thinking, 30 Oct) --------------------------------------------------------------
+   The working state in the glass of the filter tabs' bubble: a white rim, a gloss, no fill of its own. */
+.thk-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 20px;
+}
+@media (max-width: 1000px) {
+  .thk-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.thk-card {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.thk-stage {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+  padding: 28px 24px 36px;
+  border-radius: 12px;
+  background:
+    radial-gradient(40% 60% at 85% 20%, rgba(255, 170, 130, 0.12), transparent),
+    radial-gradient(40% 60% at 15% 80%, rgba(30, 59, 214, 0.06), transparent),
+    var(--bg);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.thk-user {
+  align-self: flex-end;
+}
+.thk {
+  align-items: center;
+}
+.thk__body {
+  display: flex;
+  align-items: center;
+  min-height: 30px;
+}
+.thk-now {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.thk-now b,
+.thk-glass b {
+  font-weight: 400;
+  color: var(--text-3);
+}
+/* The glass: the tabs' bubble, a size up. */
+.thk-glass {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 14px;
+  color: var(--ink);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.16) 50%, rgba(255, 255, 255, 0.46) 100%);
+  -webkit-backdrop-filter: blur(2px) saturate(1.4) brightness(1.05);
+  backdrop-filter: blur(2px) saturate(1.4) brightness(1.05);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 0 2px 2px -1px #fff,
+    inset 0 -2px 3px -1px rgba(14, 17, 22, 0.06),
+    0 2px 6px rgba(14, 17, 22, 0.08);
+}
+/* A: a soft shine passes over the words. */
+.thk-shine {
+  color: transparent;
+  background: linear-gradient(100deg, var(--text-2) 40%, #fff 50%, var(--text-2) 60%) 0 0 / 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  animation: thk-shine 1.6s linear infinite;
+}
+@keyframes thk-shine {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: 0 0;
+  }
+}
+/* B: warm glass, a tail at the lower left as a speech bubble, three Ember dots. */
+.thk-onit-row {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+}
+.thk-glass--warm {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.25) 50%, rgba(255, 255, 255, 0.5) 100%),
+    linear-gradient(90deg, rgba(255, 214, 190, 0.45), rgba(255, 236, 222, 0.35));
+}
+.thk-glass--tail {
+  border-radius: 18px 18px 18px 6px;
+  overflow: visible;
+}
+.thk-dots {
+  display: inline-flex;
+  gap: 4px;
+}
+.thk-dots i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ember, #e8501f);
+  animation: thk-dot 1.2s ease-in-out infinite;
+}
+.thk-dots i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.thk-dots i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes thk-dot {
+  0%,
+  60%,
+  100% {
+    opacity: 0.35;
+    transform: translateY(0);
+  }
+  30% {
+    opacity: 1;
+    transform: translateY(-3px);
+  }
+}
+.thk-step {
+  font-size: 13px;
+  color: var(--text-3);
+}
+/* C: the glass holds the Noor light, breathing. */
+.thk-glass--lens {
+  min-width: 260px;
+  height: 40px;
+  padding: 0 18px;
+}
+.thk-glass__light {
+  position: absolute;
+  z-index: -1;
+  inset: -40% -10%;
+  background: linear-gradient(90deg in oklch, rgba(30, 59, 214, 0.55), rgba(122, 69, 230, 0.5) 40%, rgba(233, 88, 142, 0.4) 70%, rgba(232, 80, 31, 0.45));
+  filter: blur(14px);
+  animation: thk-breathe 2.4s ease-in-out infinite;
+}
+@keyframes thk-breathe {
+  50% {
+    opacity: 0.55;
+    transform: translateX(6%);
+  }
+}
+.thk-fade {
+  animation: thk-in 0.4s ease;
+}
+@keyframes thk-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .thk-shine,
+  .thk-dots i,
+  .thk-glass__light {
+    animation: none;
+  }
+}
+/* In the chat (30 Oct): "On it" in its glass, then the step and the time in grey. */
+.thinking.thinking--onit {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+.thinking--onit .thinking__label {
+  font-size: 13px;
+  color: var(--text-3);
+}
+.thinking--onit .thinking__time {
+  font-size: 12px;
+  color: var(--text-3);
+}

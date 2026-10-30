@@ -305,9 +305,20 @@ function Thinking({ steps, since, open, onToggle }: { steps: string[]; since: st
   }, []);
   const secs = Math.max(0, Math.round((now - new Date(since).getTime()) / 1000));
   const label = steps.length ? steps[steps.length - 1] : 'Thinking';
+  // "On it" in warm glass with three Ember dots, the step beside it (picked on #/demo/thinking, B, 30 Oct).
   return (
-    <button className="thinking" onClick={onToggle} aria-expanded={open} aria-live="polite" disabled={!steps.length}>
-      <span className="thinking__label shimmer-text">{label}</span>
+    <button className="thinking thinking--onit" onClick={onToggle} aria-expanded={open} aria-live="polite" disabled={!steps.length}>
+      <span className="thk-glass thk-glass--warm thk-glass--tail">
+        On it
+        <span className="thk-dots" aria-hidden>
+          <i />
+          <i />
+          <i />
+        </span>
+      </span>
+      <span key={label} className="thinking__label thk-fade">
+        {label}
+      </span>
       <span className="thinking__time">{secs}s</span>
       {steps.length > 0 && <ChevronDown size={13} className={cx('thinking__chev', open && 'rot')} />}
     </button>
