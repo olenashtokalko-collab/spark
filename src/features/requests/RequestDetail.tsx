@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useState, type ReactNode } from 'react';
 import { ArrowLeft, BadgeCheck, Check, CircleDot, ChevronDown, CircleX, Clock, Eye, FileText, Hammer, Lightbulb, MessageSquare, PackageCheck, Paperclip, PenLine, Plus, ScanSearch, Send, TrendingUp, TriangleAlert } from 'lucide-react';
 import { latestProposal, personById, proposalTotal, proposalWeeks, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { Avatar, Button, EmptyState, Tabs, Textarea, cx } from '../../components/ui/primitives';
 import { FileIcon, ProposalStatus, RequestStatus, STAGES, STAGE_INFO, stageIndex } from '../../components/domain';
 import { useToast } from '../../components/ui/toast';
-import { aed, dueLabel, fmtDate, fmtDateTime, fmtRelative, fmtTime } from '../../lib/format';
+import { aed, daysUntil, dueLabel, fmtDate, fmtRelative, fmtTime } from '../../lib/format';
 import { navigate, useRoute } from '../../lib/router';
 import type { Activity, Finding, WorkRequest } from '../../data/types';
 import { ChatCut } from '../assistant/ChatCut';
+import { TYPE_ICON } from './CreateRequestDialog';
 
 type Tab = 'overview' | 'messages' | 'context' | 'files' | 'activity';
 
@@ -50,6 +51,7 @@ export function RequestDetail({ id }: { id: string }) {
 
   const p = latestProposal(state, r.id);
   const creator = personById(state, r.createdBy);
+  const TypeIcon = TYPE_ICON[r.type] ?? FileText;
   const sources = (r.sourceIds ?? []).map((d) => state.docs.find((x) => x.id === d)).filter(Boolean);
   const files = state.docs.filter((d) => d.requestId === r.id && !d.name.startsWith('Proposal —'));
   const allFiles = [...new Map([...sources, ...files].map((d) => [d!.id, d!])).values()];
@@ -100,6 +102,57 @@ export function RequestDetail({ id }: { id: string }) {
 
           {tab === 'overview' && (
             <div className="req-tab">
+              {/* The proposal comes first: it is what the client acts on; their request follows. A proposal waiting on the client is the decision, not a card (picked on #/demo/request-detail,
+                  B · Decision first): one Ember band with the deadline, the proposal's numbers and the button. */}
+              {p && p.status === 'awaiting' && (
+                <div className="req-decide">
+                  <div className="req-decide__text">
+                    <b>{r.nextStep?.onClient ? r.nextStep.label : 'Your decision on the proposal'}</b>
+                    <span className="req-decide__facts">
+                      {aed(proposalTotal(p))} · {proposalWeeks(p)} weeks from {fmtDate(p.startDate)} · {p.scope.length} workstreams
+                    </span>
+                    {r.nextStep?.onClient && (
+                      <span className={cx('req-decide__due', daysUntil(r.nextStep.date) < 0 && 'is-late')}>
+                        <Clock size={14} />
+                        {daysUntil(r.nextStep.date) < 0 ? `${dueLabel(r.nextStep.date)} · was due ${fmtDate(r.nextStep.date)}` : `Due ${fmtDate(r.nextStep.date)} · ${dueLabel(r.nextStep.date).replace(/^due /, '')}`}
+                      </span>
+                    )}
+                  </div>
+                  <a className="btn btn--md btn--primary" href={`#/requests/${r.id}/proposal`}>
+                    Review & decide
+                  </a>
+                </div>
+              )}
+
+              {p && p.status !== 'awaiting' && (
+                <a className="prop-card" href={`#/requests/${r.id}/proposal`}>
+                  <div className="prop-card__head">
+                    <span className="eyebrow">Proposal</span>
+                    {/* Shown only when it adds something: "declined" already reads in the header badge. */}
+                    {p.status !== 'declined' && <ProposalStatus status={p.status} />}
+                  </div>
+                  <div className="prop-card__nums">
+                    <div>
+                      <div className="prop-card__num">{aed(proposalTotal(p))}</div>
+                      <div className="faint">Investment, excl. VAT</div>
+                    </div>
+                    <div>
+                      <div className="prop-card__num">{proposalWeeks(p)} weeks</div>
+                      <div className="faint">from {fmtDate(p.startDate)}</div>
+                    </div>
+                    <div>
+                      <div className="prop-card__num">{p.scope.length}</div>
+                      <div className="faint">workstreams</div>
+                    </div>
+                  </div>
+                  <p className="prop-card__summary">{p.summary}</p>
+                  <div className="prop-card__foot">
+                    {/* The whole card is the link; this just looks like its button. Once decided, so secondary. */}
+                    <span className="btn btn--md btn--secondary prop-card__cta">Open proposal</span>
+                  </div>
+                </a>
+              )}
+
               {draft !== null ? (
                 <section className="block brief">
                   <div className="brief__head">
@@ -159,40 +212,6 @@ export function RequestDetail({ id }: { id: string }) {
                     </Button>
                   </div>
                 )
-              )}
-
-              {p && (
-                <a className="prop-card" href={`#/requests/${r.id}/proposal`}>
-                  <div className="prop-card__head">
-                    <span className="eyebrow">Proposal</span>
-                    {/* Shown only when it adds something: "awaiting" and "declined"
-                        already read in the header badge. */}
-                    {p.status !== 'awaiting' && p.status !== 'declined' && <ProposalStatus status={p.status} />}
-                  </div>
-                  <div className="prop-card__nums">
-                    <div>
-                      <div className="prop-card__num">{aed(proposalTotal(p))}</div>
-                      <div className="faint">Investment, excl. VAT</div>
-                    </div>
-                    <div>
-                      <div className="prop-card__num">{proposalWeeks(p)} weeks</div>
-                      <div className="faint">from {fmtDate(p.startDate)}</div>
-                    </div>
-                    <div>
-                      <div className="prop-card__num">{p.scope.length}</div>
-                      <div className="faint">workstreams</div>
-                    </div>
-                  </div>
-                  <p className="prop-card__summary">{p.summary}</p>
-                  <div className="prop-card__foot">
-                    {/* The deadline lives in the Stages card, next to the step it belongs to. */}
-                    {/* The whole card is the link; this just looks like its button. Primary while
-                        the proposal waits on the client, secondary once decided. */}
-                    <span className={cx('btn btn--md prop-card__cta', p.status === 'awaiting' ? 'btn--primary' : 'btn--secondary')}>
-                      {p.status === 'awaiting' ? 'Review & decide' : 'Open proposal'}
-                    </span>
-                  </div>
-                </a>
               )}
 
               {findings && findings.length > 0 && (
@@ -297,23 +316,33 @@ export function RequestDetail({ id }: { id: string }) {
           <StatusCard r={r} />
           <section className="side-card">
             <h3 className="side-card__title">Details</h3>
-            <dl className="meta-list">
-              <dt>Requested by</dt>
-              <dd>
-                <Avatar person={creator} size={20} /> {creator.name}
-              </dd>
-              <dt>Created</dt>
-              <dd>{fmtDateTime(r.createdAt)}</dd>
-              <dt>Type</dt>
-              <dd>{r.type}</dd>
-              <dt>Timing</dt>
-              <dd>{r.timing}</dd>
-              {r.budget && (
-                <>
-                  <dt>Budget</dt>
-                  <dd>{r.budget}</dd>
-                </>
-              )}
+            {/* The same facts list as the Company profile on Home (.hl-facts: label column, values left), in
+                its compact size for the side column. */}
+            <dl className="hl-facts hl-facts--side">
+              {(
+                [
+                  [
+                    'Requested by',
+                    <>
+                      <Avatar person={creator} size={20} /> {creator.name}
+                    </>,
+                  ],
+                  ['Created', fmtDate(r.createdAt, { year: true })],
+                  [
+                    'Type',
+                    <>
+                      <TypeIcon size={15} strokeWidth={1.7} /> {r.type}
+                    </>,
+                  ],
+                  ['Timing', r.timing],
+                  ...(r.budget ? [['Budget', r.budget]] : []),
+                ] as [string, ReactNode][]
+              ).map(([k, v]) => (
+                <div key={k}>
+                  <dt>{k}</dt>
+                  <dd>{v}</dd>
+                </div>
+              ))}
             </dl>
           </section>
         </aside>

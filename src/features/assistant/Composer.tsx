@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { ArrowUp, Mic, Plus, Square, X } from 'lucide-react';
-import { cx } from '../../components/ui/primitives';
+import { ArrowUp, Mic, Paperclip, Plus, Square, X } from 'lucide-react';
+import { Button, cx } from '../../components/ui/primitives';
 import { FileIcon, kindOf } from '../../components/domain';
 import { Mascot } from '../../components/ui/Mascot';
 import type { Attachment } from '../../data/types';
@@ -15,6 +15,9 @@ interface Props {
   /** Tells the page when there is text, so the orb above can react. */
   onTyping?: (typing: boolean) => void;
   className?: string;
+  /** 'box' (everywhere since 29 Oct): a plain white box, the words over a row of the portal's buttons
+   *  (Attach, Send), no mascot. 'round': the earlier glass pill with the mascot, the plus and the mic. */
+  look?: 'round' | 'box';
 }
 
 const ACCEPT = '.pdf,.doc,.docx,.ppt,.pptx,.key,.xls,.xlsx,.csv,.txt,.png,.jpg,.jpeg,.webp,.svg,.zip';
@@ -26,7 +29,8 @@ const sizeLabel = (kb: number) => (kb >= 1024 ? `${(kb / 1024).toFixed(1)} MB` :
  *  lights up, the box grows (up to ~8 lines) and the mic turns into a send
  *  button. Files can be attached with the plus or dropped onto
  *  the box; the prototype keeps only name and size. */
-export function Composer({ onSubmit, busy, placeholder = 'Message Spark AI', autoFocus, size = 'md', initial = '', onTyping, className }: Props) {
+export function Composer({ onSubmit, busy, placeholder = 'Ask Spark anything…', autoFocus, size = 'md', initial = '', onTyping, className, look = 'box' }: Props) {
+  const box = look === 'box';
   const [value, setValue] = useState(initial);
   const [files, setFiles] = useState<Attachment[]>([]);
   const [focus, setFocus] = useState(false);
@@ -73,7 +77,7 @@ export function Composer({ onSubmit, busy, placeholder = 'Message Spark AI', aut
 
   return (
     <div
-      className={cx('composer', `composer--${size}`, className, focus && 'is-focus', (typing || files.length > 0) && 'is-typing', busy && 'is-busy', drag && 'is-drag')}
+      className={cx('composer', `composer--${size}`, box && 'composer--box', className, focus && 'is-focus', (typing || files.length > 0) && 'is-typing', busy && 'is-busy', drag && 'is-drag')}
       onDragOver={(e) => {
         if (!e.dataTransfer.types.includes('Files')) return;
         e.preventDefault();
@@ -104,11 +108,11 @@ export function Composer({ onSubmit, busy, placeholder = 'Message Spark AI', aut
       )}
       <div className="composer__row">
         {/* Spark's mascot at the start of the box. */}
-        <Mascot size={26} className="composer__orb" />
+        {!box && <Mascot size={26} className="composer__orb" />}
         <div className="composer__field">
           <textarea
             ref={ref}
-            rows={1}
+            rows={box ? 2 : 1}
             value={value}
             placeholder={placeholder}
             aria-label="Message Spark AI"
@@ -130,36 +134,47 @@ export function Composer({ onSubmit, busy, placeholder = 'Message Spark AI', aut
           />
         </div>
       </div>
-      <div className="composer__bar">
-        <span className="composer__spacer" />
-        <button className="composer__icon" onClick={() => picker.current?.click()} aria-label="Attach files" title="Attach documents or images">
-          <Plus size={22} strokeWidth={1.6} />
-        </button>
-        <input
-          ref={picker}
-          type="file"
-          multiple
-          accept={ACCEPT}
-          hidden
-          onChange={(e) => {
-            add(e.target.files);
-            e.target.value = '';
-          }}
-        />
-        {busy ? (
-          <button className="composer__send is-busy" disabled aria-label="Spark AI is answering">
-            <Square size={12} fill="currentColor" />
+      <input
+        ref={picker}
+        type="file"
+        multiple
+        accept={ACCEPT}
+        hidden
+        onChange={(e) => {
+          add(e.target.files);
+          e.target.value = '';
+        }}
+      />
+      {box ? (
+        <div className="composer__bar">
+          <Button size="sm" icon={Paperclip} onClick={() => picker.current?.click()} title="Attach documents or images">
+            Attach
+          </Button>
+          <span className="composer__spacer" />
+          {/* Send as a round icon, after the reference (30 Oct): Ink when there is something to send, faint before. */}
+          <Button variant="primary" size="sm" icon={ArrowUp} className="composer__go" onClick={send} disabled={!canSend} aria-label={busy ? 'Spark AI is answering' : 'Send'} />
+        </div>
+      ) : (
+        <div className="composer__bar">
+          <span className="composer__spacer" />
+          <button className="composer__icon" onClick={() => picker.current?.click()} aria-label="Attach files" title="Attach documents or images">
+            <Plus size={22} strokeWidth={1.6} />
           </button>
-        ) : canSend ? (
-          <button className="composer__send" onClick={send} aria-label="Send">
-            <ArrowUp size={18} strokeWidth={2.2} />
-          </button>
-        ) : (
-          <button className="composer__icon" aria-label="Voice input" title="Voice input">
-            <Mic size={21} strokeWidth={1.6} />
-          </button>
-        )}
-      </div>
+          {busy ? (
+            <button className="composer__send is-busy" disabled aria-label="Spark AI is answering">
+              <Square size={12} fill="currentColor" />
+            </button>
+          ) : canSend ? (
+            <button className="composer__send" onClick={send} aria-label="Send">
+              <ArrowUp size={18} strokeWidth={2.2} />
+            </button>
+          ) : (
+            <button className="composer__icon" aria-label="Voice input" title="Voice input">
+              <Mic size={21} strokeWidth={1.6} />
+            </button>
+          )}
+        </div>
+      )}
       {drag && <div className="composer__drop">Drop files to attach</div>}
     </div>
   );

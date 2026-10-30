@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { AlertCircle, ArrowRight, Check, Heart, ChevronDown, Copy, Globe, Inbox, Loader2, RotateCcw, FileText } from 'lucide-react';
 import type { Message, Source, Visual } from '../../data/types';
 import { Button, cx } from '../../components/ui/primitives';
-import { Mascot } from '../../components/ui/Mascot';
+import { SparkDisc } from '../../components/ui/BrandSpark';
 import { FileIcon, kindOf } from '../../components/domain';
 import { personById, TEAM_FOLDER, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
@@ -95,9 +95,9 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
 
   return (
     <div className="msg-ai">
-      {/* Spark's mascot; while Spark works its light breathes. */}
+      {/* Spark's mark, the Ember spark on its disc as on Ask Spark (29 Oct); while Spark works the spark breathes. */}
       <div className={cx('msg-ai__avatar', working && 'is-working')}>
-        <Mascot size={30} working={working} />
+        <SparkDisc size={30} />
       </div>
       <div className="msg-ai__body">
         {/* Research steps: live while working, collapsible once done */}
@@ -286,7 +286,7 @@ function VisualArt({ v }: { v: Visual }) {
       <rect width="320" height="200" fill={bg} />
       <rect y="168" width="320" height="32" fill={detail} opacity="0.9" />
       {mark}
-      <text x="160" y="104" textAnchor="middle" fontFamily="Archivo, Inter, sans-serif" fontWeight="800" fontSize="34" fill={bg}>
+      <text x="160" y="104" textAnchor="middle" fontFamily="ABC Diatype Extended, sans-serif" fontWeight="700" fontSize="34" fill={bg}>
         B
       </text>
       <text x="160" y="160" textAnchor="middle" fontFamily="Inter, sans-serif" fontSize="11" letterSpacing="3" fill={accent}>

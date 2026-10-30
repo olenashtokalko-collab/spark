@@ -3,7 +3,7 @@ import { ArrowLeft, Calendar, FileText, LayoutGrid, List, Lock, MessageSquare, S
 import { Mascot } from '../../components/ui/Mascot';
 import { personById, TEAM_FOLDER, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
-import { AvatarStack, Button, cx, EmptyState, Input, PageHeader, Progress, Segmented, Skeleton } from '../../components/ui/primitives';
+import { AvatarStack, Button, cx, EmptyState, Input, PageHeader, Progress, Skeleton } from '../../components/ui/primitives';
 import { DocThumb, FileIcon, kindLabel } from '../../components/domain';
 import { FolderCard, folderTint } from './FolderCard';
 import { useToast } from '../../components/ui/toast';
@@ -12,6 +12,7 @@ import { fmtRelative, fmtSize } from '../../lib/format';
 import { navigate } from '../../lib/router';
 import type { Doc, DocKind, Folder } from '../../data/types';
 import { downloadDoc } from './DocPreview';
+import { GlassTabs } from '../../components/ui/GlassTabs';
 
 type KindFilter = 'all' | DocKind;
 type ByFilter = 'anyone' | 'spark' | 'team';
@@ -176,19 +177,15 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
             </div>
           )}
           {!searching && !folder && (
-            <div className="pill-tabs" role="tablist" aria-label="Whose files">
-              {(
-                [
-                  ['spark', 'From Spark', children.filter((f) => !isTeam(f.id)).length],
-                  ['team', 'Your team', children.filter((f) => isTeam(f.id)).length],
-                ] as const
-              ).map(([v, label, n]) => (
-                <button key={v} role="tab" aria-selected={side === v} className={cx(side === v && 'is-on')} onClick={() => setSide(v)}>
-                  {label}
-                  <span>{n}</span>
-                </button>
-              ))}
-            </div>
+            <GlassTabs
+              label="Whose files"
+              value={side}
+              onChange={setSide}
+              items={[
+                { value: 'spark', label: 'From Spark', count: children.filter((f) => !isTeam(f.id)).length },
+                { value: 'team', label: 'Your team', count: children.filter((f) => isTeam(f.id)).length },
+              ]}
+            />
           )}
 
           <div className="filter-bar">
@@ -228,13 +225,13 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
               </button>
             )}
             <span className="filter-bar__end">
-              <Segmented
+              <GlassTabs
                 label="View"
                 value={view}
                 onChange={setView}
                 items={[
-                  { value: 'grid', icon: LayoutGrid, title: 'Grid' },
-                  { value: 'list', icon: List, title: 'List' },
+                  { value: 'grid', label: <LayoutGrid size={15} strokeWidth={1.8} />, title: 'Grid' },
+                  { value: 'list', label: <List size={15} strokeWidth={1.8} />, title: 'List' },
                 ]}
               />
             </span>

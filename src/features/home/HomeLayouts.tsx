@@ -3,20 +3,23 @@
 // the company profile and the analysis Spark prepared; only what exists is shown; a chat is a secondary
 // action. Analyses are demonstration content; no scores, percentages or charts are shown.
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { ArrowRight, ArrowUpRight, Building2, Check, CircleDot, CheckCircle2, ChevronDown, CircleAlert, FileText, MessageSquare, Pencil, Plus, ScanSearch, Sparkles, SquarePen, X } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, Building2, Check, Clock3, Inbox, CircleDot, CheckCircle2, ChevronDown, CircleAlert, EyeOff, FileText, MessageSquare, MoreHorizontal, Pencil, Plus, ScanSearch, SquarePen, X } from 'lucide-react';
+import { SparkStar } from '../../components/ui/SparkStar';
 import { useUI } from '../../state/ui';
-import { ChatDrawer, Mascot } from '../assistant/ChatDrawer';
-import { CreditsCard, TopUpDialog } from '../../components/layout/Credits';
+import { ChatDrawer, Mascot, type DrawerTopic } from '../assistant/ChatDrawer';
+import { CreditRing, CreditsCard, TopUpDialog } from '../../components/layout/Credits';
 import { useStore } from '../../state/store';
 import { navigate, useRoute } from '../../lib/router';
 import { analyses as seedAnalyses } from '../../data/mock';
 import { Avatar, Button, cx } from '../../components/ui/primitives';
-import { Dialog } from '../../components/ui/overlay';
+import { Dialog, Menu } from '../../components/ui/overlay';
+import { useToast } from '../../components/ui/toast';
 import { FileIcon, RequestStatus, isOpen, needsYou } from '../../components/domain';
 import { fmtDate } from '../../lib/format';
 import { ANALYSIS_ICON } from '../assistant/Home';
 import { TYPE_ICON } from '../requests/CreateRequestDialog';
 import type { CompanyAnalysis, Doc, WorkRequest } from '../../data/types';
+import { SparkDisc } from '../../components/ui/BrandSpark';
 
 // ---- One content model for every layout ----------------------------------------------------------
 
@@ -257,6 +260,61 @@ function Facts({ all, profile }: { all?: boolean; profile?: boolean }) {
         </div>
       ))}
     </dl>
+  );
+}
+
+/** The profile in three groups (demo, 29 Oct): the facts as a grid across the width, the audiences and the
+ *  voice in columns; small mono labels, a line between groups only. */
+function ProfileGroups() {
+  const { state } = useStore();
+  const b = state.brand;
+  const facts: [string, ReactNode][] = [
+    ['Category', b.category],
+    ['Head office', b.hq],
+    ['Founded', b.founded],
+    ['Footprint', b.footprint],
+    [
+      'Website',
+      <a href={`https://${b.website}`} target="_blank" rel="noreferrer" className="hl-link">
+        {b.website}
+      </a>,
+    ],
+  ];
+  return (
+    <div className="hl-prof">
+      <section className="hl-prof__group">
+        <h3 className="hl-prof__label">At a glance</h3>
+        <dl className="hl-prof__facts">
+          {facts.map(([k, v]) => (
+            <div key={k}>
+              <dt>{k}</dt>
+              <dd>{v}</dd>
+            </div>
+          ))}
+        </dl>
+      </section>
+      <section className="hl-prof__group">
+        <h3 className="hl-prof__label">Audiences</h3>
+        <ul className="hl-prof__cols">
+          {b.audiences.map((a) => (
+            <li key={a.name}>
+              <b>{a.name}</b>
+              <span>{a.detail}</span>
+            </li>
+          ))}
+        </ul>
+      </section>
+      <section className="hl-prof__group">
+        <h3 className="hl-prof__label">Voice</h3>
+        <ul className="hl-prof__cols">
+          {b.voice.map((v) => (
+            <li key={v}>
+              <b>{v}</b>
+            </li>
+          ))}
+        </ul>
+      </section>
+    </div>
   );
 }
 
@@ -714,7 +772,7 @@ function CreditsIndicator({ balance }: { balance?: { left: number; total: number
     <>
       <span className={cx('hl-cind', low && 'is-low')}>
         <button type="button" className="hl-cind__chip" aria-describedby="hl-cind-card">
-          <Sparkles size={15} strokeWidth={1.9} className="hl-cind__icon" aria-hidden />
+          <CreditRing left={left} total={total} />
           <span className="hl-cind__amount">{usd(left)}</span>
           <span className="hl-cind__word">{low ? 'left · running low' : 'credits'}</span>
           <ChevronDown size={14} strokeWidth={2} className="hl-cind__chev" aria-hidden />
@@ -878,7 +936,8 @@ const NEW_SINCE = '2026-10-01'; // prototype: what happened in October is new un
 const UPDATE_TEXT: Record<string, string> = { 'started reviewing': 'started reviewing your request', 'started work': 'started the work' };
 type FeedItem = { id: string; at: string; kind: 'file' | 'reply' | 'update'; title: string; sub: string; doc?: Doc; reqId?: string };
 
-function LatestFromSpark({ empty }: { empty?: boolean }) {
+/** `bare`: only the list, for a dashboard card that has its own head; `limit`: how many rows. */
+function LatestFromSpark({ empty, bare, limit = 5 }: { empty?: boolean; bare?: boolean; limit?: number }) {
   const { state, actions } = useStore();
   // Files open in the preview over Home, so closing it (or going back) keeps the client on Home.
   const { openDoc } = useUI();
@@ -905,8 +964,14 @@ function LatestFromSpark({ empty }: { empty?: boolean }) {
       ? [{ id: a.id, at: a.at, kind: 'reply', title: `Spark replied on ${r.title}`, sub: `“${a.text}”`, reqId: r.id }]
       : [{ id: a.id, at: a.at, kind: 'update', title: `Spark ${UPDATE_TEXT[a.text] ?? a.text}`, sub: r.title, reqId: r.id }];
   });
-  const feed = [...files, ...updates].sort((a, b) => b.at.localeCompare(a.at)).slice(0, empty ? 0 : 5);
+  const feed = [...files, ...updates].sort((a, b) => b.at.localeCompare(a.at)).slice(0, empty ? 0 : limit);
 
+  if (!feed.length && bare)
+    return (
+      <div className="hl-quiet">
+        <span>Spark’s files, replies and updates on your work will appear here.</span>
+      </div>
+    );
   if (!feed.length)
     return (
       <section className="hl-latest">
@@ -916,9 +981,7 @@ function LatestFromSpark({ empty }: { empty?: boolean }) {
         </div>
       </section>
     );
-  return (
-    <section className="hl-latest">
-      <SectionHead title="Latest from Spark" />
+  const list = (
       <ul className="hl-latest__list">
         {feed.map((f) => {
           const fresh = f.at >= NEW_SINCE && !state.seenDocs.includes(f.id);
@@ -954,6 +1017,12 @@ function LatestFromSpark({ empty }: { empty?: boolean }) {
           );
         })}
       </ul>
+  );
+  if (bare) return list;
+  return (
+    <section className="hl-latest">
+      <SectionHead title="Latest from Spark" />
+      {list}
     </section>
   );
 }
@@ -1101,7 +1170,10 @@ function InProgress({ m, look }: { m: Model; look: ProgressLook }) {
  *  working on, what's closed (delivered or declined, as on Requests). Each column: how many, the stage with its mark, and a link to that stage
  *  on Requests. With no requests at all, one line and New request. */
 export type ReqIcons = 'line' | 'emoji';
-function RequestsSummary({ m, icons = 'line' }: { m: Model; icons?: ReqIcons }) {
+/** Columns between hairlines (on Home), or tiles after the client's reference (demo): each stage a raised
+ *  card in a tray, with a line under it that says what's next there. */
+export type ReqLook = 'cols' | 'tiles';
+function RequestsSummary({ m, icons = 'line', look = 'cols' }: { m: Model; icons?: ReqIcons; look?: ReqLook }) {
   const { state } = useStore();
   const { openRequest } = useUI();
   // Closed, as on Requests: delivered and declined together.
@@ -1123,6 +1195,47 @@ function RequestsSummary({ m, icons = 'line' }: { m: Model; icons?: ReqIcons }) 
         </Button>
       </div>
     );
+  if (look === 'tiles') {
+    // The line under each tile: the nearest date that waits on the client, Spark's next step, the last closed.
+    const due = m.waiting.find((w) => w.date);
+    const next = state.requests
+      .filter((r) => m.ongoing.some((o) => o.key === r.id) && r.nextStep)
+      .sort((a, b) => a.nextStep!.date.localeCompare(b.nextStep!.date))[0]?.nextStep;
+    const last = state.requests.filter((r) => !isOpen(r.status)).sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))[0];
+    const foot: Record<string, ReactNode> = {
+      attention: due?.date ? (<>{due.date.label} <b>{fmtDate(due.date.iso)}</b></>) : 'Nothing due',
+      progress: next ? (<>Next update <b>{fmtDate(next.date)}</b></>) : 'Spark is on it',
+      done: last ? (<>Last: <b>{last.title}</b></>) : 'None yet',
+    };
+    return (
+      <section className="hl-reqsum hl-reqsum--tiles" aria-label="Your requests">
+        <SectionHead title="Your requests">
+          <a className="hl-link" href="#/requests">
+            All requests
+          </a>
+        </SectionHead>
+        <ul className="hl-rtiles">
+          {cols.map((c) => (
+            <li key={c.key}>
+              <a className={cx('hl-rtile', `hl-rtile--${c.key}`)} href={c.href}>
+                <span className="hl-rtile__card">
+                  <span className={cx('hl-rtile__icon', emoji && 'hl-rtile__icon--emoji')} aria-hidden>
+                    {c.icon}
+                  </span>
+                  <ArrowRight size={16} className="hl-rtile__go" aria-hidden />
+                  <span className="hl-rtile__label">{c.label}</span>
+                  <span className="hl-rtile__n">{c.n}</span>
+                </span>
+                <span className="hl-rtile__foot">
+                  <span className="hl-rtile__foot-text">{foot[c.key]}</span>
+                </span>
+              </a>
+            </li>
+          ))}
+        </ul>
+      </section>
+    );
+  }
   return (
     <section className="hl-reqsum" aria-label="Your requests">
       <SectionHead title="Your requests">
@@ -1487,7 +1600,7 @@ function BannerArtView({ art, n }: { art: BannerArt; n: number }) {
     return (
       <span className="pb__icon" aria-hidden>
         <span className="pb__ink">
-          <Sparkles size={20} strokeWidth={1.9} />
+          <SparkStar size={20} strokeWidth={1.9} />
         </span>
       </span>
     );
@@ -1549,20 +1662,147 @@ const fixes = (list: CompanyAnalysis[]) =>
     .flatMap((a) => a.findings.filter((f) => !f.good).map((f) => ({ a, f })))
     .sort((x, y) => IMPACT_RANK[x.f.impact ?? 'Low'] - IMPACT_RANK[y.f.impact ?? 'Low']);
 
-function IssueList({ analyses }: { analyses: CompanyAnalysis[] }) {
+/** What a client can do with an issue (demo: #/demo/home-hero?issues=…): nothing, or Request proposal and
+ *  Ask Spark, inside "What we'd do" or shown on hover in place of where it was found. */
+export type IssueActions = 'none' | 'inside' | 'hover' | 'always' | 'menu' | 'hybrid';
+type Issue = CompanyAnalysis['findings'][number];
+
+/** The drawer's questions about one issue: why it matters, how long, what it costs, what else. */
+const issueTopic = (a: CompanyAnalysis, f: Issue): DrawerTopic => {
+  const about = ` (About “${f.title}” in the ${a.title.toLowerCase()}.)`;
+  // The questions written for this issue; general ones when it has none.
+  const qs = f.asks?.length ? f.asks : ['Why does this matter?', 'How long would the fix take?', 'What would it cost in credits?', 'What else could we do?'];
+  return {
+    label: `issue “${f.title}”`,
+    questions: qs.map((q) => ({ label: q, prompt: q + about })),
+    about,
+  };
+};
+
+function IssueActs({
+  a,
+  f,
+  onAsk,
+  onHide,
+  className,
+  tools,
+  more,
+}: {
+  a: CompanyAnalysis;
+  f: Issue;
+  onAsk: (t: DrawerTopic) => void;
+  onHide?: () => void;
+  className?: string;
+  tools?: boolean;
+  /** ⋯ beside the actions with the quieter ones, Not relevant and Already fixed (hybrid), or every action in it (all). */
+  more?: 'hybrid' | 'all';
+}) {
+  const { openRequest } = useUI();
+  const toast = useToast();
+  const make = () => openRequest({ title: f.title, description: f.fix ? `${f.body}\n\nWhat we’d do: ${f.fix}` : f.body });
+  const quiet = [
+    { label: 'Not relevant', icon: EyeOff, onSelect: () => (onHide?.(), toast({ title: 'Hidden. Spark will take it into account.', tone: 'info' })) },
+    { label: 'Already fixed', icon: CheckCircle2, onSelect: () => (onHide?.(), toast({ title: 'Marked as fixed. Spark will check it in the next analysis.' })) },
+  ];
+  const dots = (items: Parameters<typeof Menu>[0]['items']) => (
+    <Menu
+      width={190}
+      items={items}
+      trigger={({ toggle, ref, open }) => (
+        <button type="button" ref={ref} className={cx('hl-fix__more', open && 'is-open')} onClick={toggle} aria-label={`More for ${f.title}`}>
+          <MoreHorizontal size={16} />
+        </button>
+      )}
+    />
+  );
+  if (more === 'all')
+    return (
+      <span className={cx('hl-fix__acts', className)}>
+        {dots([
+          { label: 'Ask Spark', icon: SparkStar, onSelect: () => onAsk(issueTopic(a, f)) },
+          { label: 'Request proposal', icon: Inbox, onSelect: make },
+          'divider',
+          ...quiet,
+        ])}
+      </span>
+    );
+  // On hover or always: plain text actions between hairlines, as the proposal's toolbar.
+  if (tools)
+    return (
+      <span className={cx('hl-fix__acts hl-fix__tools', className)}>
+        {/* Request proposal first (the action that turns the issue into work), then Ask Spark as the spark
+            and words, no fill (feedback 29 Oct). */}
+        <Button size="sm" variant="secondary" className="hl-fix__make" onClick={make}>
+          Request proposal
+        </Button>
+        <button type="button" className="hl-fix__tool hl-fix__ask" onClick={() => onAsk(issueTopic(a, f))}>
+          <SparkDisc size={26} /> Ask Spark
+        </button>
+        {more === 'hybrid' && dots(quiet)}
+      </span>
+    );
   return (
-    <ol className="hl-fixes">
-      {fixes(analyses).map(({ a, f }) => {
+    <span className={cx('hl-fix__acts', className)}>
+      <button type="button" className="hl-mchat rq-ask" onClick={() => onAsk(issueTopic(a, f))}>
+        <SparkDisc size={22} />
+        Ask Spark
+      </button>
+      <Button size="sm" variant="secondary" className="hl-fix__req" onClick={make}>
+        Request proposal
+      </Button>
+    </span>
+  );
+}
+
+function IssueList({
+  analyses,
+  actions = 'none',
+  onAsk = () => {},
+  rows,
+  only,
+}: {
+  analyses: CompanyAnalysis[];
+  actions?: IssueActions;
+  onAsk?: (t: DrawerTopic) => void;
+  /** Inside a dashboard card: rows between hairlines instead of cards. */
+  rows?: boolean;
+  /** One impact level only. */
+  only?: 'High' | 'Medium' | 'Low';
+}) {
+  // Issues the client marked Not relevant or Already fixed, gone for the visit (demo).
+  const [hidden, setHidden] = useState<string[]>([]);
+  // Menu and hybrid lay the top row out as Always: where it was found and the impact on the left.
+  const left = actions === 'always' || actions === 'menu' || actions === 'hybrid';
+  return (
+    <ol className={cx('hl-fixes', actions !== 'none' && `hl-fixes--${actions}`, left && 'hl-fixes--left', rows && 'hl-fixes--rows')}>
+      {fixes(analyses)
+        .filter(({ a, f }) => !hidden.includes(a.id + f.title) && (!only || (f.impact ?? 'Low') === only))
+        .map(({ a, f }) => {
+        const hide = () => setHidden((h) => [...h, a.id + f.title]);
         const I = ANALYSIS_ICON[a.kind];
         const impact = f.impact ?? 'Low';
         return (
           <li key={a.id + f.title} className="hl-fix">
             {/* How much it matters, in its colour (High orange, Medium blue, Low grey); where it was found, quietly. */}
             <span className="hl-fix__meta">
-              <span className={cx('hl-impact', `hl-impact--${impact.toLowerCase()}`)}>{impact} impact</span>
-              <span className="hl-fix__src">
-                <I size={13} strokeWidth={1.8} /> {a.title.replace(' analysis', '')}
+              {/* Always: where it was found moves to the left, before the impact; the actions take the right. */}
+              <span className="hl-fix__tags">
+                {left && (
+                  <span className="hl-fix__src">
+                    <I size={13} strokeWidth={1.8} /> {a.title.replace(' analysis', '')}
+                  </span>
+                )}
+                <span className={cx('hl-impact', `hl-impact--${impact.toLowerCase()}`)}>{impact} impact</span>
+                {!left && (
+                  <span className="hl-fix__src">
+                    <I size={13} strokeWidth={1.8} /> {a.title.replace(' analysis', '')}
+                  </span>
+                )}
               </span>
+              {actions === 'hover' && <IssueActs a={a} f={f} onAsk={onAsk} className="hl-fix__acts--hover" tools />}
+              {actions === 'always' && <IssueActs a={a} f={f} onAsk={onAsk} tools />}
+              {actions === 'hybrid' && <IssueActs a={a} f={f} onAsk={onAsk} onHide={hide} tools more="hybrid" />}
+              {actions === 'menu' && <IssueActs a={a} f={f} onAsk={onAsk} onHide={hide} more="all" />}
             </span>
             <b className="hl-fix__title">{f.title}</b>
             <p className="hl-fix__body">{f.body}</p>
@@ -1570,9 +1810,10 @@ function IssueList({ analyses }: { analyses: CompanyAnalysis[] }) {
             {f.fix && (
               <div className="hl-fix__do">
                 <span className="hl-fix__do-label">
-                  What we’d do <Sparkles size={12} strokeWidth={2} className="hl-fix__do-mark" aria-hidden />
+                  What we’d do <SparkStar size={12} strokeWidth={2} className="hl-fix__do-mark" aria-hidden />
                 </span>
-                {f.fix}
+                <span className="hl-fix__do-text">{f.fix}</span>
+                {actions === 'inside' && <IssueActs a={a} f={f} onAsk={onAsk} />}
               </div>
             )}
           </li>
@@ -1582,7 +1823,238 @@ function IssueList({ analyses }: { analyses: CompanyAnalysis[] }) {
   );
 }
 
-export type ReqsLook = 'side' | 'status' | 'alert' | 'figures' | 'cards' | 'board' | 'table' | 'banner' | 'summary';
+// ---- Overview as a dashboard (#/demo/home-hero?overview=…), after the client's reference --------------
+// Cards with a stroke only (no fill, no shadow), each with a head: its mark on a small tile, the title, a
+// count, a link on the right. The wide column for what to read, the narrow one for widgets.
+
+export type OverviewLook = 'stack' | 'cols' | 'pager' | 'impact' | 'tabs';
+
+function DashCard({ icon, title, count, action, className, children }: { icon: ReactNode; title: string; count?: ReactNode; action?: ReactNode; className?: string; children: ReactNode }) {
+  return (
+    <section className={cx('hdc', className)}>
+      <header className="hdc__head">
+        <span className="hdc__icon" aria-hidden>
+          {icon}
+        </span>
+        <h2>{title}</h2>
+        {count !== undefined && <span className="hdc__count">{count}</span>}
+        {action && <span className="hdc__action">{action}</span>}
+      </header>
+      {children}
+    </section>
+  );
+}
+
+const IMPACTS = ['High', 'Medium', 'Low'] as const;
+
+/** One issue at a time, with "1 / 7" and arrows, as the reference's Paid vacation card. */
+/** `featured`: the lead of the page: larger, its stroke in the issue's impact colour. */
+function IssuePager({ analyses, featured, onAsk }: { analyses: CompanyAnalysis[]; featured?: boolean; onAsk?: (t: DrawerTopic) => void }) {
+  const [hidden, setHidden] = useState<string[]>([]);
+  const list = fixes(analyses).filter(({ a, f }) => !hidden.includes(a.id + f.title));
+  const [at, setI] = useState(0);
+  const toast = useToast();
+  if (!list.length) return null;
+  const i = Math.min(at, list.length - 1);
+  const { a, f } = list[i];
+  // Not relevant or Already fixed: the issue leaves the list for the visit, the next one shows.
+  const hide = (title: string) => {
+    setHidden((h) => [...h, a.id + f.title]);
+    toast({ title, tone: 'info' });
+  };
+  const more = (
+    <Menu
+      width={190}
+      items={[
+        { label: 'Not relevant', icon: EyeOff, onSelect: () => hide('Hidden. Spark will take it into account.') },
+        { label: 'Already fixed', icon: CheckCircle2, onSelect: () => hide('Marked as fixed. Spark will check it in the next analysis.') },
+      ]}
+      trigger={({ toggle, ref, open }) => (
+        <button type="button" ref={ref} className={cx('hl-fix__more', open && 'is-open')} onClick={toggle} aria-label={`More for ${f.title}`}>
+          <MoreHorizontal size={16} />
+        </button>
+      )}
+    />
+  );
+  const I = ANALYSIS_ICON[a.kind];
+  const impact = f.impact ?? 'Low';
+  const pager = (
+        <span className="hdc-pager">
+          <span>
+            {i + 1} / {list.length}
+          </span>
+          <button type="button" aria-label="Previous issue" disabled={i === 0} onClick={() => setI(i - 1)}>
+            <ChevronDown size={15} style={{ transform: 'rotate(90deg)' }} />
+          </button>
+          <button type="button" aria-label="Next issue" disabled={i === list.length - 1} onClick={() => setI(i + 1)}>
+            <ChevronDown size={15} style={{ transform: 'rotate(-90deg)' }} />
+          </button>
+        </span>
+  );
+  const issue = (
+      <div className="hdc-issue">
+        {/* What it is on the left, the impact and where it was found together (29 Oct); the menu on the right. */}
+        <span className="hl-fix__meta">
+          <span className="hdc-issue__about">
+            <span className={cx('hl-impact', `hl-impact--${impact.toLowerCase()}`)}>{impact} impact</span>
+            <span className="hl-fix__src">
+              <I size={13} strokeWidth={1.8} /> {a.title.replace(' analysis', '')}
+            </span>
+          </span>
+          {featured && more}
+        </span>
+        <b className="hl-fix__title">{f.title}</b>
+        <p className="hl-fix__body">{f.body}</p>
+        {f.fix && (
+          <div className="hl-fix__do">
+            <span className="hl-fix__do-label">
+              What we’d do <SparkStar size={12} strokeWidth={2} className="hl-fix__do-mark" aria-hidden />
+            </span>
+            <span className="hl-fix__do-text">{f.fix}</span>
+          </div>
+        )}
+      </div>
+  );
+  // Featured: the title and the arrows above the card, as a section head; the card holds the issue alone.
+  if (featured)
+    return (
+      <section className="hdc-feature">
+        {/* The head as the cards' heads: Spark's mark on a tile, the title, the arrows on the right. */}
+        <header className="hdc__head hdc__head--section">
+          <span className="hdc__icon" aria-hidden>
+            <SparkStar size={16} strokeWidth={1.9} />
+          </span>
+          <h2>Where we think you have issues</h2>
+          <span className="hdc__action">{pager}</span>
+        </header>
+        <div className={cx('hdc hdc--feature', `hdc--${impact.toLowerCase()}`)}>
+          {issue}
+          {/* What to do about it, at the foot of the card: talk it through, or ask for a proposal. */}
+          <div className="hdc-issue__acts">
+            <IssueActs a={a} f={f} onAsk={onAsk ?? (() => {})} tools />
+          </div>
+        </div>
+      </section>
+    );
+  return (
+    <DashCard icon={<SparkStar size={16} strokeWidth={1.9} />} title="Issues we found" action={pager}>
+      {issue}
+    </DashCard>
+  );
+}
+
+/** How many issues at each impact, as the reference's "who's away" figure. Picking one filters the list. */
+function ImpactCounts({ analyses, on, onPick }: { analyses: CompanyAnalysis[]; on?: string; onPick?: (v?: 'High' | 'Medium' | 'Low') => void }) {
+  const list = fixes(analyses);
+  return (
+    <DashCard icon={<CircleAlert size={16} strokeWidth={1.9} />} title="By impact" count={list.length}>
+      <div className="hdc-impacts">
+        {IMPACTS.map((k) => (
+          <button
+            key={k}
+            type="button"
+            className={cx('hdc-impact', `hdc-impact--${k.toLowerCase()}`, on === k && 'is-on')}
+            onClick={() => onPick?.(on === k ? undefined : k)}
+            disabled={!onPick}
+          >
+            <b>{list.filter((x) => (x.f.impact ?? 'Low') === k).length}</b>
+            <span>{k}</span>
+          </button>
+        ))}
+      </div>
+    </DashCard>
+  );
+}
+
+function OverviewDash({ m, look, fresh, onAsk }: { m: Model; look: Exclude<OverviewLook, 'stack'>; fresh?: boolean; onAsk?: (t: DrawerTopic) => void }) {
+  const [only, setOnly] = useState<'High' | 'Medium' | 'Low' | undefined>();
+  const latest = (limit: number, bare?: boolean) => (
+    <DashCard
+      icon={<Clock3 size={16} strokeWidth={1.9} />}
+      title="Latest from Spark"
+      action={
+        <a className="hdc__link" href="#/documents">
+          All files
+        </a>
+      }
+      className={cx('hdc--latest', bare && 'hdc--bare')}
+    >
+      <LatestFromSpark bare empty={fresh} limit={limit} />
+    </DashCard>
+  );
+  const issues = (
+    <DashCard
+      icon={<SparkStar size={16} strokeWidth={1.9} />}
+      title="Where we think you have issues"
+      count={fixes(m.analyses).length}
+      action={only && (
+        <button type="button" className="hdc__link" onClick={() => setOnly(undefined)}>
+          Show all
+        </button>
+      )}
+    >
+      {m.analyses.length ? <IssueList analyses={m.analyses} rows only={only} /> : <NoAnalysis />}
+    </DashCard>
+  );
+  // B: the issues first, one at a time and large, the arrows in the section's head; what Spark did under them,
+  // full width (feedback 28 Oct: issues above Latest, and more visible).
+  if (look === 'pager')
+    return (
+      <div className="hdc-stack">
+        <IssuePager analyses={m.analyses} featured onAsk={onAsk} />
+        {latest(6, true)}
+      </div>
+    );
+  // D: C with the impact as tabs under the issues' head, no stroke round them (All · High · Medium · Low, each with its count);
+  // Latest from Spark alone in the narrow column.
+  if (look === 'tabs') {
+    const all = fixes(m.analyses);
+    const tabs: [string, 'High' | 'Medium' | 'Low' | undefined, number][] = [
+      ['All', undefined, all.length],
+      ...IMPACTS.map((k): [string, 'High' | 'Medium' | 'Low', number] => [k, k, all.filter((x) => (x.f.impact ?? 'Low') === k).length]),
+    ];
+    return (
+      <div className="hdc-grid">
+        <div className="hdc-main">
+          {/* No stroke round the issues (feedback 28 Oct): the head and the tabs sit on Sand. */}
+          <DashCard icon={<SparkStar size={16} strokeWidth={1.9} />} title="Where we think you have issues" className="hdc--bare">
+            <div className="hdc-tabs" role="tablist" aria-label="Impact">
+              {tabs.map(([label, k, n]) => (
+                <button key={label} type="button" role="tab" aria-selected={only === k} className={cx('hdc-tab', k && `hdc-tab--${k.toLowerCase()}`, only === k && 'is-on')} onClick={() => setOnly(k)}>
+                  {label}
+                  <span>{n}</span>
+                </button>
+              ))}
+            </div>
+            {m.analyses.length ? <IssueList analyses={m.analyses} rows only={only} /> : <NoAnalysis />}
+          </DashCard>
+        </div>
+        <div className="hdc-side">{latest(6)}</div>
+      </div>
+    );
+  }
+  // C: the counts by impact filter the list; Latest from Spark under them.
+  if (look === 'impact')
+    return (
+      <div className="hdc-grid">
+        <div className="hdc-main">{issues}</div>
+        <div className="hdc-side">
+          <ImpactCounts analyses={m.analyses} on={only} onPick={setOnly} />
+          {latest(4)}
+        </div>
+      </div>
+    );
+  // A: the issues wide, Latest from Spark in the narrow column.
+  return (
+    <div className="hdc-grid">
+      <div className="hdc-main">{issues}</div>
+      <div className="hdc-side">{latest(6)}</div>
+    </div>
+  );
+}
+
+/** 'none': no requests block on Home (feedback 28 Oct: the requests live on Requests). */
+export type ReqsLook = 'side' | 'status' | 'alert' | 'figures' | 'cards' | 'board' | 'table' | 'banner' | 'summary' | 'none';
 
 export function MainSide({
   m,
@@ -1594,6 +2066,11 @@ export function MainSide({
   team,
   framed,
   reqIcons,
+  reqLook,
+  issueActions = 'none',
+  overviewLook = 'stack',
+  profileLook = 'rows',
+  startTab,
 }: {
   m: Model;
   reqs?: ReqsLook;
@@ -1609,12 +2086,22 @@ export function MainSide({
   framed?: boolean | 'divider' | 'split';
   /** The marks in the requests block (demo: emoji). */
   reqIcons?: ReqIcons;
+  /** The requests block as columns (on Home) or tiles (demo). */
+  reqLook?: ReqLook;
+  /** Actions on each issue (demo). */
+  issueActions?: IssueActions;
+  /** The overview as sections (on Home) or as a dashboard of cards (demo). */
+  overviewLook?: OverviewLook;
+  /** The company profile as rows (on Home) or in three groups (demo). */
+  profileLook?: 'rows' | 'groups' | 'plain';
+  /** Which tab opens first (demo). */
+  startTab?: 'overview' | 'profile';
 }) {
   // "Company profile" in the account menu opens Home on the profile tab (#/?show=company).
   const { query } = useRoute();
-  const [tab, setTab] = useState<'overview' | 'profile'>(query.get('show') === 'company' ? 'profile' : 'overview');
+  const [tab, setTab] = useState<'overview' | 'profile'>(query.get('show') === 'company' ? 'profile' : (startTab ?? 'overview'));
   // The chat drawer, empty from Ask Spark or with a question already written from an issue.
-  const [chat, setChat] = useState<{ initial?: string } | null>(null);
+  const [chat, setChat] = useState<{ initial?: string; topic?: DrawerTopic } | null>(null);
   useEffect(() => {
     if (query.get('show') === 'company') setTab('profile');
   }, [query]);
@@ -1623,18 +2110,20 @@ export function MainSide({
   // Overview, after the call of 23 Oct: Spark's work at a glance. Where Spark thinks the company has
   // issues (the lead finding of each analysis; each opens its analysis page), then what Spark sent most
   // recently. The company's details live on their own tab; what waits on the client sits above the tabs.
-  const overview = (
+  const overview = overviewLook !== 'stack' ? (
+    <OverviewDash m={m} look={overviewLook} fresh={fresh} onAsk={(topic) => setChat({ topic })} />
+  ) : (
     <>
-      {reqs !== 'summary' && progress === 'line' && <InProgress m={m} look="line" />}
+      {reqs !== 'summary' && reqs !== 'none' && progress === 'line' && <InProgress m={m} look="line" />}
       <section className="hl-issues">
         <SectionHead title="Where we think you have issues" count={m.analyses.length ? fixes(m.analyses).length : undefined} />
         {m.analyses.length ? (
-          <IssueList analyses={m.analyses} />
+          <IssueList analyses={m.analyses} actions={issueActions} onAsk={(topic) => setChat({ topic })} />
         ) : (
           <NoAnalysis />
         )}
       </section>
-      {reqs !== 'summary' && progress !== 'line' && <InProgress m={m} look={progress} />}
+      {reqs !== 'summary' && reqs !== 'none' && progress !== 'line' && <InProgress m={m} look={progress} />}
       <LatestFromSpark empty={fresh} />
     </>
   );
@@ -1664,7 +2153,7 @@ export function MainSide({
             <div className="hl-hero__actions">
               <CreditsIndicator balance={credits} />
               <button type="button" className="hl-mchat" onClick={() => setChat({})}>
-                <Mascot size={28} />
+                <SparkDisc size={28} />
                 Ask Spark
               </button>
             </div>
@@ -1676,7 +2165,7 @@ export function MainSide({
               <RequestsSummary m={m} icons={reqIcons} />
             </div>
           )}
-          {reqs !== 'side' && reqs !== 'summary' && (
+          {reqs !== 'side' && reqs !== 'summary' && reqs !== 'none' && (
             <div className="hl-hero__alert">
               <RequestsDash m={m} look={reqs} art={bannerArt} />
             </div>
@@ -1684,8 +2173,8 @@ export function MainSide({
         </div>
         {/* Split: the requests in a card of their own under the company's. */}
         {reqs === 'summary' && framed === 'split' && (
-          <div className="hl-hero__alert hl-hero__reqcard">
-            <RequestsSummary m={m} icons={reqIcons} />
+          <div className={cx('hl-hero__alert hl-hero__reqcard', reqLook === 'tiles' && 'hl-hero__reqcard--tiles')}>
+            <RequestsSummary m={m} icons={reqIcons} look={reqLook} />
           </div>
         )}
         <nav className="hl-tabs" aria-label="Home sections">
@@ -1699,13 +2188,22 @@ export function MainSide({
               {label}
             </button>
           ))}
+          {/* Groups: who keeps the profile, small on the right of the tabs, in place of a second title. */}
+          {profileLook !== 'rows' && tab === 'profile' && <span className="hl-tabs__note">Kept by Spark · updated {fmtDate(b.updatedAt)}</span>}
         </nav>
       </header>
 
       <div className={cx('hl-ms', reqs !== 'side' && 'hl-ms--full')}>
         <div className="hl-ms__main">
           {tab === 'overview' && overview}
-          {tab === 'profile' && (
+          {tab === 'profile' && profileLook === 'groups' && <ProfileGroups />}
+          {/* Plain: the rows, no title and no lines; space between them does the work. */}
+          {tab === 'profile' && profileLook === 'plain' && (
+            <section className="hl-details hl-details--plain">
+              <Facts all profile />
+            </section>
+          )}
+          {tab === 'profile' && profileLook === 'rows' && (
             <section className="hl-details hl-details--full">
               <SectionHead title="Company profile">
                 <span className="hl-muted">Kept by Spark · updated {fmtDate(b.updatedAt)}</span>
@@ -1722,7 +2220,7 @@ export function MainSide({
           </aside>
         )}
       </div>
-      <ChatDrawer open={!!chat} initial={chat?.initial} onClose={() => setChat(null)} />
+      <ChatDrawer open={!!chat} initial={chat?.initial} topic={chat?.topic} onClose={() => setChat(null)} />
     </div>
   );
 }
@@ -1732,5 +2230,5 @@ export function MainSide({
 /** The Home page: layout D (Profile), with the analyses Spark prepared. Above the issues, only the banner
  *  about what waits on the client (picked on #/demo/home-requests); the rest of the requests live on Requests. */
 export function HomePage() {
-  return <MainSide m={useModel(seedAnalyses)} reqs="summary" team framed="split" reqIcons="emoji" />;
+  return <MainSide m={useModel(seedAnalyses)} reqs="none" team framed="split" reqIcons="emoji" reqLook="tiles" overviewLook="pager" profileLook="plain" />;
 }

@@ -2,7 +2,7 @@
 // a small chat window with faded edges so it reads as part of a longer
 // conversation. Used on the request page and after sending a request. The
 // Spark AI sphere is static here: it's an illustration, not a live answer.
-import { Mascot } from '../../components/ui/Mascot';
+import { SparkDisc } from '../../components/ui/BrandSpark';
 import { cx } from '../../components/ui/primitives';
 import { RichText } from './MessageView';
 
@@ -25,7 +25,7 @@ export function ChatCut({ messages, author, compact }: { messages: CutMessage[];
           ) : (
             <div key={i} className="msg-ai">
               <div className="msg-ai__avatar">
-                <Mascot size={30} />
+                <SparkDisc size={30} />
               </div>
               <div className="msg-ai__body">
                 <div className="chat-cut__ai">Spark AI</div>

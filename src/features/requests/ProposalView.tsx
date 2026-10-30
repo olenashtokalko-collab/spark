@@ -1,28 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
-import { AlignLeft, ArrowLeft, CalendarDays, CircleAlert, Compass, Download, Layers, Lightbulb, ListChecks, MessageSquare, Package, Palette, Printer, RotateCcw, ShieldCheck, Check, PenLine, X } from 'lucide-react';
+import { ArrowLeft, CircleAlert, Download, MessageSquare, RotateCcw, ShieldCheck, Check, PenLine, X } from 'lucide-react';
 import { canApprove, latestProposal, personById, proposalTotal, proposalWeeks, useStore } from '../../state/store';
 import { Avatar, Button, Checkbox, EmptyState, Field, Select, Textarea, cx } from '../../components/ui/primitives';
 import { Dialog } from '../../components/ui/overlay';
-import { deadline } from '../../components/ui/DeadlineHourglass';
-import { ChatDrawer, Mascot } from '../assistant/ChatDrawer';
-import { StateRing } from '../../components/ui/StateTile';
+import { ProposalStatus } from '../../components/domain';
+import { SparkDisc } from '../../components/ui/BrandSpark';
+import { ChatDrawer } from '../assistant/ChatDrawer';
 import { useToast } from '../../components/ui/toast';
-import { aed, addDays, fmtDate, fmtDateTime, fmtRelative } from '../../lib/format';
+import { aed, addDays, daysUntil, fmtDate, fmtDateTime, fmtRelative } from '../../lib/format';
 import { navigate, useRoute } from '../../lib/router';
 import type { Proposal } from '../../data/types';
-
-// One icon per scope block, picked from what the block is called (first match wins).
-const SCOPE_ICONS: [RegExp, typeof Package][] = [
-  [/concept|idea|visual|creative/i, Lightbulb],
-  [/develop|build|system|format/i, Layers],
-  [/print|production|artwork|packag/i, Printer],
-  [/position|strateg|research|audit|insight/i, Compass],
-  [/content|copy|social|post/i, PenLine],
-  [/identity|brand|design|guideline/i, Palette],
-  [/event|launch|campaign|activation/i, CalendarDays],
-  [/manage|plan|coordinat|report/i, ListChecks],
-];
-const scopeIcon = (title: string) => SCOPE_ICONS.find(([re]) => re.test(title))?.[1] ?? Package;
 
 const SECTIONS = ['Summary', 'Objectives', 'Scope & deliverables', 'Timeline', 'Investment', 'Terms'] as const;
 type Section = (typeof SECTIONS)[number];
@@ -58,7 +45,11 @@ export function ProposalView({ requestId }: { requestId: string }) {
   const endedView = (p.status === 'declined' || p.status === 'changes_requested') && !!p.decision && !!decider;
   const awaiting = p.status === 'awaiting';
   const mayDecide = awaiting && canApprove(me);
-  const timed = awaiting ? deadline(p.sentAt, p.validUntil) : null;
+  // The deadline in the words of the request page: "11 days overdue · was due 18 Oct", "Due 18 Oct · 3 days left".
+  const left = awaiting ? daysUntil(p.validUntil) : null;
+  const dueText =
+    left === null ? '' : left < 0 ? `${-left} day${left === -1 ? '' : 's'} overdue · was due ${fmtDate(p.validUntil)}` : left === 0 ? 'Due today' : `Due ${fmtDate(p.validUntil)} · ${left} day${left === 1 ? '' : 's'} left`;
+  const urgent = left !== null && left <= 1;
   const countFor = (s: Section) => p.comments.filter((c) => c.section === s).length;
 
   const exportProposal = () => {
@@ -126,19 +117,28 @@ export function ProposalView({ requestId }: { requestId: string }) {
 
       <div className="proposal__layout">
         <article className="proposal__doc">
+          {/* As the request page: the id and status over the title; the tools as buttons on the right (Ask Spark
+              as the white pill everywhere); when it was sent on a hairline under it. */}
           <header className="proposal__head">
-            <h1 className="proposal__title">{p.title}</h1>
-            <div className="proposal__tools">
-              <span className="proposal__tool proposal__tool--status">
-                Sent {fmtDate(p.sentAt)} by {sender.name.split(' ')[0]}
-              </span>
-              <button className="proposal__tool" onClick={askSpark}>
-                <Mascot size={20} /> Ask Spark about this proposal
-              </button>
-              <button className="proposal__tool" onClick={exportProposal}>
-                <Download size={14} /> Download
-              </button>
+            <div className="req-head__top">
+              <span className="mono faint">{req.id}</span>
+              <ProposalStatus status={p.status} />
             </div>
+            <div className="proposal__headrow">
+              <h1 className="proposal__title">{p.title}</h1>
+              <div className="proposal__acts">
+                <button type="button" className="hl-mchat rq-ask" onClick={askSpark}>
+                  <SparkDisc size={22} />
+                  Ask Spark
+                </button>
+                <Button size="sm" variant="secondary" icon={Download} onClick={exportProposal}>
+                  Download
+                </Button>
+              </div>
+            </div>
+            <p className="proposal__sent">
+              Sent {fmtDate(p.sentAt)} by {sender.name.split(' ')[0]} · version {p.version}
+            </p>
           </header>
 
           <StatusBanner p={p} />
@@ -160,19 +160,25 @@ export function ProposalView({ requestId }: { requestId: string }) {
 
           <section className="psec" id="sec-scope">
             {sectionHead('Scope & deliverables')}
-            <div className="scope">
-              {p.scope.map((s, i) => {
-                const Icon = scopeIcon(s.title);
-                return (
-                  <div key={i} className="scope__item">
-                    <span className="scope__icon">
-                      <Icon size={22} strokeWidth={1.7} />
-                    </span>
-                    <div className="scope__title">{s.title}</div>
-                    {s.detail && <p className="muted">{s.detail}</p>}
+            {/* A framed table as on Requests: each workstream and what it delivers. */}
+            <div className="scope-tbl" role="table" aria-label="Scope and deliverables">
+              <div className="scope-tbl__row scope-tbl__head" role="row">
+                <span role="columnheader">Workstream</span>
+                <span role="columnheader">Deliverables</span>
+              </div>
+              {p.scope.map((s) => (
+                <div key={s.title} className="scope-tbl__row" role="row">
+                  <div role="cell">
+                    <div className="scope-tbl__title">{s.title}</div>
+                    {s.detail && <p className="scope-tbl__detail">{s.detail}</p>}
                   </div>
-                );
-              })}
+                  <ul role="cell" className="scope-tbl__list">
+                    {s.deliverables.map((d) => (
+                      <li key={d}>{d}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
             {sectionComposer('Scope & deliverables')}
           </section>
@@ -250,7 +256,7 @@ export function ProposalView({ requestId }: { requestId: string }) {
         </article>
 
         <aside className="proposal__side">
-          <section className={cx('decision', (timed || approvedView || endedView) && 'decision--timed', timed?.urgent && 'is-urgent', approvedView && 'decision--ok', endedView && `decision--${p.status === 'declined' ? 'declined' : 'changes'}`)}>
+          <section className={cx('decision', (awaiting || approvedView || endedView) && 'decision--timed', awaiting && 'is-open', urgent && 'is-urgent', approvedView && 'decision--ok', endedView && `decision--${p.status === 'declined' ? 'declined' : 'changes'}`)}>
             {approvedView ? (
               // Approved (picked on #/demo/states, B): the same card as while waiting, the ring closed in the spectrum around the thumb.
               <>
@@ -262,7 +268,6 @@ export function ProposalView({ requestId }: { requestId: string }) {
                     <div className="decision__total">{aed(total)}</div>
                     <div className="decision__meta decision__meta--ok">Approved</div>
                   </div>
-                  <StateRing used={1} glyph="thumb" tone="spectrum" celebrate />
                 </div>
               </>
             ) : endedView ? (
@@ -276,24 +281,24 @@ export function ProposalView({ requestId }: { requestId: string }) {
                     <div className="decision__total">{aed(total)}</div>
                     <div className="decision__meta decision__meta--ok">{p.status === 'declined' ? 'Declined' : 'Changes requested'}</div>
                   </div>
-                  <StateRing used={1} glyph={p.status === 'declined' ? 'thumb-down' : 'pen'} tone={p.status === 'declined' ? 'red' : 'cobalt'} celebrate quiet />
                 </div>
               </>
             ) : (
             <>
-            {timed ? (
-              // Awaiting a decision: how long is left, the total, and the deadline hourglass.
+            {awaiting ? (
+              // Awaiting a decision (29 Oct, by the book): the deadline, the total and what it buys; no glow and
+              // no hourglass, the words say it. Ember once a day or less is left.
               <>
                 <div className="decision__eyebrow">
-                  <span>{timed.daysLeft === 0 ? 'Due today' : `Due ${fmtDate(p.validUntil, { weekday: true })} · ${timed.daysLeft} day${timed.daysLeft === 1 ? '' : 's'} left`}</span>
+                  <span>{dueText}</span>
                 </div>
                 <div className="decision__timed">
                   <div>
                     <div className="decision__total">{aed(total)}</div>
-                    <div className="decision__meta">Waiting for your decision</div>
+                    <div className="decision__meta">
+                      excl. VAT · {weeks} weeks from {fmtDate(p.startDate)}
+                    </div>
                   </div>
-                  {/* The light warms as the time runs out; the line stays Ink until the last day. */}
-                  <StateRing used={timed.progress} glyph="hourglass" tone={timed.urgent ? 'warm' : timed.daysLeft <= 3 ? 'mid' : 'cobalt'} ink={!timed.urgent} />
                 </div>
               </>
             ) : (
@@ -414,7 +419,7 @@ function ProposalToc({ items }: { items: { id: string; label: string; count?: nu
   return (
     <nav className="ptoc ptoc--rail" style={{ ['--i' as string]: idx }} aria-label="Proposal sections">
       <div className="ptoc__title">
-        <AlignLeft size={15} strokeWidth={1.8} /> On this page
+        On this page
       </div>
       {/* A hairline rail; one accent bar slides to the section in view, a pale bar shows on hover. */}
       <div className="ptoc__items">
@@ -548,7 +553,8 @@ function DecisionDialog({ p, kind, onClose, onConfirm }: { p: Proposal; kind: De
   const copy = {
     approved: { title: 'Approve this proposal?', cta: 'Approve', variant: 'primary' as const, icon: Check, tone: 'accent' as const },
     changes_requested: { title: 'Request changes', cta: 'Send changes', variant: 'primary' as const, icon: PenLine, tone: 'accent' as const },
-    declined: { title: 'Decline this proposal?', cta: 'Decline proposal', variant: 'danger' as const, icon: X, tone: 'danger' as const },
+    // Declining is a business decision, not a deletion: Ink like the other two, no red (danger is for deleting).
+    declined: { title: 'Decline this proposal?', cta: 'Decline proposal', variant: 'primary' as const, icon: X, tone: 'neutral' as const },
   };
   if (!kind) return null;
   const c = copy[kind];
@@ -592,7 +598,7 @@ function DecisionDialog({ p, kind, onClose, onConfirm }: { p: Proposal; kind: De
           </div>
         )}
         {kind === 'declined' && (
-          <div className="approve-sum approve-sum--danger">
+          <div className="approve-sum approve-sum--neutral">
             <CircleAlert size={18} />
             <span>The request will be closed. You can always start a new one.</span>
           </div>

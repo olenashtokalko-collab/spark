@@ -1,6 +1,5 @@
 import { Fragment, useEffect, useState } from 'react';
 import { Download, X, PenLine } from 'lucide-react';
-import { Mascot } from '../../components/ui/Mascot';
 import { Dialog } from '../../components/ui/overlay';
 import { Avatar, Badge, Button, Textarea } from '../../components/ui/primitives';
 import { Art, FileIcon, kindLabel } from '../../components/domain';
@@ -9,6 +8,7 @@ import { personById, useStore } from '../../state/store';
 import type { Doc } from '../../data/types';
 import { dueLabel, fmtDateTime, fmtRelative, fmtSize } from '../../lib/format';
 import { navigate } from '../../lib/router';
+import { SparkDisc } from '../../components/ui/BrandSpark';
 
 export function downloadDoc(doc: Doc) {
   // The prototype has no file storage, so it exports a faithful copy of the
@@ -110,7 +110,7 @@ export function DocPreviewDialog({ docId, onClose }: { docId: string | null; onC
           <div className="preview__actions">
             {/* The same Ask Spark button as on Home: the mascot in a white pill with a hairline. */}
             <button type="button" className="hl-mchat preview__ask" onClick={ask}>
-              <Mascot size={28} />
+              <SparkDisc size={28} />
               Ask Spark about this file
             </button>
           </div>

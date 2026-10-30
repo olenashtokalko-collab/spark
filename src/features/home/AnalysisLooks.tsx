@@ -17,7 +17,8 @@
 //   K · Featured     the same header; the most important issue large with its signals, the others as
 //                    smaller tinted cards under it, what works in green
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { ArrowLeft, ArrowRight, BadgeCheck, Check, ChevronDown, ChevronLeft, ChevronRight, CircleAlert, Clock, FileSearch, FileText, Plus, Sparkles, TriangleAlert } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BadgeCheck, Check, ChevronDown, ChevronLeft, ChevronRight, CircleAlert, Clock, FileSearch, FileText, Plus, TriangleAlert } from 'lucide-react';
+import { SparkStar } from '../../components/ui/SparkStar';
 import { useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { navigate } from '../../lib/router';
@@ -27,6 +28,7 @@ import { ANALYSIS_ICON } from '../assistant/Home';
 import { ChatDrawer, Mascot, type DrawerTopic } from '../assistant/ChatDrawer';
 import { Composer } from '../assistant/Composer';
 import type { CompanyAnalysis } from '../../data/types';
+import { SparkDisc } from '../../components/ui/BrandSpark';
 
 export type AnalysisLook = 'priorities' | 'side' | 'conversation' | 'report' | 'compare' | 'board' | 'focus' | 'ink' | 'tabs' | 'agent' | 'featured';
 type Finding = CompanyAnalysis['findings'][number];
@@ -54,7 +56,7 @@ function useAnalysis(a: CompanyAnalysis) {
     ask: (text: string) => setAsk(text),
     // A question sent from the page starts the chat at once and opens it on Chats.
     send: (text: string) => navigate(`/assistant/${actions.ask(null, `${text}\n\n(About the ${a.title.toLowerCase()}.)`)}`),
-    request: (f: Finding) => openRequest({ title: f.title, type: a.kind === 'social' ? 'Social' : a.kind === 'brand' ? 'Strategy' : 'Other', description: `${f.body}\n\nWhat we'd like from Spark: ${f.fix ?? ''}` }),
+    request: (f: Finding) => openRequest({ title: f.title, type: a.kind === 'social' ? 'Social' : a.kind === 'brand' ? 'Strategy' : 'Digital', description: `${f.body}\n\nWhat we'd like from Spark: ${f.fix ?? ''}` }),
     drawer: <ChatDrawer open={ask !== null} initial={ask ?? undefined} onClose={() => setAsk(null)} topic={analysisTopic(a)} />,
   };
 }
@@ -246,7 +248,7 @@ export function AnalysisView({ a, look, focus }: { a: CompanyAnalysis; look: Ana
       <Verdict a={a} />
       <Meta a={a} />
       <button type="button" className="hl-mchat anx-ask" onClick={x.askAll}>
-        <Mascot size={28} /> Ask Spark about this analysis
+        <SparkDisc size={28} /> Ask Spark about this analysis
       </button>
     </header>
   );
@@ -382,7 +384,7 @@ export function AnalysisView({ a, look, focus }: { a: CompanyAnalysis; look: Ana
           <Verdict a={a} />
           <Meta a={a} />
           <button type="button" className="hl-mchat anx-ask" onClick={x.askAll}>
-            <Mascot size={28} /> Ask Spark about this analysis
+            <SparkDisc size={28} /> Ask Spark about this analysis
           </button>
         </header>
         <Figures a={a} issues={x.issues} works={x.works} />
@@ -441,7 +443,7 @@ export function AnalysisView({ a, look, focus }: { a: CompanyAnalysis; look: Ana
                 ))}
               </div>
               <button type="button" className="hl-mchat anx-panel__ask" onClick={x.askAll}>
-                <Mascot size={28} /> Ask your own question
+                <SparkDisc size={28} /> Ask your own question
               </button>
             </div>
             <div className="anx-panel anx-panel--quiet">
@@ -518,7 +520,7 @@ export function AnalysisView({ a, look, focus }: { a: CompanyAnalysis; look: Ana
             </a>
           ))}
           <button type="button" className="hl-mchat anx-toc__ask" onClick={x.askAll}>
-            <Mascot size={24} /> Ask Spark
+            <SparkDisc size={24} /> Ask Spark
           </button>
         </nav>
         <div className="anx-doc__body">
@@ -645,7 +647,7 @@ function InkLook({ a, x, acts, tail }: { a: CompanyAnalysis; x: Ctx; acts: (f: F
             <BadgeCheck size={14} strokeWidth={1.9} /> Reviewed by a Spark strategist · {fmtDate(a.updatedAt)}
           </span>
           <button type="button" className="hl-mchat" onClick={x.askAll}>
-            <Mascot size={28} /> Ask Spark
+            <SparkDisc size={28} /> Ask Spark
           </button>
         </div>
       </header>
@@ -739,7 +741,7 @@ function TabsLook({ a, x, head, focus }: { a: CompanyAnalysis; x: Ctx; head: Rea
                 <p className="anx-tile__text">
                   {f.body}
                   <button type="button" className="anx-tile__ai" onClick={() => x.ask(`Tell me more about “${f.title}” and how we build on it.`)} aria-label={`Ask Spark about ${f.title}`} data-tip="Ask Spark">
-                    <Sparkles size={16} strokeWidth={1.8} />
+                    <SparkStar size={16} strokeWidth={1.8} />
                   </button>
                 </p>
               </div>
@@ -788,7 +790,7 @@ function AgentHero({ a, x }: { a: CompanyAnalysis; x: Ctx }) {
             </button>
           )}
           <button type="button" className="hl-mchat" onClick={x.askAll}>
-            <Mascot size={28} /> Ask Spark
+            <SparkDisc size={28} /> Ask Spark
           </button>
         </span>
       </div>

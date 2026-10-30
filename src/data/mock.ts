@@ -75,9 +75,9 @@ export const analyses: CompanyAnalysis[] = [
     score: { label: 'Mobile speed', value: '41/100' },
     findings: [
       { title: 'Calm and on brand', good: true, body: 'The look matches the stores: quiet layouts, real product photos, prices up front. Visitors who reach a product page stay 2 min 40 s.' },
-      { title: 'Slow on mobile', issue: true, impact: 'High', body: 'Product pages take 6.8 s to load on 4G, mostly because of uncompressed hero images. Most visits come from phones.', fix: 'Compress the hero images and lazy-load the galleries, so product pages open in under 3 s on 4G.' },
-      { title: 'Arabic is half done', impact: 'Medium', body: 'Only the home page and three category pages are in Arabic. Checkout, delivery and returns are English only.', fix: 'Translate checkout, delivery and returns first: the steps where people pay.' },
-      { title: 'Hard to find a store', impact: 'Low', body: 'The store locator sits in the footer. Weekend shoppers search for opening hours first.', fix: 'Put Stores and opening hours in the top menu and on every product page.' },
+      { title: 'Slow on mobile', issue: true, impact: 'High', body: 'Product pages take 6.8 s to load on 4G, mostly because of uncompressed hero images. Most visits come from phones.', fix: 'Compress the hero images and lazy-load the galleries, so product pages open in under 3 s on 4G.', asks: ['How many sales do we lose to the 6.8 s load?', 'Which pages are slowest?', 'Can our developers do this, or should Spark?', 'How fast are competitors on mobile?'] },
+      { title: 'Arabic is half done', impact: 'Medium', body: 'Only the home page and three category pages are in Arabic. Checkout, delivery and returns are English only.', fix: 'Translate checkout, delivery and returns first: the steps where people pay.', asks: ['How many visitors browse in Arabic?', 'Machine or human translation?', 'How long to translate checkout?', 'Should product pages follow?'] },
+      { title: 'Hard to find a store', impact: 'Low', body: 'The store locator sits in the footer. Weekend shoppers search for opening hours first.', fix: 'Put Stores and opening hours in the top menu and on every product page.', asks: ['How many people look for a store online?', 'Should we show stock per store?', 'What do competitors do?'] },
     ],
     updatedAt: '2026-10-02T10:00:00',
   },
@@ -94,8 +94,8 @@ export const analyses: CompanyAnalysis[] = [
     score: { label: 'Engagement, Instagram', value: '3.4%' },
     findings: [
       { title: 'Instagram works', good: true, body: '38K followers, engagement of 3.4%, above the 1.9% typical for retail in the UAE. Behind-the-design stories are saved most.' },
-      { title: 'TikTok is reposted Reels', issue: true, impact: 'High', body: 'Videos are cut for Instagram and reposted. Views stay under 2K; the native creator-led posts of competitors reach 20–60K.', fix: 'Make TikTok its own: short, vertical, creator-led videos, three a week.' },
-      { title: 'Replies are slow', impact: 'Medium', body: 'Comments asking about stock wait 26 hours for an answer on average.', fix: 'Answer stock questions within 2 hours with saved replies, and post stock updates weekly.' },
+      { title: 'TikTok is reposted Reels', issue: true, impact: 'High', body: 'Videos are cut for Instagram and reposted. Views stay under 2K; the native creator-led posts of competitors reach 20–60K.', fix: 'Make TikTok its own: short, vertical, creator-led videos, three a week.', asks: ['Which creators would fit us?', 'Can we keep reusing some Reels?', 'What would three videos a week cost?', 'Which competitor does TikTok best?'] },
+      { title: 'Replies are slow', impact: 'Medium', body: 'Comments asking about stock wait 26 hours for an answer on average.', fix: 'Answer stock questions within 2 hours with saved replies, and post stock updates weekly.', asks: ['Who should answer: us or Spark?', 'Can we draft the saved replies?', 'Which questions come up most?'] },
     ],
     docId: 'd-digest-w40',
     updatedAt: '2026-10-06T10:00:00',
@@ -112,8 +112,8 @@ export const analyses: CompanyAnalysis[] = [
     summary: 'People see Brand Co. as well-made and local. The “Gulf point of view” is clear in stores, less so online.',
     findings: [
       { title: 'What people say', good: true, body: 'In 1,200 reviews and posts, the words used most are “quality”, “gift” and “calm store”. Price is mentioned, rarely as a complaint.' },
-      { title: 'Where it gets lost', issue: true, impact: 'High', body: 'Online, product photos on white look like any global chain. The regional story lives only in store design.', fix: 'Bring the stores’ materials and Gulf references into product photography and the site.' },
-      { title: 'Ahead of Riyadh', impact: 'Medium', body: 'In KSA the brand is little known: 4% unprompted recall in our panel. The flagship launch needs to introduce it, not remind.', fix: 'Introduce the brand in KSA before the opening: creators, a pre-launch story, store previews.' },
+      { title: 'Where it gets lost', issue: true, impact: 'High', body: 'Online, product photos on white look like any global chain. The regional story lives only in store design.', fix: 'Bring the stores’ materials and Gulf references into product photography and the site.', asks: ['Can we see examples of the new photography?', 'Do we need a new shoot for every product?', 'Which store details travel best online?', 'How would the site change?'] },
+      { title: 'Ahead of Riyadh', impact: 'Medium', body: 'In KSA the brand is little known: 4% unprompted recall in our panel. The flagship launch needs to introduce it, not remind.', fix: 'Introduce the brand in KSA before the opening: creators, a pre-launch story, store previews.', asks: ['How far ahead of the opening should we start?', 'Which creators work in Riyadh?', 'What budget does a pre-launch need?', 'How do competitors launch in KSA?'] },
     ],
     docId: 'd-audit',
     updatedAt: '2026-09-22T12:00:00',
@@ -315,7 +315,7 @@ export const requests: WorkRequest[] = [
     ],
   },
   {
-    id: 'REQ-107', title: 'Mobile site speed fixes', type: 'Other',
+    id: 'REQ-107', title: 'Mobile site speed fixes', type: 'Digital',
     description: 'Compress the product images and lazy-load the galleries, so product pages load in under 3 s on 4G.',
     timing: 'ASAP', status: 'approved', createdBy: 'u-omar', createdAt: '2026-10-15T09:30:00', updatedAt: '2026-10-21T10:15:00', ownerId: 's-youssef',
     nextStep: { label: 'Spark starts the work', date: '2026-10-28' },

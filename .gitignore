@@ -11,3 +11,8 @@ dist/
 # Vercel project linkage and local build output
 .vercel/
 .env*
+
+# Licensed brand fonts (ABC Diatype etc.): kept local, not in the public repo
+public/fonts/
+# Local review screenshots
+screenshots/

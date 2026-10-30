@@ -2,7 +2,7 @@
 // it came from is attached automatically (the focused answer and the question
 // before it) and shown back to the client once the request is sent.
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, BarChart3, Camera, Check, FileText, Lightbulb, Megaphone, Palette, Send, type LucideIcon } from 'lucide-react';
+import { ArrowRight, BarChart3, Check, FileText, Lightbulb, Megaphone, MonitorSmartphone, Palette, Shapes, Send, type LucideIcon } from 'lucide-react';
 import { Dialog, IconTile } from '../../components/ui/overlay';
 import { Button, Field, Input, Select, Textarea, cx } from '../../components/ui/primitives';
 import { useStore } from '../../state/store';
@@ -17,7 +17,7 @@ export interface RequestPrefill {
   focusMessageId?: string;
 }
 
-export const TYPES: RequestType[] = ['Strategy', 'Creative', 'Content', 'Research', 'Social', 'Other'];
+export const TYPES: RequestType[] = ['Strategy', 'Creative', 'Content', 'Research', 'Social', 'Digital', 'Other'];
 
 // Each request type has its icon, shown beside the type's name (picked on #/demo/requests-ui, 5).
 export const TYPE_ICON: Record<RequestType, LucideIcon> = {
@@ -26,7 +26,8 @@ export const TYPE_ICON: Record<RequestType, LucideIcon> = {
   Content: FileText,
   Research: BarChart3,
   Social: Megaphone,
-  Other: Camera,
+  Digital: MonitorSmartphone,
+  Other: Shapes,
 };
 export const TIMINGS: Timing[] = ['ASAP', 'Within 2 weeks', 'This quarter', 'Flexible'];
 const plain = (t: string) => t.replace(/\*\*/g, '');

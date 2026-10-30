@@ -2,6 +2,7 @@
 // top-up: pay by card, or contact Spark (invoice, bank transfer, larger amounts). Prototype: the card payment
 // is simulated and adds the amount at once; the real one opens the payment provider's checkout here.
 import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { GlassTabs } from '../ui/GlassTabs';
 import { createPortal } from 'react-dom';
 import { CreditCard, Mail, Plus } from 'lucide-react';
 import { useStore } from '../../state/store';
@@ -75,13 +76,14 @@ export function TopUpDialog({ open, onClose }: { open: boolean; onClose: () => v
         {method === 'card' ? (
           <div className="topup__body">
             <span className="topup__label">Amount</span>
-            <div className="topup__amounts" role="radiogroup" aria-label="Amount">
-              {AMOUNTS.map((a) => (
-                <button key={a} type="button" role="radio" aria-checked={amount === a} className={cx('topup__amount', amount === a && 'is-on')} onClick={() => setAmount(a)}>
-                  USD {a.toLocaleString('en-US')}
-                </button>
-              ))}
-            </div>
+            <GlassTabs
+              kind="radio"
+              fill
+              label="Amount"
+              value={String(amount)}
+              onChange={(v) => setAmount(Number(v) as typeof amount)}
+              items={AMOUNTS.map((a) => ({ value: String(a), label: `USD ${a.toLocaleString('en-US')}` }))}
+            />
             <p className="topup__hint">You’ll pay on a secure page. A receipt goes to {me.email}.</p>
           </div>
         ) : (
@@ -102,6 +104,30 @@ export function TopUpDialog({ open, onClose }: { open: boolean; onClose: () => v
 /** What the credits are: the balance, where it came from, what's been used, what credits pay for, and Top up.
  *  The same card on Home (on hover, beside the company's name) and from the account menu (on click). */
 export const FREE_CREDITS = 100;
+/** How much of the credits is left, as a ring that empties clockwise from the top (Cobalt on a grey track):
+ *  stands where a credits icon would. */
+export function CreditRing({ left, total, size = 16, stroke = 2.5 }: { left: number; total: number; size?: number; stroke?: number }) {
+  const r = (size - stroke) / 2;
+  const c = 2 * Math.PI * r;
+  const part = Math.max(0, Math.min(1, left / Math.max(total, 1)));
+  return (
+    <svg className="credit-ring" width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={`${Math.round(part * 100)}% of credits left`}>
+      <circle cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} className="credit-ring__track" />
+      <circle
+        cx={size / 2}
+        cy={size / 2}
+        r={r}
+        fill="none"
+        strokeWidth={stroke}
+        strokeLinecap="round"
+        strokeDasharray={`${c * part} ${c}`}
+        transform={`rotate(-90 ${size / 2} ${size / 2})`}
+        className="credit-ring__value"
+      />
+    </svg>
+  );
+}
+
 export function CreditsCard({ left, total, onTopUp }: { left: number; total: number; onTopUp: () => void }) {
   const rows: [string, string][] = [
     ['Free credits', usd(FREE_CREDITS)],

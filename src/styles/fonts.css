@@ -1,0 +1,47 @@
+/*
+ * Spark's typefaces (Brand Guidelines 2026, p. 32). One family, three weights: Ultra speaks first (titles,
+ * 44 px and up, tracking −40), Bold organises (subheads, names, key lines), Light explains (body).
+ * Diatype Mono sets labels (uppercase, tracked); Doto Rounded lights up numbers; Hacen Casablanca carries
+ * Arabic. Diatype Extended is one variable file, weights 200 to 1000 (Ultra).
+ */
+@font-face {
+  font-family: 'ABC Diatype Extended';
+  src: url('/fonts/ABCDiatypeExtendedVariable.woff2') format('woff2');
+  font-weight: 200 1000;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'ABC Diatype Mono';
+  src: url('/fonts/ABCDiatypeMono-Medium.woff2') format('woff2');
+  font-weight: 100 900;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Doto Rounded';
+  src: url('/fonts/Doto_Rounded-Bold.ttf') format('truetype');
+  font-weight: 100 900;
+  font-display: swap;
+}
+/* Arabic only: the Latin text stays in Diatype. */
+@font-face {
+  font-family: 'Hacen Casablanca';
+  src: url('/fonts/HacenCasablanca-Light.ttf') format('truetype');
+  font-weight: 100 349;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Hacen Casablanca';
+  src: url('/fonts/HacenCasablanca.ttf') format('truetype');
+  font-weight: 350 649;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Hacen Casablanca';
+  src: url('/fonts/HacenCasablanca-Heavy.ttf') format('truetype');
+  font-weight: 650 1000;
+  unicode-range: U+0600-06FF, U+0750-077F, U+08A0-08FF, U+FB50-FDFF, U+FE70-FEFF;
+  font-display: swap;
+}

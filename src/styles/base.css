@@ -125,8 +125,7 @@ ol {
 }
 .display {
   font-family: var(--font-display);
-  font-stretch: 125%;
-  font-weight: 800;
+  font-weight: 700;
   letter-spacing: -0.01em;
   text-transform: uppercase;
 }
@@ -226,8 +225,7 @@ ol {
 }
 .topbar__logo {
   font-family: var(--font-display);
-  font-stretch: 125%;
-  font-weight: 800;
+  font-weight: 700;
   font-size: 18px;
   letter-spacing: 0.02em;
   padding: 0 4px;
@@ -309,7 +307,7 @@ kbd {
   background: var(--accent);
   color: var(--on-accent);
   font-size: 10px;
-  font-weight: 600;
+  font-weight: 700;
   display: grid;
   place-items: center;
   box-shadow: 0 0 0 2px var(--ring, var(--bg));
@@ -369,7 +367,7 @@ kbd {
 }
 .section-head__title {
   font-size: 13px;
-  font-weight: 600;
+  font-weight: 700;
   display: flex;
   align-items: baseline;
   gap: 8px;
@@ -570,7 +568,7 @@ kbd {
   padding: 0 6px;
   border-radius: 999px;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   display: inline-grid;
   place-items: center;
   background: var(--neutral-soft);
@@ -590,7 +588,7 @@ kbd {
   place-items: center;
   flex: none;
   border-radius: 50%;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0.02em;
   background: hsl(var(--hue) 38% 30%);
   color: hsl(var(--hue) 70% 88%);
@@ -961,7 +959,7 @@ kbd {
 }
 .dialog__title {
   font-size: 24px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.25;
   letter-spacing: -0.015em;
 }
@@ -1124,7 +1122,7 @@ kbd {
   padding: 10px 10px 12px;
 }
 .user-menu__name {
-  font-weight: 600;
+  font-weight: 700;
 }
 .user-menu__mail {
   font-size: 13px;
@@ -1161,7 +1159,7 @@ kbd {
   align-items: center;
   justify-content: space-between;
   padding: 14px 16px 8px;
-  font-weight: 600;
+  font-weight: 700;
 }
 .notifs__list {
   max-height: min(460px, 70vh);
@@ -1537,7 +1535,7 @@ kbd {
   background: var(--text);
   color: #ffffff;
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
 }
 .acct__ws-text {
   display: flex;
@@ -1548,7 +1546,7 @@ kbd {
 }
 .acct__ws-text b {
   font-size: 16px;
-  font-weight: 600;
+  font-weight: 700;
 }
 .acct__role {
   font-size: 13px;
@@ -1694,3 +1692,39 @@ kbd {
   color: var(--text-2);
 }
 
+
+/* The spark icon (SparkStar): the brand's shape, flat in its colour. */
+.spark-star {
+  flex: none;
+  overflow: visible;
+}
+
+/* Credits left as a ring (CreditRing): Cobalt on a grey track. */
+.credit-ring {
+  flex: none;
+  display: block;
+}
+.credit-ring__track {
+  stroke: color-mix(in srgb, var(--ink, #0e1116) 14%, transparent);
+}
+.credit-ring__value {
+  stroke: var(--cobalt, #1e3bd6);
+  transition: stroke-dasharray 0.4s;
+}
+
+/* The spark on a pale Noor disc (SparkDisc): lilac through pink to peach. */
+.spark-disc {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  border-radius: 50%;
+  background: linear-gradient(160deg in oklch, #e6e4fb, #f6e3ee 55%, #fbe6da);
+}
+/* Ask Spark's disc in Ember (29 Oct): the spark Ember, the disc a pale warm wash of it. */
+.spark-disc {
+  color: var(--ember, #e8501f);
+  background: color-mix(in srgb, var(--ember, #e8501f) 12%, #fff);
+}
+.spark-disc .brand-spark {
+  filter: none;
+}

@@ -82,7 +82,6 @@
 :root[data-theme='sand'] .req-head__title,
 :root[data-theme='sand'] .proposal__title {
   font-family: var(--font-display);
-  font-stretch: 125%;
   font-weight: var(--sub-weight);
   letter-spacing: var(--sub-track);
 }
@@ -111,7 +110,7 @@
   border-radius: 999px;
   font-family: inherit;
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 700;
   font-variant-numeric: tabular-nums;
   color: color-mix(in srgb, var(--ink) 70%, transparent);
   background: rgba(14, 17, 22, 0.06);
@@ -129,8 +128,16 @@
   background: var(--ink);
   box-shadow: none;
 }
+/* Danger, for deleting only (a chat, a member): flat crimson, built like the Ink primary (no gradient, no
+   shadow). Crimson sits outside the palette on purpose: Ember never means "error". */
 :root[data-theme='sand'] .btn--danger {
+  --pill: var(--danger);
+  background: var(--danger);
   box-shadow: none;
+}
+:root[data-theme='sand'] .btn--danger:hover:not(:disabled) {
+  filter: none;
+  background: color-mix(in srgb, var(--danger) 86%, var(--ink));
 }
 :root[data-theme='sand'] .btn--primary:active:not(:disabled),
 :root[data-theme='sand'] .btn--danger:active:not(:disabled) {
@@ -288,7 +295,6 @@
 :root[data-theme='sand'] .assistant__hello {
   margin: 0 0 28px;
   font-family: var(--font-display);
-  font-stretch: 125%;
   font-weight: var(--sub-weight);
   font-size: clamp(26px, 2.6vw, 34px);
   letter-spacing: var(--sub-track);
@@ -582,15 +588,6 @@
   }
 }
 
-/* ---- The chat input in a conversation: white fill so it reads on plain Sand ----------- */
-:root[data-theme='sand'] .assistant:not(:has(.assistant__empty)) .composer {
-  background: #ffffff;
-  -webkit-backdrop-filter: none;
-  backdrop-filter: none;
-}
-:root[data-theme='sand'] .assistant:not(:has(.assistant__empty)) .composer:not(.is-typing):not(.is-busy) {
-  box-shadow: var(--pill-rim), 0 0 0 1px rgba(14, 17, 22, 0.08), 0 8px 24px -14px rgba(14, 17, 22, 0.25);
-}
 
 /* ---- Your message: "Glass speech bubble" (picked on #/demo/bubbles) ------------------- */
 :root[data-theme='sand'] .msg-user__bubble {
@@ -623,7 +620,8 @@
 }
 :root[data-theme='sand'] .shimmer-text {
   color: transparent;
-  background: linear-gradient(90deg in oklch, rgba(14, 17, 22, 0.45) 30%, var(--cobalt) 45%, var(--ember) 55%, rgba(14, 17, 22, 0.45) 70%) 0 0 / 250% 100%;
+  /* A light runs through the words in Ink, not in Noor: no spectrum on type (30 Oct). */
+  background: linear-gradient(90deg, rgba(14, 17, 22, 0.42) 30%, rgba(14, 17, 22, 0.95) 50%, rgba(14, 17, 22, 0.42) 70%) 0 0 / 250% 100%;
   -webkit-background-clip: text;
   background-clip: text;
   animation: bb-sweep 2s linear infinite;
@@ -789,7 +787,7 @@
 }
 :root[data-theme='sand'] .proposal__doc .psec__title {
   font-size: 18px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: -0.015em;
 }
 /* One type scale for the document: 18 section titles; 15 for what you read
@@ -1105,8 +1103,9 @@ button.proposal__tool:hover {
   line-height: 1.4;
   color: var(--text-2);
 }
+/* The client's deadline in plain Ink: on the request page the Ember decision band already says it (29 Oct). */
 .stg__due.is-on-you {
-  color: var(--warning);
+  color: var(--ink, var(--text));
 }
 .stg__due svg {
   flex: none;
@@ -1335,7 +1334,7 @@ button.proposal__tool:hover {
 }
 :root[data-theme='sand'] .review-card__title {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   letter-spacing: 0;
 }
 :root[data-theme='sand'] .review-card .review__thread {
@@ -1416,8 +1415,7 @@ button.proposal__tool:hover {
    read far heavier than the 15px line under it). */
 :root[data-theme='sand'] .dialog__title {
   font-size: 21px;
-  font-weight: 600;
-  font-stretch: 112%;
+  font-weight: 700;
   letter-spacing: -0.02em;
 }
 :root[data-theme='sand'] .dialog--hero .dialog__desc {
@@ -1809,9 +1807,16 @@ button.proposal__tool:hover {
 .notifs__head .link-btn {
   color: var(--ink);
 }
+/* Stages not reached yet read as disabled: no fill, a dashed edge, a faint glyph and fainter words. */
 .stg--discs .stg__item.is-todo .stg__mark {
-  background: rgba(14, 17, 22, 0.025);
-  color: var(--text-3);
+  background: none;
+  color: color-mix(in srgb, var(--ink) 30%, var(--sand));
+  box-shadow: none;
+  outline: 1px dashed color-mix(in srgb, var(--ink) 22%, transparent);
+  outline-offset: -1px;
+}
+.stg--discs .stg__item.is-todo :is(.stg__label, .stg__info) {
+  color: color-mix(in srgb, var(--ink) 42%, var(--sand));
 }
 .stg--discs .stg__item.is-declined .stg__mark,
 .axb__item.tone-negative .axb__mark {
@@ -1997,7 +2002,7 @@ button.proposal__tool:hover {
 }
 :root[data-theme='sand'] .insight__title {
   font-size: 15px;
-  font-weight: 600;
+  font-weight: 700;
   line-height: 1.35;
   color: var(--ink);
 }
@@ -2405,7 +2410,7 @@ button.proposal__tool:hover {
 }
 :root[data-theme='sand'] .msg-system:not(.chat-cut__pill) .link {
   color: var(--ink);
-  font-weight: 600;
+  font-weight: 700;
   text-decoration: underline;
   text-underline-offset: 3px;
   text-decoration-color: rgba(14, 17, 22, 0.35);
@@ -2688,7 +2693,7 @@ button.proposal__tool:hover {
   color: var(--sand);
 }
 
-/* Labels: Diatype Mono (here JetBrains Mono), uppercase and tracked, in Ember. */
+/* Labels: Diatype Mono, uppercase and tracked, in Ember. */
 :root[data-theme='sand'] .eyebrow,
 :root[data-theme='sand'] .sub-eyebrow {
   font-family: var(--font-mono);
@@ -2722,4 +2727,1229 @@ button.proposal__tool:hover {
   :root[data-theme='sand'] .req-layout {
     grid-template-columns: minmax(0, 1fr);
   }
+}
+
+/* ---- Type roles from the guidelines (p. 32), on the brand's own faces (fonts.css) -------------------
+   Light explains: descriptions and body copy. Diatype Mono labels: uppercase, tracked. */
+:root[data-theme='sand'] :is(.hl-hero__text p, .hl-fix__body, .rq-head__sub, .fdm-about, .hl-fix__do-text) {
+  font-weight: 300;
+}
+:root[data-theme='sand'] :is(.hl-fix__do-label, .hl-fix__src, .hl-impact, .hl-rtile__foot) {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+:root[data-theme='sand'] .hl-rtile__foot {
+  font-size: 10.5px;
+}
+:root[data-theme='sand'] .hl-rtile__foot b {
+  font-weight: 500;
+}
+:root[data-theme='sand'] :is(.hl-col__n, .hl-rtile__n) {
+  font-family: var(--font-display);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+/* The counts in Diatype Extended Bold (Doto read poorly as figures, feedback 28 Oct). The company's name is
+   the page's title: Ultra, 44 px, tracking −40 (never Ultra below 44). */
+:root[data-theme='sand'] :is(.hl-col__n, .hl-rtile__n) {
+  font-size: 32px;
+  line-height: 1;
+}
+:root[data-theme='sand'] .hl-hero__title {
+  font-family: var(--font-display);
+  font-size: 44px;
+  font-weight: 1000;
+  letter-spacing: -0.04em;
+  line-height: 1.05;
+}
+
+/* ---- Chat in glass (picked on #/demo/brand-glass, E · Volume, 28 Oct) ---------------------------------
+   Your messages: light, airy glass in pale peach (the social post's "Make it brighter"): the colour
+   across the glass, a white gloss under the text, a white rim, a deeper foot, a short warm shadow.
+   Spark answers as text beside its mark, as before. */
+:root[data-theme][data-theme] .msg-user__bubble {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-radius: 22px 22px 8px 22px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.12) 50%, rgba(255, 255, 255, 0.32) 100%),
+    linear-gradient(90deg in oklch, #ffd2bd, #ffe3d6 50%, #ffcbb4);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75),
+    inset 0 1.5px 1px #fff,
+    inset 0 -1.5px 1px rgba(255, 255, 255, 0.85),
+    inset 6px 0 10px -6px rgba(255, 255, 255, 0.9),
+    inset -6px 0 10px -6px rgba(200, 90, 40, 0.1),
+    inset 0 -12px 16px -8px rgba(220, 100, 50, 0.14),
+    0 1px 1px rgba(14, 17, 22, 0.03),
+    0 6px 12px -10px rgba(232, 80, 31, 0.18);
+}
+/* The gloss: a soft white band across the top of the glass. */
+:root[data-theme][data-theme] .msg-user__bubble::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 2px;
+  left: 10px;
+  right: 10px;
+  height: min(52%, 24px);
+  border-radius: 999px 999px 50% 50% / 999px 999px 100% 100%;
+  background: linear-gradient(180deg, #fff 0%, rgba(255, 255, 255, 0.5) 45%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+
+/* The chat box, in the same light glass, wherever it is (Chats, the Ask Spark drawer): a gloss across
+   the top, bright edges, a cool breath at the foot, a short shadow. While you type, the shadow warms
+   to peach: your turn. */
+:root[data-theme][data-theme] .composer {
+  isolation: isolate;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(255, 255, 255, 0.5) 55%, rgba(255, 255, 255, 0.64) 100%);
+  -webkit-backdrop-filter: blur(16px) saturate(1.3);
+  backdrop-filter: blur(16px) saturate(1.3);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    inset 0 1.5px 1px #fff,
+    inset 0 -1.5px 1px rgba(255, 255, 255, 0.85),
+    inset 8px 0 14px -8px rgba(255, 255, 255, 0.9),
+    inset -8px 0 14px -8px rgba(14, 17, 22, 0.06),
+    inset 0 -16px 20px -10px rgba(30, 59, 214, 0.08),
+    0 0 0 1px rgba(14, 17, 22, 0.06),
+    0 8px 16px -12px rgba(14, 17, 22, 0.22);
+}
+:root[data-theme][data-theme] .composer::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 3px;
+  left: 22px;
+  right: 22px;
+  height: min(40%, 40px);
+  border-radius: 999px 999px 50% 50% / 999px 999px 100% 100%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9) 0%, rgba(255, 255, 255, 0.35) 45%, rgba(255, 255, 255, 0) 100%);
+  pointer-events: none;
+}
+:root[data-theme][data-theme] .composer.is-typing {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    inset 0 1.5px 1px #fff,
+    inset 0 -1.5px 1px rgba(255, 255, 255, 0.85),
+    inset 8px 0 14px -8px rgba(255, 255, 255, 0.9),
+    inset -8px 0 14px -8px rgba(14, 17, 22, 0.06),
+    inset 0 -16px 20px -10px rgba(255, 140, 100, 0.12),
+    0 0 0 1px rgba(14, 17, 22, 0.08),
+    0 10px 18px -12px rgba(232, 80, 31, 0.3);
+}
+/* Send: the primary, solid Ink (feedback 29 Oct). Sending is the client's action; Ember stays for AI. */
+:root[data-theme][data-theme] .composer__send:not(.is-busy) {
+  color: #fff;
+  background: var(--ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.16), 0 1px 2px rgba(14, 17, 22, 0.25);
+}
+:root[data-theme][data-theme] .composer__send:not(.is-busy):hover:not(:disabled) {
+  background: #2a2f38;
+}
+
+/* The light behind a conversation on Chats: warm behind your side, cool behind Spark's, very faint. */
+:root[data-theme][data-theme] .assistant--chats .assistant__main {
+  background:
+    radial-gradient(32% 40% at 80% 28%, rgba(255, 160, 125, 0.1), transparent),
+    radial-gradient(30% 38% at 20% 62%, rgba(30, 59, 214, 0.06), transparent);
+}
+
+/* Home · request tiles: the tray without its grey (feedback 28 Oct). The stroke on Sand, the white card
+   inside it, the line about what's next under the card. */
+:root[data-theme][data-theme] .hl-rtile {
+  background: none;
+}
+/* The arrow shows on hover (and keyboard focus) only. */
+:root[data-theme][data-theme] .hl-rtile__go {
+  opacity: 0;
+  transform: translateX(-3px);
+  transition: opacity 0.15s, transform 0.15s, color 0.15s;
+}
+:root[data-theme][data-theme] .hl-rtile:is(:hover, :focus-visible) .hl-rtile__go {
+  opacity: 1;
+  transform: translateX(0);
+  color: var(--text);
+}
+/* "Your requests" as a section of its own, set like "Where we think you have issues": the same title
+   size and the same 12 px down to the cards. */
+:root[data-theme][data-theme] .hl-hero--split .hl-reqsum--tiles .hl-section-head {
+  margin-bottom: 12px;
+}
+:root[data-theme][data-theme] .hl-reqsum--tiles .hl-section-head h2 {
+  font-size: 18px;
+}
+
+/* One text scale for Home's lists (feedback 28 Oct): an item's title 15 px Bold-ish (600), what it says
+   14 px Light, the date 13 px. The issues and Latest from Spark read as one page. */
+:root[data-theme][data-theme] :is(.hl-fix__title, .hl-latest__text b) {
+  font-size: 15px;
+  font-weight: 700;
+  line-height: 1.4;
+}
+:root[data-theme][data-theme] :is(.hl-fix__body, .hl-fix__do-text, .hl-latest__text > span) {
+  font-size: 14px;
+  font-weight: 300;
+  line-height: 1.5;
+}
+:root[data-theme][data-theme] .hl-latest__date {
+  font-size: 13px;
+}
+/* Feedback 28 Oct: titles 14 px, what they say 12 px, and the same 4 px from title to text in the issues
+   and in Latest from Spark. */
+:root[data-theme][data-theme] :is(.hl-fix__title, .hl-latest__text b) {
+  font-size: 14px;
+  line-height: 20px;
+}
+:root[data-theme][data-theme] :is(.hl-fix__body, .hl-fix__do-text, .hl-latest__text > span) {
+  font-size: 12px;
+  line-height: 18px;
+}
+:root[data-theme][data-theme] .hl-fix__title + .hl-fix__body {
+  margin-top: -4px;
+}
+:root[data-theme][data-theme] .hl-fix__body {
+  margin-bottom: 0;
+}
+:root[data-theme][data-theme] .hl-latest__text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+/* Titles in Medium (500), not 600 (feedback 28 Oct). */
+:root[data-theme][data-theme] :is(.hl-fix__title, .hl-latest__text b) {
+  font-weight: 500;
+}
+
+/* The company's avatar, quieter (feedback 28 Oct, "Grey" on the demo): a grey tile (Ink 12% on Sand) with
+   an Ink initial, the Sand ring kept so it sits over the cover, no drop shadow. */
+:root[data-theme][data-theme] .hl-hero__avatar {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--ink) 12%, var(--sand));
+  font-weight: 700;
+  font-size: 28px;
+  box-shadow: 0 0 0 3px var(--sand);
+}
+
+/* Home · Ask Spark in the header as the primary: an Ink pill, white text, the mascot kept
+   (feedback 28 Oct). */
+:root[data-theme][data-theme] .hl-hero__actions .hl-mchat {
+  color: #fff;
+  background: var(--ink);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 1px 2px rgba(14, 17, 22, 0.2);
+}
+:root[data-theme][data-theme] .hl-hero__actions .hl-mchat:hover {
+  background: #2a2f38;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 1px 2px rgba(14, 17, 22, 0.2);
+}
+
+/* Avatar options on #/demo/home-hero. */
+:root[data-theme][data-theme] .hl-frame[data-avatar='white'] .hl-hero__avatar {
+  background: #fff;
+  box-shadow: 0 0 0 3px var(--sand), inset 0 0 0 1px var(--line);
+}
+:root[data-theme][data-theme] .hl-frame[data-avatar='grey'] .hl-hero__avatar {
+  background: color-mix(in srgb, var(--ink) 6%, var(--sand));
+  box-shadow: 0 0 0 3px var(--sand);
+}
+:root[data-theme][data-theme] .hl-frame[data-avatar='grey2'] .hl-hero__avatar {
+  background: color-mix(in srgb, var(--ink) 12%, var(--sand));
+  box-shadow: 0 0 0 3px var(--sand);
+}
+:root[data-theme][data-theme] .hl-frame[data-avatar='haze'] .hl-hero__avatar {
+  color: color-mix(in srgb, var(--cobalt) 60%, var(--ink));
+  background: var(--haze);
+  box-shadow: 0 0 0 3px var(--sand);
+}
+:root[data-theme][data-theme] .hl-frame[data-avatar='outline'] .hl-hero__avatar {
+  background: var(--sand);
+  box-shadow: 0 0 0 3px var(--sand), inset 0 0 0 1.5px var(--line-strong, rgba(14, 17, 22, 0.16));
+}
+:root[data-theme][data-theme] .hl-frame[data-avatar='ink'] .hl-hero__avatar {
+  color: var(--sand);
+  background: var(--ink);
+  font-weight: 700;
+  font-size: 32px;
+  box-shadow: 0 0 0 3px var(--sand), 0 12px 24px -16px rgba(14, 17, 22, 0.5);
+}
+/* 14/12 read too small (feedback 28 Oct): titles 16 px Medium, what they say 14 px Light, 4 px between. */
+:root[data-theme][data-theme] :is(.hl-fix__title, .hl-latest__text b) {
+  font-size: 16px;
+  line-height: 22px;
+}
+:root[data-theme][data-theme] :is(.hl-fix__body, .hl-fix__do-text, .hl-latest__text > span) {
+  font-size: 14px;
+  line-height: 20px;
+}
+
+/* Ask Spark, R7 · Soft pill (picked on #/demo/buttons, 29 Oct): a plain white pill with the softest
+   shadow, the brand's spark on a pale Noor disc, Ink words. The Home header keeps its Ink primary. */
+:root[data-theme][data-theme] .hl-mchat {
+  color: var(--ink);
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.04), 0 1px 2px rgba(14, 17, 22, 0.04), 0 6px 16px -8px rgba(14, 17, 22, 0.14);
+}
+:root[data-theme][data-theme] .hl-mchat:hover {
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.05), 0 1px 2px rgba(14, 17, 22, 0.05), 0 10px 20px -8px rgba(14, 17, 22, 0.2);
+}
+:root[data-theme][data-theme] .hl-mchat:has(.spark-disc) {
+  padding-left: 5px;
+}
+
+/* ---- Buttons by the book (picked on #/demo/buttons, 29 Oct) -------------------------------------------
+   Primary: solid Ink (as before). Secondary: a stroke only, no fill, so it takes the surface it stands on.
+   Tertiary: Ink words, underlined on hover, a small chevron. Icon buttons: a stroked circle, no fill. */
+:root[data-theme][data-theme] .btn--secondary {
+  color: var(--ink);
+  background: none;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 18%, transparent);
+}
+:root[data-theme][data-theme] .btn--secondary:hover:not(:disabled) {
+  filter: none;
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 28%, transparent);
+}
+:root[data-theme][data-theme] .itd--night .btn--secondary {
+  color: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+:root[data-theme][data-theme] :is(.hl-link, .hdc__link) {
+  gap: 2px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+}
+:root[data-theme][data-theme] :is(.hl-link, .hdc__link)::after {
+  content: '';
+  width: 14px;
+  height: 14px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+:root[data-theme][data-theme] :is(.hl-link, .hdc__link):hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+:root[data-theme][data-theme] :is(.hl-fix__more, .hdc-pager button) {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  color: var(--ink);
+  background: none;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 18%, transparent);
+}
+:root[data-theme][data-theme] :is(.hl-fix__more, .hdc-pager button):hover:not(:disabled),
+:root[data-theme][data-theme] .hl-fix__more.is-open {
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 28%, transparent);
+}
+
+/* Ask Spark everywhere is R7, the Home header too (29 Oct): the white soft pill, the spark on a Noor
+   disc. The text action on the issue card becomes a small R7. */
+:root[data-theme][data-theme] .hl-hero__actions .hl-mchat,
+:root[data-theme][data-theme] .hl-hero__actions .hl-mchat:hover {
+  color: var(--ink);
+  background: #fff;
+}
+:root[data-theme][data-theme] .hl-hero__actions .hl-mchat {
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.04), 0 1px 2px rgba(14, 17, 22, 0.04), 0 6px 16px -8px rgba(14, 17, 22, 0.14);
+}
+:root[data-theme][data-theme] .hl-hero__actions .hl-mchat:hover {
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.05), 0 1px 2px rgba(14, 17, 22, 0.05), 0 10px 20px -8px rgba(14, 17, 22, 0.2);
+}
+:root[data-theme][data-theme] .hl-fix__tools .hl-fix__tool:has(.spark-disc) {
+  height: 28px;
+  padding: 0 12px 0 3px;
+  gap: 6px;
+  border-left: 0;
+  border-radius: 999px;
+  background: #fff;
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.04), 0 1px 2px rgba(14, 17, 22, 0.04), 0 4px 10px -6px rgba(14, 17, 22, 0.16);
+}
+:root[data-theme][data-theme] .hl-fix__tools .hl-fix__tool:has(.spark-disc):hover {
+  color: var(--ink);
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.05), 0 1px 2px rgba(14, 17, 22, 0.05), 0 8px 14px -6px rgba(14, 17, 22, 0.22);
+}
+:root[data-theme][data-theme] .hl-fix__tools .hl-fix__tool:has(.spark-disc) + .hl-fix__make {
+  margin-left: 8px;
+}
+:root[data-theme][data-theme] :is(.hl-link, .hdc__link) {
+  display: inline-flex;
+  align-items: center;
+}
+
+/* Ask Spark R7, refined (feedback 29 Oct): no stroke; the shadow is the light, not grey — a faint violet
+   at rest, a touch more on hover with Cobalt to the left and Ember to the right. */
+:root[data-theme][data-theme] :is(.hl-mchat, .hl-hero__actions .hl-mchat, .hl-fix__tools .hl-fix__tool:has(.spark-disc)) {
+  box-shadow: 0 4px 12px -6px rgba(122, 69, 230, 0.16);
+}
+:root[data-theme][data-theme] :is(.hl-mchat, .hl-hero__actions .hl-mchat, .hl-fix__tools .hl-fix__tool:has(.spark-disc)):hover {
+  box-shadow:
+    -6px 8px 16px -10px rgba(30, 59, 214, 0.22),
+    6px 8px 16px -10px rgba(232, 80, 31, 0.2),
+    0 6px 14px -8px rgba(122, 69, 230, 0.2);
+}
+
+/* Home cover: E · Frosted (picked on #/demo/home-hero, 29 Oct). The Noor field seen through frosted glass,
+   pale and soft, on Sand; grain multiplied in; no grey at the foot. Kept at low specificity so the demo's
+   cover options still override it. */
+:where(:root[data-theme='sand']) .hl-hero__band {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.6)),
+    radial-gradient(40% 120% at 10% 60%, rgba(30, 59, 214, 0.75), transparent 70%),
+    radial-gradient(34% 120% at 36% 20%, rgba(150, 60, 230, 0.55), transparent 70%),
+    radial-gradient(34% 120% at 60% 60%, rgba(236, 60, 150, 0.5), transparent 70%),
+    radial-gradient(40% 120% at 86% 50%, rgba(255, 96, 30, 0.75), transparent 70%),
+    var(--sand, #f8f6f2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9), inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+}
+:where(:root[data-theme='sand']) .hl-hero__band::after {
+  opacity: 0.16;
+  mix-blend-mode: multiply;
+}
+/* The demo's "Before": the old cover, greyed at the foot. */
+:root[data-theme][data-theme] .hl-frame[data-cover='now'] .hl-hero__band {
+  background:
+    linear-gradient(180deg, transparent 40%, rgba(14, 17, 22, 0.55) 100%),
+    radial-gradient(45% 80% at 12% 10%, rgba(30, 59, 214, 0.9), transparent 70%),
+    radial-gradient(40% 80% at 42% 20%, rgba(150, 70, 225, 0.65), transparent 70%),
+    radial-gradient(45% 90% at 88% 70%, rgba(232, 80, 31, 0.85), transparent 70%),
+    radial-gradient(35% 70% at 66% 40%, rgba(236, 110, 160, 0.6), transparent 70%),
+    var(--haze, #c8d8f0);
+  box-shadow: none;
+}
+
+/* ---- Home cover after the brand book's chapter covers (pp. 3, 14, 24; 29 Oct) ------------------------
+   Sand with a fine grain all over; the light gathered on the right as deep-blurred clouds — Haze at the
+   top, Cobalt, violet, magenta and coral through the middle, Ember low on the right — feathering into
+   clean Sand on the left, where the avatar and the name sit. The clouds are drawn on a layer and blurred
+   hard, so no edge of a shape ever shows. */
+:where(:root[data-theme='sand']) .hl-hero__band {
+  background: var(--sand, #f8f6f2);
+  box-shadow: none;
+  isolation: isolate;
+}
+:where(:root[data-theme='sand']) .hl-hero__band::before {
+  content: '';
+  position: absolute;
+  inset: -40% -10% -40% 30%;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(22% 30% at 78% 18%, rgba(196, 218, 244, 0.95), transparent 70%),
+    radial-gradient(20% 34% at 52% 36%, rgba(40, 62, 228, 0.9), transparent 70%),
+    radial-gradient(22% 36% at 36% 50%, rgba(140, 70, 236, 0.75), transparent 70%),
+    radial-gradient(22% 34% at 46% 72%, rgba(238, 70, 150, 0.7), transparent 70%),
+    radial-gradient(24% 36% at 70% 62%, rgba(240, 110, 90, 0.7), transparent 70%),
+    radial-gradient(22% 34% at 86% 50%, rgba(240, 100, 40, 0.85), transparent 70%);
+  filter: blur(26px) saturate(1.1);
+}
+/* The grain: fine, even, over the light and the Sand alike. */
+:where(:root[data-theme='sand']) .hl-hero__band::after {
+  z-index: 1;
+  opacity: 0.32;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='1.1' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.55 0 0 0 0 0.54 0 0 0 0 0.52 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+/* The demo's other covers keep their own fills; switch the cloud layer off for them. */
+:root[data-theme][data-theme] .hl-frame[data-cover]:not([data-cover='chapter']) .hl-hero__band::before {
+  display: none;
+}
+
+/* Issue card actions, larger (feedback 29 Oct): Request proposal first at the standard 36 px, then Ask
+   Spark with no fill or shadow, the spark disc and the words. */
+:root[data-theme][data-theme] .hl-fix__tools .hl-fix__make {
+  height: 36px;
+  padding: 0 16px;
+  font-size: 14px;
+  margin-left: 0;
+}
+:root[data-theme][data-theme] .hl-fix__tools .hl-fix__tool.hl-fix__ask {
+  height: 36px;
+  margin-left: 12px;
+  padding: 0 6px 0 0;
+  gap: 8px;
+  font-size: 14px;
+  background: none;
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .hl-fix__tools .hl-fix__tool.hl-fix__ask:hover {
+  color: var(--text-2);
+  box-shadow: none;
+}
+.hdc-issue__acts .hl-fix__tool:first-child {
+  padding-left: 0;
+}
+/* The cover's grain, lighter: it should speckle the Sand, not grey it. */
+:where(:root[data-theme='sand']) .hl-hero__band::after {
+  opacity: 0.2;
+}
+.hl-frame[data-cover='chapter'] .hl-hero__band {
+  --cover-grain: 0.2;
+}
+/* The light across the whole cover (feedback 29 Oct): Cobalt from the left, violet, magenta and coral
+   through the middle, Ember on the right, Haze at the top right; still deep-blurred, still grained. */
+:where(:root[data-theme='sand']) .hl-hero__band::before {
+  inset: -40% -8%;
+  background:
+    radial-gradient(16% 34% at 10% 55%, rgba(40, 62, 228, 0.85), transparent 70%),
+    radial-gradient(16% 34% at 26% 30%, rgba(110, 80, 236, 0.75), transparent 70%),
+    radial-gradient(16% 36% at 40% 62%, rgba(150, 70, 236, 0.7), transparent 70%),
+    radial-gradient(16% 34% at 55% 40%, rgba(238, 70, 150, 0.65), transparent 70%),
+    radial-gradient(16% 34% at 68% 66%, rgba(240, 110, 90, 0.7), transparent 70%),
+    radial-gradient(14% 30% at 72% 22%, rgba(40, 62, 228, 0.7), transparent 70%),
+    radial-gradient(14% 28% at 88% 18%, rgba(196, 218, 244, 0.95), transparent 70%),
+    radial-gradient(18% 36% at 90% 58%, rgba(240, 100, 40, 0.85), transparent 70%);
+}
+/* One continuous flow, no gaps: wide clouds that overlap, Cobalt → violet → magenta → coral → Ember. */
+:where(:root[data-theme='sand']) .hl-hero__band::before {
+  inset: -30% -6%;
+  background:
+    radial-gradient(28% 70% at 8% 55%, rgba(40, 62, 228, 0.9), transparent 75%),
+    radial-gradient(28% 70% at 28% 40%, rgba(124, 70, 236, 0.8), transparent 75%),
+    radial-gradient(28% 70% at 48% 58%, rgba(222, 72, 170, 0.72), transparent 75%),
+    radial-gradient(28% 70% at 68% 45%, rgba(240, 105, 100, 0.75), transparent 75%),
+    radial-gradient(28% 70% at 90% 58%, rgba(240, 100, 40, 0.88), transparent 75%),
+    radial-gradient(18% 40% at 84% 8%, rgba(196, 218, 244, 0.9), transparent 75%),
+    var(--sand, #f8f6f2);
+  filter: blur(22px) saturate(1.1);
+}
+
+/* ---- Dots and selection, one rule each (29 Oct) -------------------------------------------------------
+   "Look here" is one colour everywhere — Ember: the dot in the sidebar, the unread count and dot in
+   notifications, the new marks in Latest from Spark, as Needs you, the Proposal status and "to review".
+   Cobalt means "with Spark" (statuses, done stages), so it never marks attention.
+   "Selected" is Ink everywhere, as the primary: tabs, segmented controls, checks, switches, choices. */
+:root[data-theme][data-theme] :is(.rail__dot, .notif__dot, .hl-latest__dot) {
+  background: var(--ember);
+}
+:root[data-theme][data-theme] .bell__dot {
+  color: #fff;
+  background: var(--ember);
+}
+:root[data-theme][data-theme] .segmented__item.is-active {
+  color: #fff;
+  background: var(--ink);
+}
+:root[data-theme][data-theme] .menu__check {
+  color: var(--ink);
+}
+
+/* Secondary lighter (29 Oct): the stroke is Ink at 10%, so it is a shade of whatever it stands on (Sand, white
+   or the light) rather than a grey line; the label a touch lighter (450). Hover: Ink 18% and a 4% wash.
+   Chats keeps its rest look while the history is open: the open panel says so (feedback 29 Oct).
+   The same stroke for the stroked icon buttons and the chat start's pills and chips. */
+:root[data-theme][data-theme] {
+  --stroke-2: color-mix(in srgb, var(--ink) 10%, transparent);
+  --stroke-2-hover: color-mix(in srgb, var(--ink) 18%, transparent);
+}
+:root[data-theme][data-theme] .btn--secondary {
+  font-weight: 500;
+  box-shadow: inset 0 0 0 1px var(--stroke-2);
+}
+:root[data-theme][data-theme] .btn--secondary:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  box-shadow: inset 0 0 0 1px var(--stroke-2-hover);
+}
+:root[data-theme][data-theme] :is(.hl-fix__more, .hdc-pager button) {
+  box-shadow: inset 0 0 0 1px var(--stroke-2);
+}
+:root[data-theme][data-theme] :is(.hl-fix__more, .hdc-pager button):hover:not(:disabled),
+:root[data-theme][data-theme] .hl-fix__more.is-open {
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  box-shadow: inset 0 0 0 1px var(--stroke-2-hover);
+}
+:root[data-theme][data-theme] :is(.cs2-pill, .cs2-frame .cs2-pill):not(.cs2-pill--soft):not(.is-on),
+:root[data-theme][data-theme] .cs2-chip {
+  font-weight: 500;
+  box-shadow: inset 0 0 0 1px var(--stroke-2);
+}
+:root[data-theme][data-theme] :is(.cs2-pill, .cs2-frame .cs2-pill):not(.cs2-pill--soft):not(.is-on):hover,
+:root[data-theme][data-theme] .cs2-chip:hover {
+  box-shadow: inset 0 0 0 1px var(--stroke-2-hover);
+}
+/* On the Ink ground the stroke is white at the same weight. */
+:root[data-theme][data-theme] .cs2[data-bg='ink'] {
+  --stroke-2: rgba(255, 255, 255, 0.2);
+  --stroke-2-hover: rgba(255, 255, 255, 0.34);
+}
+:root[data-theme][data-theme] .cs2[data-bg='ink'] .cs2-top .btn--secondary {
+  color: #fff;
+}
+:root[data-theme][data-theme] .cs2[data-bg='ink'] .cs2-top .btn--secondary:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+/* Inside the white box the stroke stays Ink, on any ground. */
+:root[data-theme][data-theme] .cs2[data-bg='ink'] .cs2-box {
+  --stroke-2: color-mix(in srgb, var(--ink) 10%, transparent);
+  --stroke-2-hover: color-mix(in srgb, var(--ink) 18%, transparent);
+}
+
+/* The box on a new chat (Chats, 29 Oct): plain white, no glass of its own (the frame round it is the glass),
+   the words over the row of buttons. */
+:root[data-theme][data-theme] .composer.composer--box,
+:root[data-theme][data-theme] .composer.composer--box:is(.is-focus, .is-typing, .is-busy) {
+  gap: 8px;
+  min-height: 0;
+  padding: 14px 14px 10px 18px;
+  border-radius: 18px;
+  background: #fff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.05), 0 2px 6px -3px rgba(14, 17, 22, 0.12);
+  animation: none;
+}
+:root[data-theme][data-theme] .composer.composer--box::after {
+  display: none;
+}
+:root[data-theme][data-theme] .composer--box textarea {
+  padding: 2px 0 6px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+:root[data-theme][data-theme] .composer--box .composer__bar {
+  margin: 0;
+  gap: 8px;
+}
+
+/* Chip hover variants on #/demo/chat-start (29 Oct): the grey wash read as dimmed. */
+:root[data-theme][data-theme] .cs2 .cs2-chip {
+  position: relative;
+  isolation: isolate;
+  transition: background 0.2s, box-shadow 0.2s, color 0.2s;
+}
+:root[data-theme][data-theme] .cs2[data-hover='grey'] .cs2-chip:hover {
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+}
+:root[data-theme][data-theme] .cs2[data-hover='white'] .cs2-chip:hover {
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 1px 2px rgba(14, 17, 22, 0.06), 0 4px 12px -6px rgba(14, 17, 22, 0.16);
+}
+:root[data-theme][data-theme] .cs2[data-hover='light'] .cs2-chip::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 40% 10% -6px;
+  border-radius: 999px;
+  background: linear-gradient(90deg in oklch, #1e3bd6, #7a45e6 35%, #e9588e 65%, #e8501f);
+  filter: blur(10px);
+  opacity: 0;
+  transition: opacity 0.25s;
+}
+:root[data-theme][data-theme] .cs2[data-hover='light'] .cs2-chip:hover {
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+}
+:root[data-theme][data-theme] .cs2[data-hover='light'] .cs2-chip:hover::before {
+  opacity: 0.45;
+}
+:root[data-theme][data-theme] .cs2[data-hover='frost'] .cs2-chip:hover {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.55)),
+    linear-gradient(90deg in oklch, rgba(30, 59, 214, 0.12), rgba(233, 88, 142, 0.1), rgba(232, 80, 31, 0.12));
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: inset 0 1px 0 #fff, inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 2px 8px -4px rgba(122, 69, 230, 0.25);
+}
+:root[data-theme][data-theme] .cs2[data-hover='ink'] .cs2-chip:hover {
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--ink);
+}
+:root[data-theme][data-theme] .cs2[data-hover='ink'] .cs2-chip:hover .cs2-start__icon {
+  color: var(--ember, #e8501f);
+}
+:root[data-theme][data-theme] .cs2[data-hover='clear'] .cs2-chip:hover {
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.85), 0 2px 8px -4px rgba(14, 17, 22, 0.12);
+}
+
+/* Chips at rest without a stroke, on #/demo/chat-start (29 Oct). */
+:root[data-theme][data-theme] .cs2[data-chip='sand'] .cs2-chip,
+:root[data-theme][data-theme] .cs2[data-chip='sand'] .cs2-chip:hover {
+  background: rgba(248, 246, 242, 0.55);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .cs2[data-chip='sand-clear'] .cs2-chip,
+:root[data-theme][data-theme] .cs2[data-chip='sand-clear'] .cs2-chip:hover {
+  background: rgba(248, 246, 242, 0.35);
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .cs2[data-chip='tint'] .cs2-chip {
+  background: rgba(14, 17, 22, 0.05);
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .cs2[data-chip='sand'] .cs2-chip:hover {
+  background: rgba(248, 246, 242, 0.85);
+}
+:root[data-theme][data-theme] .cs2[data-chip='sand-clear'] .cs2-chip:hover {
+  background: rgba(248, 246, 242, 0.65);
+}
+:root[data-theme][data-theme] .cs2[data-chip='tint'] .cs2-chip:hover {
+  background: rgba(14, 17, 22, 0.08);
+  box-shadow: none;
+}
+
+/* Follow-ups under an answer: the secondary stroke, no fill, as the portal's buttons (29 Oct). */
+:root[data-theme][data-theme] .followup {
+  height: 32px;
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--stroke-2);
+}
+:root[data-theme][data-theme] .followup:hover {
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  box-shadow: inset 0 0 0 1px var(--stroke-2-hover);
+}
+/* Your messages: plain white, no glass, no gloss, no shadow (29 Oct). */
+:root[data-theme][data-theme] .msg-user__bubble {
+  background: #fff;
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .msg-user__bubble::after {
+  display: none;
+}
+/* Sources: the stroke, as the follow-ups (29 Oct). Your sent messages take the grey fill instead of white:
+   fill means "you said this", stroke means "you can press this", white is where you write. */
+:root[data-theme][data-theme] .sources__toggle {
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--stroke-2);
+}
+:root[data-theme][data-theme] .sources__toggle:hover {
+  background: color-mix(in srgb, var(--ink) 4%, transparent);
+  box-shadow: inset 0 0 0 1px var(--stroke-2-hover);
+}
+:root[data-theme][data-theme] .msg-user__bubble {
+  background: rgba(14, 17, 22, 0.05);
+}
+
+/* System notes in the thread as plain text (29 Oct): no pill, no fill, no stroke (the Noor strip was flat
+   Noor, and in the chat a fill means "you said this", a stroke "you can press this"). Small grey words and
+   icon in the middle; a link in Ink with the chevron, as All files on Home. */
+:root[data-theme][data-theme] .msg-system:not(.chat-cut__pill):not(.ns) {
+  gap: 6px;
+  padding: 2px 0;
+  font-size: 13px;
+  color: var(--text-3);
+  background: none;
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .msg-system:not(.chat-cut__pill):not(.ns) svg {
+  color: var(--text-3);
+}
+:root[data-theme][data-theme] .msg-system:not(.chat-cut__pill):not(.ns) .link {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: 4px;
+  font-weight: 500;
+  color: var(--ink);
+  text-decoration: none;
+}
+:root[data-theme][data-theme] .msg-system:not(.chat-cut__pill):not(.ns) .link::after {
+  content: '';
+  width: 14px;
+  height: 14px;
+  background: currentColor;
+  -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+  mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m9 18 6-6-6-6'/%3E%3C/svg%3E") center / contain no-repeat;
+}
+:root[data-theme][data-theme] .msg-system:not(.chat-cut__pill):not(.ns) .link:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* Spark's mark beside an answer: the Ember spark on its pale disc, as on Ask Spark (29 Oct). While Spark
+   works, the spark breathes. */
+.msg-ai__avatar .spark-disc {
+  box-shadow: none;
+}
+.msg-ai__avatar.is-working .brand-spark {
+  animation: spark-breathe 1.6s ease-in-out infinite;
+}
+@keyframes spark-breathe {
+  50% {
+    transform: scale(0.82);
+    opacity: 0.6;
+  }
+}
+
+/* "1 to review" on a folder (29 Oct): not an Ink pill (Ink fill is the primary button). An Ember dot and
+   the words: Ember is what waits on the client everywhere (Needs you, the decision band, the Proposal dot). */
+:root[data-theme][data-theme] .fcard__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ink);
+  background: none;
+}
+:root[data-theme][data-theme] .fcard__badge::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ember);
+}
+/* With a hairline round it (29 Oct): the label holds together as a tag on the card. */
+:root[data-theme][data-theme] .fcard__badge {
+  height: 24px;
+  padding: 0 10px 0 8px;
+  border-radius: 999px;
+  box-shadow: inset 0 0 0 1px var(--stroke-2);
+}
+:root[data-theme][data-theme] .hl-prof__facts .hl-link {
+  font-size: inherit;
+  font-weight: 400;
+}
+
+/* ---- Request page (29 Oct): no white cards. The side cards are outlined like "Your request" (no fill);
+   a proposal waiting on the client is one Ember band with the deadline, its numbers and the button. */
+:root[data-theme='sand'] :is(.req-side .side-card, .req-main .prop-card) {
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+/* A decided proposal is still a link: on hover the edge darkens, no fill and no lift. */
+:root[data-theme='sand'] .req-main .prop-card:hover {
+  background: none;
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 30%, transparent);
+}
+.req-decide {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  background: color-mix(in srgb, var(--ember) 9%, var(--sand));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ember) 22%, transparent);
+}
+.req-decide__text {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+.req-decide__text b {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text);
+}
+.req-decide__facts {
+  font-size: 13px;
+  color: var(--text-2);
+}
+.req-decide__due {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 2px;
+  font-size: 13px;
+  color: var(--ember-text, #b9431a);
+}
+.req-decide__due.is-late {
+  font-weight: 700;
+}
+.req-decide .btn {
+  flex: none;
+}
+@media (max-width: 720px) {
+  .req-decide {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ---- Proposal page, consistent with the request page (29 Oct) ------------------------------------
+   White only where the client acts: the open decision card is white with a hairline (no glow, no shadow,
+   no hourglass); a decided card has no fill, outlined like the request page's side cards. */
+:root[data-theme='sand'] .proposal__side .decision.decision--timed.is-open,
+:root[data-theme='sand'] .proposal__side .decision.decision--timed.is-open.is-urgent {
+  background: #fff;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+:root[data-theme='sand'] .proposal__side .decision.decision--timed:not(.is-open),
+:root[data-theme='sand'] .proposal__side .decision.decision--timed.decision--ok {
+  background: none;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+.decision.is-urgent .decision__eyebrow > span {
+  color: var(--ember-text, #b9431a);
+  font-weight: 700;
+}
+/* The head: id and status, then the title with the tools on the right, then when it was sent on a hairline. */
+.proposal__headrow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+.proposal__acts {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+.proposal__sent {
+  margin: 8px 0 0;
+  padding-bottom: 18px;
+  font-size: 13px;
+  color: var(--text-3);
+  border-bottom: 1px solid var(--line-strong);
+}
+/* Scope & deliverables as a framed table, as on Requests: Sand labels row in mono, hairlines, no fill. */
+.scope-tbl {
+  border: 1px solid var(--line-strong);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.scope-tbl__row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 24px;
+  padding: 14px 16px;
+  box-shadow: inset 0 -1px 0 var(--line);
+}
+.scope-tbl__row:last-child {
+  box-shadow: none;
+}
+.scope-tbl__head {
+  padding-block: 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  background: var(--surface-2);
+}
+.scope-tbl__title {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.scope-tbl__detail {
+  margin: 3px 0 0;
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-3);
+}
+.scope-tbl__list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-size: 14px;
+  color: var(--text);
+}
+.scope-tbl__list li::before {
+  content: '·';
+  margin-right: 8px;
+  color: var(--text-3);
+}
+@media (max-width: 720px) {
+  .proposal__headrow {
+    flex-direction: column;
+  }
+  .scope-tbl__row {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+}
+/* One rule for labels over a card or a list on both pages: Diatype Mono, uppercase, tracked (p. 32). Section
+   titles inside the proposal document stay in Diatype Extended Bold (subheads). */
+:root[data-theme][data-theme] :is(.req-detail .brief__title, .req-side .side-card__title, .proposal__side .ptoc--rail .ptoc__title) {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+
+/* ---- Filter tabs in glass (GlassTabs; picked on #/demo/brand-glass, 04 · Tabs, D, 30 Oct) ------------------
+   A sunken track; the picked tab under a clear glass bubble (a white rim and a gloss, no fill, no colour) that
+   slides to the next one; hovering another tab leaves a frosted trace in place and the bubble leans towards it.
+   32px high, 13px and 8px corners, as the search and filters beside it (the inner pieces 6px: 8 less the 2px
+   inset, so the corners stay concentric). The page's buttons stay pills. */
+.gtabs {
+  position: relative;
+  display: inline-flex;
+  align-self: flex-start;
+  width: fit-content;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 8px;
+  background: color-mix(in srgb, var(--ink) 5%, transparent);
+  box-shadow: inset 0 1px 2px rgba(14, 17, 22, 0.06);
+}
+.docs__main > .gtabs {
+  margin-bottom: 14px;
+}
+.gtabs button {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  white-space: nowrap;
+  color: var(--text-2);
+  transition: color 0.2s ease;
+}
+.gtabs button.is-on,
+.gtabs button:hover {
+  color: var(--ink);
+}
+.gtabs button:focus-visible {
+  outline: 2px solid var(--cobalt);
+  outline-offset: 1px;
+}
+.gtabs__n {
+  font-size: 11px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-3);
+}
+.gtabs__n.is-you {
+  color: var(--ember-text, #b9431a);
+}
+.gtabs__bubble,
+.gtabs__trace {
+  position: absolute;
+  left: 0;
+  border-radius: 6px;
+  pointer-events: none;
+}
+.gtabs__bubble {
+  /* Inside the track, as the tab: the grey shows round it on every side. */
+  top: 2px;
+  height: 28px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62) 0%, rgba(255, 255, 255, 0.16) 50%, rgba(255, 255, 255, 0.46) 100%);
+  -webkit-backdrop-filter: blur(1.5px) saturate(1.4) brightness(1.05);
+  backdrop-filter: blur(1.5px) saturate(1.4) brightness(1.05);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 0 2px 2px -1px #fff,
+    inset 0 -2px 3px -1px rgba(14, 17, 22, 0.06),
+    0 1px 3px rgba(14, 17, 22, 0.08);
+  transition:
+    transform 0.42s cubic-bezier(0.3, 1.35, 0.5, 1),
+    width 0.42s cubic-bezier(0.3, 1.35, 0.5, 1),
+    box-shadow 0.25s ease;
+}
+/* Not measured yet: no slide in from the left edge on the first paint. */
+.gtabs__bubble.is-unset {
+  transition: none;
+}
+.gtabs__bubble.is-hover {
+  box-shadow:
+    inset 0 0 0 1px #fff,
+    inset 0 2px 2px -1px #fff,
+    inset 0 -2px 3px -1px rgba(14, 17, 22, 0.06),
+    0 2px 5px rgba(14, 17, 22, 0.1);
+}
+.gtabs__trace {
+  top: 2px;
+  height: 28px;
+  opacity: 0;
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: inset 0 1px 0 #fff, inset 0 0 0 1px rgba(14, 17, 22, 0.035);
+  transition: opacity 0.2s ease;
+}
+.gtabs__trace.is-on {
+  opacity: 1;
+}
+@media (prefers-reduced-motion: reduce) {
+  .gtabs__bubble {
+    transition: none;
+  }
+}
+
+/* ---- Switch: held or hovered, the knob swells into a clear lens (picked on #/demo/brand-glass, 04 · Switch) ---
+   The lens keeps the knob's centre: wider and taller than the track, clear in the middle, a white rim and a
+   gloss, no colour at the edge. */
+:root[data-theme][data-theme] .switch__thumb {
+  transition:
+    transform 0.3s cubic-bezier(0.3, 1.3, 0.5, 1),
+    width 0.3s cubic-bezier(0.3, 1.3, 0.5, 1),
+    height 0.3s cubic-bezier(0.3, 1.3, 0.5, 1),
+    top 0.3s cubic-bezier(0.3, 1.3, 0.5, 1),
+    left 0.3s cubic-bezier(0.3, 1.3, 0.5, 1),
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+:root[data-theme][data-theme] .switch:is(:hover, :active, :focus-visible) .switch__thumb {
+  top: -4px;
+  left: -3px;
+  width: 26px;
+  height: 28px;
+  border-radius: 999px;
+  background: radial-gradient(120% 100% at 50% 35%, rgba(255, 255, 255, 0.2) 0%, rgba(255, 255, 255, 0.1) 55%, rgba(255, 255, 255, 0.7) 100%);
+  -webkit-backdrop-filter: blur(1px) saturate(1.6) brightness(1.15);
+  backdrop-filter: blur(1px) saturate(1.6) brightness(1.15);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.95),
+    inset 0 3px 3px -1px #fff,
+    inset 0 -3px 4px -1px rgba(255, 255, 255, 0.6),
+    0 3px 8px rgba(14, 17, 22, 0.22);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme][data-theme] .switch__thumb {
+    transition: none;
+  }
+}
+
+/* ---- Corners: 8px for every card, table and panel (30 Oct) ----------------------------------------------------
+   One corner for containers, the same as the controls beside them (search, filters, tabs): the tables, the cards
+   on Home, the request and proposal pages, folders and file previews, Home's cover. A piece set inside a card takes
+   6px (8 less its inset), so the corners stay concentric. Pills (buttons, tags) and the chat (bubbles, the box,
+   the drawer) keep their own shapes. */
+:root[data-theme][data-theme] :is(
+    .rq-tbl,
+    .scope-tbl,
+    .side-card,
+    .prop-card,
+    .brief,
+    .req-decide,
+    .proposal__side .decision,
+    .fcard,
+    .drop-card,
+    .file-card__thumb,
+    .insight,
+    .anp__finding,
+    .hl-issue,
+    .hdc,
+    .hl-cind__card,
+    .hl-hero__card,
+    .hl-hero__band
+  ) {
+  border-radius: 8px;
+}
+:root[data-theme][data-theme] :is(.stg--discs .stg__item, .hl-cind__note, .hl-fix__do) {
+  border-radius: 6px;
+}
+/* The sidebar too: its items, the collapse button and the account card. */
+:root[data-theme][data-theme] :is(.rail__btn, .rail__toggle, .rail__me) {
+  border-radius: 8px;
+}
+/* The grey hover on lists without a frame (Team, files) rounds as the cards do. */
+:root[data-theme][data-theme] :is(.tm-row:not(.tm-row--head):hover, .file-line:hover, .file-row:hover) {
+  border-radius: 8px;
+}
+
+/* ---- Sidebar logo by the book (30 Oct) ----------------------------------------------------------------------
+   Open: the wordmark, Ink on Sand, 120px wide (the book's digital minimum), with clear space round it. Folded: the
+   app icon. The wordmark is the client's file (01_SPARK_LOGO_Black), trimmed to its edges. */
+:root[data-theme] .shell:not(.shell--rail-open) .rail__wordmark {
+  display: none;
+}
+:root[data-theme='sand'] .shell--rail-open .rail__logo {
+  width: auto;
+  height: 44px;
+  padding-left: 6px;
+}
+:root[data-theme='sand'] .shell--rail-open .rail__wordmark {
+  display: block;
+  width: 120px;
+  height: auto;
+}
+:root[data-theme='sand'] .shell--rail-open .rail__appicon {
+  display: none;
+}
+/* GlassTabs, two more shapes: icons only (the grid / list switch), and stretched to the width (an amount). */
+.gtabs button.is-icon {
+  padding: 0 9px;
+}
+.gtabs--fill {
+  display: flex;
+  align-self: stretch;
+  width: 100%;
+}
+.gtabs--fill button {
+  flex: 1;
+  justify-content: center;
+}
+
+/* ---- Ask Spark: the spark breathes (picked on #/demo/ask-spark, 30 Oct) --------------------------------------
+   The disc stays; the spark in it swells a little and turns a few degrees, its Ember glow rising with it, every
+   3.2s: Spark is there and ready. Still for anyone who asks for less motion. The button keeps the Ember disc (the
+   app icon in its place was tried and set aside: at 22px the spectrum blurs into a blot beside Home's cover). */
+@keyframes spark-breathe {
+  0%,
+  100% {
+    transform: scale(0.9) rotate(0deg);
+    filter: drop-shadow(0 0 0 rgba(232, 80, 31, 0));
+  }
+  50% {
+    transform: scale(1.12) rotate(12deg);
+    filter: drop-shadow(0 0 3px rgba(232, 80, 31, 0.55));
+  }
+}
+/* Only on the buttons that ask Spark: Spark's avatar in the chat keeps its own motion (it breathes while Spark works). */
+:is(button, a) > .spark-disc .brand-spark {
+  animation: spark-breathe 3.2s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  :is(button, a) > .spark-disc .brand-spark {
+    animation: none;
+  }
+}
+
+/* Send as a round icon (30 Oct): Ink, and before there is anything to send the same Ink, faint, not grey. */
+:root[data-theme][data-theme] .composer .composer__go {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+}
+:root[data-theme][data-theme] .composer .composer__go svg {
+  width: 17px;
+  height: 17px;
+  stroke-width: 2.1;
+}
+:root[data-theme][data-theme] .composer .composer__go:disabled {
+  opacity: 1;
+  color: #fff;
+  background: color-mix(in srgb, var(--ink) 22%, transparent);
+  box-shadow: none;
+}
+
+/* Buttons in the style of the chat box's "+" (demo #/demo/home-hero, Buttons A, 30 Oct): a breath of white, a
+   faint white edge, one soft warm shadow, no grey stroke. */
+:root[data-theme][data-theme] .hl-frame[data-btns='soft'] :is(.btn--secondary, .hl-fix__make, .hl-fix__more, .hdc-pager button, .hl-fix__tools .hl-fix__tool:has(.spark-disc)) {
+  border: 1px solid rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: 0 2px 6px rgba(120, 102, 80, 0.1);
+}
+:root[data-theme][data-theme] .hl-frame[data-btns='soft'] :is(.btn--secondary, .hl-fix__make, .hl-fix__more, .hdc-pager button, .hl-fix__tools .hl-fix__tool:has(.spark-disc)):hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: 0 3px 9px rgba(120, 102, 80, 0.14);
+}
+:root[data-theme][data-theme] .hl-frame[data-btns='soft'] :is(.btn--secondary, .hl-fix__make, .hl-fix__more, .hdc-pager button, .hl-fix__tools .hl-fix__tool:has(.spark-disc)):active:not(:disabled) {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 1px 2px rgba(120, 102, 80, 0.1);
+}
+:root[data-theme][data-theme] .hl-frame[data-btns='soft'] .hl-fix__tools .hl-fix__tool:has(.spark-disc) {
+  padding-right: 14px;
+  border-radius: 999px;
 }

@@ -3,13 +3,15 @@ import { Calendar, FileText, Plus, Search, Tag, X } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { useRoute } from '../../lib/router';
-import { Button, cx, EmptyState } from '../../components/ui/primitives';
+import { Button, EmptyState } from '../../components/ui/primitives';
 import { FilterMenu } from '../../components/ui/overlay';
 import { isOpen, NeedsYou, RequestStatus } from '../../components/domain';
 import { fmtDate, fmtRelative } from '../../lib/format';
 import type { RequestType, WorkRequest } from '../../data/types';
 import { TYPES, TYPE_ICON } from './CreateRequestDialog';
-import { ChatDrawer, Mascot } from '../assistant/ChatDrawer';
+import { ChatDrawer } from '../assistant/ChatDrawer';
+import { SparkDisc } from '../../components/ui/BrandSpark';
+import { GlassTabs } from '../../components/ui/GlassTabs';
 
 type Filter = 'all' | 'decision' | 'active' | 'closed';
 type Updated = 'any' | 'week' | 'month';
@@ -23,6 +25,26 @@ const onYou = (r: WorkRequest) => r.status === 'proposal' || !!(r.nextStep?.onCl
 
 /** A request sent in the last ten minutes stays at the top of the list, so the person sees it land. */
 const isFresh = (r: WorkRequest) => r.status === 'submitted' && Date.now() - new Date(r.createdAt).getTime() < 10 * 60000;
+
+/** One request per line, as a table row: title with the Ember mark when it waits on the client
+ *  (the next step on hover), type, status, date. */
+function RequestRow({ r }: { r: WorkRequest }) {
+  const I = TYPE_ICON[r.type] ?? FileText;
+  return (
+    <a role="listitem" className="rq-row3" href={`#/requests/${r.id}`}>
+      <span className="rq-row3__name">
+        <span className="rq-row3__title">{r.title}</span>
+        <NeedsYou request={r} />
+      </span>
+      <span className="rq-row3__type">
+        <I size={15} strokeWidth={1.7} />
+        {r.type}
+      </span>
+      <RequestStatus status={r.status} />
+      <span className="rq-row3__when">{whenOf(r.updatedAt)}</span>
+    </a>
+  );
+}
 
 export function Requests() {
   const { state } = useStore();
@@ -64,12 +86,12 @@ export function Requests() {
     [state.requests, filter, q, type, updated],
   );
 
-  // The same marks as the requests block on Home; Closed holds declined requests too, so it gets a finish flag, not a tick.
-  const tabs: [Filter, string, string?][] = [
+  // Words only: the emoji marks read as off brand next to Ink on Sand (guidelines p. 30).
+  const tabs: [Filter, string][] = [
     ['all', 'All'],
-    ['decision', 'Needs you', '👀'],
-    ['active', 'In progress', '⏳'],
-    ['closed', 'Closed', '🏁'],
+    ['decision', 'Needs you'],
+    ['active', 'In progress'],
+    ['closed', 'Closed'],
   ];
 
   // Quiet layout (picked on #/demo/requests-ui, 5): a small title and one line, text tabs, then one row
@@ -84,7 +106,7 @@ export function Requests() {
         <div className="rq-head__acts">
           {/* Ask Spark as on Home: the mascot pill; it opens the chat drawer over this page. */}
           <button type="button" className="hl-mchat rq-ask" onClick={() => setChatOpen(true)}>
-            <Mascot size={22} />
+            <SparkDisc size={22} />
             Ask Spark
           </button>
           <Button size="sm" variant="primary" icon={Plus} onClick={() => openRequest()}>
@@ -95,19 +117,12 @@ export function Requests() {
 
       <div className="rq-centre rq-centre--left">
         <div className="rq-bar">
-          <div className="rq-tabs" role="tablist" aria-label="Requests">
-            {tabs.map(([v, label, mark]) => (
-              <button key={v} role="tab" aria-selected={filter === v} className={cx(filter === v && 'is-on')} onClick={() => setFilter(v)}>
-                {mark && (
-                  <i className="rq-tabs__mark" aria-hidden>
-                    {mark}
-                  </i>
-                )}
-                {label}
-                <span>{state.requests.filter(groups[v]).length}</span>
-              </button>
-            ))}
-          </div>
+          <GlassTabs
+            label="Requests"
+            value={filter}
+            onChange={setFilter}
+            items={tabs.map(([v, label]) => ({ value: v, label, count: state.requests.filter(groups[v]).length, you: v === 'decision' }))}
+          />
           <div className="rq-tools">
             <label className="rq-search">
               <Search size={15} />
@@ -146,24 +161,17 @@ export function Requests() {
             }
           />
         ) : (
-          <div className="rq-list" role="list" aria-label="Requests">
-            {list.map((r) => {
-              const I = TYPE_ICON[r.type] ?? FileText;
-              return (
-                <a key={r.id} role="listitem" className="rq-row3" href={`#/requests/${r.id}`}>
-                  <span className="rq-row3__name">
-                    <span className="rq-row3__title">{r.title}</span>
-                    <NeedsYou request={r} />
-                  </span>
-                  <span className="rq-row3__type">
-                    <I size={15} strokeWidth={1.7} />
-                    {r.type}
-                  </span>
-                  <RequestStatus status={r.status} onClient={r.nextStep?.onClient} />
-                  <span className="rq-row3__when">{whenOf(r.updatedAt)}</span>
-                </a>
-              );
-            })}
+          <div className="rq-list rq-tbl" role="list" aria-label="Requests">
+            {/* Column labels in Diatype Mono (p. 32), on the same grid as the rows. */}
+            <div className="rq-row3 rq-cols" aria-hidden>
+              <span>Request</span>
+              <span>Type</span>
+              <span>Status</span>
+              <span className="rq-row3__when">Updated</span>
+            </div>
+            {list.map((r) => (
+              <RequestRow key={r.id} r={r} />
+            ))}
           </div>
         )}
       </div>

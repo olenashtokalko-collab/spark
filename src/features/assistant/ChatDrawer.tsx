@@ -1,15 +1,15 @@
 // A new chat in a drawer from the right, after the client's reference (an assistant panel beside the page):
-// the mascot, "How can I help?", four ways to start (never a blank chat: the research dossier of 8 Oct), and
+// Spark's mark, "How can I help?", four ways to start (never a blank chat: the research dossier of 8 Oct), and
 // the box at the foot. Sending starts the chat and opens it on the Chats page; the expand button opens Chats
 // without sending. Used from Home, so a chat starts without leaving it.
 import { useEffect } from 'react';
 import { createPortal } from 'react-dom';
-import { Maximize2, Sparkles, X } from 'lucide-react';
+import { ArrowRight, Maximize2, X } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { navigate } from '../../lib/router';
 import { Mascot } from '../../components/ui/Mascot';
+import { SparkDisc } from '../../components/ui/BrandSpark';
 import { Composer } from './Composer';
-import { CHIP_ICON } from './ChatStart';
 import { suggestedPrompts } from '../../data/assistant';
 import type { Attachment } from '../../data/types';
 
@@ -20,6 +20,8 @@ export { Mascot };
 export interface DrawerTopic {
   label: string;
   questions: { label: string; prompt: string }[];
+  /** Added to what the client types, so the chat knows its subject (an issue from Home). */
+  about?: string;
 }
 
 /** `initial` opens it with a question already written (e.g. Ask Spark to fix on Home), to edit and send.
@@ -36,7 +38,8 @@ export function ChatDrawer({ open, onClose, initial, topic }: { open: boolean; o
 
   // Sending (or a way to start) begins the chat and opens it on the Chats page.
   const start = (text: string, attachments: Attachment[] = []) => {
-    const id = actions.ask(null, text, { attachments });
+    const about = topic?.about;
+    const id = actions.ask(null, about && !text.includes(about) ? text + about : text, { attachments });
     onClose();
     navigate(`/assistant/${id}`);
   };
@@ -47,7 +50,7 @@ export function ChatDrawer({ open, onClose, initial, topic }: { open: boolean; o
       <div className="chat-drawer__scrim" onClick={onClose} />
       <aside className="chat-drawer" role="dialog" aria-modal="true" aria-label="New chat with Spark">
         <header className="chat-drawer__head">
-          <Mascot size={28} />
+          <SparkDisc size={28} />
           <h2>Ask Spark</h2>
           <button type="button" className="chat-drawer__btn" onClick={() => (onClose(), navigate('/assistant'))} aria-label="Open in Chats" data-tip="Open in Chats">
             <Maximize2 size={17} strokeWidth={1.8} />
@@ -57,22 +60,20 @@ export function ChatDrawer({ open, onClose, initial, topic }: { open: boolean; o
           </button>
         </header>
         <div className="chat-drawer__body">
-          <Mascot size={72} className="chat-drawer__mascot" />
+          {/* One spark in the drawer, the one in its head (29 Oct); the ways to start as a list of plain lines
+              (the Chats page's list without icons), an arrow on hover. Opened from something (an issue), the
+              questions about it. */}
           <h3>How can I help?</h3>
-          <p>{topic ? `Ask about the ${topic.label}. A good answer can become a request.` : 'Ask about your brand, audience or market. A good answer can become a request.'}</p>
-          {/* Ways to start, the same pills as on the Chats page: one click and the chat begins. On a page
-              with a subject, the questions about it. */}
-          <div className="home__prompts chat-drawer__prompts">
-            {(topic ? topic.questions : suggestedPrompts.slice(0, 4)).map((p) => {
-              const I = CHIP_ICON[p.label] ?? Sparkles;
-              return (
-                <button key={p.label} type="button" className="home__prompt" onClick={() => start(p.prompt)} title={p.prompt}>
-                  <I size={15} strokeWidth={1.7} />
-                  {p.label}
+          <ul className="chats-start__list chat-drawer__list">
+            {(topic ? topic.questions.map((q) => ({ ...q, hint: '' })) : suggestedPrompts.slice(0, 4)).map((p) => (
+              <li key={p.label}>
+                <button type="button" className="chats-start__row" onClick={() => start(p.prompt)}>
+                  <span>{p.hint ? <><b>{p.label}</b> {p.hint.charAt(0).toLowerCase() + p.hint.slice(1)}</> : p.label}</span>
+                  <ArrowRight size={15} strokeWidth={1.7} className="chat-drawer__go" />
                 </button>
-              );
-            })}
-          </div>
+              </li>
+            ))}
+          </ul>
         </div>
         <footer className="chat-drawer__foot">
           <Composer

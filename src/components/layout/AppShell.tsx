@@ -16,13 +16,12 @@ import {
   Users,
   Settings,
   LogOut,
-  Sparkles,
 } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { navigate, useRoute } from '../../lib/router';
 import { Avatar, cx } from '../ui/primitives';
 import { Popover } from '../ui/overlay';
-import { CreditsOverlay, TopUpDialog } from './Credits';
+import { CreditRing, CreditsOverlay, TopUpDialog } from './Credits';
 import { fmtRelative } from '../../lib/format';
 import type { Notification } from '../../data/types';
 
@@ -104,8 +103,10 @@ export function AppShell({ children }: { children: ReactNode }) {
         <div className="rail__head">
           <a className="rail__logo" href="#/" aria-label="Spark, home">
             <span className="brand-hide">SPARK</span>
-            {/* Brand A: the app icon from the brand book, the spark lit from inside (p. 9). */}
-            <img className="topbar__icon brand-only" src="/brand/spark-app-icon.jpg" alt="" />
+            {/* By the book: the wordmark (p. 26, Ink on Sand, at least 120px wide) when the sidebar is open; the
+                app icon, the spark lit from inside (p. 29), when it is folded to icons. */}
+            <img className="rail__wordmark brand-only" src="/brand/spark-logo-ink.png" alt="Spark Studios" />
+            <img className="topbar__icon rail__appicon brand-only" src="/brand/spark-app-icon.jpg" alt="" />
           </a>
           {/* Collapse to icons; when collapsed it shows over the logo on hover. */}
           <button className="rail__toggle" onClick={toggleRail} aria-label={railOpen ? 'Collapse sidebar' : 'Expand sidebar'} data-tip={railOpen ? 'Collapse' : 'Expand'}>
@@ -308,7 +309,7 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
               onFocus={(e) => showCredits(e.currentTarget)}
               onClick={(e) => showCredits(e.currentTarget)}
             >
-              <Sparkles size={18} strokeWidth={1.6} className="acct__credits-icon" />
+              <CreditRing left={state.credits} total={state.creditsTotal} size={18} />
               <span className="acct__credits-amount">
                 USD{' '}
                 {state.credits.toLocaleString('en-US', {

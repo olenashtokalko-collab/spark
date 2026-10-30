@@ -2,7 +2,7 @@
 // minimal (after the reference: a small title, one grey line, plain rows on hairlines, lots of air).
 // Real requests from the store; the rows open the real request pages.
 import { useState } from 'react';
-import { BarChart3, Camera, FileText, Lightbulb, Megaphone, MoreHorizontal, Palette, Plus, Search, SlidersHorizontal, type LucideIcon } from 'lucide-react';
+import { BarChart3, FileText, Lightbulb, Megaphone, MonitorSmartphone, MoreHorizontal, Palette, Shapes, Plus, Search, SlidersHorizontal, type LucideIcon } from 'lucide-react';
 import { latestProposal, proposalTotal, useStore } from '../../state/store';
 import { isOpen, requestStatusMeta } from '../../components/domain';
 import { Button, PageHeader, cx } from '../../components/ui/primitives';
@@ -18,7 +18,8 @@ const TYPE_ICON: Record<RequestType, LucideIcon> = {
   Content: FileText,
   Research: BarChart3,
   Social: Megaphone,
-  Other: Camera,
+  Digital: MonitorSmartphone,
+  Other: Shapes,
 };
 
 /** Status as a coloured dot and a word: no filled pill. */

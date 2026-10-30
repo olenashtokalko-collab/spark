@@ -1,13 +1,15 @@
-import { useEffect, useRef } from 'react';
-import { Eye, Plus } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { Eye, History, Plus } from 'lucide-react';
 import { personById, useStore } from '../../state/store';
 import { navigate } from '../../lib/router';
-import { Button, EmptyState } from '../../components/ui/primitives';
+import { Button, EmptyState, cx } from '../../components/ui/primitives';
 import { Composer } from './Composer';
 import { MessageView } from './MessageView';
 import { ChatStart } from './ChatStart';
 import { ChatHistory } from './ChatHistory';
 import type { Attachment } from '../../data/types';
+
+let histOpen = false;
 
 export function Assistant({ convId }: { convId?: string }) {
   const { state, me, actions } = useStore();
@@ -18,6 +20,10 @@ export function Assistant({ convId }: { convId?: string }) {
   const readOnly = !!conv && conv.createdBy !== me.id;
   const threadRef = useRef<HTMLDivElement>(null);
   const busy = !!conv?.messages.some((m) => m.state === 'thinking' || m.state === 'streaming');
+  // The history opens from the right under Chats and stays open from chat to chat (each chat mounts
+  // the page anew, so the choice lives outside it).
+  const [hist, setHistState] = useState(histOpen);
+  const setHist = (f: (h: boolean) => boolean) => setHistState((h) => (histOpen = f(h)));
 
   // Follow the answer as it streams, unless the reader scrolled up.
   const last = conv?.messages[conv.messages.length - 1];
@@ -50,16 +56,15 @@ export function Assistant({ convId }: { convId?: string }) {
   const missing = convId && !conv;
 
   return (
-    // Chats: the history in a column on the left, "New chat" on top of it; the chat beside it.
-    <div className="assistant assistant--chats">
-      <aside className="chats-col" aria-label="Chats">
-        <a className={'chats-col__new' + (!convId ? ' is-active' : '')} href="#/assistant" aria-current={!convId ? 'page' : undefined}>
-          <Plus size={18} strokeWidth={1.8} />
-          New chat
-        </a>
-        <ChatHistory />
-      </aside>
+    // Chats, as picked on #/demo/chat-start (29 Oct): the chat across the page, Chats at its top right, which
+    // opens the history from the right: Chat history and New, the list under them, no fill.
+    <div className={cx('assistant assistant--chats', hist && 'is-hist')}>
       <section className="assistant__main">
+        <div className="chats-top">
+          <Button icon={History} onClick={() => setHist((h) => !h)} aria-expanded={hist} aria-controls="chats-hist">
+            Chats
+          </Button>
+        </div>
         {missing ? (
           <EmptyState
             title="Chat not found"
@@ -96,12 +101,23 @@ export function Assistant({ convId }: { convId?: string }) {
         {readOnly && (
           <div className="assistant__composer readonly-bar">
             <span className="muted">Only {author!.name.split(' ')[0]} can continue this chat.</span>
-            <Button variant="primary" onClick={() => navigate('/assistant')}>
+            <Button onClick={() => navigate('/assistant')}>
               Start your own chat
             </Button>
           </div>
         )}
       </section>
+      <aside id="chats-hist" className="chats-hist" aria-label="Chat history" aria-hidden={!hist} {...(!hist && { inert: '' })}>
+        <div className="chats-hist__in">
+          <header className="chats-hist__head">
+            <h2>Chat history</h2>
+            <Button icon={Plus} onClick={() => navigate('/assistant')}>
+              New
+            </Button>
+          </header>
+          <ChatHistory />
+        </div>
+      </aside>
     </div>
   );
 }

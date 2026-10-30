@@ -4,6 +4,7 @@ import App from './App';
 import { StoreProvider } from './state/store';
 import { UIProvider } from './state/ui';
 import { ToastProvider } from './components/ui/toast';
+import './styles/fonts.css';
 import './styles/tokens.css';
 import './styles/base.css';
 import './styles/features.css';

@@ -8,8 +8,16 @@ import { HomeLayoutsDemo } from './features/demo/HomeLayoutsDemo';
 import { HomeRequestsDemo } from './features/demo/HomeRequestsDemo';
 import { HomeNextDemo } from './features/demo/HomeNextDemo';
 import { HomeHeroDemo } from './features/demo/HomeHeroDemo';
+import { BrandUiDemo } from './features/demo/BrandUiDemo';
+import { GlassKitDemo } from './features/demo/GlassKitDemo';
+import { BrandButtonsDemo } from './features/demo/BrandButtonsDemo';
+import { ChatStartDemo } from './features/demo/ChatStartDemo';
 import { AnalysisDemo } from './features/demo/AnalysisDemo';
 import { RecentDemo } from './features/demo/RecentDemo';
+import { RequestDetailDemo } from './features/demo/RequestDetailDemo';
+import { DocumentsDemo } from './features/demo/DocumentsDemo';
+import { AskSparkDemo } from './features/demo/AskSparkDemo';
+import { ComposerSoftDemo } from './features/demo/ComposerSoftDemo';
 import { useEffect } from 'react';
 import { useRoute } from './lib/router';
 import { AppShell } from './components/layout/AppShell';
@@ -64,8 +72,16 @@ function Screen() {
       if (a === 'home-requests') return <HomeRequestsDemo />;
       if (a === 'home-next') return <HomeNextDemo />;
       if (a === 'home-hero') return <HomeHeroDemo />;
+      if (a === 'brand-ui') return <BrandUiDemo />;
+      if (a === 'brand-glass') return <GlassKitDemo />;
+      if (a === 'buttons') return <BrandButtonsDemo />;
+      if (a === 'chat-start') return <ChatStartDemo />;
       if (a === 'analysis') return <AnalysisDemo />;
       if (a === 'recent') return <RecentDemo />;
+      if (a === 'request-detail') return <RequestDetailDemo />;
+      if (a === 'documents') return <DocumentsDemo />;
+      if (a === 'ask-spark') return <AskSparkDemo />;
+      if (a === 'composer-soft') return <ComposerSoftDemo />;
       break;
     case 'reset':
       // For rehearsals: forget everything that was done in the prototype and start from the seed data again.

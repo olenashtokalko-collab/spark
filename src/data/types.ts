@@ -63,7 +63,8 @@ export interface CompanyAnalysis {
   score?: { label: string; value: string };
   /** issue: the problem Spark leads with for this subject; good: what already works. */
   /** impact and fix (what Spark would do) are for what doesn't work yet; they order the page and make it actionable. */
-  findings: { title: string; body: string; issue?: boolean; good?: boolean; impact?: 'High' | 'Medium' | 'Low'; fix?: string }[];
+  /** asks: what a client would ask Spark about this issue, offered in the chat drawer opened on it. */
+  findings: { title: string; body: string; issue?: boolean; good?: boolean; impact?: 'High' | 'Medium' | 'Low'; fix?: string; asks?: string[] }[];
   /** What the analysis rests on, in a line ("23 pages, tested on 4G"), and who at Spark reviewed it. */
   basis: string;
   /** The basis as separate signals ("Pages reviewed · 23"), for layouts that list what the analysis rests on. */
@@ -128,7 +129,7 @@ export type RequestStatus =
   | 'delivered'
   | 'declined';
 
-export type RequestType = 'Strategy' | 'Creative' | 'Content' | 'Research' | 'Social' | 'Other';
+export type RequestType = 'Strategy' | 'Creative' | 'Content' | 'Research' | 'Social' | 'Digital' | 'Other';
 export type Timing = 'ASAP' | 'Within 2 weeks' | 'This quarter' | 'Flexible';
 
 export interface Activity {

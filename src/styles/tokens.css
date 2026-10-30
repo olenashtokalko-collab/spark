@@ -5,8 +5,10 @@
  * not a Spark brand colour.
  */
 :root {
-  --font-sans: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
-  --font-display: 'Archivo', 'Inter', sans-serif;
+  /* The brand's faces in every theme (fonts.css, guidelines p. 32), dark included. */
+  --font-sans: 'ABC Diatype Extended', 'Hacen Casablanca', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-display: 'ABC Diatype Extended', 'Hacen Casablanca', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'ABC Diatype Mono', ui-monospace, 'SF Mono', Menlo, monospace;
 
   --radius-xs: 6px;
   --radius-sm: 8px;
@@ -89,10 +91,10 @@
  * Liwa Ember 15%, Corniche Haze 5%, Noor 10% (glow and glass only). The book
  * gives no greys, surface steps or semantic colours: those are mixed from Sand
  * and Ink here (product decision, to be approved).
- * Type (p. 31): one family, three roles. Fonts are stand-ins until Diatype is
- * licensed: Archivo Expanded for Diatype Extended (Ultra = 900 for titles of 44px
- * and up, Bold = 700 below that), Inter for text, JetBrains Mono for Diatype Mono
- * labels and figures. Doto is gone from the book.
+ * Type (p. 32): one family, three roles, the licensed files in public/fonts (fonts.css):
+ * Diatype Extended Ultra (1000) for titles of 44px and up with tracking −40, Bold (700)
+ * for subheads, Light (300) for long text; Diatype Mono for labels; Doto Rounded for
+ * numbers (not used in the UI since 28 Oct: it read poorly as figures).
  */
 :root[data-theme='sand'] {
   color-scheme: light;
@@ -107,11 +109,15 @@
   --human: var(--cobalt);
   --ai: var(--ember);
 
-  --font-display: 'Archivo', 'Inter', sans-serif;
-  --font-mono: 'JetBrains Mono', ui-monospace, monospace;
+  /* The brand's own faces (fonts.css, guidelines p. 32): Diatype Extended for titles and text, Diatype
+     Mono for labels, Doto Rounded for numbers that lead (counts, credits), Hacen Casablanca for Arabic. */
+  --font-sans: 'ABC Diatype Extended', 'Hacen Casablanca', ui-sans-serif, system-ui, sans-serif;
+  --font-display: 'ABC Diatype Extended', 'Hacen Casablanca', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'ABC Diatype Mono', ui-monospace, 'SF Mono', Menlo, monospace;
   --font-num: var(--font-mono);
-  /* Type roles (p. 31): Ultra speaks first, Bold organises, Light explains. */
-  --title-weight: 900;
+  --font-dots: 'Doto Rounded', var(--font-mono);
+  /* Type roles (p. 32): Ultra speaks first, Bold organises, Light explains. */
+  --title-weight: 1000;
   --title-track: -0.04em;
   --sub-weight: 700;
   --sub-track: -0.02em;
@@ -158,9 +164,10 @@
   /* Semantic colours sit outside the brand palette; Ember is never "error". */
   --positive: #138a5a;
   --positive-soft: rgba(19, 138, 90, 0.1);
-  /* Kept clear of Liwa Ember: warning is a true yellow, danger a crimson. */
-  --warning: #7a6200;
-  --warning-soft: rgba(222, 184, 0, 0.18);
+  /* No yellow in the book: "warning" (what waits on the client, a due date) is Ember, as Needs you and the
+     Proposal status (30 Oct). Danger stays crimson, for deleting only. */
+  --warning: var(--ember-text, #b9431a);
+  --warning-soft: color-mix(in srgb, var(--ember) 12%, transparent);
   --danger: #b42347;
   --danger-soft: rgba(180, 35, 71, 0.1);
   --neutral-soft: rgba(14, 17, 22, 0.06);
