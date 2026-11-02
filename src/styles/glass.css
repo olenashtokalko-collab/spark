@@ -1717,3 +1717,2916 @@
 :root[data-theme][data-theme] .hl-tabs.hl-tabs {
   width: fit-content;
 }
+
+/* ---- Home's buttons as the bubble, B up close on #/demo/bubble-buttons (2 Nov) ---------------------------------
+   Request proposal, Ask Spark (on the card and in the header) and the pager's arrows are clear glass bubbles: a
+   highlight on top, a glow at the foot, the ground bent through them. The main action has the spectrum blurred
+   under it, as Send in the chat box. On hover they do not swell; the glass turns a little whiter and the light
+   under the main action rises. */
+:root[data-theme][data-theme] body :is(.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat, .hl-fix__tools.hl-fix__tools .hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask, .hl-fix__tools.hl-fix__tools .hl-fix__make.hl-fix__make.hl-fix__make.hl-fix__make, .hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager button) {
+  position: relative;
+  isolation: isolate;
+  color: var(--ink);
+  background:
+    radial-gradient(60% 45% at 50% 6%, rgba(255, 255, 255, 0.8), transparent 70%),
+    radial-gradient(120% 80% at 50% 130%, rgba(255, 255, 255, 0.7), transparent 60%),
+    rgba(255, 255, 255, 0.1);
+  -webkit-backdrop-filter: blur(3px) saturate(1.8) brightness(1.08) contrast(1.05);
+  backdrop-filter: blur(3px) saturate(1.8) brightness(1.08) contrast(1.05);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75),
+    inset 0 -4px 10px -4px rgba(255, 255, 255, 0.9),
+    inset 0 8px 14px -10px rgba(40, 30, 90, 0.25),
+    0 10px 24px -14px rgba(40, 30, 90, 0.35);
+  transform: none;
+  transition: background 0.2s ease;
+}
+:root[data-theme][data-theme] body :is(.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat, .hl-fix__tools.hl-fix__tools .hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask, .hl-fix__tools.hl-fix__tools .hl-fix__make.hl-fix__make.hl-fix__make.hl-fix__make, .hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager button):hover:not(:disabled) {
+  color: var(--ink);
+  background:
+    radial-gradient(60% 45% at 50% 6%, rgba(255, 255, 255, 0.85), transparent 70%),
+    radial-gradient(120% 80% at 50% 130%, rgba(255, 255, 255, 0.75), transparent 60%),
+    rgba(255, 255, 255, 0.32);
+  transform: none;
+}
+:root[data-theme][data-theme] body :is(.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat, .hl-fix__tools.hl-fix__tools .hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask, .hl-fix__tools.hl-fix__tools .hl-fix__make.hl-fix__make.hl-fix__make.hl-fix__make, .hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager button):active:not(:disabled) {
+  transform: scale(0.98);
+}
+:root[data-theme][data-theme] body :is(.hl-mchat, .hl-fix__tools .hl-fix__ask)::before {
+  display: none;
+}
+:root[data-theme][data-theme] body .hl-fix__tools .hl-fix__ask.hl-fix__ask {
+  padding: 0 14px 0 8px;
+}
+/* The spectrum under the main action. */
+:root[data-theme][data-theme] body .hl-fix__tools .hl-fix__make.hl-fix__make::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 10px 14px -8px;
+  border-radius: 999px;
+  pointer-events: none;
+  background: var(--noor);
+  filter: blur(14px);
+  opacity: 0.35;
+  transition: opacity 0.3s ease;
+}
+:root[data-theme][data-theme] body .hl-fix__tools .hl-fix__make.hl-fix__make:hover::before {
+  opacity: 0.55;
+}
+
+/* ---- Demo #/demo/bubble-buttons: new looks for the buttons, from the brand book --------------------------- */
+@property --mx {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 50%;
+}
+@property --my {
+  syntax: '<percentage>';
+  inherits: true;
+  initial-value: 50%;
+}
+.bbd-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.bbd-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 28px 24px;
+}
+@media (max-width: 1100px) {
+  .bbd-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.bbd-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.bbd-big {
+  margin-top: 32px;
+}
+.bbd-book {
+  margin: 0;
+  font-family: var(--font-mono, 'ABC Diatype Mono', monospace);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ember-text, var(--ember));
+}
+.bbd-note {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+
+/* The ground: Sand, with three clouds of the spectrum drifting behind. */
+.bbd-stage {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  padding: 40px 22px;
+  border-radius: 24px;
+  background: var(--sand, #f8f6f2);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.05);
+}
+.bbd-stage--big {
+  padding: 56px 28px;
+}
+.bbd-blob {
+  position: absolute;
+  z-index: -1;
+  width: 220px;
+  height: 160px;
+  border-radius: 50%;
+  filter: blur(36px);
+  opacity: 0.6;
+  animation: bbd-drift 16s ease-in-out infinite alternate;
+}
+.bbd-blob--a {
+  left: -40px;
+  top: -30px;
+  background: var(--cobalt);
+}
+.bbd-blob--b {
+  right: -30px;
+  bottom: -50px;
+  background: var(--ember);
+  animation-duration: 19s;
+  animation-direction: alternate-reverse;
+}
+.bbd-blob--c {
+  left: 40%;
+  top: 30%;
+  width: 160px;
+  height: 120px;
+  background: color-mix(in oklch, var(--cobalt), var(--ember));
+  opacity: 0.45;
+  animation-duration: 13s;
+}
+@keyframes bbd-drift {
+  to {
+    transform: translate(180px, 40px) scale(1.2);
+  }
+}
+.bbd-stage.is-still .bbd-blob {
+  animation-play-state: paused;
+}
+.bbd-surface {
+  position: relative;
+}
+.bbd-stage--card .bbd-surface {
+  padding: 22px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    0 12px 32px -20px rgba(40, 30, 90, 0.16);
+}
+.bbd-set {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+/* One button: the light, the glass, the words; a highlight over all. */
+.bbd-b {
+  --spring: cubic-bezier(0.3, 1.5, 0.5, 1);
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 38px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    transform 0.35s var(--spring),
+    --mx 0.4s ease-out,
+    --my 0.4s ease-out;
+}
+.bbd-b--icon {
+  width: 38px;
+  padding: 0;
+}
+.bbd-b__light,
+.bbd-b__glass,
+.bbd-b::after {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  transition:
+    opacity 0.3s,
+    transform 0.35s var(--spring),
+    box-shadow 0.3s,
+    background 0.3s;
+}
+.bbd-b__light {
+  opacity: 0;
+}
+.bbd-b::after {
+  content: '';
+  z-index: 1;
+}
+.bbd-b__in {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+.bbd-b:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* A · The recipe: white frost, a bright rim, the spectrum blurred underneath. */
+.bbd--recipe .bbd-b__light {
+  inset: 8px 10px -6px;
+  background: var(--noor);
+  filter: blur(12px);
+}
+.bbd--recipe :is(.bbd-b--main, .bbd-b--ask) .bbd-b__light {
+  opacity: 0.45;
+}
+.bbd--recipe .bbd-b:hover .bbd-b__light {
+  opacity: 0.8;
+}
+.bbd--recipe .bbd-b__glass {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(16px) saturate(1.4);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    0 8px 20px -12px rgba(40, 30, 90, 0.25);
+}
+.bbd--recipe .bbd-b:active {
+  transform: scale(0.97);
+}
+
+/* B · Bubble (and C's quiet buttons): clear and convex, a highlight on top, a glow at the bottom, the ground bent
+   through it; a glint where the pointer is. */
+:is(.bbd--bubble, .bbd--lens) .bbd-b__glass {
+  background:
+    radial-gradient(120% 80% at 50% 130%, rgba(255, 255, 255, 0.7), transparent 60%),
+    rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(3px) saturate(1.8) brightness(1.08) contrast(1.05);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75),
+    inset 0 -4px 10px -4px rgba(255, 255, 255, 0.9),
+    inset 0 8px 14px -10px rgba(40, 30, 90, 0.25),
+    0 10px 24px -14px rgba(40, 30, 90, 0.35);
+}
+:is(.bbd--bubble, .bbd--lens) .bbd-b::after {
+  background:
+    radial-gradient(60% 45% at 50% 6%, rgba(255, 255, 255, 0.95), transparent 70%),
+    radial-gradient(22px 16px at var(--mx) var(--my), rgba(255, 255, 255, 0.75), transparent 70%);
+  opacity: 0.85;
+}
+:is(.bbd--bubble, .bbd--lens) .bbd-b__light {
+  inset: 10px 14px -8px;
+  background: var(--noor);
+  filter: blur(14px);
+}
+.bbd--bubble :is(.bbd-b--main, .bbd-b--send) .bbd-b__light {
+  opacity: 0.35;
+}
+:is(.bbd--bubble, .bbd--lens) .bbd-b:hover {
+  transform: scale(1.05);
+}
+:is(.bbd--bubble, .bbd--lens) .bbd-b:hover .bbd-b__light {
+  opacity: 0.55;
+}
+:is(.bbd--bubble, .bbd--lens) .bbd-b:active {
+  transform: scale(0.95, 0.92);
+}
+
+/* C · Ink with a lens: the main action in Ink, the spark in a clear lens at its end. */
+.bbd--lens .bbd-b--main {
+  padding-right: 6px;
+  color: var(--sand);
+}
+.bbd--lens .bbd-b--main .bbd-b__glass {
+  background: var(--ink);
+  backdrop-filter: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 10px 24px -12px rgba(14, 17, 22, 0.55);
+}
+.bbd--lens .bbd-b--main::after {
+  background: radial-gradient(50% 40% at 50% 0%, rgba(255, 255, 255, 0.16), transparent 70%);
+}
+.bbd--lens .bbd-b--main .bbd-b__light {
+  opacity: 0;
+}
+.bbd-lens {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  margin-left: 4px;
+  border-radius: 50%;
+  background:
+    radial-gradient(60% 45% at 50% 8%, rgba(255, 255, 255, 0.95), transparent 70%),
+    radial-gradient(90% 70% at 50% 100%, color-mix(in srgb, var(--ember) 55%, transparent), transparent 75%),
+    rgba(255, 255, 255, 0.82);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6),
+    inset 0 -3px 6px -2px rgba(255, 255, 255, 0.5),
+    0 0 14px -2px color-mix(in srgb, var(--ember) 60%, transparent);
+  transition: transform 0.35s var(--spring);
+}
+.bbd--lens .bbd-b--main:hover .bbd-lens {
+  transform: scale(1.15) rotate(12deg);
+}
+
+/* D · Liquid drop: a drop of the spectrum inside the glass gathers under the pointer; pressed, it spreads. */
+.bbd--drop .bbd-b {
+  --mx: 30%;
+  --my: 60%;
+}
+.bbd--drop .bbd-b__glass {
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(14px) saturate(1.4);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    0 8px 20px -12px rgba(40, 30, 90, 0.25);
+}
+.bbd--drop .bbd-b__light {
+  z-index: 1;
+  background:
+    radial-gradient(28px 20px at var(--mx) var(--my), color-mix(in srgb, var(--ember) 70%, transparent), transparent 100%),
+    radial-gradient(44px 30px at var(--mx) var(--my), color-mix(in srgb, var(--cobalt) 45%, transparent), transparent 100%);
+  filter: blur(7px);
+  mix-blend-mode: multiply;
+}
+.bbd--drop :is(.bbd-b--main, .bbd-b--ask, .bbd-b--send) .bbd-b__light {
+  opacity: 0.35;
+}
+.bbd--drop .bbd-b:hover .bbd-b__light {
+  opacity: 0.75;
+}
+.bbd--drop .bbd-b:active {
+  transform: scale(1.04, 0.92);
+}
+.bbd--drop .bbd-b:active .bbd-b__light {
+  opacity: 0.9;
+  filter: blur(12px);
+  transform: scale(1.4, 1.2);
+}
+
+/* E · Thick glass keys: an edge that catches the light, colour deep inside. */
+.bbd--key .bbd-b {
+  height: 40px;
+}
+.bbd--key .bbd-b--icon {
+  width: 40px;
+  border-radius: 14px;
+}
+.bbd--key .bbd-b__glass {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.28));
+  backdrop-filter: blur(10px) saturate(1.5);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 0 2px 1px #fff,
+    inset 0 -4px 8px -2px rgba(40, 30, 90, 0.14),
+    0 1px 0 rgba(255, 255, 255, 0.7),
+    0 14px 24px -14px rgba(40, 30, 90, 0.4);
+}
+.bbd--key .bbd-b__light {
+  inset: 9px;
+  filter: blur(8px);
+}
+.bbd--key .bbd-b--main .bbd-b__light {
+  opacity: 0.55;
+  background: var(--cobalt);
+}
+.bbd--key .bbd-b--ask .bbd-b__light {
+  opacity: 0.55;
+  background: var(--ember);
+}
+.bbd--key .bbd-b--send .bbd-b__light {
+  opacity: 0.6;
+  background: var(--noor);
+}
+.bbd--key .bbd-b--icon:not(.bbd-b--send) .bbd-b__light {
+  opacity: 0.35;
+  background: var(--cobalt);
+}
+.bbd--key .bbd-b:hover {
+  transform: translateY(-1px);
+}
+.bbd--key .bbd-b:hover .bbd-b__light {
+  opacity: 0.8;
+}
+.bbd--key .bbd-b:active {
+  transform: translateY(1px);
+}
+.bbd--key .bbd-b:active .bbd-b__glass {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 0 3px 6px -2px rgba(40, 30, 90, 0.18),
+    0 6px 12px -10px rgba(40, 30, 90, 0.4);
+}
+
+/* F · Tinted by the light: Cobalt under the main action, Ember under Ask Spark; the words stay Ink. */
+.bbd--tint .bbd-b__glass {
+  background: rgba(255, 255, 255, 0.42);
+  backdrop-filter: blur(14px) saturate(1.5);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.85),
+    inset 0 1px 0 #fff,
+    0 8px 20px -12px rgba(40, 30, 90, 0.22);
+}
+.bbd--tint .bbd-b__light {
+  inset: 4px 8px -4px;
+  filter: blur(10px);
+}
+.bbd--tint .bbd-b--main .bbd-b__light,
+.bbd--tint .bbd-b--send .bbd-b__light {
+  opacity: 0.7;
+  background: var(--cobalt);
+}
+.bbd--tint .bbd-b--ask .bbd-b__light {
+  opacity: 0.7;
+  background: var(--ember);
+}
+.bbd--tint .bbd-b:hover .bbd-b__light {
+  opacity: 0.95;
+  transform: scale(1.06);
+}
+.bbd--tint .bbd-b:active {
+  transform: scale(0.97);
+}
+
+/* Up close: the chat box in glass with bubble buttons. */
+.bbd-box {
+  display: grid;
+  gap: 28px;
+  width: min(640px, 100%);
+  margin: 0 auto;
+  padding: 18px 18px 14px 22px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    0 12px 32px -20px rgba(40, 30, 90, 0.16);
+}
+.bbd-box__ph {
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--text-3);
+}
+.bbd-box__row {
+  display: flex;
+  align-items: center;
+}
+.bbd-box__sp {
+  flex: 1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bbd-blob {
+    animation: none;
+  }
+  .bbd-b,
+  .bbd-b__light,
+  .bbd-b__glass,
+  .bbd-lens {
+    transition: none;
+  }
+}
+
+/* C2 · Ink, no lens: the spark bare on the Ink; no light under the buttons, no swelling on hover. */
+.bbd--ink .bbd-b__light {
+  display: none;
+}
+.bbd--ink .bbd-b__glass {
+  background: rgba(255, 255, 255, 0.55);
+  backdrop-filter: blur(16px) saturate(1.4);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    0 8px 20px -12px rgba(40, 30, 90, 0.25);
+}
+.bbd--ink .bbd-b:hover .bbd-b__glass {
+  background: rgba(255, 255, 255, 0.78);
+}
+.bbd--ink .bbd-b--main {
+  color: var(--sand);
+}
+.bbd--ink .bbd-b--main .bbd-b__glass {
+  background: var(--ink);
+  backdrop-filter: none;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.18),
+    0 10px 24px -12px rgba(14, 17, 22, 0.55);
+}
+.bbd--ink .bbd-b--main:hover .bbd-b__glass {
+  background: color-mix(in srgb, var(--sand) 14%, var(--ink));
+}
+.bbd--ink .bbd-b--main::after {
+  background: radial-gradient(50% 40% at 50% 0%, rgba(255, 255, 255, 0.16), transparent 70%);
+}
+.bbd-bare {
+  display: inline-grid;
+  margin-left: 2px;
+  transition: transform 0.35s var(--spring);
+}
+.bbd--ink .bbd-b--main:hover .bbd-bare {
+  transform: rotate(45deg);
+}
+.bbd--ink .bbd-b:active {
+  transform: scale(0.98);
+}
+
+/* C: no swelling on hover, and no light rising under the button (2 Nov). */
+.bbd--lens .bbd-b:hover {
+  transform: none;
+}
+.bbd--lens .bbd-b:hover .bbd-b__light {
+  opacity: 0;
+}
+.bbd--lens .bbd-b:hover .bbd-b__glass {
+  background:
+    radial-gradient(120% 80% at 50% 130%, rgba(255, 255, 255, 0.7), transparent 60%),
+    rgba(255, 255, 255, 0.3);
+}
+.bbd--lens .bbd-b--main:hover .bbd-b__glass {
+  background: color-mix(in srgb, var(--sand) 14%, var(--ink));
+}
+.bbd--lens .bbd-b:active {
+  transform: scale(0.98);
+}
+
+/* B · Bubble with a stroke (2 Nov): a half-clear line of shade at the edge, the white rim just inside it, so the
+   bubble reads on white and stays clear. On the demo's B, the chat box up close, and Home's buttons. */
+.bbd--bubble .bbd-b__glass {
+  box-shadow:
+    inset 0 0 0 1px rgba(40, 30, 90, 0.16),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.7),
+    inset 0 -4px 10px -4px rgba(255, 255, 255, 0.9),
+    inset 0 8px 14px -10px rgba(40, 30, 90, 0.25),
+    0 10px 24px -14px rgba(40, 30, 90, 0.35);
+}
+.bbd--bubble .bbd-b:hover .bbd-b__glass {
+  box-shadow:
+    inset 0 0 0 1px rgba(40, 30, 90, 0.22),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.75),
+    inset 0 -4px 10px -4px rgba(255, 255, 255, 0.9),
+    inset 0 8px 14px -10px rgba(40, 30, 90, 0.25),
+    0 10px 24px -14px rgba(40, 30, 90, 0.35);
+}
+:root[data-theme][data-theme] body :is(.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat, .hl-fix__tools.hl-fix__tools .hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask, .hl-fix__tools.hl-fix__tools .hl-fix__make.hl-fix__make.hl-fix__make.hl-fix__make, .hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager button):is(*) {
+  box-shadow:
+    inset 0 0 0 1px rgba(40, 30, 90, 0.16),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.7),
+    inset 0 -4px 10px -4px rgba(255, 255, 255, 0.9),
+    inset 0 8px 14px -10px rgba(40, 30, 90, 0.25),
+    0 10px 24px -14px rgba(40, 30, 90, 0.35);
+}
+:root[data-theme][data-theme] body :is(.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat, .hl-fix__tools.hl-fix__tools .hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask, .hl-fix__tools.hl-fix__tools .hl-fix__make.hl-fix__make.hl-fix__make.hl-fix__make, .hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager button):is(*):hover:not(:disabled) {
+  box-shadow:
+    inset 0 0 0 1px rgba(40, 30, 90, 0.22),
+    inset 0 0 0 2px rgba(255, 255, 255, 0.75),
+    inset 0 -4px 10px -4px rgba(255, 255, 255, 0.9),
+    inset 0 8px 14px -10px rgba(40, 30, 90, 0.25),
+    0 10px 24px -14px rgba(40, 30, 90, 0.35);
+}
+
+/* ---- Demo #/demo/slab-buttons: every button in the look of the client's glass reference (2 Nov) ------------- */
+.rsd-bar {
+  margin-bottom: 20px;
+}
+.rsd-list {
+  display: grid;
+  gap: 32px;
+}
+.rsd-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.rsd-stage {
+  padding: 36px 32px;
+  border-radius: 24px;
+  background: #f5f4f1;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.05);
+}
+.rsd-stage--card .rsd-surface {
+  padding: 28px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: 0 12px 32px -20px rgba(40, 30, 90, 0.2);
+}
+.rsd-set {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 28px 48px;
+}
+.rsd-group {
+  display: grid;
+  gap: 12px;
+  align-content: start;
+}
+.rsd-cap {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.rsd-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+
+/* One slab. Each kind sets the two colours inside it and how strong they are; each look builds the glass. */
+.rsd-b {
+  --c1: var(--cobalt);
+  --c2: var(--ember);
+  --a1: 20%;
+  --a2: 10%;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 14px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    filter 0.25s ease,
+    transform 0.15s ease,
+    box-shadow 0.15s ease;
+}
+.rsd-b--icon {
+  width: 40px;
+  padding: 0;
+  border-radius: 12px;
+}
+.rsd-b--sm {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+}
+.rsd-b--chip {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 12px;
+  font-weight: 400;
+}
+.rsd-b--primary,
+.rsd-b--send {
+  --a1: 90%;
+  --a2: 80%;
+}
+.rsd-b--secondary {
+  --a1: 28%;
+  --c2: #e9588e;
+  --a2: 16%;
+}
+.rsd-b--danger {
+  --c1: #d4321a;
+  --a1: 55%;
+  --a2: 70%;
+}
+.rsd-b--ask {
+  --c1: #e9588e;
+  --a1: 55%;
+  --a2: 85%;
+}
+.rsd-b--chip {
+  --a1: 12%;
+  --c2: #e9588e;
+  --a2: 12%;
+}
+.rsd-b:hover {
+  filter: saturate(1.25) brightness(1.03);
+}
+.rsd-b:active {
+  transform: translateY(2px);
+}
+.rsd-b:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+
+/* A · Frosted tiles: clear frost, a thick bright edge under it, the colours glowing in two corners. */
+.rsd--tile .rsd-b {
+  background:
+    radial-gradient(75% 130% at 0% 100%, color-mix(in oklch, var(--c1) var(--a1), transparent), transparent 70%),
+    radial-gradient(75% 130% at 100% 0%, color-mix(in oklch, var(--c2) var(--a2), transparent), transparent 70%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(234, 238, 250, 0.7));
+  -webkit-backdrop-filter: blur(12px) saturate(1.3);
+  backdrop-filter: blur(12px) saturate(1.3);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75),
+    inset 0 -2px 4px rgba(30, 59, 214, 0.1),
+    0 3px 0 rgba(198, 206, 236, 0.95),
+    0 4px 1px rgba(30, 59, 214, 0.1),
+    0 16px 24px -12px rgba(30, 40, 120, 0.3);
+}
+.rsd--tile .rsd-b:active {
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75),
+    inset 0 -2px 4px rgba(30, 59, 214, 0.1),
+    0 1px 0 rgba(198, 206, 236, 0.95),
+    0 8px 14px -10px rgba(30, 40, 120, 0.3);
+}
+
+/* B · Coloured jelly: the colour is the glass; a frosted sheen at the top, a lit rim, a coloured edge and shadow. */
+.rsd--jelly .rsd-b {
+  background:
+    radial-gradient(120% 90% at 30% -10%, rgba(255, 255, 255, 0.5), transparent 55%),
+    linear-gradient(135deg in oklch, color-mix(in oklch, var(--c1) var(--a1), transparent), color-mix(in oklch, var(--c2) var(--a2), transparent)),
+    rgba(255, 255, 255, 0.4);
+  -webkit-backdrop-filter: blur(10px) saturate(1.4);
+  backdrop-filter: blur(10px) saturate(1.4);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.5),
+    inset 0 2px 2px rgba(255, 255, 255, 0.7),
+    inset 0 -4px 8px color-mix(in oklch, var(--c2) calc(var(--a2) * 0.5), transparent),
+    0 3px 0 color-mix(in oklch, var(--c1) calc(var(--a1) * 0.45), #fff),
+    0 16px 26px -14px color-mix(in oklch, var(--c1) calc(var(--a1) * 0.7), transparent);
+}
+.rsd--jelly .rsd-b--primary {
+  --c2: #c43fd6;
+}
+.rsd--jelly :is(.rsd-b--primary, .rsd-b--send, .rsd-b--ask, .rsd-b--danger) {
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(14, 17, 22, 0.2);
+}
+.rsd--jelly .rsd-b--text {
+  --a1: 10%;
+  --a2: 6%;
+}
+.rsd--jelly .rsd-b:active {
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.5),
+    inset 0 2px 2px rgba(255, 255, 255, 0.7),
+    0 1px 0 color-mix(in oklch, var(--c1) calc(var(--a1) * 0.45), #fff),
+    0 8px 14px -10px color-mix(in oklch, var(--c1) calc(var(--a1) * 0.7), transparent);
+}
+
+/* C · Pastel frost: matte washes of the spectrum mixed with white, a soft thick edge. */
+.rsd--pastel .rsd-b {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(160deg in oklch, color-mix(in oklch, var(--c1) calc(var(--a1) * 0.5), #fff), color-mix(in oklch, #e9588e calc(var(--a2) * 0.35), #fff) 55%, color-mix(in oklch, var(--c2) calc(var(--a2) * 0.55), #fff));
+  box-shadow:
+    inset 0 2px 1px rgba(255, 255, 255, 0.9),
+    inset 0 -4px 8px rgba(255, 255, 255, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 4px 0 color-mix(in oklch, var(--c2) calc(var(--a2) * 0.3), #e8e6f2),
+    0 18px 28px -16px rgba(40, 30, 90, 0.3);
+}
+.rsd--pastel .rsd-b:active {
+  box-shadow:
+    inset 0 2px 1px rgba(255, 255, 255, 0.9),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 2px 0 color-mix(in oklch, var(--c2) calc(var(--a2) * 0.3), #e8e6f2),
+    0 8px 14px -10px rgba(40, 30, 90, 0.3);
+}
+
+/* Text buttons in every look: no slab until hover, then the quietest one. */
+.rsd-set .rsd-b--text:not(:hover) {
+  background: none;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.rsd-b--text {
+  padding: 0 12px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rsd-b {
+    transition: none;
+  }
+}
+/* Jelly's Ask Spark deeper, so the white words read. */
+.rsd--jelly .rsd-b--ask {
+  --c1: #f0623a;
+  --a1: 92%;
+  --c2: #d4321a;
+  --a2: 95%;
+}
+
+/* ---- Slab demo, D–G: the lit-rim glass of Ask Spark, the search field and the pager (2 Nov) ----------------
+   Pills; a thick clear rim with Cobalt at the left end and Ember at the right; how white the middle is and how far
+   the colour runs in tells the looks apart. The kinds set how strong the light is. */
+.rsd-stage--light {
+  background:
+    radial-gradient(45% 80% at 100% 0%, rgba(232, 80, 31, 0.22), transparent 70%),
+    radial-gradient(40% 70% at 0% 100%, rgba(30, 59, 214, 0.14), transparent 70%),
+    radial-gradient(30% 60% at 70% 100%, rgba(233, 88, 142, 0.16), transparent 70%),
+    #f5f2ee;
+}
+.rsd-group--wide {
+  flex-basis: 100%;
+}
+:is(.rsd--ends, .rsd--clear, .rsd--ring, .rsd--tinted, .rsd--bubside) .rsd-b {
+  --c1: var(--cobalt);
+  --c2: var(--ember);
+  --k: 0.55;
+  border: 2.5px solid transparent;
+  border-radius: 999px;
+}
+:is(.rsd--ends, .rsd--clear, .rsd--ring, .rsd--tinted, .rsd--bubside) :is(.rsd-b--primary, .rsd-b--send) {
+  --k: 1;
+}
+:is(.rsd--ends, .rsd--clear, .rsd--ring, .rsd--tinted, .rsd--bubside) :is(.rsd-b--ask, .rsd-b--field) {
+  --k: 0.85;
+}
+:is(.rsd--ends, .rsd--clear, .rsd--ring, .rsd--tinted, .rsd--bubside) .rsd-b--chip {
+  --k: 0.35;
+}
+:is(.rsd--ends, .rsd--clear, .rsd--ring, .rsd--tinted, .rsd--bubside) .rsd-b--danger {
+  --c1: var(--ember);
+  --k: 0.8;
+  color: var(--ember-text, #c2410c);
+}
+:is(.rsd--ends, .rsd--clear, .rsd--ring, .rsd--tinted, .rsd--bubside) .rsd-b--ask .brand-spark {
+  color: var(--ember);
+}
+.rsd-b--field {
+  justify-content: flex-start;
+  gap: 14px;
+  width: min(560px, 100%);
+  height: 52px;
+  padding: 0 22px;
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--text-2);
+  cursor: text;
+}
+.rsd-b--field svg {
+  color: var(--text-2);
+}
+.rsd-b--field:active {
+  transform: none;
+}
+
+/* D · Light at the ends: as Ask Spark, the field and the pager now. */
+.rsd--ends .rsd-b {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 245, 250, 0.82)) padding-box,
+    linear-gradient(90deg, color-mix(in oklch, var(--c1) calc(var(--k) * 100%), #fff), rgba(255, 255, 255, 0.85) 22%, rgba(255, 255, 255, 0.85) 78%, color-mix(in oklch, var(--c2) calc(var(--k) * 100%), #fff)) border-box;
+  -webkit-backdrop-filter: blur(12px) saturate(1.3);
+  backdrop-filter: blur(12px) saturate(1.3);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 6px 0 8px -5px color-mix(in oklch, var(--c1) calc(var(--k) * 70%), transparent),
+    inset -6px 0 8px -5px color-mix(in oklch, var(--c2) calc(var(--k) * 70%), transparent),
+    inset 0 2px 2px -1px #fff,
+    0 0 0 3px rgba(255, 255, 255, 0.45),
+    0 8px 18px -10px rgba(40, 30, 90, 0.3);
+}
+
+/* E · Clear at the sides: white in the middle only, clear towards the ends, the colour running further in. */
+.rsd--clear .rsd-b {
+  background:
+    radial-gradient(60% 120% at 50% 50%, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.55) 55%, rgba(255, 255, 255, 0.08) 100%) padding-box,
+    linear-gradient(90deg, color-mix(in oklch, var(--c1) calc(var(--k) * 100%), transparent), rgba(255, 255, 255, 0.6) 35%, rgba(255, 255, 255, 0.6) 65%, color-mix(in oklch, var(--c2) calc(var(--k) * 100%), transparent)) border-box;
+  -webkit-backdrop-filter: blur(4px) saturate(1.7) brightness(1.06);
+  backdrop-filter: blur(4px) saturate(1.7) brightness(1.06);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    inset 14px 0 14px -10px color-mix(in oklch, var(--c1) calc(var(--k) * 75%), transparent),
+    inset -14px 0 14px -10px color-mix(in oklch, var(--c2) calc(var(--k) * 75%), transparent),
+    inset 0 3px 3px -2px #fff,
+    0 8px 18px -12px rgba(40, 30, 90, 0.3);
+}
+
+/* F · Spectrum ring and halo: clear glass in a thin ring of the whole spectrum, frost round it. */
+.rsd--ring .rsd-b {
+  border-width: 2px;
+  background:
+    radial-gradient(80% 60% at 50% 0%, rgba(255, 255, 255, 0.7), transparent 70%) padding-box,
+    linear-gradient(rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0.28)) padding-box,
+    linear-gradient(90deg in oklch, color-mix(in oklch, var(--c1) calc(var(--k) * 100%), #fff), color-mix(in oklch, #7a45e6 calc(var(--k) * 70%), #fff) 30%, color-mix(in oklch, #e9588e calc(var(--k) * 70%), #fff) 65%, color-mix(in oklch, var(--c2) calc(var(--k) * 100%), #fff)) border-box;
+  -webkit-backdrop-filter: blur(6px) saturate(1.6);
+  backdrop-filter: blur(6px) saturate(1.6);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.8),
+    inset 0 -3px 6px -2px rgba(255, 255, 255, 0.8),
+    0 0 0 5px rgba(255, 255, 255, 0.4),
+    0 0 0 6px rgba(255, 255, 255, 0.7),
+    0 10px 22px -12px rgba(40, 30, 90, 0.3);
+}
+
+/* G · Tinted glass, clear edges: the spectrum through the whole glass, frosted in the middle, clear at the edges. */
+.rsd--tinted .rsd-b {
+  background:
+    radial-gradient(60% 120% at 50% 50%, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.05) 100%) padding-box,
+    linear-gradient(90deg in oklch, color-mix(in oklch, var(--c1) calc(var(--k) * 45%), transparent), color-mix(in oklch, #e9588e calc(var(--k) * 25%), transparent) 50%, color-mix(in oklch, var(--c2) calc(var(--k) * 45%), transparent)) padding-box,
+    linear-gradient(90deg, color-mix(in oklch, var(--c1) calc(var(--k) * 100%), #fff), rgba(255, 255, 255, 0.8) 30%, rgba(255, 255, 255, 0.8) 70%, color-mix(in oklch, var(--c2) calc(var(--k) * 100%), #fff)) border-box;
+  -webkit-backdrop-filter: blur(8px) saturate(1.5);
+  backdrop-filter: blur(8px) saturate(1.5);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75),
+    inset 0 3px 3px -2px #fff,
+    inset 0 -4px 8px -4px rgba(255, 255, 255, 0.7),
+    0 0 0 3px rgba(255, 255, 255, 0.35),
+    0 10px 22px -12px color-mix(in oklch, var(--c1) calc(var(--k) * 40%), rgba(40, 30, 90, 0.3));
+}
+
+/* Text buttons in D–G: no rim until hover. */
+:is(.rsd--ends, .rsd--clear, .rsd--ring, .rsd--tinted, .rsd--bubside) .rsd-b--text:not(:hover) {
+  border-color: transparent;
+  background: none;
+}
+
+/* H · A clear bubble in a coloured rim (as the pager's arrows): inside, clear convex glass with no colour of its
+   own, the ground showing through, a highlight on top and a glow at the foot; round it a thin rim running smoothly
+   from Cobalt at the left to Ember at the right, a sheen across its top and a halo of frost outside. */
+.rsd--bubside .rsd-b {
+  border: 0;
+  background:
+    radial-gradient(50% 30% at 50% 0%, rgba(255, 255, 255, 0.85), transparent 80%),
+    radial-gradient(60% 35% at 50% 105%, rgba(255, 255, 255, 0.5), transparent 75%),
+    rgba(255, 255, 255, 0.03);
+  -webkit-backdrop-filter: blur(2px) saturate(1.8);
+  backdrop-filter: blur(2px) saturate(1.8);
+  box-shadow:
+    inset 0 0 0 2.5px rgba(255, 255, 255, 0.3),
+    inset 0 -3px 6px -3px rgba(255, 255, 255, 0.8),
+    inset 0 8px 14px -10px rgba(40, 30, 90, 0.22),
+    -2px 0 6px -3px color-mix(in oklch, var(--c1) calc(var(--k) * 55%), transparent),
+    2px 0 6px -3px color-mix(in oklch, var(--c2) calc(var(--k) * 55%), transparent),
+    0 0 0 3px rgba(255, 255, 255, 0.3),
+    0 10px 20px -12px rgba(40, 30, 90, 0.3);
+}
+/* The rim alone: the gradient masked to a 2px ring, so the middle stays clear. */
+.rsd--bubside .rsd-b::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 2px;
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    radial-gradient(60% 55% at 50% 0%, rgba(255, 255, 255, 0.6), transparent 75%),
+    linear-gradient(90deg in oklch, color-mix(in oklch, var(--c1) calc(var(--k) * 100%), #fff), color-mix(in oklch, #a86ad8 calc(var(--k) * 60%), #fff) 50%, color-mix(in oklch, var(--c2) calc(var(--k) * 100%), #fff));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+.rsd--bubside :is(.rsd-b--sm, .rsd-b--chip)::before {
+  padding: 1.5px;
+}
+.rsd--bubside .rsd-b--text:not(:hover)::before {
+  display: none;
+}
+.rsd--bubside .rsd-b:hover {
+  filter: saturate(1.3);
+}
+
+/* ---- Slab demo, I–L: after the classic glass buttons (soft glass, clear lens, tinted gloss), in our colours ---- */
+.rsd-stage--soft {
+  background:
+    radial-gradient(70% 60% at 50% 0%, rgba(255, 255, 255, 0.7), transparent 70%),
+    radial-gradient(35% 60% at 0% 100%, rgba(30, 59, 214, 0.06), transparent 70%),
+    radial-gradient(35% 60% at 100% 100%, rgba(232, 80, 31, 0.07), transparent 70%),
+    linear-gradient(180deg, #f1eee9, #e3dfd8);
+}
+.rsd-stage--ink {
+  background:
+    radial-gradient(60% 50% at 50% 110%, color-mix(in oklch, var(--cobalt) 55%, transparent), transparent 75%),
+    linear-gradient(180deg, var(--ink) 0%, color-mix(in oklch, var(--cobalt) 35%, var(--ink)) 70%, color-mix(in oklch, var(--cobalt) 55%, var(--ink)) 100%);
+}
+.rsd-stage--cobalt {
+  background:
+    radial-gradient(50% 70% at 100% 0%, rgba(233, 88, 142, 0.35), transparent 70%),
+    linear-gradient(115deg in oklch, color-mix(in oklch, var(--cobalt) 80%, var(--ink)), var(--cobalt) 45%, #6b5bd8 85%, #8f78d4);
+}
+:is(.rsd-stage--ink, .rsd-stage--cobalt) .rsd-cap {
+  color: rgba(255, 255, 255, 0.6);
+}
+:is(.rsd--soft, .rsd--lens, .rsd--gloss, .rsd--caustic) .rsd-b {
+  --k: 0.5;
+  border-radius: 999px;
+}
+:is(.rsd--soft, .rsd--lens, .rsd--gloss, .rsd--caustic) :is(.rsd-b--primary, .rsd-b--send) {
+  --k: 1;
+}
+:is(.rsd--soft, .rsd--lens, .rsd--gloss, .rsd--caustic) :is(.rsd-b--ask, .rsd-b--field) {
+  --k: 0.8;
+}
+:is(.rsd--soft, .rsd--lens, .rsd--gloss, .rsd--caustic) .rsd-b--danger {
+  --c1: var(--ember);
+  --k: 0.8;
+}
+:is(.rsd--soft, .rsd--caustic) .rsd-b--danger {
+  color: var(--ember-text, #c2410c);
+}
+:is(.rsd--soft, .rsd--lens, .rsd--gloss, .rsd--caustic) .rsd-b--text:not(:hover) {
+  border-color: transparent;
+  background: none;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+
+/* The split button: the icon apart, two lines of words. */
+.rsd-b.rsd-b--split {
+  height: 56px;
+  padding: 0;
+  gap: 0;
+}
+.rsd-split__icon {
+  display: grid;
+  place-items: center;
+  align-self: stretch;
+  padding: 0 16px 0 22px;
+  border-right: 1px solid rgba(14, 17, 22, 0.12);
+}
+:is(.rsd--lens, .rsd--gloss) .rsd-split__icon {
+  border-right-color: rgba(255, 255, 255, 0.28);
+}
+.rsd-split__text {
+  display: grid;
+  gap: 1px;
+  padding: 0 26px 0 16px;
+  text-align: left;
+}
+.rsd-split__text b {
+  font-size: 14px;
+  font-weight: 500;
+}
+.rsd-split__text span {
+  font-size: 12px;
+  font-weight: 300;
+  opacity: 0.8;
+}
+
+/* I · Soft glass on Sand: a fine bright rim, the ends a shade deeper, light at the foot, a breath of colour. */
+.rsd--soft .rsd-b {
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  background:
+    linear-gradient(90deg, color-mix(in oklch, var(--c1) calc(var(--k) * 24%), transparent), transparent 28%, transparent 72%, color-mix(in oklch, var(--c2) calc(var(--k) * 24%), transparent)),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.18) 50%, rgba(255, 255, 255, 0.5));
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 12px 0 12px -12px rgba(40, 40, 60, 0.2),
+    inset -12px 0 12px -12px rgba(40, 40, 60, 0.2),
+    inset 0 -6px 10px -6px rgba(255, 255, 255, 0.8),
+    0 0 0 1px rgba(60, 60, 80, 0.12),
+    0 12px 24px -14px rgba(30, 30, 50, 0.35);
+}
+.rsd--soft .rsd-split__icon {
+  color: var(--cobalt);
+}
+
+/* J · Clear lens on Ink: hairline rim bright at the foot, light focused along the bottom inside, the ends darker. */
+.rsd--lens .rsd-b {
+  --gl: var(--cobalt);
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  color: #e8ecf3;
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.35);
+  background:
+    radial-gradient(70% 50% at 50% 105%, color-mix(in oklch, color-mix(in oklch, var(--gl) calc(var(--k) * 70%), #fff) 55%, transparent), transparent 75%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.03), rgba(255, 255, 255, 0.08) 60%, rgba(255, 255, 255, 0.16));
+  -webkit-backdrop-filter: blur(4px) saturate(1.3);
+  backdrop-filter: blur(4px) saturate(1.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.22),
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.6),
+    inset 14px 0 14px -12px rgba(0, 0, 0, 0.45),
+    inset -14px 0 14px -12px rgba(0, 0, 0, 0.45),
+    inset 0 10px 14px -10px rgba(0, 0, 0, 0.35),
+    0 14px 26px -14px rgba(0, 0, 0, 0.6);
+}
+.rsd--lens :is(.rsd-b--ask, .rsd-b--danger) {
+  --gl: var(--ember);
+}
+.rsd--lens .rsd-b--danger {
+  color: #ffb39a;
+}
+.rsd--lens .rsd-b--field {
+  color: rgba(232, 236, 243, 0.7);
+}
+.rsd--lens .rsd-b--field svg {
+  color: rgba(232, 236, 243, 0.7);
+}
+.rsd--lens .rsd-b:hover {
+  filter: brightness(1.15);
+}
+
+/* K · Tinted gloss on Cobalt: a gloss across the top half, a bright rim catching the light at the right end. */
+.rsd--gloss .rsd-b {
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: #fff;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.1) 49%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.06) 100%),
+    linear-gradient(90deg, rgba(255, 255, 255, calc(0.05 + var(--k) * 0.1)), rgba(255, 255, 255, calc(0.12 + var(--k) * 0.14)));
+  -webkit-backdrop-filter: blur(6px) saturate(1.3);
+  backdrop-filter: blur(6px) saturate(1.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset -3px 0 2px -1px rgba(255, 255, 255, 0.7),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.22),
+    0 10px 22px -12px rgba(10, 15, 60, 0.55);
+}
+.rsd--gloss :is(.rsd-b--ask, .rsd-b--danger) {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.26) 0%, rgba(255, 255, 255, 0.1) 49%, rgba(255, 255, 255, 0) 50%, rgba(255, 255, 255, 0.06) 100%),
+    linear-gradient(90deg, color-mix(in oklch, var(--ember) 78%, transparent), color-mix(in oklch, #f0623a 92%, transparent));
+}
+.rsd--gloss .rsd-b--field {
+  color: rgba(255, 255, 255, 0.75);
+}
+.rsd--gloss .rsd-b--field svg {
+  color: rgba(255, 255, 255, 0.75);
+}
+.rsd--gloss .rsd-b:hover {
+  filter: brightness(1.1);
+}
+
+/* L · Lens with the spectrum in it: J's lens on Sand, the light it focuses Cobalt into Ember. */
+.rsd--caustic .rsd-b {
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background:
+    radial-gradient(45% 50% at 28% 105%, color-mix(in oklch, var(--c1) calc(var(--k) * 45%), transparent), transparent 75%),
+    radial-gradient(45% 50% at 72% 105%, color-mix(in oklch, var(--c2) calc(var(--k) * 45%), transparent), transparent 75%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0.42));
+  -webkit-backdrop-filter: blur(4px) saturate(1.4);
+  backdrop-filter: blur(4px) saturate(1.4);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 -1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 14px 0 14px -12px rgba(40, 30, 90, 0.22),
+    inset -14px 0 14px -12px rgba(40, 30, 90, 0.22),
+    inset 0 10px 14px -10px rgba(40, 30, 90, 0.14),
+    0 0 0 1px rgba(40, 30, 90, 0.1),
+    0 12px 24px -14px rgba(40, 30, 90, 0.35);
+}
+.rsd--caustic .rsd-split__icon {
+  color: var(--cobalt);
+}
+
+/* ---- Demo #/demo/sand-buttons: the buttons drawn again from the brand book, on Sand (2 Nov) ---------------------
+   One object: a frosted body in a clear glass tube (::before, a masked ring), a highlight on the tube (::after),
+   and the tube's colour cast onto the ground below (outer shadows). Each kind sets the tube's colours (--c at the
+   left, --c2 at the right), the tint inside (--tint) and how much light it casts (--cast). */
+.sbd {
+  display: grid;
+  gap: 40px;
+}
+.sbd__look {
+  display: grid;
+  gap: 14px;
+}
+.sbd__head {
+  display: grid;
+  gap: 6px;
+  max-width: 820px;
+}
+.sbd__book {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ember-text, var(--ember));
+}
+.sbd__note {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+.sbd__stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr);
+  gap: 40px;
+  padding: 40px;
+  border-radius: 24px;
+  background: var(--sand);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.06);
+}
+@media (max-width: 1200px) {
+  .sbd__stage {
+    grid-template-columns: 1fr;
+  }
+}
+.sbk {
+  display: grid;
+  gap: 26px;
+  align-content: start;
+}
+.sbk__group {
+  display: grid;
+  gap: 14px;
+}
+.sbk__cap {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.sbk__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 14px;
+}
+.sbp {
+  display: grid;
+  gap: 24px;
+  align-content: start;
+}
+.sbp__card {
+  display: grid;
+  gap: 8px;
+  padding: 22px 24px 24px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    0 12px 32px -20px rgba(40, 30, 90, 0.18);
+}
+.sbp__card b {
+  font-size: 16px;
+  font-weight: 500;
+}
+.sbp__card p {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+.sbp__tag {
+  justify-self: start;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--ember);
+}
+.sbp__chat {
+  display: grid;
+  gap: 22px;
+  padding: 18px 16px 14px 22px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    0 12px 32px -20px rgba(40, 30, 90, 0.18);
+}
+.sbp__ph {
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--text-3);
+}
+.sbp__bar {
+  display: flex;
+  align-items: center;
+}
+.sbp__sp {
+  flex: 1;
+}
+
+/* The object. */
+.sb {
+  --c: #a9bde6;
+  --c2: var(--c);
+  --tint: 0%;
+  --cast: 0.3;
+  --sb-rim: 3px;
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 44px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  white-space: nowrap;
+  cursor: pointer;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.5)),
+    linear-gradient(90deg, color-mix(in oklch, var(--c) var(--tint), transparent), color-mix(in oklch, var(--c2) var(--tint), transparent));
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow:
+    inset 0 0 0 var(--sb-rim) transparent,
+    inset 0 0 0 calc(var(--sb-rim) + 1px) rgba(255, 255, 255, 0.75),
+    inset 0 -8px 12px -8px rgba(255, 255, 255, 0.95),
+    inset 0 10px 14px -12px rgba(14, 17, 22, 0.1),
+    0 1px 2px rgba(14, 17, 22, 0.06),
+    -10px 14px 22px -12px color-mix(in oklch, var(--c) calc(var(--cast) * 100%), transparent),
+    10px 14px 22px -12px color-mix(in oklch, var(--c2) calc(var(--cast) * 100%), transparent);
+  transition:
+    box-shadow 0.25s ease,
+    transform 0.15s ease,
+    filter 0.25s ease;
+}
+/* The tube: its colour at the ends, lighter in the middle, the light on its top. */
+.sb::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  padding: var(--sb-rim);
+  border-radius: inherit;
+  pointer-events: none;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 48%),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0) 35%),
+    linear-gradient(90deg in oklch, var(--c), color-mix(in oklch, var(--c) 50%, #fff) 30%, color-mix(in oklch, var(--c2) 50%, #fff) 70%, var(--c2));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+}
+/* The highlight where the light strikes the tube, top left. */
+.sb::after {
+  content: '';
+  position: absolute;
+  z-index: 1;
+  top: 2px;
+  left: 16px;
+  width: min(34%, 56px);
+  height: 3px;
+  border-radius: 3px;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), #fff 45%, rgba(255, 255, 255, 0));
+}
+.sb__t {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.sb--icon {
+  width: 44px;
+  padding: 0;
+}
+.sb--icon::after {
+  left: 9px;
+  width: 16px;
+}
+.sb--sm {
+  width: 36px;
+  height: 36px;
+}
+.sb--sm::after {
+  left: 7px;
+  width: 12px;
+}
+.sb--chip {
+  height: 38px;
+  padding: 0 18px;
+  font-size: 13px;
+  font-weight: 400;
+}
+.sb__spark {
+  display: inline-grid;
+  color: var(--ember);
+}
+.sb:is(:hover, .is-h):not(:disabled) {
+  --cast: calc(var(--cast-h, 0.45));
+  filter: saturate(1.15);
+}
+.sb:is(:active, .is-p):not(:disabled) {
+  transform: translateY(1px);
+  --cast: 0.12;
+}
+.sb:disabled {
+  cursor: default;
+  opacity: 0.45;
+  filter: grayscale(0.6);
+}
+.sb:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+/* Text buttons: no glass until hover. */
+.sb--text {
+  padding: 0 14px;
+}
+.sbd__stage .sb--text:not(:hover, .is-h) {
+  background: none;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.sb--text:not(:hover, .is-h)::before,
+.sb--text:not(:hover, .is-h)::after {
+  display: none;
+}
+.sb--danger {
+  color: var(--ember-text, #c2410c);
+}
+
+/* 01 · Glass tube: Cobalt for what you do, Ember for Spark, the spectrum for Send, Haze for the quiet ones. */
+.sbv--tube .sb--primary {
+  --c: var(--cobalt);
+  --tint: 12%;
+  --cast: 0.5;
+  --cast-h: 0.75;
+}
+.sbv--tube .sb--ask {
+  --c: var(--ember);
+  --tint: 12%;
+  --cast: 0.45;
+  --cast-h: 0.7;
+}
+.sbv--tube .sb--send {
+  --c: var(--cobalt);
+  --c2: var(--ember);
+  --tint: 12%;
+  --cast: 0.55;
+  --cast-h: 0.8;
+}
+
+/* 02 · Frosted bubble: a thick clear rim, a highlight top left; the main action and Spark lit from inside. */
+.sbv--bubble .sb {
+  --sb-rim: 4px;
+  --c: #ffffff;
+  --c2: #ffffff;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(250, 248, 252, 0.6));
+  box-shadow:
+    inset 0 0 0 var(--sb-rim) transparent,
+    inset 0 0 0 calc(var(--sb-rim) + 1px) rgba(214, 208, 228, 0.6),
+    inset 0 -8px 12px -8px rgba(255, 255, 255, 0.95),
+    0 0 0 1px rgba(196, 190, 214, 0.55),
+    0 2px 4px rgba(14, 17, 22, 0.05),
+    0 12px 22px -14px rgba(60, 50, 110, 0.35);
+}
+.sbv--bubble .sb::before {
+  background:
+    linear-gradient(180deg, #fff, rgba(255, 255, 255, 0.4) 55%, rgba(255, 255, 255, 0.85)),
+    linear-gradient(90deg, rgba(220, 216, 236, 0.9), rgba(255, 255, 255, 0.9) 30%, rgba(255, 255, 255, 0.9) 70%, rgba(236, 222, 216, 0.9));
+}
+.sbv--bubble .sb::after {
+  top: 6px;
+  left: 12px;
+  width: 18px;
+  height: 9px;
+  border-radius: 12px 0 0 0;
+  background: none;
+  border-top: 2px solid rgba(255, 255, 255, 0.95);
+  border-left: 2px solid rgba(255, 255, 255, 0.95);
+}
+.sbv--bubble .sb--icon::after,
+.sbv--bubble .sb--sm::after {
+  left: 9px;
+  width: 9px;
+}
+.sbv--bubble :is(.sb--primary, .sb--send) {
+  background:
+    radial-gradient(70% 90% at 20% 20%, rgba(255, 255, 255, 0.55), transparent 70%),
+    linear-gradient(135deg in oklch, #b9c6ff, #c6b2f6);
+  box-shadow:
+    inset 0 0 0 var(--sb-rim) transparent,
+    inset 0 0 0 calc(var(--sb-rim) + 1px) rgba(255, 255, 255, 0.6),
+    inset 0 -8px 12px -8px rgba(255, 255, 255, 0.8),
+    0 0 0 1px rgba(170, 160, 240, 0.5),
+    0 0 22px 2px rgba(122, 100, 245, 0.35),
+    0 12px 22px -14px rgba(60, 50, 160, 0.45);
+}
+.sbv--bubble :is(.sb--primary, .sb--send):is(:hover, .is-h):not(:disabled) {
+  box-shadow:
+    inset 0 0 0 var(--sb-rim) transparent,
+    inset 0 0 0 calc(var(--sb-rim) + 1px) rgba(255, 255, 255, 0.6),
+    inset 0 -8px 12px -8px rgba(255, 255, 255, 0.8),
+    0 0 0 1px rgba(170, 160, 240, 0.5),
+    0 0 30px 4px rgba(122, 100, 245, 0.45),
+    0 12px 22px -14px rgba(60, 50, 160, 0.45);
+}
+.sbv--bubble .sb--ask {
+  background:
+    radial-gradient(70% 90% at 20% 20%, rgba(255, 255, 255, 0.6), transparent 70%),
+    linear-gradient(135deg in oklch, #ffe1cf, #ffc3a6);
+  box-shadow:
+    inset 0 0 0 var(--sb-rim) transparent,
+    inset 0 0 0 calc(var(--sb-rim) + 1px) rgba(255, 255, 255, 0.6),
+    inset 0 -8px 12px -8px rgba(255, 255, 255, 0.8),
+    0 0 0 1px rgba(240, 170, 140, 0.5),
+    0 0 22px 2px rgba(232, 80, 31, 0.25),
+    0 12px 22px -14px rgba(160, 60, 20, 0.35);
+}
+.sbv--bubble .sb--chip {
+  border-bottom-left-radius: 8px;
+}
+.sbv--bubble .sb:is(:hover, .is-h):not(:disabled) {
+  filter: brightness(1.03) saturate(1.1);
+}
+
+/* 03 · Spark in glass: a clear casing round a solid core; Spark an Ember sphere. */
+.sbv--core .sb {
+  --sb-rim: 4px;
+  --c: #c8d8f0;
+  --c2: #c8d8f0;
+  --cast: 0.35;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.3));
+}
+.sbv--core .sb::before {
+  background:
+    linear-gradient(180deg, #fff, rgba(255, 255, 255, 0.25) 50%, rgba(255, 255, 255, 0.9)),
+    linear-gradient(90deg, rgba(200, 216, 240, 0.9), rgba(255, 255, 255, 0.6) 30%, rgba(255, 255, 255, 0.6) 70%, rgba(200, 216, 240, 0.9));
+}
+.sbv--core .sb--primary {
+  --c: var(--cobalt);
+  --c2: var(--cobalt);
+  --cast: 0.55;
+  --cast-h: 0.8;
+  color: #fff;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0) 52%),
+    radial-gradient(120% 140% at 30% 15%, #4a68ff, var(--cobalt) 55%, #1630b0);
+}
+.sbv--core .sb--primary::before {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.35) 50%, rgba(255, 255, 255, 0.75)),
+    linear-gradient(90deg, rgba(160, 180, 255, 0.9), rgba(255, 255, 255, 0.5) 50%, rgba(160, 180, 255, 0.9));
+}
+.sbv--core .sb--ask {
+  --c: var(--ember);
+  --c2: var(--ember);
+  --cast: 0.4;
+  --cast-h: 0.65;
+  padding-left: 7px;
+}
+.sbv--core .sb--send {
+  --c: var(--ember);
+  --c2: var(--ember);
+  --cast: 0.5;
+  --cast-h: 0.75;
+}
+.sb__orb {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  color: #fff;
+  background:
+    radial-gradient(40% 30% at 38% 26%, rgba(255, 255, 255, 0.9), transparent 70%),
+    radial-gradient(100% 100% at 35% 30%, #ffb08a, var(--ember) 50%, #b8360f 100%);
+  box-shadow:
+    inset 0 -3px 5px rgba(120, 30, 0, 0.35),
+    0 3px 8px -2px rgba(232, 80, 31, 0.55);
+}
+.sb__orb--full {
+  width: 36px;
+  height: 36px;
+}
+.sbv--core .sb--send .sb__orb--full {
+  margin: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sb {
+    transition: none;
+  }
+}
+
+/* ---- Demo #/demo/ai-buttons: the buttons as an AI product's glass, on Sand (2 Nov) ------------------------------
+   Rules from the feedback: rims one pixel at most, the glass clear enough to see the ground, the main action black
+   (Ink). The light moves only on Spark's buttons. */
+@property --ag-a {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+@property --ag-e1 {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+@property --ag-e2 {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+@property --ag-e3 {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+@property --ag-e4 {
+  syntax: '<color>';
+  inherits: false;
+  initial-value: transparent;
+}
+@keyframes ag-spin {
+  to {
+    --ag-a: 360deg;
+  }
+}
+@keyframes ag-breathe {
+  0%,
+  100% {
+    transform: scale(0.9) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.12) rotate(12deg);
+  }
+}
+@keyframes ag-edge {
+  0%,
+  100% {
+    --ag-e1: rgba(30, 59, 214, 0.75);
+    --ag-e2: rgba(232, 80, 31, 0.75);
+    --ag-e3: rgba(122, 69, 230, 0.55);
+    --ag-e4: rgba(233, 88, 142, 0.55);
+  }
+  25% {
+    --ag-e1: rgba(122, 69, 230, 0.6);
+    --ag-e2: rgba(233, 88, 142, 0.6);
+    --ag-e3: rgba(232, 80, 31, 0.6);
+    --ag-e4: rgba(30, 59, 214, 0.6);
+  }
+  50% {
+    --ag-e1: rgba(232, 80, 31, 0.75);
+    --ag-e2: rgba(30, 59, 214, 0.75);
+    --ag-e3: rgba(233, 88, 142, 0.55);
+    --ag-e4: rgba(122, 69, 230, 0.55);
+  }
+  75% {
+    --ag-e1: rgba(233, 88, 142, 0.6);
+    --ag-e2: rgba(122, 69, 230, 0.6);
+    --ag-e3: rgba(30, 59, 214, 0.6);
+    --ag-e4: rgba(232, 80, 31, 0.6);
+  }
+}
+
+.agd {
+  display: grid;
+  gap: 40px;
+}
+.agd__look {
+  display: grid;
+  gap: 12px;
+}
+.agd__head {
+  display: grid;
+  gap: 6px;
+  max-width: 820px;
+}
+.agd__note {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.55;
+  color: var(--text-2);
+}
+/* Sand with one cluster of light, behind the buttons, so the glass shows what it lets through. */
+.agd__stage {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+  gap: 40px;
+  padding: 40px;
+  border-radius: 24px;
+  background:
+    radial-gradient(28% 34% at 14% 30%, rgba(30, 59, 214, 0.2), transparent 70%),
+    radial-gradient(26% 30% at 30% 52%, rgba(233, 88, 142, 0.16), transparent 70%),
+    radial-gradient(26% 30% at 22% 70%, rgba(232, 80, 31, 0.16), transparent 70%),
+    var(--sand);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.06);
+}
+@media (max-width: 1200px) {
+  .agd__stage {
+    grid-template-columns: 1fr;
+  }
+}
+.agk {
+  display: grid;
+  gap: 26px;
+  align-content: start;
+}
+.agk__group {
+  display: grid;
+  gap: 12px;
+}
+.agk__cap {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.agk__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
+}
+.agp {
+  display: grid;
+  gap: 20px;
+  align-content: start;
+}
+.agp__head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 18px 20px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.85);
+}
+.agp__head > div {
+  display: grid;
+  flex: 1;
+  gap: 2px;
+}
+.agp__head b {
+  font-size: 16px;
+  font-weight: 700;
+}
+.agp__head > div span,
+.agp__credits {
+  font-size: 12px;
+  font-weight: 300;
+  color: var(--text-2);
+}
+.agp__card,
+.agp__chat {
+  display: grid;
+  gap: 8px;
+  padding: 20px 22px 22px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    0 12px 32px -20px rgba(40, 30, 90, 0.18);
+}
+.agp__card b {
+  font-size: 16px;
+  font-weight: 500;
+}
+.agp__card p {
+  margin: 0 0 10px;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+.agp__tag {
+  justify-self: start;
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #fff;
+  background: var(--ember);
+}
+.agp__chat {
+  gap: 22px;
+  padding: 18px 14px 14px 22px;
+}
+.agp__ph {
+  font-size: 15px;
+  font-weight: 300;
+  color: var(--text-3);
+}
+.agp__bar {
+  display: flex;
+  align-items: center;
+}
+.agp__sp {
+  flex: 1;
+}
+
+/* The button: clear glass, a one-pixel rim, a line of light on top. */
+.ag {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+  white-space: nowrap;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.6);
+  backdrop-filter: blur(10px) saturate(1.6);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 0.5px rgba(14, 17, 22, 0.1),
+    0 4px 12px -6px rgba(14, 17, 22, 0.16);
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.15s ease;
+}
+.ag__t {
+  position: relative;
+  z-index: 2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.ag--icon {
+  width: 40px;
+  padding: 0;
+}
+.ag--sm {
+  width: 34px;
+  height: 34px;
+}
+.ag--chip {
+  height: 34px;
+  padding: 0 14px;
+  font-size: 13px;
+  font-weight: 400;
+}
+.ag__spark {
+  display: inline-grid;
+  color: var(--ember);
+  animation: ag-breathe 3.2s ease-in-out infinite;
+}
+.ag:is(:hover, .is-h):not(:disabled) {
+  background: rgba(255, 255, 255, 0.42);
+}
+.ag:is(:active, .is-p):not(:disabled) {
+  transform: translateY(1px);
+}
+.ag:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+.ag:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+.ag--danger {
+  color: var(--ember-text, #c2410c);
+}
+.agd__stage .ag--text:not(:hover, .is-h) {
+  padding: 0 12px;
+  background: none;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.agd__stage .ag--text:not(:hover, .is-h)::before,
+.agd__stage .ag--text:not(:hover, .is-h)::after {
+  display: none;
+}
+
+/* The main action: black Ink glass, a breath of light on its top edge. */
+.agd__stage .ag.ag--primary {
+  color: var(--sand);
+  background: linear-gradient(180deg, rgba(44, 49, 58, 0.94), rgba(14, 17, 22, 0.96));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 6px 16px -8px rgba(14, 17, 22, 0.5);
+}
+.agd__stage .ag.ag--primary:is(:hover, .is-h):not(:disabled) {
+  background: linear-gradient(180deg, rgba(62, 68, 80, 0.94), rgba(30, 34, 42, 0.96));
+}
+
+/* A · Liquid glass: almost no white; light on the edges; Spark's buttons with Cobalt and Ember in their ends. */
+.agv--liquid .ag {
+  background: rgba(255, 255, 255, 0.04);
+  -webkit-backdrop-filter: blur(3px) saturate(1.9) brightness(1.02);
+  backdrop-filter: blur(3px) saturate(1.9) brightness(1.02);
+  box-shadow:
+    inset 1px 1px 0 -0.5px rgba(255, 255, 255, 1),
+    inset -1px -1px 0 -0.5px rgba(255, 255, 255, 0.85),
+    inset 0 0 0 0.5px rgba(255, 255, 255, 0.6),
+    inset 0 0 8px rgba(255, 255, 255, 0.15),
+    inset 0 -10px 14px -12px rgba(14, 17, 22, 0.12),
+    0 0 0 0.5px rgba(14, 17, 22, 0.1),
+    0 6px 16px -8px rgba(14, 17, 22, 0.2);
+}
+.agv--liquid :is(.ag--ask, .ag--send) {
+  box-shadow:
+    inset 1px 1px 0 -0.5px rgba(255, 255, 255, 1),
+    inset -1px -1px 0 -0.5px rgba(255, 255, 255, 0.85),
+    inset 8px 0 10px -7px rgba(30, 59, 214, 0.6),
+    inset -8px 0 10px -7px rgba(232, 80, 31, 0.6),
+    inset 0 0 8px rgba(255, 255, 255, 0.15),
+    0 0 0 0.5px rgba(14, 17, 22, 0.1),
+    0 6px 16px -8px rgba(14, 17, 22, 0.2);
+}
+.agv--liquid .ag:is(:hover, .is-h):not(:disabled):not(.ag--primary) {
+  background: rgba(255, 255, 255, 0.22);
+}
+.agv--liquid .ag:is(:active, .is-p):not(:disabled) {
+  transform: scale(0.97);
+}
+
+/* B · Ink and aura: the spectrum turns slowly behind Spark's buttons; the glass over it frosts it. */
+.agv--aura :is(.ag--ask, .ag--send) {
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: 0 4px 12px -6px rgba(14, 17, 22, 0.16);
+}
+.agv--aura :is(.ag--ask, .ag--send)::before {
+  content: '';
+  position: absolute;
+  inset: -4px;
+  z-index: -1;
+  border-radius: inherit;
+  background: conic-gradient(from var(--ag-a), #1e3bd6, #7a45e6, #e9588e, #e8501f, #e9588e, #7a45e6, #1e3bd6);
+  filter: blur(9px);
+  opacity: 0.5;
+  animation: ag-spin 6s linear infinite;
+  transition: opacity 0.3s ease;
+}
+.agv--aura :is(.ag--ask, .ag--send)::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  backdrop-filter: blur(12px) saturate(1.4);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.8),
+    inset 0 1px 0 #fff;
+}
+.agv--aura :is(.ag--ask, .ag--send):is(:hover, .is-h):not(:disabled)::before {
+  opacity: 0.85;
+}
+
+/* C · Spectrum hairline: the spectrum turns round a one-pixel rim; a sheen crosses the glass on hover. */
+.agv--hairline :is(.ag--ask, .ag--send) {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 4px 12px -6px rgba(14, 17, 22, 0.16);
+}
+.agv--hairline :is(.ag--ask, .ag--send)::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  padding: 1px;
+  border-radius: inherit;
+  pointer-events: none;
+  background: conic-gradient(from var(--ag-a), #1e3bd6, #7a45e6, #e9588e, #e8501f, #e9588e, #7a45e6, #1e3bd6);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: ag-spin 4s linear infinite;
+}
+
+
+/* C's Ask Spark as the glass tube (01 on #/demo/sand-buttons, 2 Nov): a frosted body in a clear glass tube; the
+   spectrum turning in the tube, a highlight where the light strikes it top left, and its light cast onto the
+   ground below, Cobalt at the left and Ember at the right. */
+.agv--hairline .ag.ag--ask {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.5)),
+    linear-gradient(90deg, color-mix(in oklch, var(--cobalt) 12%, transparent), color-mix(in oklch, var(--ember) 12%, transparent));
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow:
+    inset 0 0 0 1.5px transparent,
+    inset 0 0 0 2.5px rgba(255, 255, 255, 0.75),
+    inset 0 -8px 12px -8px rgba(255, 255, 255, 0.95),
+    inset 0 10px 14px -12px rgba(14, 17, 22, 0.1),
+    0 1px 2px rgba(14, 17, 22, 0.06),
+    -10px 14px 22px -12px color-mix(in oklch, var(--cobalt) 50%, transparent),
+    10px 14px 22px -12px color-mix(in oklch, var(--ember) 50%, transparent);
+}
+.agv--hairline .ag.ag--ask:is(:hover, .is-h):not(:disabled) {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.6)),
+    linear-gradient(90deg, color-mix(in oklch, var(--cobalt) 16%, transparent), color-mix(in oklch, var(--ember) 16%, transparent));
+  box-shadow:
+    inset 0 0 0 1.5px transparent,
+    inset 0 0 0 2.5px rgba(255, 255, 255, 0.75),
+    inset 0 -8px 12px -8px rgba(255, 255, 255, 0.95),
+    inset 0 10px 14px -12px rgba(14, 17, 22, 0.1),
+    0 1px 2px rgba(14, 17, 22, 0.06),
+    -10px 14px 24px -12px color-mix(in oklch, var(--cobalt) 75%, transparent),
+    10px 14px 24px -12px color-mix(in oklch, var(--ember) 75%, transparent);
+}
+.agv--hairline .ag.ag--ask:is(:active, .is-p):not(:disabled) {
+  box-shadow:
+    inset 0 0 0 1.5px transparent,
+    inset 0 0 0 2.5px rgba(255, 255, 255, 0.75),
+    inset 0 -8px 12px -8px rgba(255, 255, 255, 0.95),
+    inset 0 10px 14px -12px rgba(14, 17, 22, 0.1),
+    0 1px 2px rgba(14, 17, 22, 0.06),
+    -6px 8px 14px -10px color-mix(in oklch, var(--cobalt) 30%, transparent),
+    6px 8px 14px -10px color-mix(in oklch, var(--ember) 30%, transparent);
+}
+.agv--hairline .ag.ag--ask::before {
+  padding: 1.5px;
+  background:
+    radial-gradient(16% 70% at 22% 0%, #fff, transparent 70%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 48%),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0) 35%),
+    conic-gradient(from var(--ag-a), #1e3bd6, #7a45e6, #e9588e, #e8501f, #e9588e, #7a45e6, #1e3bd6);
+}
+.agv--hairline .ag.ag--ask {
+  height: 44px;
+  padding: 0 22px;
+}
+
+/* D · Edge light: the spectrum moves round inside the edges of Spark's buttons; the middle stays clear. */
+.agv--edge .ag {
+  background: rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(4px) saturate(1.8);
+  backdrop-filter: blur(4px) saturate(1.8);
+}
+.agv--edge :is(.ag--ask, .ag--send) {
+  animation: ag-edge 5s linear infinite;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    inset 10px 0 12px -8px var(--ag-e1),
+    inset -10px 0 12px -8px var(--ag-e2),
+    inset 0 7px 10px -7px var(--ag-e3),
+    inset 0 -7px 10px -7px var(--ag-e4),
+    0 0 0 0.5px rgba(14, 17, 22, 0.1),
+    0 4px 12px -6px rgba(14, 17, 22, 0.16);
+}
+.agv--edge .ag--send {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    inset 7px 0 9px -6px var(--ag-e1),
+    inset -7px 0 9px -6px var(--ag-e2),
+    inset 0 7px 9px -6px var(--ag-e3),
+    inset 0 -7px 9px -6px var(--ag-e4),
+    0 0 0 0.5px rgba(14, 17, 22, 0.1),
+    0 4px 12px -6px rgba(14, 17, 22, 0.16);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ag__spark,
+  .agv--aura .ag::before,
+  .agv--hairline .ag::before,
+  .agv--edge .ag {
+    animation: none;
+  }
+}
+
+/* ---- Home: Ask Spark and the icon buttons as C on #/demo/ai-buttons (2 Nov) --------------------------------------
+   Ask Spark (in the header and on the issue card): a frosted body in a thin clear glass tube, the spectrum turning
+   slowly in the tube, a glint at its top left, its light cast onto the ground below (Cobalt left, Ember right); the
+   spark bare, no disc. The icon buttons (the pager's arrows, ⋯): clear glass in a one-pixel rim. No flash on hover. */
+:root[data-theme][data-theme] body :is(.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat, .hl-fix__tools.hl-fix__tools .hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask) {
+  position: relative;
+  isolation: isolate;
+  color: var(--ink);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.5)),
+    linear-gradient(90deg, color-mix(in oklch, var(--cobalt) 12%, transparent), color-mix(in oklch, var(--ember) 12%, transparent));
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow:
+    inset 0 0 0 1.5px transparent,
+    inset 0 0 0 2.5px rgba(255, 255, 255, 0.75),
+    inset 0 -8px 12px -8px rgba(255, 255, 255, 0.95),
+    inset 0 10px 14px -12px rgba(14, 17, 22, 0.1),
+    0 1px 2px rgba(14, 17, 22, 0.06),
+    -10px 14px 22px -12px color-mix(in oklch, var(--cobalt) 50%, transparent),
+    10px 14px 22px -12px color-mix(in oklch, var(--ember) 50%, transparent);
+  transform: none;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.25s ease,
+    transform 0.15s ease;
+}
+:root[data-theme][data-theme] body :is(.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat, .hl-fix__tools.hl-fix__tools .hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask):hover:not(:disabled) {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.88), rgba(255, 255, 255, 0.6)),
+    linear-gradient(90deg, color-mix(in oklch, var(--cobalt) 16%, transparent), color-mix(in oklch, var(--ember) 16%, transparent));
+  box-shadow:
+    inset 0 0 0 1.5px transparent,
+    inset 0 0 0 2.5px rgba(255, 255, 255, 0.75),
+    inset 0 -8px 12px -8px rgba(255, 255, 255, 0.95),
+    inset 0 10px 14px -12px rgba(14, 17, 22, 0.1),
+    0 1px 2px rgba(14, 17, 22, 0.06),
+    -10px 14px 24px -12px color-mix(in oklch, var(--cobalt) 75%, transparent),
+    10px 14px 24px -12px color-mix(in oklch, var(--ember) 75%, transparent);
+  transform: none;
+}
+:root[data-theme][data-theme] body :is(.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat, .hl-fix__tools.hl-fix__tools .hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask):active:not(:disabled) {
+  transform: translateY(1px);
+  box-shadow:
+    inset 0 0 0 1.5px transparent,
+    inset 0 0 0 2.5px rgba(255, 255, 255, 0.75),
+    inset 0 -8px 12px -8px rgba(255, 255, 255, 0.95),
+    inset 0 10px 14px -12px rgba(14, 17, 22, 0.1),
+    0 1px 2px rgba(14, 17, 22, 0.06),
+    -6px 8px 14px -10px color-mix(in oklch, var(--cobalt) 30%, transparent),
+    6px 8px 14px -10px color-mix(in oklch, var(--ember) 30%, transparent);
+}
+/* The tube: a ring masked out of the turning spectrum, light on its top and a glint at the top left. */
+:root[data-theme][data-theme] body :is(.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat.hl-mchat, .hl-fix__tools.hl-fix__tools .hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask)::before {
+  content: '';
+  display: block;
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  width: auto;
+  height: auto;
+  padding: 1.5px;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 1;
+  filter: none;
+  background:
+    radial-gradient(16% 70% at 22% 0%, #fff, transparent 70%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0) 48%),
+    linear-gradient(0deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0) 35%),
+    conic-gradient(from var(--ag-a), #1e3bd6, #7a45e6, #e9588e, #e8501f, #e9588e, #7a45e6, #1e3bd6);
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  animation: ag-spin 4s linear infinite;
+}
+/* The spark bare, Ember, no disc. */
+:root[data-theme][data-theme] body :is(.hl-mchat, .hl-fix__tools .hl-fix__ask) .spark-disc.spark-disc {
+  position: relative;
+  z-index: 1;
+  background: none;
+  box-shadow: none;
+}
+
+/* The icon buttons: clear glass in a one-pixel rim, a line of light on top. */
+:root[data-theme][data-theme] body :is(.hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager button, .hl-fix__more.hl-fix__more.hl-fix__more.hl-fix__more.hl-fix__more.hl-fix__more.hl-fix__more) {
+  background: rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.6);
+  backdrop-filter: blur(10px) saturate(1.6);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 0.5px rgba(14, 17, 22, 0.1),
+    0 4px 12px -6px rgba(14, 17, 22, 0.16);
+  transform: none;
+  transition:
+    background 0.2s ease,
+    transform 0.15s ease;
+}
+:root[data-theme][data-theme] body :is(.hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager button, .hl-fix__more.hl-fix__more.hl-fix__more.hl-fix__more.hl-fix__more.hl-fix__more.hl-fix__more):hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.42);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 0.5px rgba(14, 17, 22, 0.1),
+    0 4px 12px -6px rgba(14, 17, 22, 0.16);
+  transform: none;
+}
+:root[data-theme][data-theme] body :is(.hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager.hdc-pager button, .hl-fix__more.hl-fix__more.hl-fix__more.hl-fix__more.hl-fix__more.hl-fix__more.hl-fix__more):active:not(:disabled) {
+  transform: translateY(1px);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme][data-theme] body :is(.hl-mchat, .hl-fix__tools .hl-fix__ask)::before {
+    animation: none;
+  }
+}
+
+/* Request proposal is the primary (2 Nov): black Ink as the main action in C on #/demo/ai-buttons, a breath of
+   light on its top edge; no light under it. Ask Spark stays the glass tube beside it. */
+:root[data-theme][data-theme] body .hl-fix__tools.hl-fix__tools .hl-fix__make.hl-fix__make.hl-fix__make.hl-fix__make.hl-fix__make.hl-fix__make {
+  color: var(--sand);
+  background: linear-gradient(180deg, rgba(44, 49, 58, 0.94), rgba(14, 17, 22, 0.96));
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 6px 16px -8px rgba(14, 17, 22, 0.5);
+  transform: none;
+}
+:root[data-theme][data-theme] body .hl-fix__tools.hl-fix__tools .hl-fix__make.hl-fix__make.hl-fix__make.hl-fix__make.hl-fix__make.hl-fix__make:hover:not(:disabled) {
+  color: var(--sand);
+  background: linear-gradient(180deg, rgba(62, 68, 80, 0.94), rgba(30, 34, 42, 0.96));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 6px 16px -8px rgba(14, 17, 22, 0.5);
+  transform: none;
+}
+:root[data-theme][data-theme] body .hl-fix__tools.hl-fix__tools .hl-fix__make.hl-fix__make.hl-fix__make.hl-fix__make.hl-fix__make.hl-fix__make:active:not(:disabled) {
+  transform: translateY(1px);
+}
+:root[data-theme][data-theme] body .hl-fix__tools.hl-fix__tools .hl-fix__make.hl-fix__make.hl-fix__make.hl-fix__make.hl-fix__make.hl-fix__make::before {
+  display: none;
+}
+
+/* Ask Spark on the issue card without the tube (2 Nov): beside the black Request proposal it is the second action,
+   so clear glass in a one-pixel rim, as the icon buttons, with the Ember spark; no spectrum and no light under it.
+   The header's Ask Spark keeps the tube: one cluster of light per screen (p. 34). */
+:root[data-theme][data-theme] body .hl-fix__tools.hl-fix__tools .hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask {
+  background: rgba(255, 255, 255, 0.2);
+  -webkit-backdrop-filter: blur(10px) saturate(1.6);
+  backdrop-filter: blur(10px) saturate(1.6);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 0.5px rgba(14, 17, 22, 0.1),
+    0 4px 12px -6px rgba(14, 17, 22, 0.16);
+}
+:root[data-theme][data-theme] body .hl-fix__tools.hl-fix__tools .hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask:hover:not(:disabled) {
+  background: rgba(255, 255, 255, 0.42);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 0.5px rgba(14, 17, 22, 0.1),
+    0 4px 12px -6px rgba(14, 17, 22, 0.16);
+}
+:root[data-theme][data-theme] body .hl-fix__tools.hl-fix__tools .hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask:active:not(:disabled) {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.75),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    0 0 0 0.5px rgba(14, 17, 22, 0.1),
+    0 2px 6px -4px rgba(14, 17, 22, 0.16);
+}
+:root[data-theme][data-theme] body .hl-fix__tools.hl-fix__tools .hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask.hl-fix__ask::before {
+  display: none;
+}
+
+/* ---- Demo #/demo/glass-folders: the folders on Documents in glass that holds light (2 Nov) ----------------------
+   Each folder sets its light (--c1, --c2: two neighbours on the spectrum); rims one pixel, the glass clear. */
+.gfo-stage {
+  margin-top: 20px;
+  padding: 36px;
+  border-radius: 24px;
+  background:
+    radial-gradient(30% 50% at 62% 0%, rgba(30, 59, 214, 0.18), transparent 70%),
+    radial-gradient(28% 50% at 80% 0%, rgba(122, 69, 230, 0.16), transparent 70%),
+    radial-gradient(30% 50% at 98% 0%, rgba(232, 80, 31, 0.18), transparent 70%),
+    var(--sand);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.06);
+}
+.gfo-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 22px;
+}
+.gfo-grid--tab {
+  row-gap: 30px;
+}
+.gfo {
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  color: var(--ink);
+  text-decoration: none;
+  border-radius: 24px;
+}
+.gfo:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+.gfo-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.gfo-text {
+  display: grid;
+  gap: 4px;
+}
+.gfo-text b {
+  font-size: 17px;
+  font-weight: 500;
+}
+.gfo-text span {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--text-2);
+}
+.gfo-count {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.gfo-badge {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.85),
+    0 0 0 0.5px rgba(14, 17, 22, 0.1);
+}
+.gfo-badge::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--ember);
+}
+.gfo-team {
+  display: inline-flex;
+  flex: none;
+}
+.gfo-team i {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  margin-left: -6px;
+  border-radius: 50%;
+  font-size: 8px;
+  font-style: normal;
+  font-weight: 500;
+  background: var(--haze);
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.9);
+}
+/* A page's lines. */
+:is(.gfo-sheet, .gfo-layer--3, .gfo-peek) i {
+  display: block;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(14, 17, 22, 0.09);
+}
+:is(.gfo-sheet, .gfo-layer--3, .gfo-peek) i:first-child {
+  width: 55%;
+  background: rgba(14, 17, 22, 0.16);
+}
+:is(.gfo-sheet, .gfo-layer--3, .gfo-peek) i:nth-child(2) {
+  width: 85%;
+}
+:is(.gfo-sheet, .gfo-layer--3, .gfo-peek) i:nth-child(3) {
+  width: 68%;
+}
+/* The glass card the folder sits on (A and C). */
+:is(.gfo--pocket, .gfo--layers) {
+  height: 300px;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.45);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  backdrop-filter: blur(20px) saturate(1.3);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.85),
+    inset 0 1px 0 #fff,
+    0 12px 32px -20px rgba(40, 30, 90, 0.18);
+}
+
+/* A · Frosted pocket. */
+.gfo--pocket {
+  padding: 22px 22px 0;
+}
+.gfo-obj {
+  position: relative;
+  height: 168px;
+  margin-top: auto;
+}
+.gfo-back {
+  position: absolute;
+  left: 4%;
+  right: 4%;
+  top: 22px;
+  bottom: 0;
+  border-radius: 0 16px 0 0;
+  background:
+    radial-gradient(70% 90% at 25% 30%, color-mix(in oklch, var(--c1) 70%, #fff), transparent 70%),
+    radial-gradient(70% 90% at 82% 62%, color-mix(in oklch, var(--c2) 65%, #fff), transparent 70%),
+    color-mix(in oklch, var(--c1) 22%, #fff);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.6);
+}
+.gfo-back::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: -16px;
+  width: 40%;
+  height: 17px;
+  border-radius: 12px 12px 0 0;
+  background: color-mix(in oklch, var(--c1) 62%, #fff);
+}
+.gfo-sheet {
+  position: absolute;
+  top: 34px;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  width: 50%;
+  height: 130px;
+  padding: 16px 14px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 6px 16px -8px rgba(14, 17, 22, 0.25);
+  transform: translateY(var(--lift, 0)) rotate(var(--r));
+  transition: transform 0.45s cubic-bezier(0.3, 1.3, 0.5, 1);
+}
+.gfo-sheet--1 {
+  --r: -5deg;
+  left: 14%;
+}
+.gfo-sheet--2 {
+  --r: 3deg;
+  left: 34%;
+  top: 26px;
+}
+.gfo--pocket:hover .gfo-sheet--1 {
+  --lift: -16px;
+}
+.gfo--pocket:hover .gfo-sheet--2 {
+  --lift: -26px;
+}
+.gfo-front {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  display: flex;
+  align-items: flex-end;
+  height: 60%;
+  padding: 0 18px 16px;
+  border-radius: 18px 18px 0 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.28));
+  -webkit-backdrop-filter: blur(14px) saturate(1.5);
+  backdrop-filter: blur(14px) saturate(1.5);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    0 -8px 18px -12px rgba(40, 30, 90, 0.2);
+}
+
+/* B · Glass tile: compact, the light only in the small folder (2 Nov: no light in the corner). */
+.gfo--tile {
+  height: auto;
+  padding: 20px;
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  backdrop-filter: blur(20px) saturate(1.3);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    0 12px 32px -20px rgba(40, 30, 90, 0.2);
+  transition: background 0.2s ease;
+}
+.gfo--tile:hover {
+  background: rgba(255, 255, 255, 0.68);
+}
+.gfo-mini {
+  position: relative;
+  width: 48px;
+  height: 40px;
+}
+/* The back and its tab in one piece, holding the folder's light. */
+.gfo-mini__back {
+  position: absolute;
+  inset: 0 0 4px;
+  clip-path: path('M0 6 Q0 0 6 0 H16 Q19 0 21 2.5 L23.5 5.5 H42 Q48 5.5 48 11.5 V30 Q48 36 42 36 H6 Q0 36 0 30 Z');
+  background: linear-gradient(160deg in oklch, color-mix(in oklch, var(--c1) 75%, #fff), color-mix(in oklch, var(--c2) 70%, #fff));
+}
+.gfo-mini__sheet {
+  position: absolute;
+  left: 9px;
+  top: 9px;
+  width: 30px;
+  height: 22px;
+  border-radius: 3px;
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(14, 17, 22, 0.12);
+  transform: rotate(-4deg);
+}
+/* The front: frosted glass, the light and the page showing through it. */
+.gfo-mini__front {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 26px;
+  border-radius: 7px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.62), rgba(255, 255, 255, 0.32));
+  -webkit-backdrop-filter: blur(4px) saturate(1.5);
+  backdrop-filter: blur(4px) saturate(1.5);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    0 6px 12px -6px color-mix(in oklch, var(--c1) 55%, transparent);
+}
+.gfo--tile .gfo-text {
+  margin-top: 14px;
+}
+.gfo-kinds {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 14px;
+}
+.gfo-kinds span {
+  padding: 4px 9px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+  color: var(--text-2);
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    0 0 0 0.5px rgba(14, 17, 22, 0.08);
+}
+
+/* C · Layer by layer. */
+.gfo--layers {
+  padding: 22px;
+}
+.gfo-head--abs {
+  position: absolute;
+  z-index: 2;
+  top: 18px;
+  left: 18px;
+  right: 18px;
+}
+.gfo-stack {
+  position: relative;
+  height: 168px;
+  perspective: 900px;
+}
+.gfo-layer {
+  position: absolute;
+  left: 50%;
+  top: 56%;
+  width: 150px;
+  height: 108px;
+  margin: -54px 0 0 -75px;
+  border-radius: 16px;
+  transform: rotateX(56deg) rotateZ(-38deg) translateZ(var(--z));
+  transition: transform 0.5s cubic-bezier(0.3, 1.3, 0.5, 1);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.8),
+    0 14px 22px -12px rgba(40, 30, 90, 0.35);
+}
+.gfo-layer--1 {
+  --z: 0px;
+  background: linear-gradient(135deg in oklch, color-mix(in oklch, var(--c1) 80%, transparent), color-mix(in oklch, var(--c2) 75%, transparent));
+}
+.gfo-layer--2 {
+  --z: 20px;
+  background: linear-gradient(135deg in oklch, color-mix(in oklch, var(--c1) 38%, rgba(255, 255, 255, 0.45)), color-mix(in oklch, var(--c2) 38%, rgba(255, 255, 255, 0.45)));
+}
+.gfo-layer--3 {
+  --z: 40px;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  padding: 18px 16px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.6));
+}
+.gfo--layers:hover .gfo-layer--2 {
+  --z: 34px;
+}
+.gfo--layers:hover .gfo-layer--3 {
+  --z: 70px;
+}
+.gfo--layers .gfo-text {
+  margin-top: auto;
+}
+.gfo-count--foot {
+  margin-top: 8px;
+}
+
+/* D · Glass folder with its light. */
+.gfo--tab {
+  display: block;
+  height: 232px;
+}
+.gfo-tabshape {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 42%;
+  height: 20px;
+  border-radius: 14px 14px 0 0;
+  background: linear-gradient(180deg, color-mix(in oklch, var(--c1) 20%, rgba(255, 255, 255, 0.6)), rgba(255, 255, 255, 0.6));
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  backdrop-filter: blur(20px) saturate(1.3);
+  box-shadow:
+    inset 1px 0 0 rgba(255, 255, 255, 0.85),
+    inset -1px 0 0 rgba(255, 255, 255, 0.85),
+    inset 0 1px 0 #fff;
+}
+.gfo-peek {
+  position: absolute;
+  left: 46%;
+  right: 8%;
+  top: 4px;
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  height: 120px;
+  padding: 16px 14px;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 0 6px 16px -8px rgba(14, 17, 22, 0.25);
+  transition: transform 0.45s cubic-bezier(0.3, 1.3, 0.5, 1);
+}
+.gfo--tab:hover .gfo-peek {
+  transform: translateY(-20px) rotate(-2deg);
+}
+.gfo-body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 18px;
+  bottom: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 20px 22px 22px;
+  border-radius: 0 24px 24px 24px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.4)),
+    linear-gradient(135deg in oklch, color-mix(in oklch, var(--c1) 14%, transparent), color-mix(in oklch, var(--c2) 14%, transparent));
+  -webkit-backdrop-filter: blur(18px) saturate(1.4);
+  backdrop-filter: blur(18px) saturate(1.4);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.85),
+    inset 0 1px 0 #fff,
+    -12px 18px 30px -18px color-mix(in oklch, var(--c1) 55%, transparent),
+    12px 18px 30px -18px color-mix(in oklch, var(--c2) 55%, transparent);
+}
+.gfo--tab .gfo-text {
+  margin-top: auto;
+}
+.gfo--tab.is-team .gfo-body {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.85),
+    inset 0 1px 0 #fff,
+    0 12px 32px -20px rgba(40, 30, 90, 0.2);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .gfo-sheet,
+  .gfo-layer,
+  .gfo-peek {
+    transition: none;
+  }
+}
+
+/* Documents: the folders are B · Glass tile from #/demo/glass-folders (2 Nov; .gfo--tile above). The drop card in
+   Your team takes the row's height instead of its own 286px. */
+:root[data-theme][data-theme] .fcard-grid .drop-card {
+  height: auto;
+  min-height: 190px;
+}
+/* The folder tiles and the drop card take the tables' 16px corners (2 Nov): tiles inside the page. */
+:root[data-theme][data-theme] .fcard-grid :is(.gfo--tile, .drop-card) {
+  border-radius: 16px;
+}
+/* The folder tile's file count, quiet under the line (2 Nov: in place of the type chips). */
+.gfo-count--tile {
+  margin-top: 12px;
+  color: var(--text-3);
+}
+/* The drop card whitens on hover as the glass beside it does, not grey (2 Nov); a file held over it whiter still,
+   so it reads as “let go here”. The dashed edge stays and darkens a touch. */
+:root[data-theme][data-theme] .fcard-grid .drop-card {
+  transition:
+    border-color 0.15s,
+    background 0.2s,
+    box-shadow 0.2s;
+}
+:root[data-theme][data-theme] .fcard-grid .drop-card:hover {
+  border-color: color-mix(in srgb, var(--text) 28%, transparent);
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  backdrop-filter: blur(20px) saturate(1.3);
+  box-shadow: 0 12px 32px -20px rgba(40, 30, 90, 0.2);
+}
+:root[data-theme][data-theme] .fcard-grid .drop-card.is-over {
+  border-color: color-mix(in srgb, var(--text) 40%, transparent);
+  background: rgba(255, 255, 255, 0.78);
+  -webkit-backdrop-filter: blur(20px) saturate(1.3);
+  backdrop-filter: blur(20px) saturate(1.3);
+  box-shadow: 0 14px 34px -18px rgba(40, 30, 90, 0.26);
+}
+
+/* ---- Demo #/demo/suggestions: the ways to start in the Ask Spark drawer, on its white panel (2 Nov) ----------- */
+.sgd-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(330px, 1fr));
+  gap: 28px;
+}
+.sgd-col {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.sgd-panel {
+  display: flex;
+  flex-direction: column;
+  min-height: 560px;
+  padding: 18px 18px 24px;
+  border-radius: 22px;
+  background: #fff;
+  box-shadow:
+    0 30px 70px -30px rgba(14, 17, 22, 0.35),
+    inset 0 0 0 1px rgba(14, 17, 22, 0.06);
+}
+.sgd-head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--text-2);
+}
+.sgd-head b {
+  flex: 1;
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--ink);
+}
+.sgd-panel h3 {
+  margin: 110px 0 22px;
+  font-size: 22px;
+  font-weight: 500;
+  text-align: center;
+}
+.sgd-panel ul {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.sgd-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 52px;
+  padding: 13px 16px;
+  border: 0;
+  border-radius: 16px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 400;
+  text-align: left;
+  color: var(--ink);
+  cursor: pointer;
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.sgd-row > span {
+  flex: 1;
+}
+.sgd-row > svg {
+  flex: none;
+  color: var(--text-2);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+.sgd-row:is(:hover, .is-h) > svg {
+  opacity: 1;
+}
+
+/* Now: Sand fill and a grey hairline. */
+.sgd--now .sgd-row {
+  background: rgba(248, 246, 242, 0.6);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.06);
+}
+.sgd--now .sgd-row:is(:hover, .is-h) {
+  background: rgba(240, 237, 231, 0.9);
+}
+
+/* A · Glass on white: a white rim, the faintest outer edge, a soft shadow; a breath of Sand inside. */
+.sgd--glass .sgd-row {
+  background: rgba(248, 246, 242, 0.55);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 0 1px 0 #fff,
+    0 0 0 0.5px rgba(14, 17, 22, 0.09),
+    0 2px 6px -2px rgba(40, 30, 90, 0.08);
+}
+.sgd--glass .sgd-row:is(:hover, .is-h) {
+  background: #fff;
+  box-shadow:
+    inset 0 0 0 1px #fff,
+    0 0 0 0.5px rgba(14, 17, 22, 0.1),
+    0 8px 18px -10px rgba(40, 30, 90, 0.24);
+}
+
+/* B · Glass on a lit panel: one cluster of light at the top, clear glass rows over it. */
+.sgd--lit {
+  background:
+    radial-gradient(60% 34% at 70% 0%, rgba(122, 69, 230, 0.12), transparent 70%),
+    radial-gradient(50% 30% at 100% 6%, rgba(232, 80, 31, 0.12), transparent 70%),
+    radial-gradient(50% 30% at 30% 4%, rgba(30, 59, 214, 0.1), transparent 70%),
+    linear-gradient(180deg, #fbfaf8, #f6f4f0);
+}
+.sgd--lit .sgd-row {
+  background: rgba(255, 255, 255, 0.45);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    0 0 0 0.5px rgba(14, 17, 22, 0.08),
+    0 4px 12px -8px rgba(40, 30, 90, 0.16);
+}
+.sgd--lit .sgd-row:is(:hover, .is-h) {
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow:
+    inset 0 0 0 1px #fff,
+    0 0 0 0.5px rgba(14, 17, 22, 0.1),
+    0 8px 18px -10px rgba(40, 30, 90, 0.24);
+}
+
+/* C · Fill only: Sand, no line, no shadow; hover white glass with a shadow. */
+.sgd--fill .sgd-row {
+  background: rgba(244, 241, 235, 0.85);
+}
+.sgd--fill .sgd-row:is(:hover, .is-h) {
+  background: #fff;
+  box-shadow:
+    0 0 0 0.5px rgba(14, 17, 22, 0.1),
+    0 8px 18px -10px rgba(40, 30, 90, 0.24);
+}
+
+/* The Ask Spark drawer's ways to start as A on #/demo/suggestions (2 Nov): no grey line; a white rim, the faintest
+   outer edge and a soft shadow, a breath of Sand inside so a row holds on the white panel. Hover turns it white
+   and lifts it, as the glass elsewhere. */
+:root[data-theme][data-theme] .chat-drawer.chat-drawer .chats-start__row {
+  background: rgba(248, 246, 242, 0.55);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 0 1px 0 #fff,
+    0 0 0 0.5px rgba(14, 17, 22, 0.09),
+    0 2px 6px -2px rgba(40, 30, 90, 0.08);
+  transition:
+    background 0.2s ease,
+    box-shadow 0.2s ease;
+}
+:root[data-theme][data-theme] .chat-drawer.chat-drawer .chats-start__row:is(:hover, :focus-visible) {
+  background: #fff;
+  box-shadow:
+    inset 0 0 0 1px #fff,
+    0 0 0 0.5px rgba(14, 17, 22, 0.1),
+    0 8px 18px -10px rgba(40, 30, 90, 0.24);
+}

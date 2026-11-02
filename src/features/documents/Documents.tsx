@@ -5,7 +5,7 @@ import { personById, TEAM_FOLDER, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { AvatarStack, Button, cx, EmptyState, Input, PageHeader, Progress, Skeleton } from '../../components/ui/primitives';
 import { DocThumb, FileIcon, kindLabel } from '../../components/domain';
-import { FolderCard, folderTint } from './FolderCard';
+import { FolderCard, folderLight } from './FolderCard';
 import { useToast } from '../../components/ui/toast';
 import { FilterMenu } from '../../components/ui/overlay';
 import { fmtRelative, fmtSize } from '../../lib/format';
@@ -260,8 +260,9 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
                     key={f.id}
                     href={`#/documents/${f.id}`}
                     name={f.name}
-                    sub={f.description ?? `${n} ${n === 1 ? 'item' : 'items'}`}
-                    tint={folderTint(state.folders, f.id)}
+                    sub={f.description}
+                    light={folderLight(state.folders, f.id)}
+                    count={n}
                     badge={review > 0 && `${review} to review`}
                     mark={isTeam(f.id) ? <AvatarStack people={team} size={20} max={3} /> : undefined}
                   />
