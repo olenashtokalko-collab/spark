@@ -1719,7 +1719,7 @@ function IssueActs({
     return (
       <span className={cx('hl-fix__acts', className)}>
         {dots([
-          { label: 'Ask Spark', icon: SparkStar, onSelect: () => onAsk(issueTopic(a, f)) },
+          { label: 'Ask about this', icon: SparkStar, onSelect: () => onAsk(issueTopic(a, f)) },
           { label: 'Request proposal', icon: Inbox, onSelect: make },
           'divider',
           ...quiet,
@@ -1730,13 +1730,13 @@ function IssueActs({
   if (tools)
     return (
       <span className={cx('hl-fix__acts hl-fix__tools', className)}>
-        {/* Request proposal first (the action that turns the issue into work), then Ask Spark as the spark
-            and words, no fill (feedback 29 Oct). */}
+        {/* Request proposal first (the action that turns the issue into work), then Ask about this as the spark
+            and words, no fill (feedback 29 Oct): it opens Spark on this issue, so not the header's Ask Spark (2 Nov). */}
         <Button size="sm" variant="secondary" className="hl-fix__make" onClick={make}>
           Request proposal
         </Button>
         <button type="button" className="hl-fix__tool hl-fix__ask" onClick={() => onAsk(issueTopic(a, f))}>
-          <SparkDisc size={26} /> Ask Spark
+          <SparkDisc size={26} /> Ask about this
         </button>
         {more === 'hybrid' && dots(quiet)}
       </span>
@@ -1745,7 +1745,7 @@ function IssueActs({
     <span className={cx('hl-fix__acts', className)}>
       <button type="button" className="hl-mchat rq-ask" onClick={() => onAsk(issueTopic(a, f))}>
         <SparkDisc size={22} />
-        Ask Spark
+        Ask about this
       </button>
       <Button size="sm" variant="secondary" className="hl-fix__req" onClick={make}>
         Request proposal
