@@ -1,6 +1,6 @@
 import { useState, type ReactNode } from 'react';
-import { ArrowLeft, BadgeCheck, Check, CircleDot, ChevronDown, CircleX, Clock, Eye, FileText, Hammer, Lightbulb, MessageSquare, PackageCheck, Paperclip, PenLine, Plus, ScanSearch, Send, TrendingUp, TriangleAlert } from 'lucide-react';
-import { latestProposal, personById, proposalTotal, proposalWeeks, useStore } from '../../state/store';
+import { ArrowLeft, BadgeCheck, Check, CircleDot, ChevronDown, CircleX, Clock, Eye, FileText, Hammer, Lightbulb, MessageSquare, PackageCheck, Paperclip, PenLine, Plus, ScanSearch, Send, TrendingUp, TriangleAlert, Upload } from 'lucide-react';
+import { TEAM_FOLDER, latestProposal, personById, proposalTotal, proposalWeeks, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { Avatar, Button, EmptyState, Tabs, Textarea, cx } from '../../components/ui/primitives';
 import { FileIcon, ProposalStatus, RequestStatus, STAGES, STAGE_INFO, stageIndex } from '../../components/domain';
@@ -271,7 +271,7 @@ export function RequestDetail({ id }: { id: string }) {
                   ))}
                 </div>
               ) : (
-                <EmptyState panel title="No files yet." body="Files you or Spark attach to this request show up here." />
+                <FileDrop requestId={r.id} />
               )}
             </div>
           )}
@@ -357,7 +357,13 @@ function Messages({ r }: { r: WorkRequest }) {
   const { state, me } = useStore();
   const msgs = r.activity.filter((a) => a.kind === 'comment').sort((a, b) => a.at.localeCompare(b.at));
   if (!msgs.length)
-    return <EmptyState panel title="No messages yet." body="Ask Spark a question or add a note about this request; Spark replies here." />;
+    return (
+      // No box, no picture (3 Nov): the words alone.
+      <div className="req-empty">
+        <b>No messages yet.</b>
+        <span>Ask Spark a question or add a note about this request; Spark replies here.</span>
+      </div>
+    );
   return (
     <ol className="rmsg">
       {msgs.map((a) => {
@@ -658,3 +664,37 @@ function LogItem({ a, requestId, onMessage }: { a: Activity; requestId: string; 
   );
 }
 
+/** A request's Files tab with nothing in it yet (3 Nov): a dashed drop zone, so the empty state is where files go.
+ *  Dropped or chosen files are shared to Your team, tied to this request, and show in the tab. */
+function FileDrop({ requestId }: { requestId: string }) {
+  const { actions } = useStore();
+  const toast = useToast();
+  const [over, setOver] = useState(false);
+  const add = (list: FileList | null) => {
+    if (!list?.length) return;
+    const files = [...list].map((f) => ({ name: f.name, sizeKb: Math.max(1, Math.round(f.size / 1024)) }));
+    actions.uploadFiles(files, TEAM_FOLDER, requestId);
+    toast({ title: files.length === 1 ? `${files[0].name} shared with Spark` : `${files.length} files shared with Spark` });
+  };
+  return (
+    <label
+      className={cx('req-drop', over && 'is-over')}
+      onDragOver={(e) => {
+        e.preventDefault();
+        setOver(true);
+      }}
+      onDragLeave={() => setOver(false)}
+      onDrop={(e) => {
+        e.preventDefault();
+        setOver(false);
+        add(e.dataTransfer.files);
+      }}
+    >
+      <input type="file" multiple hidden onChange={(e) => (add(e.target.files), (e.target.value = ''))} />
+      {/* The same card as the drop card in Documents: the icon, the line, the note. */}
+      <Upload size={18} />
+      <b>Drop files here</b>
+      <span>Or click to choose. Files you or Spark attach to this request show up here.</span>
+    </label>
+  );
+}

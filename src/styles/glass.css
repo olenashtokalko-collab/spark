@@ -4630,3 +4630,279 @@
     0 0 0 0.5px rgba(14, 17, 22, 0.1),
     0 8px 18px -10px rgba(40, 30, 90, 0.24);
 }
+
+/* Text actions in Ink, not Cobalt (30 Oct): Edit and every link button, as All files; underlined on hover.
+   Tab counts as small grey numbers beside the word, no pill, as the filter tabs' counts. */
+:root[data-theme][data-theme] .link-btn.link-btn {
+  color: var(--ink);
+  font-weight: 500;
+}
+:root[data-theme][data-theme] .link-btn.link-btn:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+:root[data-theme][data-theme] .tabs .tabs__count.tabs__count {
+  min-width: 0;
+  height: auto;
+  margin-left: 6px;
+  padding: 0;
+  border-radius: 0;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--text-3);
+  background: none;
+  box-shadow: none;
+}
+
+/* ---- Request page and Team, consistency pass (3 Nov) ------------------------------------------------------- */
+/* The decision on a request is the page's foreground, white, as the proposal's decision card. */
+:root[data-theme][data-theme] .req-decide.req-decide.req-decide {
+  background: #fff;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    0 0 0 1px rgba(14, 17, 22, 0.04),
+    0 14px 34px -18px rgba(40, 30, 90, 0.22);
+}
+/* "Overdue" in Ember wherever it shows, the current stage too. */
+:root[data-theme][data-theme] .stg__due.is-on-you,
+:root[data-theme][data-theme] .stg__due.is-on-you * {
+  color: var(--ember-text, #b9431a);
+}
+/* Stage marks one shape: every one a 32px tile with 10px corners; the ones not reached a dashed edge that follows
+   the corners (a border, not an outline). */
+:root[data-theme][data-theme] .stg--discs .stg__item.is-todo .stg__mark {
+  outline: 0;
+  border: 1px dashed color-mix(in srgb, var(--ink) 22%, transparent);
+  border-radius: 10px;
+}
+
+/* Team: the list in a glass card as the Requests table (16px corners), its head in the tables' mono caps, Active
+   without a coloured dot (Cobalt means new or waiting on you); Pending keeps its Ember dot. */
+:root[data-theme][data-theme] .team .tm-list {
+  overflow: hidden;
+  padding: 4px 20px 8px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    0 12px 32px -20px rgba(40, 30, 90, 0.16);
+}
+:root[data-theme][data-theme] .team .tm-row--head,
+:root[data-theme][data-theme] .team .tm-row--head * {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 400;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+:root[data-theme][data-theme] .team .tm-row .rstatus--approved {
+  color: var(--text-2);
+}
+:root[data-theme][data-theme] .team .tm-row .rstatus--approved .rstatus__dot {
+  display: none;
+}
+:root[data-theme][data-theme] .team .tm-row:last-child {
+  box-shadow: none;
+  border-bottom: 0;
+}
+/* Team rows can't be opened, so no hover on them (3 Nov); the controls inside (role, ⋯) keep their own. */
+:root[data-theme][data-theme] .team .tm-row.tm-row:hover {
+  background: none;
+}
+/* ...and the lines between rows stay put under the pointer. */
+:root[data-theme][data-theme] .team .tm-row.tm-row:not(.tm-row--head):hover,
+:root[data-theme][data-theme] .team .tm-row.tm-row:has(+ .tm-row:not(.tm-row--head):hover) {
+  box-shadow: inset 0 -1px 0 rgba(14, 17, 22, 0.08);
+}
+:root[data-theme][data-theme] .team .tm-row.tm-row:last-child:hover {
+  box-shadow: none;
+}
+
+/* ---- 16px everywhere (3 Nov) ---------------------------------------------------------------------------------
+   Every container 16px: the sidebar, chat history, the cards and sections on every page, the tables. The plates
+   inside them 12px, the small pieces 10px, so the inner corners stay smaller than the outer. */
+:root[data-theme][data-theme] :is(.rail, .chats-hist, .hl-hero__card, .hdc-feature, .hdc--latest, .rq-tbl, .req-decide, .block.brief, .side-card, .decision, .scope-tbl, .tm-list, .fcard):is(*, *):is(*, *):is(*, *) {
+  border-radius: 16px;
+}
+:root[data-theme][data-theme] :is(.hdc-feature .hdc--feature, .hl-latest__row, .chats-start__row, .hl-hero__avatar):is(*, *):is(*, *):is(*, *) {
+  border-radius: 12px;
+}
+:root[data-theme][data-theme] :is(.rail__btn, .rail__me, .hl-fix__do, .stg__item.is-current):is(*, *):is(*, *):is(*, *) {
+  border-radius: 10px;
+}
+:root[data-theme][data-theme] .stg .stg__item.is-current.is-current.is-current {
+  border-radius: 10px;
+}
+:root[data-theme][data-theme] .hdc--latest .hl-latest__row.hl-latest__row.hl-latest__row,
+:root[data-theme][data-theme] .hdc--latest .hl-latest__list > * > .hl-latest__row.hl-latest__row {
+  border-radius: 12px;
+}
+
+/* Secondary buttons in dialogs (3 Nov): on the dialog's white the glass did nothing; a hairline stroke, as on the
+   proposal's decision card, so Cancel and the like read as buttons. */
+:root[data-theme][data-theme] .dialog .btn--secondary.btn--secondary.btn--secondary {
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.14);
+}
+:root[data-theme][data-theme] .dialog .btn--secondary.btn--secondary.btn--secondary:hover:not(:disabled) {
+  background: rgba(14, 17, 22, 0.04);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.22);
+}
+
+/* ---- Empty states on a request (3 Nov) ------------------------------------------------------------------------
+   Messages: no box; a small picture of the conversation to come (your glass bubble, then Spark's with its three
+   Ember dots, as "On it"), the words under it. Files: a dashed drop zone, the empty state is where files go. */
+.req-empty {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 36px 0 28px;
+  text-align: center;
+}
+.req-empty b {
+  margin-top: 14px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.req-empty > span:last-child {
+  max-width: 420px;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text-2);
+}
+.req-empty__art {
+  display: grid;
+  gap: 8px;
+  width: 168px;
+}
+.req-empty__bubble {
+  display: block;
+  height: 30px;
+  border-radius: 16px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82) 0%, rgba(255, 255, 255, 0.45) 50%, rgba(255, 255, 255, 0.68) 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.85), inset 0 2px 2px -1px #fff, 0 4px 12px -6px rgba(40, 30, 90, 0.2);
+}
+.req-empty__bubble--you {
+  justify-self: end;
+  width: 70%;
+  border-bottom-right-radius: 6px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.25)), rgba(14, 17, 22, 0.05);
+}
+.req-empty__bubble--spark {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  justify-self: start;
+  width: 56%;
+  padding: 0 14px;
+  border-bottom-left-radius: 6px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0.25) 50%, rgba(255, 255, 255, 0.5) 100%),
+    linear-gradient(90deg, rgba(255, 214, 190, 0.45), rgba(255, 236, 222, 0.35));
+}
+.req-empty__bubble--spark i {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: var(--ember, #e8501f);
+  opacity: 0.5;
+}
+.req-empty__bubble--spark i:nth-child(2) {
+  opacity: 0.75;
+}
+.req-empty__bubble--spark i:nth-child(3) {
+  opacity: 1;
+}
+.req-drop {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 32px 24px;
+  border: 1.5px dashed color-mix(in srgb, var(--ink) 18%, transparent);
+  border-radius: 16px;
+  text-align: center;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.25);
+  transition: background 0.2s, border-color 0.2s;
+}
+.req-drop:hover,
+.req-drop.is-over {
+  border-color: color-mix(in srgb, var(--ink) 35%, transparent);
+  background: rgba(255, 255, 255, 0.55);
+}
+.req-drop__icon {
+  display: grid;
+  place-items: center;
+  width: 40px;
+  height: 40px;
+  margin-bottom: 6px;
+  border-radius: 12px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 0 0 1px #fff, 0 2px 8px -4px rgba(40, 30, 90, 0.18);
+}
+.req-drop b {
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.req-drop > span:last-child {
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text-2);
+}
+.req-drop u {
+  color: var(--ink);
+  font-weight: 450;
+  text-underline-offset: 3px;
+}
+.req-empty__bubble--you {
+  background: rgba(14, 17, 22, 0.07);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7), inset 0 2px 2px -1px rgba(255, 255, 255, 0.8);
+}
+.req-empty b {
+  margin-top: 0;
+}
+/* The request's drop zone as the drop card in Documents (3 Nov): no fill at rest, the same dashed edge, icon, sizes
+   and corners; whitens on hover, whiter still with a file held over it. */
+:root[data-theme][data-theme] .req-drop {
+  gap: 6px;
+  min-height: 190px;
+  align-content: center;
+  padding: 20px;
+  border: 1.5px dashed var(--line-strong);
+  border-radius: 16px;
+  font-size: 13px;
+  color: var(--text-2);
+  background: none;
+  transition: border-color 0.15s, background 0.2s, box-shadow 0.2s;
+}
+:root[data-theme][data-theme] .req-drop b {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--text);
+}
+:root[data-theme][data-theme] .req-drop > span:last-child {
+  font-size: 13px;
+  font-weight: 400;
+  color: var(--text-3);
+}
+:root[data-theme][data-theme] .req-drop:hover {
+  border-color: color-mix(in srgb, var(--text) 28%, transparent);
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0 12px 32px -20px rgba(40, 30, 90, 0.2);
+}
+:root[data-theme][data-theme] .req-drop.is-over {
+  border-color: color-mix(in srgb, var(--text) 40%, transparent);
+  background: rgba(255, 255, 255, 0.78);
+  box-shadow: 0 14px 34px -18px rgba(40, 30, 90, 0.26);
+}

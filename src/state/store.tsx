@@ -454,7 +454,8 @@ function useStoreValue() {
   // ---- Documents ------------------------------------------------------------
 
   const uploadFiles = useCallback(
-    (files: { name: string; sizeKb: number }[], folderId: ID) => {
+    // `requestId` ties the files to a request (dropped on its Files tab), so they show there too.
+    (files: { name: string; sizeKb: number }[], folderId: ID, requestId?: ID) => {
       const meId = 'u-layla';
       const at = nowIso();
       const docs: Doc[] = files.map((f) => ({
@@ -465,6 +466,7 @@ function useStoreValue() {
         sizeKb: f.sizeKb,
         uploadedBy: meId,
         uploadedAt: at,
+        requestId,
         preview: { type: 'none' },
       }));
       set((s) => ({
