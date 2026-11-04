@@ -232,7 +232,8 @@ function SectionTitle({ children, count }: { children: ReactNode; count?: number
   );
 }
 
-export function AnalysisView({ a, look, focus }: { a: CompanyAnalysis; look: AnalysisLook; focus?: string }) {
+/** `inline`: shown inside Home as one of Brand Analysis's tabs (4 Nov), so no back link to Home. */
+export function AnalysisView({ a, look, focus, inline }: { a: CompanyAnalysis; look: AnalysisLook; focus?: string; inline?: boolean }) {
   const x = useAnalysis(a);
   const issueRows = (compact?: boolean) => (
     <ol className="anx-issues">
@@ -369,7 +370,7 @@ export function AnalysisView({ a, look, focus }: { a: CompanyAnalysis; look: Ana
   if (look === 'agent' || look === 'featured') return <AgentLook a={a} x={x} featured={look === 'featured'} focus={focus} />;
 
   // ---- I · Tabs over a grid of small cards -----------------------------------------------------------
-  if (look === 'tabs') return <TabsLook a={a} x={x} head={head} focus={focus} />;
+  if (look === 'tabs') return <TabsLook a={a} x={x} head={head} focus={focus} inline={inline} />;
 
   // ---- H · Ink cover, folded issues -------------------------------------------------------------------
   if (look === 'ink') return <InkLook a={a} x={x} acts={acts} tail={tail} />;
@@ -690,7 +691,7 @@ function InkLook({ a, x, acts, tail }: { a: CompanyAnalysis; x: Ctx; acts: (f: F
 /** I: after the client's reference, a grid of small white cards: a grey label (what it is) and one line
  *  (what we found, or what we'd do), with Spark's mark beside it that opens the chat about it. The three
  *  groups follow one another (no tabs): issues to fix, recommendations, what works. */
-function TabsLook({ a, x, head, focus }: { a: CompanyAnalysis; x: Ctx; head: ReactNode; focus?: string }) {
+function TabsLook({ a, x, head, focus, inline }: { a: CompanyAnalysis; x: Ctx; head: ReactNode; focus?: string; inline?: boolean }) {
   // The issue opened from Home: scrolled into view and marked, so the page continues the card clicked.
   const focusRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -699,8 +700,8 @@ function TabsLook({ a, x, head, focus }: { a: CompanyAnalysis; x: Ctx; head: Rea
   }, [focus]);
   // An issue and Spark's recommendation in one card: what we found, then what we'd do and the actions.
   return (
-    <article className="anx anx--i">
-      <Back />
+    <article className={cx('anx anx--i', inline && 'anx--inline')}>
+      {!inline && <Back />}
       {head}
       <Figures a={a} issues={x.issues} works={x.works} />
       <section>

@@ -8,6 +8,7 @@ import { SparkStar } from '../../components/ui/SparkStar';
 import { useUI } from '../../state/ui';
 import { ChatDrawer, Mascot, type DrawerTopic } from '../assistant/ChatDrawer';
 import { CreditRing, CreditsCard, TopUpDialog } from '../../components/layout/Credits';
+import { AnalysisView } from './AnalysisLooks';
 import { useStore } from '../../state/store';
 import { navigate, useRoute } from '../../lib/router';
 import { analyses as seedAnalyses } from '../../data/mock';
@@ -2101,11 +2102,13 @@ export function MainSide({
   /** The company profile as rows (on Home) or in three groups (demo). */
   profileLook?: 'rows' | 'groups' | 'plain';
   /** Which tab opens first (demo). */
-  startTab?: 'overview' | 'profile';
+  startTab?: HomeTab;
 }) {
   // "Company profile" in the account menu opens Home on the profile tab (#/?show=company).
   const { query } = useRoute();
-  const [tab, setTab] = useState<'overview' | 'profile'>(query.get('show') === 'company' ? 'profile' : (startTab ?? 'overview'));
+  // Brand Analysis (client feedback, 4 Nov): Overview, Company profile, then a tab per report Spark has done.
+  const [tab, setTab] = useState<HomeTab>(query.get('show') === 'company' ? 'profile' : (startTab ?? 'overview'));
+  const reports = REPORT_ORDER.map((k) => m.analyses.find((a) => a.kind === k)).filter((a): a is CompanyAnalysis => !!a);
   // The chat drawer, empty from Ask Spark or with a question already written from an issue.
   const [chat, setChat] = useState<{ initial?: string; topic?: DrawerTopic } | null>(null);
   useEffect(() => {
@@ -2183,11 +2186,13 @@ export function MainSide({
             <RequestsSummary m={m} icons={reqIcons} look={reqLook} />
           </div>
         )}
-        <nav className="hl-tabs" aria-label="Home sections">
+        <h2 className="hl-ba__title">Brand Analysis</h2>
+        <nav className="hl-tabs" aria-label="Brand Analysis">
           {(
             [
               ['overview', 'Overview'],
               ['profile', 'Company profile'],
+              ...reports.map((a) => [a.kind, REPORT_LABEL[a.kind]] as const),
             ] as const
           ).map(([k, label]) => (
             <button key={k} type="button" className={cx(tab === k && 'is-on')} aria-current={tab === k ? 'page' : undefined} onClick={() => setTab(k)}>
@@ -2199,7 +2204,9 @@ export function MainSide({
 
       <div className={cx('hl-ms', reqs !== 'side' && 'hl-ms--full')}>
         <div className="hl-ms__main">
+          {tab === 'overview' && reports.length > 0 && <ReportSummaries reports={reports} open={(k) => (setTab(k), window.scrollTo({ top: 0, behavior: 'smooth' }))} />}
           {tab === 'overview' && overview}
+          {reports.map((a) => tab === a.kind && <AnalysisView key={a.kind} a={a} look="tabs" inline />)}
           {tab === 'profile' && profileLook === 'groups' && <ProfileGroups />}
           {/* Plain: the rows, no title and no lines; space between them does the work. */}
           {tab === 'profile' && profileLook === 'plain' && (
@@ -2226,6 +2233,45 @@ export function MainSide({
       </div>
       <ChatDrawer open={!!chat} initial={chat?.initial} topic={chat?.topic} onClose={() => setChat(null)} />
     </div>
+  );
+}
+
+// ---- Brand Analysis ------------------------------------------------------------------------------
+
+type HomeTab = 'overview' | 'profile' | CompanyAnalysis['kind'];
+const REPORT_ORDER: CompanyAnalysis['kind'][] = ['social', 'website', 'brand', 'pr'];
+const REPORT_LABEL: Record<CompanyAnalysis['kind'], string> = { social: 'Social media report', website: 'Website report', brand: 'Brand report', pr: 'PR report' };
+const REPORT_NAME: Record<CompanyAnalysis['kind'], string> = { social: 'Social media', website: 'Website', brand: 'Brand', pr: 'PR' };
+
+/** Overview's head (client feedback, 4 Nov): each report at a glance, its score, the verdict and how many
+ *  issues, with a way into the full report on its own tab. */
+function ReportSummaries({ reports, open }: { reports: CompanyAnalysis[]; open: (k: CompanyAnalysis['kind']) => void }) {
+  return (
+    <section className="hl-ba">
+      {reports.map((a) => {
+        // Counted as the report counts them: everything that isn't working yet.
+        const issues = a.findings.filter((f) => !f.good).length;
+        const works = a.findings.filter((f) => f.good).length;
+        return (
+          <article key={a.kind} className="hl-ba__card">
+            <span className="hl-ba__kind">{REPORT_NAME[a.kind]}</span>
+            {a.score && (
+              <span className="hl-ba__score">
+                <b>{a.score.value}</b>
+                <span>{a.score.label}</span>
+              </span>
+            )}
+            <p className="hl-ba__head">{a.headline ?? a.summary}</p>
+            <span className="hl-ba__counts">
+              {issues} {issues === 1 ? 'issue' : 'issues'} to fix · {works} working well
+            </span>
+            <button type="button" className="hl-link hl-ba__go" onClick={() => open(a.kind)}>
+              View {REPORT_LABEL[a.kind].toLowerCase()}
+            </button>
+          </article>
+        );
+      })}
+    </section>
   );
 }
 
