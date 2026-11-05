@@ -6890,3 +6890,6 @@ a.hld-chip[href]:hover {
 :root[data-theme][data-theme] .rq-head {
   padding-top: 32px;
 }
+.hl-latest__last {
+  white-space: nowrap;
+}

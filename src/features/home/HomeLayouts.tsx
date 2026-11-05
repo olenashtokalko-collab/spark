@@ -1008,9 +1008,19 @@ export function LatestFromSpark({ empty, bare, limit = 5, typed }: { empty?: boo
                   </span>
                 )}
                 <span className="hl-latest__text">
+                  {/* The new dot rides with the title's last word, so it never wraps onto a line of its own (5 Nov). */}
                   <b>
-                    {f.title}
-                    {fresh && <span className="hl-latest__dot" aria-label="New" />}
+                    {fresh ? (
+                      <>
+                        {f.title.slice(0, f.title.lastIndexOf(' ') + 1)}
+                        <span className="hl-latest__last">
+                          {f.title.slice(f.title.lastIndexOf(' ') + 1)}
+                          <span className="hl-latest__dot" aria-label="New" />
+                        </span>
+                      </>
+                    ) : (
+                      f.title
+                    )}
                   </b>
                   <span>{typed ? `${FEED_TYPE[f.kind]} · ${f.sub}` : f.sub}</span>
                 </span>
