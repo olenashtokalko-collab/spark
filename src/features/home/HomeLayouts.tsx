@@ -2,7 +2,7 @@
 // the Home page itself. After the call of 23 Oct: Home (not New chat) leads with what waits on the client, the work in progress,
 // the company profile and the analysis Spark prepared; only what exists is shown; a chat is a secondary
 // action. Analyses are demonstration content; no scores, percentages or charts are shown.
-import { useEffect, useRef, useState, type ReactNode } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { ArrowRight, ArrowUpRight, Building2, Check, Clock3, Inbox, CircleDot, CheckCircle2, ChevronDown, CircleAlert, EyeOff, FileText, MessageSquare, MoreHorizontal, Pencil, Plus, ScanSearch, SquarePen, X } from 'lucide-react';
 import { SparkStar } from '../../components/ui/SparkStar';
 import { useUI } from '../../state/ui';
@@ -762,7 +762,7 @@ const usd = (n: number) => `USD ${n.toLocaleString('en-US', { minimumFractionDig
 /** The company's credits beside its name, after the client's reference: a soft pill (the spark, the
  *  balance, a chevron); hover or focus opens a card with what's available, where it came from, what's
  *  been used, a note on what credits pay for, and Top up (the same dialog as the corner pill elsewhere). */
-function CreditsIndicator({ balance }: { balance?: { left: number; total: number } }) {
+export function CreditsIndicator({ balance }: { balance?: { left: number; total: number } }) {
   const { state } = useStore();
   const [topUp, setTopUp] = useState(false);
   const left = balance?.left ?? state.credits;
@@ -872,7 +872,7 @@ function RequestsCard({ m }: { m: Model }) {
 /** The company's own team under its description, after the client's reference: their faces, "Brand Co.
  *  team · you and 2 colleagues"; it opens Team. Only the client's people: Spark shows as one
  *  team, never by name. */
-function TeamLine() {
+export function TeamLine() {
   const { state, me } = useStore();
   const others = state.people.filter((p) => p.org === 'client' && p.id !== me.id);
   if (!others.length)
@@ -937,8 +937,11 @@ const NEW_SINCE = '2026-10-01'; // prototype: what happened in October is new un
 const UPDATE_TEXT: Record<string, string> = { 'started reviewing': 'started reviewing your request', 'started work': 'started the work' };
 type FeedItem = { id: string; at: string; kind: 'file' | 'reply' | 'update'; title: string; sub: string; doc?: Doc; reqId?: string };
 
-/** `bare`: only the list, for a dashboard card that has its own head; `limit`: how many rows. */
-function LatestFromSpark({ empty, bare, limit = 5 }: { empty?: boolean; bare?: boolean; limit?: number }) {
+const FEED_TYPE: Record<FeedItem['kind'], string> = { file: 'File', reply: 'Comment', update: 'Request' };
+
+/** `bare`: only the list, for a dashboard card that has its own head; `limit`: how many rows; `typed`: no icons,
+ *  the kind of event first in the grey line ("Comment · …"), as the type leads the line in Needs your action. */
+export function LatestFromSpark({ empty, bare, limit = 5, typed }: { empty?: boolean; bare?: boolean; limit?: number; typed?: boolean }) {
   const { state, actions } = useStore();
   // Files open in the preview over Home, so closing it (or going back) keeps the client on Home.
   const { openDoc } = useUI();
@@ -983,7 +986,7 @@ function LatestFromSpark({ empty, bare, limit = 5 }: { empty?: boolean; bare?: b
       </section>
     );
   const list = (
-      <ul className="hl-latest__list">
+      <ul className={cx('hl-latest__list', typed && 'hl-latest__list--typed')}>
         {feed.map((f) => {
           const fresh = f.at >= NEW_SINCE && !state.seenDocs.includes(f.id);
           return (
@@ -997,7 +1000,7 @@ function LatestFromSpark({ empty, bare, limit = 5 }: { empty?: boolean; bare?: b
                   else if (f.reqId) navigate(`/requests/${f.reqId}${f.kind === 'reply' ? '?tab=messages' : ''}`);
                 }}
               >
-                {f.doc ? (
+                {typed ? null : f.doc ? (
                   <FileIcon kind={f.doc.kind} size={16} />
                 ) : (
                   <span className="hl-latest__kind" aria-hidden>
@@ -1009,7 +1012,7 @@ function LatestFromSpark({ empty, bare, limit = 5 }: { empty?: boolean; bare?: b
                     {f.title}
                     {fresh && <span className="hl-latest__dot" aria-label="New" />}
                   </b>
-                  <span>{f.sub}</span>
+                  <span>{typed ? `${FEED_TYPE[f.kind]} · ${f.sub}` : f.sub}</span>
                 </span>
                 <span className="hl-latest__date">{fmtDate(f.at)}</span>
                 <ArrowRight size={15} className="hl-latest__go" />
@@ -1658,7 +1661,7 @@ function ProposalBanner({ m, art = 'sheet' }: { m: Model; art?: BannerArt }) {
  *  (feedback 27 Oct: a separate analysis page lost the thread). Each card: how much it matters and where
  *  it was found, the problem, what Spark found, and what Spark would do, set apart. */
 const IMPACT_RANK = { High: 0, Medium: 1, Low: 2 } as const;
-const fixes = (list: CompanyAnalysis[]) =>
+export const fixes = (list: CompanyAnalysis[]) =>
   list
     .flatMap((a) => a.findings.filter((f) => !f.good).map((f) => ({ a, f })))
     .sort((x, y) => IMPACT_RANK[x.f.impact ?? 'Low'] - IMPACT_RANK[y.f.impact ?? 'Low']);
@@ -1736,8 +1739,8 @@ function IssueActs({
         <Button size="sm" variant="secondary" className="hl-fix__make" onClick={make}>
           Request proposal
         </Button>
-        <button type="button" className="hl-fix__tool hl-fix__ask" onClick={() => onAsk(issueTopic(a, f))}>
-          <SparkDisc size={26} /> Ask about this
+        <button type="button" className="hl-fix__asklink" onClick={() => onAsk(issueTopic(a, f))}>
+          <SparkStar size={13} strokeWidth={2} /> Ask about this
         </button>
         {more === 'hybrid' && dots(quiet)}
       </span>
@@ -1939,6 +1942,12 @@ function IssuePager({ analyses, featured, onAsk }: { analyses: CompanyAnalysis[]
           {/* What to do about it, at the foot of the card: talk it through, or ask for a proposal. */}
           <div className="hdc-issue__acts">
             <IssueActs a={a} f={f} onAsk={onAsk ?? (() => {})} tools />
+            {/* One way to the full report (4 Nov): its tab on Home, scrolled to this issue. */}
+            {REPORT_ORDER.includes(a.kind) && (
+              <a className="hl-link hdc-issue__report" href={`#/?tab=${a.kind}&issue=${encodeURIComponent(f.title)}`}>
+                See in {REPORT_LABEL[a.kind].toLowerCase()}
+              </a>
+            )}
           </div>
         </div>
       </section>
@@ -1947,6 +1956,72 @@ function IssuePager({ analyses, featured, onAsk }: { analyses: CompanyAnalysis[]
     <DashCard icon={<SparkStar size={16} strokeWidth={1.9} />} title="Issues we found" action={pager}>
       {issue}
     </DashCard>
+  );
+}
+
+/** The issue cards as on Home, all of them in a list instead of one at a time, with chips that filter by report
+ *  (#/demo/home-rethink?v=f2&tab=analysis). */
+export function IssueCards({ analyses, onAsk, title = 'What we recommend fixing' }: { analyses: CompanyAnalysis[]; onAsk?: (t: DrawerTopic) => void; title?: string }) {
+  const [kind, setKind] = useState<string>('all');
+  const all = fixes(analyses);
+  const kinds = REPORT_ORDER.filter((k) => all.some(({ a }) => a.kind === k));
+  const list = all.filter(({ a }) => kind === 'all' || a.kind === kind);
+  return (
+    <section className="hdc-feature hdc-list">
+      <header className="hdc__head hdc__head--section">
+        <span className="hdc__icon" aria-hidden>
+          <SparkStar size={16} strokeWidth={1.9} />
+        </span>
+        <h2>{title}</h2>
+        <span className="hdc__count">{all.length}</span>
+      </header>
+      <div className="chips hdc-list__chips" role="group" aria-label="Filter by report">
+        {['all', ...kinds].map((k) => (
+          <button key={k} type="button" className={cx('chip', kind === k && 'is-active')} onClick={() => setKind(k)}>
+            {k === 'all' ? 'All' : REPORT_NAME[k as CompanyAnalysis['kind']]}
+            <span className="hdc-list__n">{k === 'all' ? all.length : all.filter(({ a }) => a.kind === k).length}</span>
+          </button>
+        ))}
+      </div>
+      <div className="hdc-list__items">
+        {list.map(({ a, f }) => {
+          const I = ANALYSIS_ICON[a.kind];
+          const impact = f.impact ?? 'Low';
+          return (
+            <div key={a.id + f.title} className={cx('hdc hdc--feature', `hdc--${impact.toLowerCase()}`)}>
+              <div className="hdc-issue">
+                <span className="hl-fix__meta">
+                  <span className="hdc-issue__about">
+                    <span className={cx('hl-impact', `hl-impact--${impact.toLowerCase()}`)}>{impact} impact</span>
+                    <span className="hl-fix__src">
+                      <I size={13} strokeWidth={1.8} /> {a.title.replace(' analysis', '')}
+                    </span>
+                  </span>
+                </span>
+                <b className="hl-fix__title">{f.title}</b>
+                <p className="hl-fix__body">{f.body}</p>
+                {f.fix && (
+                  <div className="hl-fix__do">
+                    <span className="hl-fix__do-label">
+                      What we’d do <SparkStar size={12} strokeWidth={2} className="hl-fix__do-mark" aria-hidden />
+                    </span>
+                    <span className="hl-fix__do-text">{f.fix}</span>
+                  </div>
+                )}
+              </div>
+              <div className="hdc-issue__acts">
+                <IssueActs a={a} f={f} onAsk={onAsk ?? (() => {})} tools />
+                {REPORT_ORDER.includes(a.kind) && (
+                  <a className="hl-link hdc-issue__report" href={`#/?tab=${a.kind}&issue=${encodeURIComponent(f.title)}`}>
+                    See in {REPORT_LABEL[a.kind].toLowerCase()}
+                  </a>
+                )}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </section>
   );
 }
 
@@ -2107,13 +2182,25 @@ export function MainSide({
   // "Company profile" in the account menu opens Home on the profile tab (#/?show=company).
   const { query } = useRoute();
   // Brand Analysis (client feedback, 4 Nov): Overview, Company profile, then a tab per report Spark has done.
-  const [tab, setTab] = useState<HomeTab>(query.get('show') === 'company' ? 'profile' : (startTab ?? 'overview'));
+  // The tab lives in the address (#/?tab=social), so Back returns to Overview and a report can be linked to;
+  // ?issue= names an issue to bring into view in it (from an issue card).
+  const route = useRoute();
   const reports = REPORT_ORDER.map((k) => m.analyses.find((a) => a.kind === k)).filter((a): a is CompanyAnalysis => !!a);
+  const asked = query.get('tab');
+  const tab: HomeTab =
+    asked === 'profile' || reports.some((a) => a.kind === asked) ? (asked as HomeTab) : query.get('show') === 'company' ? 'profile' : (startTab ?? 'overview');
+  const setTab = (k: HomeTab) => {
+    const q = new URLSearchParams(query);
+    q.delete('show');
+    q.delete('issue');
+    if (k === 'overview' && !startTab) q.delete('tab');
+    else q.set('tab', k);
+    const qs = q.toString();
+    navigate(qs ? `${route.path}?${qs}` : route.path);
+    window.scrollTo({ top: 0 });
+  };
   // The chat drawer, empty from Ask Spark or with a question already written from an issue.
   const [chat, setChat] = useState<{ initial?: string; topic?: DrawerTopic } | null>(null);
-  useEffect(() => {
-    if (query.get('show') === 'company') setTab('profile');
-  }, [query]);
   const b = m.brand;
 
   // Overview, after the call of 23 Oct: Spark's work at a glance. Where Spark thinks the company has
@@ -2204,9 +2291,9 @@ export function MainSide({
 
       <div className={cx('hl-ms', reqs !== 'side' && 'hl-ms--full')}>
         <div className="hl-ms__main">
-          {tab === 'overview' && reports.length > 0 && <ReportSummaries reports={reports} open={(k) => (setTab(k), window.scrollTo({ top: 0, behavior: 'smooth' }))} />}
+          {tab === 'overview' && reports.length > 0 && <ReportSummaries reports={reports} open={setTab} />}
           {tab === 'overview' && overview}
-          {reports.map((a) => tab === a.kind && <AnalysisView key={a.kind} a={a} look="tabs" inline />)}
+          {reports.map((a) => tab === a.kind && <AnalysisView key={a.kind} a={a} look="tabs" inline focus={query.get('issue') ?? undefined} />)}
           {tab === 'profile' && profileLook === 'groups' && <ProfileGroups />}
           {/* Plain: the rows, no title and no lines; space between them does the work. */}
           {tab === 'profile' && profileLook === 'plain' && (
@@ -2239,8 +2326,9 @@ export function MainSide({
 // ---- Brand Analysis ------------------------------------------------------------------------------
 
 type HomeTab = 'overview' | 'profile' | CompanyAnalysis['kind'];
-const REPORT_ORDER: CompanyAnalysis['kind'][] = ['social', 'website', 'brand', 'pr'];
-const REPORT_LABEL: Record<CompanyAnalysis['kind'], string> = { social: 'Social media report', website: 'Website report', brand: 'Brand report', pr: 'PR report' };
+// The reports the client asked for (4 Nov): social media and website. Brand and PR stay in the data, not shown.
+const REPORT_ORDER: CompanyAnalysis['kind'][] = ['social', 'website'];
+export const REPORT_LABEL: Record<CompanyAnalysis['kind'], string> = { social: 'Social media report', website: 'Website report', brand: 'Brand report', pr: 'PR report' };
 const REPORT_NAME: Record<CompanyAnalysis['kind'], string> = { social: 'Social media', website: 'Website', brand: 'Brand', pr: 'PR' };
 
 /** Overview's head (client feedback, 4 Nov): each report at a glance, its score, the verdict and how many

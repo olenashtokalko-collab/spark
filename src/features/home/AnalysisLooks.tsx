@@ -22,7 +22,7 @@ import { SparkStar } from '../../components/ui/SparkStar';
 import { useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { navigate } from '../../lib/router';
-import { cx } from '../../components/ui/primitives';
+import { Button, cx } from '../../components/ui/primitives';
 import { fmtDate } from '../../lib/format';
 import { ANALYSIS_ICON } from '../assistant/Home';
 import { ChatDrawer, Mascot, type DrawerTopic } from '../assistant/ChatDrawer';
@@ -30,7 +30,7 @@ import { Composer } from '../assistant/Composer';
 import type { CompanyAnalysis } from '../../data/types';
 import { SparkDisc } from '../../components/ui/BrandSpark';
 
-export type AnalysisLook = 'priorities' | 'side' | 'conversation' | 'report' | 'compare' | 'board' | 'focus' | 'ink' | 'tabs' | 'agent' | 'featured';
+export type AnalysisLook = 'priorities' | 'side' | 'conversation' | 'report' | 'compare' | 'board' | 'focus' | 'ink' | 'tabs' | 'agent' | 'featured' | 'cards';
 type Finding = CompanyAnalysis['findings'][number];
 
 const ORIGIN = { spark: 'Prepared by Spark', requested: 'You requested' } as const;
@@ -147,31 +147,45 @@ function Impact({ f }: { f: Finding }) {
   return f.impact ? <span className={cx('anx-impact', `anx-impact--${f.impact.toLowerCase()}`)}>{f.impact} impact</span> : null;
 }
 
+/** An issue as the card on Home (4 Nov): the impact above the title, What we'd do on a plate with Spark's mark,
+ *  then Request proposal (stroked) and Ask about this. One look for the issue wherever it shows. */
+function IssueCardBody({ f, askFix, request }: { f: Finding; askFix: () => void; request: () => void }) {
+  return (
+    <>
+    <span className="hl-fix__meta">
+      <span className="hdc-issue__about">
+        <span className={cx('hl-impact', `hl-impact--${(f.impact ?? 'Low').toLowerCase()}`)}>{f.impact ?? 'Low'} impact</span>
+      </span>
+    </span>
+    <b className="hl-fix__title">{f.title}</b>
+    <p className="hl-fix__body">{f.body}</p>
+    {f.fix && (
+      <div className="hl-fix__do">
+        <span className="hl-fix__do-label">
+          What we’d do <SparkStar size={12} strokeWidth={2} className="hl-fix__do-mark" aria-hidden />
+        </span>
+        <span className="hl-fix__do-text">{f.fix}</span>
+      </div>
+    )}
+    <span className="hl-fix__acts hl-fix__tools anx-issue__acts">
+      <Button size="sm" variant="secondary" className="hl-fix__make" onClick={request}>
+        Request proposal
+      </Button>
+      <button type="button" className="hl-fix__asklink" onClick={askFix}>
+        <SparkStar size={13} strokeWidth={2} /> Ask about this
+      </button>
+    </span>
+    </>
+  );
+}
+
 /** One issue: number, title and impact, what Spark found, what Spark would do, and the two actions. */
 function IssueRow({ f, n, askFix, request, compact }: { f: Finding; n: number; askFix: () => void; request: () => void; compact?: boolean }) {
   return (
     <li className={cx('anx-issue', compact && 'anx-issue--compact')}>
       <span className="anx-issue__n">{n}</span>
-      <div className="anx-issue__body">
-        <div className="anx-issue__head">
-          <h3>{f.title}</h3>
-          <Impact f={f} />
-        </div>
-        <p>{f.body}</p>
-        {f.fix && (
-          <p className="anx-issue__fix">
-            <span className="anx-label">What we’d do</span>
-            {f.fix}
-          </p>
-        )}
-        <div className="anx-issue__acts">
-          <button type="button" className="hl-issue__fix" onClick={askFix}>
-            <Mascot size={18} /> Ask Spark to fix
-          </button>
-          <button type="button" className="link-btn anx-link" onClick={request}>
-            <Plus size={14} /> Make it a request
-          </button>
-        </div>
+      <div className="anx-issue__body hdc-issue">
+        <IssueCardBody f={f} askFix={askFix} request={request} />
       </div>
     </li>
   );
@@ -233,7 +247,7 @@ function SectionTitle({ children, count }: { children: ReactNode; count?: number
 }
 
 /** `inline`: shown inside Home as one of Brand Analysis's tabs (4 Nov), so no back link to Home. */
-export function AnalysisView({ a, look, focus, inline }: { a: CompanyAnalysis; look: AnalysisLook; focus?: string; inline?: boolean }) {
+export function AnalysisView({ a, look, focus, inline, switcher, page }: { a: CompanyAnalysis; look: AnalysisLook; focus?: string; inline?: boolean; switcher?: ReactNode; page?: boolean }) {
   const x = useAnalysis(a);
   const issueRows = (compact?: boolean) => (
     <ol className="anx-issues">
@@ -368,6 +382,9 @@ export function AnalysisView({ a, look, focus, inline }: { a: CompanyAnalysis; l
 
   // ---- J and K · after the control-centre reference ---------------------------------------------------
   if (look === 'agent' || look === 'featured') return <AgentLook a={a} x={x} featured={look === 'featured'} focus={focus} />;
+
+  // ---- Cards · the report in Home's glass cards (F2's Reports tab) --------------------------------------
+  if (look === 'cards') return <CardsLook a={a} x={x} focus={focus} switcher={switcher} page={page} />;
 
   // ---- I · Tabs over a grid of small cards -----------------------------------------------------------
   if (look === 'tabs') return <TabsLook a={a} x={x} head={head} focus={focus} inline={inline} />;
@@ -691,6 +708,95 @@ function InkLook({ a, x, acts, tail }: { a: CompanyAnalysis; x: Ctx; acts: (f: F
 /** I: after the client's reference, a grid of small white cards: a grey label (what it is) and one line
  *  (what we found, or what we'd do), with Spark's mark beside it that opens the chat about it. The three
  *  groups follow one another (no tabs): issues to fix, recommendations, what works. */
+/** The report in the glass cards of Home (#/demo/home-rethink?v=f2&tab=analysis, 4 Nov): a head card (the reports'
+ *  switch, the verdict, who and when, the figures on a plate), then Issues to fix with Home's issue cards one under
+ *  another, What works and How Spark did this, each a card with the same title as the rest of Home. */
+function CardsLook({ a, x, focus, switcher, page }: { a: CompanyAnalysis; x: Ctx; focus?: string; switcher?: ReactNode; page?: boolean }) {
+  const focusRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const t = setTimeout(() => focusRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 250);
+    return () => clearTimeout(t);
+  }, [focus]);
+  // The figures as on Home's Overview (4 Nov): the report's measure with its status light, then Issues to fix and
+  // Working well, in the same words.
+  const st = x.issues.some((f) => f.impact === 'High')
+    ? { key: 'risk', label: 'At risk' }
+    : x.issues.some((f) => f.impact === 'Medium')
+      ? { key: 'work', label: 'Needs work' }
+      : { key: 'good', label: 'Good' };
+  const figs: { label: string; value: ReactNode; st?: typeof st }[] = [
+    ...(a.score ? [{ label: a.score.label, value: a.score.value, st }] : []),
+    { label: 'Issues to fix', value: x.issues.length },
+    { label: 'Working well', value: x.works.length },
+  ];
+  return (
+    <article className="anc hld-card">
+      <div className="anc-head">
+        {switcher && <div className="anc-head__top">{switcher}</div>}
+        {/* As its own page (G, 5 Nov): a small grey line first (when the report was made), then the verdict as the
+            title and the lead under it. */}
+        {page && <span className="anc-head__date">Report created {fmtDate(a.updatedAt)}</span>}
+        <h2 className="anc-head__verdict">{a.headline ?? a.title}</h2>
+        <p className="anc-head__lead">{a.summary}</p>
+        <div className="hld-figs anc-figs" style={{ gridTemplateColumns: `repeat(${figs.length}, minmax(0, 1fr))` }}>
+          {figs.map((c) => (
+            <div key={c.label} className="hld-figs__cell">
+              <span className="hld-figs__label">{c.label}</span>
+              <b>{c.value}</b>
+              {c.st && (
+                <span className={cx('hld-status', `hld-status--${c.st.key}`)}>
+                  <i />
+                  {c.st.label}
+                </span>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+      <section className="anc-sec">
+        <h3 className="hld-sub">Issues to fix</h3>
+        <div className="anc-issues">
+          {x.issues.map((f) => (
+            <div key={f.title} ref={f.title === focus ? focusRef : undefined} className={cx('hdc hdc--feature anc-issue', f.title === focus && 'is-focus')}>
+              <div className="hdc-issue">
+                <IssueCardBody f={f} askFix={() => x.askFix(f)} request={() => x.request(f)} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+      {x.works.length > 0 && (
+        <section className="anc-sec">
+          <h3 className="hld-sub">What works</h3>
+          {/* As the issue cards above (4 Nov): a quiet badge over the title, the finding, and the spark's "Ask about this"
+              to build on it; no black tick. */}
+          <div className="anc-issues">
+            {x.works.map((f) => (
+              <div key={f.title} className="hdc hdc--feature anc-issue anc-work">
+                <div className="hdc-issue">
+                  <span className="hl-fix__meta">
+                    <span className="hdc-issue__about">
+                      <span className="hl-impact anc-good">Working well</span>
+                    </span>
+                  </span>
+                  <b className="hl-fix__title">{f.title}</b>
+                  <p className="hl-fix__body">{f.body}</p>
+                  <span className="hl-fix__acts hl-fix__tools anx-issue__acts">
+                    <button type="button" className="hl-fix__asklink" onClick={() => x.ask(`Tell me more about “${f.title}” and how we build on it.`)}>
+                      <SparkStar size={13} strokeWidth={2} /> Ask how to build on it
+                    </button>
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+      {x.drawer}
+    </article>
+  );
+}
+
 function TabsLook({ a, x, head, focus, inline }: { a: CompanyAnalysis; x: Ctx; head: ReactNode; focus?: string; inline?: boolean }) {
   // The issue opened from Home: scrolled into view and marked, so the page continues the card clicked.
   const focusRef = useRef<HTMLDivElement>(null);
@@ -706,27 +812,11 @@ function TabsLook({ a, x, head, focus, inline }: { a: CompanyAnalysis; x: Ctx; h
       <Figures a={a} issues={x.issues} works={x.works} />
       <section>
         <SectionTitle count={x.issues.length}>Issues to fix</SectionTitle>
-        <div className="anx-grid">
+        <div className="anx-grid anx-grid--list">
           {x.issues.map((f) => (
-            <div key={f.title} ref={f.title === focus ? focusRef : undefined} className={cx('anx-tile anx-tile--issue', f.title === focus && 'is-focus')}>
-              <span className="anx-tile__head">
-                <h3>{f.title}</h3>
-                <Impact f={f} />
-              </span>
-              <p className="anx-tile__text">{f.body}</p>
-              {f.fix && (
-                <p className="anx-tile__fix">
-                  <span className="anx-label">What we’d do</span>
-                  {f.fix}
-                </p>
-              )}
-              <div className="anx-tile__acts">
-                <button type="button" className="hl-issue__fix" onClick={() => x.askFix(f)}>
-                  <Mascot size={18} /> Ask Spark to fix
-                </button>
-                <button type="button" className="link-btn anx-link" onClick={() => x.request(f)}>
-                  <Plus size={14} /> Make it a request
-                </button>
+            <div key={f.title} ref={f.title === focus ? focusRef : undefined} className={cx('anx-tile anx-tile--issue hdc hdc--feature', `hdc--${(f.impact ?? 'Low').toLowerCase()}`, f.title === focus && 'is-focus')}>
+              <div className="hdc-issue">
+                <IssueCardBody f={f} askFix={() => x.askFix(f)} request={() => x.request(f)} />
               </div>
             </div>
           ))}

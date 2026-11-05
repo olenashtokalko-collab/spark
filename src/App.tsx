@@ -30,6 +30,7 @@ import { PagerMotionDemo } from './features/demo/PagerMotionDemo';
 import { TabLooksDemo } from './features/demo/TabLooksDemo';
 import { AskGlassDemo } from './features/demo/AskGlassDemo';
 import { RailHoverDemo } from './features/demo/RailHoverDemo';
+import { HomeRethinkDemo } from './features/demo/HomeRethinkDemo';
 import { useEffect } from 'react';
 import { useRoute } from './lib/router';
 import { AppShell } from './components/layout/AppShell';
@@ -37,7 +38,7 @@ import { SignIn } from './features/auth/SignIn';
 import { Invite } from './features/auth/Invite';
 import { STORAGE_KEY, useStore } from './state/store';
 import { Assistant } from './features/assistant/Assistant';
-import { HomePage } from './features/home/HomeLayouts';
+import { GHomePage, GBrandAnalysisPage } from './features/demo/HomeRethinkDemo';
 import { AnalysisPage } from './features/home/AnalysisPage';
 import { ComposerColorDemo } from './features/demo/ComposerColorDemo';
 import { NoteStripDemo } from './features/demo/NoteStripDemo';
@@ -59,7 +60,10 @@ function Screen() {
   switch (section) {
     case undefined:
     case 'home':
-      return <HomePage />;
+      return <GHomePage />;
+    // Brand Analysis, its own section since 5 Nov: #/brand-analysis (?tab=profile) and a report, #/brand-analysis/social.
+    case 'brand-analysis':
+      return <GBrandAnalysisPage kind={a} />;
     case 'analysis':
       return <AnalysisPage kind={a} />;
     case 'assistant':
@@ -106,6 +110,7 @@ function Screen() {
       if (a === 'tab-looks') return <TabLooksDemo />;
       if (a === 'ask-glass') return <AskGlassDemo />;
       if (a === 'rail-hover') return <RailHoverDemo />;
+      if (a === 'home-rethink') return <HomeRethinkDemo />;
       break;
     case 'reset':
       // For rehearsals: forget everything that was done in the prototype and start from the seed data again.

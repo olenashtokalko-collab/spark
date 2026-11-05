@@ -3,15 +3,24 @@
 // #/demo/analysis (after the client's reference): the verdict, the figures, then Issues to fix,
 // Recommendations and What works as grids of small cards, each with Spark's mark to ask about it, and what
 // the analysis rests on. Questions open the chat drawer with questions about this analysis.
+import { useEffect } from 'react';
 import { navigate, useRoute } from '../../lib/router';
 import { analyses } from '../../data/mock';
 import { Button, EmptyState } from '../../components/ui/primitives';
 import { AnalysisView } from './AnalysisLooks';
 
+// Reports with a page in Brand Analysis (5 Nov) open there, so there is one way to each report; this page stays only for
+// analyses without a tab.
+const ON_HOME = ['social', 'website'];
+
 export function AnalysisPage({ kind }: { kind?: string }) {
   const a = analyses.find((x) => x.kind === kind);
   // ?issue= names the issue the client clicked on Home: the page brings it into view and marks it.
   const issue = useRoute().query.get('issue') ?? undefined;
+  useEffect(() => {
+    if (kind && ON_HOME.includes(kind)) navigate(`/brand-analysis/${kind}${issue ? `?issue=${encodeURIComponent(issue)}` : ''}`, { replace: true });
+  }, [kind, issue]);
+  if (kind && ON_HOME.includes(kind)) return null;
   if (!a)
     return (
       <EmptyState

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   Bell,
+  ChartPie,
   Check,
   CheckCheck,
   FileText,
@@ -27,13 +28,33 @@ import type { Notification } from '../../data/types';
 
 // Home is the start page after sign-in: the company, Spark's analysis and the work (feedback 23 Oct).
 // Chats is its own page, with the history in a column on the left and "New chat" on top of it.
+/** Prototype (#/demo/home-rethink?v=g…, 5 Nov): look G puts Brand Analysis in the sidebar as its own section,
+ *  Home keeping the work (what needs you, the latest). Only on that demo; the portal's sidebar is unchanged. */
+function navFor(path: string, query: URLSearchParams) {
+  // G is the demo's default (5 Nov): no v means G's Home.
+  const v = query.get('v') ?? 'g';
+  if (path !== '/demo/home-rethink' || !v.startsWith('g')) return NAV;
+  return [
+    { ...NAV[0], path: '/demo/home-rethink?v=g', match: () => v === 'g' },
+    { ...NAV[1], path: '/demo/home-rethink?v=g-ba', match: () => v === 'g-ba' || v === 'g-report' },
+    ...NAV.slice(2),
+  ];
+}
+
 const NAV = [
   {
     path: '/',
     label: 'Home',
     icon: House,
     // An analysis page belongs to Home: it opens from there and goes back there.
-    match: (p: string) => p === '/' || p === '/home' || p.startsWith('/analysis'),
+    match: (p: string) => p === '/' || p === '/home',
+  },
+  // Brand Analysis, its own section since 5 Nov: the reports and the company profile.
+  {
+    path: '/brand-analysis',
+    label: 'Brand Analysis',
+    icon: ChartPie,
+    match: (p: string) => p.startsWith('/brand-analysis') || p.startsWith('/analysis'),
   },
   {
     path: '/assistant',
@@ -113,7 +134,7 @@ export function AppShell({ children }: { children: ReactNode }) {
             {railOpen ? <PanelLeftClose size={18} strokeWidth={1.7} /> : <PanelLeftOpen size={18} strokeWidth={1.7} />}
           </button>
         </div>
-        {NAV.map((n) => {
+        {navFor(route.path, route.query).map((n) => {
           const active = n.match(route.path);
           const count = n.path === '/requests' ? counts.requests : n.path === '/documents' ? counts.documents : 0;
           return (
