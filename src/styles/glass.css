@@ -6857,3 +6857,36 @@ a.hld-chip[href]:hover {
   white-space: normal;
   text-overflow: clip;
 }
+/* One page head across the portal (5 Nov), as Documents has it: the title 22px bold, the line under it 14px
+   regular 4px below, 24px above the head, 40px below it to the content. Requests and Brand Analysis follow. */
+:root[data-theme][data-theme] .rq-head {
+  padding-top: 24px;
+  margin-bottom: 40px;
+}
+:root[data-theme][data-theme] :is(.rq-head__title, .hld-page .hld-greet) {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+}
+:root[data-theme][data-theme] :is(.rq-head__sub, .hld-page > p) {
+  margin: 4px 0 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: var(--text-2);
+}
+:root[data-theme][data-theme] .hld-page {
+  padding-top: 24px;
+  margin-bottom: 20px;
+}
+:root[data-theme][data-theme] .hld .hld-page .hld-page__tabs {
+  margin-top: 24px;
+}
+:root[data-theme][data-theme] .rq-head {
+  align-items: center;
+}
+:root[data-theme][data-theme] .rq-head {
+  padding-top: 32px;
+}

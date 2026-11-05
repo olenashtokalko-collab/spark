@@ -957,7 +957,7 @@ function GBrandAnalysisView({ m, tab }: { m: Model; tab: 'overview' | 'profile' 
         <nav className="hl-tabs hld-tabs hld-page__tabs">
           {(
             [
-              ['overview', 'Overview'],
+              ['overview', 'Reports'],
               ['profile', 'Company profile'],
             ] as const
           ).map(([t, label]) => (
@@ -968,8 +968,8 @@ function GBrandAnalysisView({ m, tab }: { m: Model; tab: 'overview' | 'profile' 
         </nav>
       </header>
       {tab === 'overview' ? (
-        <section className="hld-card">
-          <h3 className="hld-title">Reports</h3>
+        // The Reports tab (5 Nov): the report cards on the ground, no card around them nor a title repeating the tab.
+        <section className="hld-ba-reports">
           <HealthCards
             named
             to={(a) => `#${p.report(a.kind)}`}
