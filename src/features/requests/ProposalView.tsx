@@ -4,7 +4,7 @@ import { canApprove, latestProposal, personById, proposalTotal, proposalWeeks, u
 import { Avatar, Button, Checkbox, EmptyState, Field, Select, Textarea, cx } from '../../components/ui/primitives';
 import { Dialog } from '../../components/ui/overlay';
 import { ProposalStatus } from '../../components/domain';
-import { SparkDisc } from '../../components/ui/BrandSpark';
+import { AskButton } from '../../components/ui/DrAi';
 import { ChatDrawer } from '../assistant/ChatDrawer';
 import { useToast } from '../../components/ui/toast';
 import { aed, addDays, daysUntil, fmtDate, fmtDateTime, fmtRelative } from '../../lib/format';
@@ -127,11 +127,8 @@ export function ProposalView({ requestId }: { requestId: string }) {
             <div className="proposal__headrow">
               <h1 className="proposal__title">{p.title}</h1>
               <div className="proposal__acts">
-                <button type="button" className="hl-mchat rq-ask" onClick={askSpark}>
-                  <SparkDisc size={22} />
-                  Ask Spark
-                </button>
-                <Button size="sm" variant="secondary" icon={Download} onClick={exportProposal}>
+                <AskButton className="rq-ask" size={22} onClick={askSpark} />
+                <Button size="sm" variant="secondary" icon={Download} className="rq-new" onClick={exportProposal}>
                   Download
                 </Button>
               </div>

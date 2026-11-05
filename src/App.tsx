@@ -31,6 +31,7 @@ import { TabLooksDemo } from './features/demo/TabLooksDemo';
 import { AskGlassDemo } from './features/demo/AskGlassDemo';
 import { RailHoverDemo } from './features/demo/RailHoverDemo';
 import { HomeRethinkDemo } from './features/demo/HomeRethinkDemo';
+import { MascotDemo } from './features/demo/MascotDemo';
 import { useEffect } from 'react';
 import { useRoute } from './lib/router';
 import { AppShell } from './components/layout/AppShell';
@@ -111,6 +112,7 @@ function Screen() {
       if (a === 'ask-glass') return <AskGlassDemo />;
       if (a === 'rail-hover') return <RailHoverDemo />;
       if (a === 'home-rethink') return <HomeRethinkDemo />;
+      if (a === 'mascot') return <MascotDemo />;
       break;
     case 'reset':
       // For rehearsals: forget everything that was done in the prototype and start from the seed data again.

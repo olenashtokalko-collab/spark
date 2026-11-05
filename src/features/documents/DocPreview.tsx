@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useState } from 'react';
+import { AskButton } from '../../components/ui/DrAi';
 import { Download, X, PenLine } from 'lucide-react';
 import { Dialog } from '../../components/ui/overlay';
 import { Avatar, Badge, Button, Textarea } from '../../components/ui/primitives';
@@ -8,7 +9,6 @@ import { personById, useStore } from '../../state/store';
 import type { Doc } from '../../data/types';
 import { dueLabel, fmtDateTime, fmtRelative, fmtSize } from '../../lib/format';
 import { navigate } from '../../lib/router';
-import { SparkDisc } from '../../components/ui/BrandSpark';
 
 export function downloadDoc(doc: Doc) {
   // The prototype has no file storage, so it exports a faithful copy of the
@@ -109,10 +109,7 @@ export function DocPreviewDialog({ docId, onClose }: { docId: string | null; onC
           {doc.summary && <p className="preview__summary">{doc.summary}</p>}
           <div className="preview__actions">
             {/* The same Ask Spark button as on Home: the mascot in a white pill with a hairline. */}
-            <button type="button" className="hl-mchat preview__ask" onClick={ask}>
-              <SparkDisc size={28} />
-              Ask Spark about this file
-            </button>
+            <AskButton className="preview__ask" onClick={ask} about="about this file" />
           </div>
           <dl className="meta-list">
             <dt>Shared by</dt>

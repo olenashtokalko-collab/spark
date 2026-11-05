@@ -10,7 +10,7 @@ import { fmtDate, fmtRelative } from '../../lib/format';
 import type { RequestType, WorkRequest } from '../../data/types';
 import { TYPES, TYPE_ICON } from './CreateRequestDialog';
 import { ChatDrawer } from '../assistant/ChatDrawer';
-import { SparkDisc } from '../../components/ui/BrandSpark';
+import { AskButton, useDrAi } from '../../components/ui/DrAi';
 import { GlassTabs } from '../../components/ui/GlassTabs';
 
 type Filter = 'all' | 'decision' | 'active' | 'closed';
@@ -57,6 +57,8 @@ export function Requests() {
   });
   const [q, setQ] = useState('');
   const [chatOpen, setChatOpen] = useState(false);
+  // Dr.AI on: Ask lives in the menu, so the head drops its own (5 Nov).
+  const drai = useDrAi();
   const [type, setType] = useState<RequestType | 'any'>('any');
   const [updated, setUpdated] = useState<Updated>('any');
   const narrowed = !!q || type !== 'any' || updated !== 'any';
@@ -105,11 +107,8 @@ export function Requests() {
         </div>
         <div className="rq-head__acts">
           {/* Ask Spark as on Home: the mascot pill; it opens the chat drawer over this page. */}
-          <button type="button" className="hl-mchat rq-ask" onClick={() => setChatOpen(true)}>
-            <SparkDisc size={22} />
-            Ask Spark
-          </button>
-          <Button size="sm" variant="primary" icon={Plus} onClick={() => openRequest()}>
+          {!drai && <AskButton className="rq-ask" size={22} onClick={() => setChatOpen(true)} />}
+          <Button size="sm" variant="primary" icon={Plus} className="rq-new" onClick={() => openRequest()}>
             New request
           </Button>
         </div>

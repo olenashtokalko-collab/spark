@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { BeamEdge } from '../../components/ui/BeamEdge';
 import { Eye, History, Plus } from 'lucide-react';
 import { personById, useStore } from '../../state/store';
 import { navigate } from '../../lib/router';
@@ -95,7 +96,9 @@ export function Assistant({ convId }: { convId?: string }) {
 
         {conv && !readOnly && (
           <div className="assistant__composer">
-            <Composer onSubmit={send} busy={busy} size="lg" />
+            <BeamEdge>
+              <Composer onSubmit={send} busy={busy} size="lg" />
+            </BeamEdge>
           </div>
         )}
         {readOnly && (
@@ -111,9 +114,10 @@ export function Assistant({ convId }: { convId?: string }) {
         <div className="chats-hist__in">
           <header className="chats-hist__head">
             <h2>Chat history</h2>
-            <Button variant="ghost" size="sm" icon={Plus} onClick={() => navigate('/assistant')}>
-              New
-            </Button>
+            {/* A text link as Home's "View all" (5 Nov): a plus before the word, no button around it. */}
+            <button type="button" className="hld-link chats-hist__new" onClick={() => navigate('/assistant')}>
+              <Plus size={13} strokeWidth={2} /> New
+            </button>
           </header>
           <ChatHistory />
         </div>

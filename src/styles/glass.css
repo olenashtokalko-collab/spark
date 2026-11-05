@@ -6893,3 +6893,1976 @@ a.hld-chip[href]:hover {
 .hl-latest__last {
   white-space: nowrap;
 }
+
+/* ---- #/demo/mascot (5 Nov): Dr.AI and Sparki cut from the brand film, placed where they could live ---- */
+.msc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(420px, 1fr));
+  gap: 20px;
+}
+.msc-card {
+  display: flex;
+  flex-direction: column;
+}
+.msc-stage {
+  flex: 1;
+  display: grid;
+  place-items: center;
+  min-height: 300px;
+  padding: 16px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.5);
+}
+.msc-note {
+  display: flex;
+  gap: 6px;
+  margin: 14px 0 0;
+  font-size: 13px;
+  font-weight: 300;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+.msc-note svg {
+  flex: none;
+  margin-top: 3px;
+}
+/* The clip: a window onto the film. The film's ground is dark, so the window is a dark tile for now. */
+.msc-clip {
+  position: relative;
+  display: block;
+  flex: none;
+  overflow: hidden;
+  border-radius: 18px;
+  background: #0b0d16;
+}
+.msc-clip--head {
+  border-radius: 999px;
+}
+.msc-clip video {
+  position: absolute;
+  max-width: none;
+  pointer-events: none;
+}
+/* 1 · chat start */
+.msc-chatstart {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  width: 100%;
+}
+.msc-chatstart h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 20px;
+}
+.msc-input {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: min(100%, 380px);
+  padding: 6px 6px 6px 16px;
+  border-radius: 24px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.1);
+}
+.msc-input input {
+  flex: 1;
+  border: 0;
+  outline: 0;
+  font: inherit;
+  font-size: 14px;
+  background: none;
+}
+.msc-send {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 999px;
+  color: #fff;
+  background: var(--ink);
+}
+.msc-hint,
+.msc-faint {
+  font-size: 12px;
+  color: var(--text-3);
+}
+/* 2 · answering */
+.msc-thread {
+  display: grid;
+  gap: 12px;
+  width: 100%;
+  justify-items: start;
+}
+.msc-msg {
+  max-width: 90%;
+  padding: 10px 14px;
+  border-radius: 16px;
+  font-size: 14px;
+  line-height: 1.5;
+}
+.msc-msg--you {
+  justify-self: end;
+  background: var(--ink);
+  color: #fff;
+}
+.msc-msg--spark {
+  display: flex;
+  gap: 10px;
+  background: #fff;
+}
+.msc-msg--spark p {
+  margin: 2px 0 0;
+}
+.msc-thread .hld-q__go {
+  justify-self: center;
+}
+/* 3 · empty */
+.msc-empty {
+  display: grid;
+  justify-items: center;
+  gap: 4px;
+  text-align: center;
+}
+.msc-empty b {
+  margin-top: 10px;
+  font-size: 15px;
+  font-weight: 500;
+}
+.msc-empty span:last-child {
+  font-size: 13px;
+  color: var(--text-2);
+}
+/* 4 · report in progress */
+.msc-report {
+  width: min(100%, 320px);
+}
+.msc-report__body {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: 8px;
+}
+.msc-report__body > span:last-child {
+  display: grid;
+  gap: 2px;
+}
+.msc-report__body b {
+  font-size: 14px;
+  font-weight: 500;
+}
+.msc-report__body span span {
+  font-size: 13px;
+  color: var(--text-2);
+}
+/* 5 · first visit */
+.msc-hello {
+  display: grid;
+  gap: 14px;
+  width: 100%;
+}
+.msc-hello__film {
+  width: 100%;
+  border-radius: 14px;
+}
+.msc-hello h3 {
+  margin: 4px 0 4px;
+  font-family: var(--font-display);
+  font-size: 20px;
+}
+.msc-hello p {
+  margin: 0 0 12px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+/* 6 · Sparki on buttons: it lifts on hover */
+.msc-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 18px;
+}
+.msc-sparki svg {
+  transition: transform 0.25s ease;
+}
+.msc-sparki:hover svg {
+  transform: translateY(-3px) rotate(12deg) scale(1.12);
+}
+/* Dr.AI lifted off the film's ground (5 Nov): the canvas shows him on ours, the video under it stays hidden. */
+.chats-start__mascot {
+  position: relative;
+  z-index: 1;
+  margin: 0 auto 8px;
+}
+/* The mascot's clips are clear now (5 Nov): no dark tile, a soft shadow under him. */
+
+/* Mascot on the film's own ground (5 Nov): a circle for the head, a rounded tile for the figure, a fine light rim. */
+.msc-clip.msc-clip--circle {
+  border-radius: 999px;
+}
+.msc-clip.msc-clip--tile {
+  border-radius: 18px;
+}
+.msc-clip {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 8px 18px -10px rgba(14, 17, 22, 0.45);
+  transition: width 0.3s ease, height 0.3s ease;
+}
+.msc-clip video {
+  transition: width 0.3s ease, height 0.3s ease, left 0.3s ease, top 0.3s ease;
+}
+.msc-h2 {
+  margin: 28px 0 14px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-2);
+}
+/* While Spark answers: the chat's own markup, framed. */
+.msc-play {
+  display: grid;
+  gap: 14px;
+  width: 100%;
+  align-self: stretch;
+}
+.msc-chat {
+  display: grid;
+  gap: 18px;
+}
+.msc-chat .msg-user {
+  justify-self: end;
+  max-width: 88%;
+}
+.msc-chat .msg-ai__avatar.msc-ai-avatar {
+  width: auto;
+  height: auto;
+  background: none;
+  box-shadow: none;
+}
+.msc-chat .msg-ai__avatar.msc-ai-avatar::before,
+.msc-chat .msg-ai__avatar.msc-ai-avatar::after {
+  display: none;
+}
+.msc-replay {
+  justify-self: center;
+}
+.msc-thinkcard {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  padding: 12px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 1px 2px rgba(40, 30, 90, 0.05);
+}
+.msc-thinkcard b {
+  font-size: 14px;
+  font-weight: 500;
+}
+.msc-thinkcard ul {
+  display: grid;
+  gap: 4px;
+  margin: 6px 0 0;
+  padding: 0;
+  list-style: none;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.msc-thinkcard li {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.msc-thinkcard li.is-later {
+  color: var(--text-3);
+}
+.msc-dot {
+  width: 5px;
+  height: 5px;
+  margin: 0 4px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.5;
+}
+.msc-composer {
+  position: relative;
+  display: grid;
+  justify-items: center;
+  gap: 8px;
+  margin-top: 8px;
+}
+.msc-peek {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 12px 4px 4px;
+  border-radius: 999px;
+  font-size: 13px;
+  color: var(--text-2);
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 6px 16px -10px rgba(40, 30, 90, 0.4);
+  opacity: 0;
+  transform: translateY(8px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.msc-peek.is-on {
+  opacity: 1;
+  transform: none;
+}
+.msc-sparki-pulse.is-on {
+  display: inline-block;
+  animation: msc-breathe 1.4s ease-in-out infinite;
+}
+@keyframes msc-breathe {
+  50% {
+    transform: scale(1.14);
+    filter: drop-shadow(0 0 8px rgba(232, 80, 31, 0.45));
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .msc-sparki-pulse.is-on {
+    animation: none;
+  }
+}
+/* The chat's answers with Dr.AI (5 Nov): the avatar takes his circle's size, no disc behind it. */
+.msg-ai__avatar.msg-ai__avatar--mascot {
+  width: auto;
+  height: auto;
+  background: none;
+  box-shadow: none;
+}
+.msg-ai__avatar.msg-ai__avatar--mascot::before,
+.msg-ai__avatar.msg-ai__avatar--mascot::after {
+  display: none;
+}
+/* Dr.AI across the portal (5 Nov): the panel's greeting, and the demo's switch card. */
+.chat-drawer__drai {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+.chat-drawer__body:has(.chat-drawer__drai) > h3 {
+  text-align: center;
+  margin-bottom: 0;
+}
+.chat-drawer__lead {
+  margin: 4px 0 16px;
+  text-align: center;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.drai-head {
+  flex: none;
+}
+.msc-across {
+  margin-bottom: 8px;
+}
+.msc-across__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+.msc-across__head p {
+  max-width: 62ch;
+  margin: -8px 0 0;
+  font-size: 14px;
+  font-weight: 300;
+  color: var(--text-2);
+}
+.msc-across__switch {
+  flex: none;
+}
+.msc-across__row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 28px;
+  margin-top: 18px;
+  padding: 18px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.6);
+}
+.msc-across__sizes {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+}
+.msc-across__sizes span {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+.msc-across__sizes i {
+  font-style: normal;
+  font-size: 11px;
+  color: var(--text-3);
+}
+.msc-across__bits {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.msc-railitem {
+  pointer-events: none;
+  width: 180px;
+}
+.msc-askpill {
+  pointer-events: none;
+}
+.msc-across__links {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-left: auto;
+}
+/* Dr.AI's head as an icon: the film's still in a circle. In the sidebar, Ask Dr.AI sits apart under a fine line. */
+img.drai-head {
+  flex: none;
+  border-radius: 999px;
+  object-fit: cover;
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.08);
+}
+.rail__rule {
+  display: block;
+  height: 1px;
+  margin: 8px 12px;
+  background: rgba(14, 17, 22, 0.1);
+}
+.rail__btn--drai img.drai-head {
+  margin: -2px 0;
+}
+/* Ask, with Dr.AI on (5 Nov): his head alone in a circle; on hover it lifts a little and his name shows. */
+.drai-btn {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  cursor: pointer;
+  box-shadow: 0 0 0 2px #fff, 0 8px 18px -8px rgba(40, 30, 90, 0.45);
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.drai-btn:hover {
+  transform: translateY(-1px) scale(1.05);
+  box-shadow: 0 0 0 2px #fff, 0 10px 22px -8px rgba(91, 108, 240, 0.55);
+}
+.drai-btn:focus-visible {
+  outline: 2px solid var(--ink);
+  outline-offset: 3px;
+}
+/* The head button (5 Nov, after review): 36px, as tall as the credits beside it and a touch above the button;
+   the white rim half clear, so it sits in the glass rather than on it. */
+.drai-btn,
+.drai-btn:hover {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5), 0 8px 18px -8px rgba(40, 30, 90, 0.4);
+}
+.drai-btn:hover {
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.7), 0 10px 22px -8px rgba(91, 108, 240, 0.5);
+}
+
+/* Dr.AI from the client's transparent clips (5 Nov): no dark ground. The figure stands free, Sparki may fly past
+   its box; the head sits on a soft glass disc with a half-clear rim, as the Ask button. */
+.msc-clip.msc-clip--free,
+.msc-clip.msc-clip--tile {
+  overflow: visible;
+  background: none;
+  box-shadow: none;
+  border-radius: 0;
+}
+.msc-clip.msc-clip--circle {
+  overflow: hidden;
+  border-radius: 999px;
+  background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.85), rgba(225, 230, 250, 0.6));
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5), 0 8px 18px -8px rgba(40, 30, 90, 0.35);
+}
+.msc-clip video {
+  transition: width 0.3s ease, height 0.3s ease, left 0.3s ease, top 0.3s ease;
+}
+/* The head still is clear now: it sits on the same soft disc as the playing head. */
+img.drai-head {
+  background: radial-gradient(circle at 50% 40%, #ffffff, #e3e7f8);
+}
+/* Taller than the panel (Dr.AI on top): start from the top instead of spilling under the header. */
+.chat-drawer__body:has(.chat-drawer__drai) {
+  justify-content: safe center;
+}
+
+/* Dr.AI's head as a still (5 Nov): a crop of the clear clip on a chosen shape and ground. */
+img.drai-head.drai-head--square {
+  border-radius: 28%;
+}
+img.drai-head.drai-head--light {
+  background: radial-gradient(circle at 50% 35%, #ffffff, #e3e7f8);
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.08);
+}
+img.drai-head.drai-head--dark {
+  /* The lookbook's ground: a gradient from dark blue (lower left) to near-black (upper right). */
+  background: linear-gradient(40deg, #16265a 0%, #0c1638 40%, #060915 75%, #030409 100%);
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.2);
+}
+img.drai-head.drai-head--ring {
+  box-sizing: border-box;
+  border: 1.5px solid transparent;
+  background:
+    radial-gradient(circle at 50% 35%, #ffffff, #e3e7f8) padding-box,
+    linear-gradient(135deg, #3b5bff, #b46cf0 50%, #ff7a59) border-box;
+  box-shadow: none;
+}
+.msc-icons__lead {
+  margin: 4px 0 16px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.msc-icons__grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(210px, 1fr));
+  gap: 12px;
+}
+.msc-icon {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  padding: 20px 14px 14px;
+  border-radius: 12px;
+  border: 1px solid rgba(14, 17, 22, 0.08);
+  background: rgba(255, 255, 255, 0.6);
+  cursor: pointer;
+  font: inherit;
+  color: inherit;
+}
+.msc-icon:hover {
+  border-color: rgba(14, 17, 22, 0.2);
+}
+.msc-icon.is-on {
+  border-color: #3b5bff;
+  box-shadow: 0 0 0 1px #3b5bff;
+}
+.msc-icon__sizes {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.msc-icon .msc-railitem {
+  align-self: stretch;
+  pointer-events: none;
+}
+.msc-icon__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 500;
+}
+/* Just the head (5 Nov, after Clara): no disc, no rim; a soft shadow keeps it off the glass. */
+img.drai-head.drai-head--clear {
+  border-radius: 0;
+  background: none;
+  box-shadow: none;
+  filter: drop-shadow(0 1px 2px rgba(20, 20, 60, 0.18));
+}
+/* As the empty state's head, held still: a soft light disc, a half-clear white rim, a shadow under it. */
+img.drai-head.drai-head--soft {
+  background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.9), rgba(225, 230, 250, 0.65));
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5), 0 6px 14px -6px rgba(40, 30, 90, 0.35);
+}
+/* A glass bubble (5 Nov): a tinted sphere, lit from the upper left, darker at its edge, so his white robe and
+   headdress stand off the light glass behind. */
+img.drai-head.drai-head--bubble {
+  background: radial-gradient(circle at 50% 22%, #ffffff 0%, #e8ebfc 28%, #bcc4f2 64%, #8e99e2 92%, #7f8ad8 100%);
+  box-shadow:
+    0 0 0 1.5px rgba(255, 255, 255, 0.65),
+    0 6px 14px -6px rgba(40, 30, 90, 0.45);
+}
+.drai-bubble {
+  position: relative;
+  display: inline-block;
+  flex: none;
+  border-radius: 999px;
+}
+.drai-bubble > img {
+  display: block;
+}
+/* The glass: a glint at the upper left and a light rim inside, over him. */
+.drai-bubble::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  pointer-events: none;
+  background:
+    radial-gradient(38% 26% at 32% 16%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 100%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0) 68%, rgba(255, 255, 255, 0.35) 92%, rgba(255, 255, 255, 0.6) 100%);
+  box-shadow: inset 0 -3px 6px rgba(60, 70, 180, 0.25);
+}
+.rail__btn--drai .drai-bubble {
+  margin: -5px 0 -5px -4px;
+}
+.rail__btn--drai .drai-bubble img.drai-head {
+  margin: 0;
+}
+/* Dr.AI's head is 30px everywhere (5 Nov): the menu, the Ask buttons, the panel's header. */
+.rail__btn--drai img.drai-head {
+  margin: -5px 0 -5px -4px;
+}
+/* Other colours for the bubble (5 Nov): each darker toward the bottom, where his white robe sits. */
+img.drai-head.drai-head--bubble.drai-head--pearl {
+  background: radial-gradient(circle at 50% 22%, #ffffff 0%, #f1f0ee 28%, #d6d4d2 64%, #b3b0ad 92%, #a29f9b 100%);
+}
+.drai-bubble:has(.drai-head--pearl)::after {
+  box-shadow: inset 0 -3px 6px rgba(60, 55, 50, 0.22);
+}
+img.drai-head.drai-head--bubble.drai-head--peach {
+  background: radial-gradient(circle at 50% 22%, #fffaf7 0%, #fde8de 28%, #f8c6b4 64%, #ee9f88 92%, #e58c74 100%);
+}
+.drai-bubble:has(.drai-head--peach)::after {
+  box-shadow: inset 0 -3px 6px rgba(190, 80, 50, 0.22);
+}
+/* Spark's own light: blue into lilac into coral, soft. */
+img.drai-head.drai-head--bubble.drai-head--iris {
+  background:
+    radial-gradient(circle at 50% 18%, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.55) 34%, rgba(255, 255, 255, 0) 70%),
+    linear-gradient(150deg, #9fb0ff 0%, #c8a6f5 45%, #f6a6b8 75%, #ffb58f 100%);
+}
+.drai-bubble:has(.drai-head--iris)::after {
+  box-shadow: inset 0 -3px 6px rgba(120, 60, 160, 0.22);
+}
+img.drai-head.drai-head--bubble.drai-head--graphite {
+  background: radial-gradient(circle at 50% 22%, #6d7180 0%, #474b58 34%, #2a2d36 70%, #1b1d24 100%);
+}
+.drai-bubble:has(.drai-head--graphite)::after {
+  box-shadow: inset 0 -3px 6px rgba(0, 0, 0, 0.35);
+}
+/* Graphite: a quieter glint and rim, so the white doesn't flare on the dark glass. */
+.drai-bubble:has(.drai-head--graphite)::after {
+  background:
+    radial-gradient(38% 26% at 32% 16%, rgba(255, 255, 255, 0.28), rgba(255, 255, 255, 0) 100%),
+    radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0) 70%, rgba(255, 255, 255, 0.1) 92%, rgba(255, 255, 255, 0.2) 100%);
+}
+.drai-bubble:has(.drai-head--graphite) img.drai-head {
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.3), 0 6px 14px -6px rgba(20, 20, 30, 0.5);
+}
+/* The Ask head as a bubble (5 Nov): the bubble carries its own rim, so the button adds only the lift. */
+.drai-btn:has(.drai-bubble),
+.drai-btn:has(.drai-bubble):hover {
+  box-shadow: none;
+}
+.drai-btn:has(.drai-bubble):hover .drai-bubble img.drai-head {
+  box-shadow: 0 0 0 1.5px rgba(255, 255, 255, 0.4), 0 10px 22px -8px rgba(20, 20, 40, 0.55);
+}
+.drai-btn.rq-ask {
+  height: auto;
+  padding: 0;
+}
+.proposal__acts:has(.drai-btn) {
+  align-items: center;
+}
+/* Clear glass (5 Nov): the chat avatar's light disc made see-through, so the page's own light shows under him,
+   blurred, with a fine white rim. */
+img.drai-head.drai-head--frost {
+  /* Clear at the top; a smoky tint gathers at the bottom, where his white robe sits, so on a white page he
+     still stands off it. A hairline outside the white rim draws the edge on white. */
+  background:
+    radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(180deg, rgba(120, 125, 175, 0.06) 0%, rgba(110, 115, 170, 0.16) 50%, rgba(80, 85, 140, 0.38) 100%);
+  -webkit-backdrop-filter: blur(10px) saturate(1.3);
+  backdrop-filter: blur(10px) saturate(1.3);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6),
+    0 0 0 0.5px rgba(30, 30, 70, 0.18),
+    0 6px 14px -8px rgba(40, 30, 90, 0.4);
+}
+/* Tiles (5 Nov, after the lookbook's Expression tile): a softer corner than the square, plain grounds, a light rim. */
+img.drai-head.drai-head--square.drai-head--rim {
+  border-radius: 24%;
+}
+img.drai-head.drai-head--ggraphite {
+  background: radial-gradient(circle at 50% 25%, #5e6270 0%, #3c3f4b 40%, #23252d 80%, #1a1c22 100%);
+}
+img.drai-head.drai-head--gpearl {
+  background: linear-gradient(180deg, #ffffff 0%, #eeedeb 45%, #cfcdca 100%);
+}
+img.drai-head.drai-head--giris {
+  background:
+    radial-gradient(circle at 50% 20%, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.4) 35%, rgba(255, 255, 255, 0) 70%),
+    linear-gradient(150deg, #9fb0ff 0%, #c8a6f5 45%, #f6a6b8 75%, #ffb58f 100%);
+}
+/* The light rim: a half-clear white line inside, a hairline outside so the edge holds on white. */
+img.drai-head.drai-head--rim.drai-head--rim {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 0 0 0.5px rgba(20, 20, 50, 0.16),
+    0 6px 14px -8px rgba(30, 30, 60, 0.4);
+}
+/* Each option on four grounds: white, the portal's paper, its coloured light, and dark. */
+.msc-icon__grounds {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  align-self: stretch;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.msc-ground {
+  display: grid;
+  place-items: center;
+  height: 64px;
+}
+.msc-ground--white {
+  background: #ffffff;
+}
+.msc-ground--portal {
+  background: #f1efeb;
+}
+.msc-ground--glow {
+  background: linear-gradient(135deg, #c9b6ec, #e7b2c4 55%, #f0b9a2);
+}
+.msc-ground--dark {
+  background: #15161b;
+}
+/* The Ask head as a tile: the tile carries its own rim, so the button takes its corner and adds only the lift. */
+.drai-btn:has(.drai-head--square),
+.drai-btn:has(.drai-head--square):hover {
+  border-radius: 24%;
+  box-shadow: none;
+}
+
+/* Voice (5 Nov): the mic sits before Send in the same clear glass round as the plus. Recording, the words give way
+   to a live wave, a red dot and a timer; Cancel in glass, Done in Ink turns it into text in the box. */
+.composer--box .composer__bar {
+  gap: 8px;
+}
+.composer__mic {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 50%;
+  color: var(--ink, #0e1116);
+  background: rgba(255, 255, 255, 0.35);
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 2px 6px rgba(120, 102, 80, 0.1);
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+.composer__mic:hover {
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4px 10px rgba(120, 102, 80, 0.16);
+}
+.composer__mic:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.composer__recdone {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  background: var(--ink, #0e1116);
+  cursor: pointer;
+}
+.composer__rec {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 44px;
+}
+.composer__recdot {
+  flex: none;
+  width: 9px;
+  height: 9px;
+  border-radius: 50%;
+  background: #e5484d;
+  box-shadow: 0 0 0 0 rgba(229, 72, 77, 0.5);
+  animation: composer-rec 1.4s ease-out infinite;
+}
+@keyframes composer-rec {
+  0% { box-shadow: 0 0 0 0 rgba(229, 72, 77, 0.45); }
+  70% { box-shadow: 0 0 0 8px rgba(229, 72, 77, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(229, 72, 77, 0); }
+}
+.composer__reclabel {
+  flex: none;
+  font-size: 15px;
+  color: var(--text-2, #5b5f6a);
+}
+.composer__wave {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 3px;
+  height: 28px;
+  overflow: hidden;
+}
+.composer__wave i {
+  flex: none;
+  width: 3px;
+  height: 100%;
+  border-radius: 2px;
+  background: linear-gradient(180deg, #5b6cf0, #b46cf0 55%, #ff7a59);
+  transform-origin: center;
+  transition: transform 0.09s linear;
+}
+.composer__time {
+  flex: none;
+  min-width: 34px;
+  text-align: right;
+  font-size: 13px;
+  color: var(--text-2, #5b5f6a);
+}
+@media (prefers-reduced-motion: reduce) {
+  .composer__recdot {
+    animation: none;
+  }
+}
+
+/* Dr.AI in full while Spark answers (5 Nov). */
+.msc-chat .msg-ai {
+  align-items: flex-start;
+}
+.msc-chat--bare .msg-ai {
+  padding-left: 0;
+}
+/* H: the figure while working, the head after. */
+.msc-swap {
+  position: relative;
+  display: block;
+  transition: width 0.35s ease, height 0.35s ease;
+}
+.msc-swap.is-full {
+  width: 84px;
+  height: 106px;
+}
+.msc-swap.is-head {
+  width: 30px;
+  height: 30px;
+}
+.msc-swap > * {
+  position: absolute;
+  left: 0;
+  top: 0;
+  transition: opacity 0.3s ease;
+}
+.msc-swap.is-full .msc-swap__head,
+.msc-swap.is-head .msc-swap__full {
+  opacity: 0;
+  pointer-events: none;
+}
+/* I: the stage. */
+.msc-thinkstage {
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+  padding: 8px 0 4px;
+  text-align: center;
+}
+.msc-thinkstage b {
+  margin-top: 6px;
+  font-size: 15px;
+  font-weight: 500;
+}
+.msc-thinkstage__step {
+  font-size: 13px;
+  color: var(--text-2);
+}
+.msc-thinkstage__dots {
+  display: flex;
+  gap: 5px;
+  margin-top: 4px;
+}
+.msc-thinkstage__dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(14, 17, 22, 0.15);
+  transition: background 0.3s ease;
+}
+.msc-thinkstage__dots i.is-on {
+  background: #5b6cf0;
+}
+/* J: standing on the composer's edge. */
+.msc-onbox {
+  position: relative;
+  margin-top: 64px;
+}
+.msc-onbox__fig {
+  position: absolute;
+  right: 22px;
+  bottom: calc(100% - 10px);
+  z-index: 1;
+}
+.msc-onbox .msc-input {
+  width: 100%;
+}
+/* K: the companion in the margin. */
+.msc-companion {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 12px;
+  align-items: start;
+}
+.msc-companion__rail {
+  position: sticky;
+  top: 16px;
+  display: grid;
+  justify-items: center;
+  gap: 6px;
+}
+.msc-companion__tag {
+  font-size: 12px;
+  color: var(--text-2);
+  text-align: center;
+}
+/* L (5 Nov): one clip that zooms from the whole figure to the face. The frame, the film's place in it and the
+   corner all ease together; the circle's light ground fades in under him instead of popping. */
+.msc-clip.msc-morph {
+  overflow: hidden;
+  background: none;
+  transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1), height 0.7s cubic-bezier(0.4, 0, 0.2, 1), border-radius 0.7s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.7s ease;
+}
+.msc-clip.msc-morph video {
+  z-index: 1;
+  transition: width 0.7s cubic-bezier(0.4, 0, 0.2, 1), height 0.7s cubic-bezier(0.4, 0, 0.2, 1), left 0.7s cubic-bezier(0.4, 0, 0.2, 1), top 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.msc-clip.msc-morph::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.85), rgba(225, 230, 250, 0.6));
+  opacity: 0;
+  transition: opacity 0.5s ease 0.25s;
+}
+.msc-clip.msc-morph.msc-clip--free {
+  border-radius: 14%;
+  box-shadow: none;
+}
+.msc-clip.msc-morph.msc-clip--circle {
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5), 0 8px 18px -8px rgba(40, 30, 90, 0.35);
+}
+.msc-clip.msc-morph.msc-clip--circle::before {
+  opacity: 1;
+}
+
+/* "Thinking" (5 Nov): a clear, neutral bubble instead of warm glass. Mostly see-through, a gloss across the top,
+   a bright rim and a faint shade at the bottom, like a soap bubble; grey dots instead of Ember. */
+:root[data-theme][data-theme] .thk-glass.thk-glass--warm {
+  /* The tail at the lower left, Dr.AI's side, as the question's bubble has its own at the lower right. */
+  border-radius: 18px 18px 18px 6px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.06) 52%, rgba(255, 255, 255, 0.2) 100%);
+  -webkit-backdrop-filter: blur(6px) saturate(1.2);
+  backdrop-filter: blur(6px) saturate(1.2);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.8),
+    inset 0 7px 8px -7px rgba(255, 255, 255, 0.95),
+    inset 0 -4px 6px -4px rgba(14, 17, 22, 0.08),
+    0 0 0 0.5px rgba(14, 17, 22, 0.06),
+    0 4px 10px -6px rgba(14, 17, 22, 0.14);
+}
+:root[data-theme][data-theme] .thk-glass.thk-glass--warm .thk-dots i {
+  background: rgba(14, 17, 22, 0.4);
+}
+/* The still head as the chat avatar (5 Nov): the same light disc, rim and shadow as the live head in the chat. */
+img.drai-head.drai-head--soft {
+  background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.85), rgba(225, 230, 250, 0.6));
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.5), 0 8px 18px -8px rgba(40, 30, 90, 0.35);
+}
+.drai-btn:has(.drai-head--soft),
+.drai-btn:has(.drai-head--soft):hover {
+  box-shadow: none;
+}
+
+/* Request a report's icon, smaller (5 Nov): about two thirds of its size, so the card's words lead. */
+.hld-scores .hld-new__icon {
+  width: 40px;
+  height: 37px;
+  margin-bottom: 6px;
+}
+.hld-new__back {
+  left: 3px;
+  width: 28px;
+  height: 28px;
+  border-radius: 9px;
+}
+.hld-new__front {
+  right: 1px;
+  width: 30px;
+  height: 30px;
+  border-radius: 9px;
+}
+.hld-new__front svg {
+  width: 15px;
+  height: 15px;
+}
+
+/* Rule (5 Nov): where Dr.AI's light disc sits on a light surface (the menu, the panel's header) its white rim
+   disappears, so it takes a thin, half-clear dark stroke instead to hold its edge. */
+:is(.rail, .chat-drawer header) img.drai-head.drai-head--soft {
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.12), 0 6px 14px -8px rgba(40, 30, 90, 0.3);
+}
+/* On the Ask buttons the page's coloured light is behind him, so no stroke and no rim: the disc and its shadow,
+   at the menu's size. */
+.drai-btn img.drai-head.drai-head--soft {
+  box-shadow: 0 6px 14px -8px rgba(40, 30, 90, 0.3);
+}
+
+/* Home's head (5 Nov): no card, as on every other page. The company's mark at the height of the title and its
+   line, the name as the title, the credits on the right. */
+:root[data-theme][data-theme] .hld-page.hld-page--home {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: 32px;
+}
+.hld-page--home .hld-page__mark {
+  width: 48px;
+  height: 48px;
+  border-radius: 12px;
+  font-size: 19px;
+}
+.hld-page--home .hld-page__text {
+  flex: 1;
+  min-width: 0;
+}
+.hld-page--home .hld-page__acts {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex: none;
+}
+/* The team on Home: you first, then colleagues, four at most. */
+.hld-team__list {
+  display: grid;
+  gap: 14px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hld-team__list li {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.hld-team__list li > span:last-child {
+  display: grid;
+  min-width: 0;
+}
+.hld-team__list b {
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hld-team__list b i {
+  font-style: normal;
+  font-weight: 400;
+  color: var(--text-3);
+}
+.hld-team__list li > span:last-child > span {
+  font-size: 13px;
+  color: var(--text-2);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* The credits on Home's head (5 Nov): light and on one line, as the chip it was: a small ring, the balance,
+   "credits"; a soft glass only on hover or while its card is open. The card opens on click. */
+.hld-credits {
+  position: relative;
+  display: inline-flex;
+}
+.hld-credits__main {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  height: 36px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 12px;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  color: inherit;
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+.hld-credits__main b {
+  font-weight: 500;
+}
+.hld-credits__main > span {
+  color: var(--text-2);
+}
+/* Text only: no hover, no fill. The chevron turns up while the card is open. */
+.hld-credits__main {
+  padding: 0;
+}
+.hld-credits__chev {
+  margin-left: -2px;
+  color: var(--text-2);
+  transition: transform 0.2s ease;
+}
+.hld-credits.is-open .hld-credits__chev {
+  transform: rotate(180deg);
+}
+.hld-credits .hld-credits__card {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  z-index: 20;
+}
+.hld-credits.is-low .hld-credits__main > span {
+  color: var(--ember, #c2410c);
+}
+/* Home's head without the mark: the text, the credits on the right. */
+:root[data-theme][data-theme] .hld-page.hld-page--home {
+  align-items: flex-end;
+}
+/* The team card (5 Nov): the card's own padding and the same title spacing as Latest above it. */
+.hld-card.hld-teamcard {
+  padding: 24px;
+}
+.hld-teamcard .hld-team__list {
+  margin-top: 4px;
+}
+
+/* ---- The input with light on its edge (5 Nov, after Border beam on libraries.dev) ----
+   One angle turns (--beam-a) and three layers follow it: a bloom of Spark's colours inside the edge (::before),
+   the thin beam on the border itself (::after), and a blurred copy of the beam for its glow (.msc-beam__glow).
+   Each is shown only in a sector of the turn, so the light travels; its hue drifts a little over time. */
+@property --beam-a {
+  syntax: '<angle>';
+  inherits: true;
+  initial-value: 0deg;
+}
+.msc-beam {
+  --beam-r: 24px;
+  --beam-dur: 2s;
+  position: relative;
+  width: 100%;
+  border-radius: var(--beam-r);
+  animation: msc-beam-spin var(--beam-dur) linear infinite;
+}
+.msc-beam > .composer {
+  position: relative;
+  z-index: 0;
+}
+@keyframes msc-beam-spin {
+  to {
+    --beam-a: 360deg;
+  }
+}
+@keyframes msc-beam-hue {
+  0%, 100% { filter: hue-rotate(0deg) brightness(1.15) saturate(1.2); }
+  50% { filter: hue-rotate(-24deg) brightness(1.15) saturate(1.2); }
+}
+.msc-beam::before,
+.msc-beam::after,
+.msc-beam__glow {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--beam-r);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+/* The bloom: soft colour pooled along the edges, seen only where the beam is. */
+.msc-beam::before {
+  z-index: 1;
+  background:
+    radial-gradient(90px 40px at 18% -6%, rgba(91, 108, 240, 0.55), transparent),
+    radial-gradient(110px 44px at 62% -8%, rgba(180, 108, 240, 0.5), transparent),
+    radial-gradient(48px 90px at 104% 30%, rgba(214, 112, 220, 0.5), transparent),
+    radial-gradient(48px 80px at 104% 78%, rgba(255, 122, 89, 0.5), transparent),
+    radial-gradient(120px 40px at 76% 106%, rgba(255, 140, 110, 0.5), transparent),
+    radial-gradient(110px 40px at 28% 106%, rgba(232, 120, 190, 0.45), transparent),
+    radial-gradient(44px 80px at -4% 60%, rgba(110, 130, 255, 0.5), transparent);
+  -webkit-mask: conic-gradient(from var(--beam-a), transparent 0% 30%, #000 50%, transparent 72% 100%);
+  mask: conic-gradient(from var(--beam-a), transparent 0% 30%, #000 50%, transparent 72% 100%);
+  animation: msc-beam-hue 12s ease-in-out infinite;
+}
+/* The beam on the border: a 1.5px ring, lit in a short arc. */
+.msc-beam::after,
+.msc-beam__glow {
+  z-index: 2;
+  padding: 1.5px;
+  background: conic-gradient(
+    from var(--beam-a),
+    transparent 0% 40%,
+    rgba(91, 108, 240, 0.9) 46%,
+    rgba(180, 108, 240, 1) 50%,
+    rgba(255, 122, 89, 0.9) 54%,
+    transparent 60% 100%
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.msc-beam__glow {
+  padding: 3px;
+  filter: blur(7px);
+}
+.msc-beam.is-on::before { opacity: 0.6; }
+.msc-beam.is-on::after { opacity: 0.95; }
+.msc-beam.is-on .msc-beam__glow { opacity: 0.55; }
+/* Line: the beam only. */
+.msc-beam--line.is-on::before { opacity: 0; }
+/* Pulse: no travel; the whole edge breathes in Spark's colours. */
+.msc-beam--pulse {
+  animation: none;
+}
+.msc-beam--pulse::before {
+  -webkit-mask: none;
+  mask: none;
+}
+.msc-beam--pulse::after,
+.msc-beam--pulse .msc-beam__glow {
+  background: linear-gradient(120deg, #5b6cf0, #b46cf0 45%, #f07ab0 70%, #ff7a59);
+}
+.msc-beam--pulse.is-on::before,
+.msc-beam--pulse.is-on::after,
+.msc-beam--pulse.is-on .msc-beam__glow {
+  animation: msc-beam-breathe 2.4s ease-in-out infinite;
+}
+@keyframes msc-beam-breathe {
+  0%, 100% { opacity: 0.15; }
+  50% { opacity: 0.75; }
+}
+/* Wakes with you: brighter while typing or speaking. */
+.msc-beam--active.is-fast::before { opacity: 0.8; }
+.msc-beam--active.is-fast .msc-beam__glow { opacity: 0.8; }
+@media (prefers-reduced-motion: reduce) {
+  .msc-beam,
+  .msc-beam::before,
+  .msc-beam--pulse.is-on::before,
+  .msc-beam--pulse.is-on::after,
+  .msc-beam--pulse.is-on .msc-beam__glow {
+    animation: none;
+  }
+}
+/* Rotate · soft: no hard line on the border; the bloom inside the edge leads, a little stronger, with only a
+   faint, wide glow where the beam is. */
+.msc-beam--soft.is-on::after {
+  opacity: 0;
+}
+.msc-beam--soft.is-on::before {
+  opacity: 0.8;
+}
+.msc-beam--soft .msc-beam__glow {
+  padding: 4px;
+  filter: blur(12px);
+}
+/* (5 Nov, review: the blurred ring still read as a thick line) No ring at all: only the light inside the edge. */
+.msc-beam--soft.is-on .msc-beam__glow {
+  opacity: 0;
+}
+
+/* The chat's box with Spark's light on its edge (5 Nov): the bright colour inside it and the halo under it go, so
+   the box is plain glass and the light that goes round its edge is the only colour. */
+:root[data-theme][data-theme] .chats-start .chats-start__light,
+:root[data-theme][data-theme] .chats-start .chats-start__halo {
+  display: none;
+}
+
+/* While you write, the light holds still where it is (5 Nov); it goes round again once the box is empty. */
+.msc-beam:has(.composer.is-typing) {
+  animation-play-state: paused;
+}
+
+/* One gap under every page head (5 Nov, review: it was 40–52px and read loose): 28px from the head (its line, or
+   its tabs) to the first block, on Home, Brand Analysis, Requests and Documents. */
+:root[data-theme][data-theme] .hld-page.hld-page--home {
+  margin-bottom: 8px;
+}
+:root[data-theme][data-theme] .hld-page:not(.hld-page--home) {
+  margin-bottom: 8px;
+}
+:root[data-theme][data-theme] .rq-head {
+  margin-bottom: 28px;
+}
+:root[data-theme][data-theme] .docs .page-head {
+  padding-bottom: 28px;
+}
+
+/* Sparki is not cut off while Dr.AI thinks (5 Nov): in full, the clip's window reaches well past the figure's box,
+   so Sparki can circle him; settling into the head, the window closes to the circle. clip-path eases between the
+   two where overflow could only snap. */
+.msc-clip.msc-morph {
+  overflow: visible;
+  clip-path: inset(-12% -60% -6% -60% round 14%);
+  transition:
+    width 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    height 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    border-radius 0.7s cubic-bezier(0.4, 0, 0.2, 1),
+    box-shadow 0.7s ease,
+    clip-path 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.msc-clip.msc-morph.msc-clip--circle {
+  clip-path: inset(-3px round 50%);
+}
+/* The circle's soft shadow comes from its holder, since the clip would cut a shadow of its own. */
+.msg-ai__avatar--mascot:not(.is-working) {
+  filter: drop-shadow(0 5px 7px rgba(40, 30, 90, 0.18));
+}
+/* The head as one block on every page (5 Nov): title, its line 4px under it, the action on the right; then 28px to
+   whatever comes next, tabs or content. Brand Analysis' tabs and Home's line follow. */
+:root[data-theme][data-theme] .hld .hld-page .hld-page__tabs {
+  margin-top: 28px;
+}
+:root[data-theme][data-theme] .hld-page.hld-page--home > .hld-page__text > p {
+  margin-top: 4px;
+}
+
+/* Sparki in the Thinking bubble (5 Nov): where the three dots were, he floats, turns a little and glows. */
+.thk-sparki {
+  flex: none;
+  margin: -4px -2px -4px -6px;
+  animation: thk-sparki 2.4s ease-in-out infinite;
+  filter: drop-shadow(0 0 4px rgba(120, 110, 255, 0.45));
+}
+@keyframes thk-sparki {
+  0%, 100% { transform: translateY(1px) rotate(-8deg) scale(0.96); filter: drop-shadow(0 0 3px rgba(120, 110, 255, 0.35)); }
+  50% { transform: translateY(-2px) rotate(8deg) scale(1.06); filter: drop-shadow(0 0 7px rgba(255, 120, 150, 0.55)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .thk-sparki {
+    animation: none;
+  }
+}
+
+/* One rim rule for Dr.AI's circle (5 Nov): on a light surface a thin, half-clear dark stroke holds its edge;
+   on coloured light (the Ask buttons) none. The live head follows the still one. */
+.msc-clip.msc-clip--circle {
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.12), 0 6px 14px -8px rgba(40, 30, 90, 0.3);
+}
+.msc-clip.msc-morph.msc-clip--circle {
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.12);
+}
+
+/* Sparki keeps clear of the Thinking bubble (5 Nov): the window reaches far to the left of Dr.AI, where the
+   gutter is empty, and only a little to the right, where the answer's bubble starts. */
+.msc-clip.msc-morph {
+  clip-path: inset(-12% -6% -6% -60% round 14%);
+}
+.msc-clip.msc-morph.msc-clip--circle {
+  clip-path: inset(-3px round 50%);
+}
+
+/* The settled avatar is cut exactly to its circle (5 Nov, review: a 3px allowance let the clip show past the
+   circle, Sparki's tip and the figure's edge with it). Its stroke is drawn inside the circle instead. */
+.msc-clip.msc-morph.msc-clip--circle {
+  clip-path: inset(0 round 50%);
+  box-shadow: none;
+}
+.msc-clip.msc-morph::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  border-radius: inherit;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.12);
+  opacity: 0;
+  transition: opacity 0.4s ease 0.3s;
+  pointer-events: none;
+}
+.msc-clip.msc-morph.msc-clip--circle::after {
+  opacity: 1;
+}
+
+/* "Ask about this" with Dr.AI on an issue (5 Nov demo). */
+.msc-issue {
+  width: 100%;
+  text-align: left;
+}
+.msc-issue__acts {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.msc-issue__spacer {
+  flex: 1;
+}
+/* A: the head as the link's mark. */
+.hl-fix__asklink.msc-issue__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+/* B: the head alone; the words slide out of it on hover or focus. */
+.msc-issue__head {
+  display: inline-flex;
+  align-items: center;
+  gap: 0;
+  height: 36px;
+  padding: 3px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink, #0e1116);
+  cursor: pointer;
+  transition: background 0.25s ease, gap 0.25s ease, padding 0.25s ease;
+}
+.msc-issue__head > span {
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  opacity: 0;
+  transition: max-width 0.3s ease, opacity 0.2s ease;
+}
+.msc-issue__head:hover,
+.msc-issue__head:focus-visible {
+  gap: 8px;
+  padding-right: 14px;
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.08);
+}
+.msc-issue__head:hover > span,
+.msc-issue__head:focus-visible > span {
+  max-width: 140px;
+  opacity: 1;
+}
+@media (hover: none) {
+  .msc-issue__head > span {
+    max-width: 140px;
+    opacity: 1;
+  }
+  .msc-issue__head {
+    gap: 8px;
+  }
+}
+/* C: a second button, the head in it, at Request proposal's height. */
+.msc-issue__pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 14px 0 6px;
+  border: 0;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.6));
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.1), 0 2px 6px -3px rgba(40, 30, 90, 0.2);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink, #0e1116);
+  cursor: pointer;
+}
+.msc-issue__pill:hover {
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.18), 0 4px 10px -4px rgba(40, 30, 90, 0.25);
+}
+/* D: inside "What we'd do", at its foot. */
+.msc-issue__do {
+  display: grid;
+}
+.msc-issue__dobtn {
+  justify-self: start;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 10px;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink, #0e1116);
+  cursor: pointer;
+}
+.msc-issue__dobtn:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* "Ask about this" in the chat's light (5 Nov demo, after "Tune in Studio" on libraries.dev): Request proposal's
+   size and weight (36px, white, a hairline), Dr.AI's head at the start, and Spark's colours glowing softly inside
+   the rim: a blurred wash of blue, lilac and coral, clear in the middle, drifting slowly. */
+.msc-glowbtn {
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 16px 0 5px;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.1), 0 1px 2px rgba(14, 17, 22, 0.05);
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink, #0e1116);
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, background 0.2s ease;
+}
+.msc-glowbtn::before,
+.msc-glowbtn__beam {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background:
+    radial-gradient(40% 140% at 12% 50%, rgba(91, 108, 240, 0.95), transparent 70%),
+    radial-gradient(36% 140% at 48% 0%, rgba(180, 108, 240, 0.85), transparent 70%),
+    radial-gradient(36% 140% at 62% 100%, rgba(240, 122, 176, 0.8), transparent 70%),
+    radial-gradient(40% 140% at 92% 50%, rgba(255, 122, 89, 0.9), transparent 70%);
+  background-size: 160% 100%;
+  pointer-events: none;
+}
+.msc-glowbtn::before {
+  filter: blur(5px) saturate(1.2);
+  -webkit-mask: radial-gradient(closest-side, transparent 62%, #000 100%);
+  mask: radial-gradient(closest-side, transparent 62%, #000 100%);
+  -webkit-mask-size: 100% 100%;
+  opacity: 0.6;
+  animation: msc-glow-drift 5s ease-in-out infinite alternate, msc-glow-hue 8s ease-in-out infinite;
+  transition: opacity 0.3s ease;
+}
+@keyframes msc-glow-drift {
+  from { background-position: 0% 50%; }
+  to { background-position: 100% 50%; }
+}
+@keyframes msc-glow-hue {
+  0%, 100% { filter: blur(5px) saturate(1.2) hue-rotate(0deg); }
+  50% { filter: blur(5px) saturate(1.2) hue-rotate(-20deg); }
+}
+.msc-glowbtn:hover {
+  background: rgba(255, 255, 255, 0.95);
+}
+.msc-glowbtn:hover::before {
+  opacity: 0.85;
+}
+.msc-glowbtn__head {
+  position: relative;
+  display: grid;
+  place-items: center;
+}
+.msc-glowbtn__head img.drai-head {
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.1);
+}
+.msc-glowbtn__label {
+  position: relative;
+}
+/* F: sparks from his head on hover. */
+.msc-glowbtn__sparks {
+  position: absolute;
+  inset: 50% auto auto 50%;
+  pointer-events: none;
+}
+.msc-glowbtn__sparks i {
+  position: absolute;
+  left: -2px;
+  top: -2px;
+  width: 4px;
+  height: 4px;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0 30%, rgba(140, 120, 255, 0.95) 60%, transparent 70%);
+  opacity: 0;
+  transform: rotate(calc(var(--i) * 51deg - 90deg)) translateX(10px) scale(0.4);
+}
+.msc-glowbtn--sparks:hover .msc-glowbtn__sparks i {
+  animation: msc-glow-spark 0.9s ease-out calc(var(--i) * 0.04s) both;
+}
+.msc-glowbtn--sparks:hover .msc-glowbtn__sparks i:nth-child(odd) {
+  background: radial-gradient(circle, #fff 0 30%, rgba(255, 130, 100, 0.95) 60%, transparent 70%);
+}
+@keyframes msc-glow-spark {
+  0% { opacity: 0; transform: rotate(calc(var(--i) * 51deg - 90deg)) translateX(10px) scale(0.4); }
+  30% { opacity: 1; }
+  100% { opacity: 0; transform: rotate(calc(var(--i) * 51deg - 90deg)) translateX(26px) scale(1); }
+}
+/* G: the chat box's light going round the pill (Rotate · soft). */
+.msc-glowbtn--beam::before {
+  opacity: 0;
+}
+.msc-glowbtn__beam {
+  background-size: 100% 100%;
+  filter: blur(4px) saturate(1.2);
+  -webkit-mask: radial-gradient(closest-side, transparent 55%, #000 100%), conic-gradient(from var(--beam-a), transparent 0% 25%, #000 50%, transparent 75% 100%);
+  -webkit-mask-composite: source-in;
+  mask: radial-gradient(closest-side, transparent 55%, #000 100%) intersect, conic-gradient(from var(--beam-a), transparent 0% 25%, #000 50%, transparent 75% 100%);
+  opacity: 0.85;
+  animation: msc-beam-spin 3.5s linear infinite;
+}
+/* H: calm at rest, lit on hover. */
+.msc-glowbtn--hover::before {
+  opacity: 0;
+}
+.msc-glowbtn--hover:hover::before {
+  opacity: 0.8;
+}
+@media (prefers-reduced-motion: reduce) {
+  .msc-glowbtn::before,
+  .msc-glowbtn__beam,
+  .msc-glowbtn--sparks:hover .msc-glowbtn__sparks i {
+    animation: none;
+  }
+}
+
+/* The glow pill, softer (5 Nov, review): Request proposal's type (13px), a smaller head (20px), and the colour as
+   a light, blended wash: more blur, more transparent, fading gently in from the rim rather than tracing it, so the
+   pill stays white with colour moving in it. */
+.msc-glowbtn {
+  gap: 7px;
+  padding: 0 16px 0 8px;
+  font-size: 13px;
+}
+.msc-glowbtn::before,
+.msc-glowbtn__beam {
+  background:
+    radial-gradient(45% 160% at 10% 50%, rgba(91, 108, 240, 0.7), transparent 75%),
+    radial-gradient(40% 160% at 46% 0%, rgba(180, 108, 240, 0.6), transparent 75%),
+    radial-gradient(40% 160% at 60% 100%, rgba(240, 122, 176, 0.55), transparent 75%),
+    radial-gradient(45% 160% at 94% 50%, rgba(255, 122, 89, 0.65), transparent 75%);
+  background-size: 170% 100%;
+}
+.msc-glowbtn::before {
+  -webkit-mask: radial-gradient(closest-side, rgba(0, 0, 0, 0.15) 30%, #000 115%);
+  mask: radial-gradient(closest-side, rgba(0, 0, 0, 0.15) 30%, #000 115%);
+  opacity: 0.4;
+}
+@keyframes msc-glow-hue {
+  0%, 100% { filter: blur(9px) saturate(1.1) hue-rotate(0deg); }
+  50% { filter: blur(9px) saturate(1.1) hue-rotate(-20deg); }
+}
+.msc-glowbtn:hover::before {
+  opacity: 0.6;
+}
+.msc-glowbtn--hover:hover::before {
+  opacity: 0.55;
+}
+.msc-glowbtn__beam {
+  filter: blur(9px) saturate(1.1);
+  -webkit-mask: radial-gradient(closest-side, rgba(0, 0, 0, 0.2) 25%, #000 115%), conic-gradient(from var(--beam-a), transparent 0% 8%, #000 50%, transparent 92% 100%);
+  -webkit-mask-composite: source-in;
+  mask: radial-gradient(closest-side, rgba(0, 0, 0, 0.2) 25%, #000 115%) intersect, conic-gradient(from var(--beam-a), transparent 0% 8%, #000 50%, transparent 92% 100%);
+  opacity: 0.5;
+  animation-duration: 5s;
+}
+
+/* The report's top row (5 Nov): when it was made on the left, the report's one Ask on the right (the pill Home
+   had, with Dr.AI's head). */
+.anc-head__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+}
+.hl-mchat.drai-pill {
+  gap: 8px;
+}
+.hl-mchat.drai-pill img.drai-head {
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.1);
+}
+
+/* The report's Ask Dr.AI pill, lighter (5 Nov, review): clearer glass inside so the page's light shows through,
+   the coloured rim kept as the accent, and no coloured shadow under it at rest (it read as hovered): only a
+   hairline of shade. On hover the glass whitens a touch and a faint glow of the rim's colours comes up. His
+   head sits snug at the start, as an avatar in a chip. */
+:root[data-theme][data-theme] body .drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill {
+  height: 36px;
+  padding: 0 14px 0 5px;
+  gap: 8px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.22)),
+    linear-gradient(90deg, color-mix(in oklch, var(--cobalt, #1e3bd6) 8%, transparent), color-mix(in oklch, var(--ember, #e8501f) 8%, transparent));
+  -webkit-backdrop-filter: blur(12px) saturate(1.3);
+  backdrop-filter: blur(12px) saturate(1.3);
+  box-shadow:
+    inset 0 0 0 2.5px rgba(255, 255, 255, 0.55),
+    inset 0 -8px 12px -8px rgba(255, 255, 255, 0.7),
+    0 1px 2px rgba(14, 17, 22, 0.05);
+  transition: background 0.2s ease, box-shadow 0.2s ease;
+}
+:root[data-theme][data-theme] body .drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill:hover {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.4)),
+    linear-gradient(90deg, color-mix(in oklch, var(--cobalt, #1e3bd6) 10%, transparent), color-mix(in oklch, var(--ember, #e8501f) 10%, transparent));
+  box-shadow:
+    inset 0 0 0 2.5px rgba(255, 255, 255, 0.7),
+    inset 0 -8px 12px -8px rgba(255, 255, 255, 0.8),
+    0 1px 2px rgba(14, 17, 22, 0.05),
+    -6px 6px 14px -10px color-mix(in oklch, var(--cobalt, #1e3bd6) 45%, transparent),
+    6px 6px 14px -10px color-mix(in oklch, var(--ember, #e8501f) 45%, transparent);
+}
+:root[data-theme][data-theme] body .drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill img.drai-head {
+  box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.7);
+}
+
+/* The Ask Dr.AI pill's coloured edge all the way round (5 Nov, review: the top read white): one ring, Cobalt into
+   Noor's pink into Ember, with no white gloss over it; and clearer glass inside. */
+:root[data-theme][data-theme] body .drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill::before {
+  padding: 1.5px;
+  background: linear-gradient(90deg in oklch, color-mix(in srgb, var(--cobalt, #1e3bd6) 80%, transparent), color-mix(in oklch, var(--cobalt, #1e3bd6), var(--ember, #e8501f)) 50%, color-mix(in srgb, var(--ember, #e8501f) 80%, transparent));
+  opacity: 0.75;
+}
+:root[data-theme][data-theme] body .drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32), rgba(255, 255, 255, 0.12)),
+    linear-gradient(90deg, color-mix(in oklch, var(--cobalt, #1e3bd6) 6%, transparent), color-mix(in oklch, var(--ember, #e8501f) 6%, transparent));
+  box-shadow: 0 1px 2px rgba(14, 17, 22, 0.05);
+}
+:root[data-theme][data-theme] body .drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill:hover {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.26)),
+    linear-gradient(90deg, color-mix(in oklch, var(--cobalt, #1e3bd6) 8%, transparent), color-mix(in oklch, var(--ember, #e8501f) 8%, transparent));
+  box-shadow:
+    0 1px 2px rgba(14, 17, 22, 0.05),
+    -6px 6px 14px -10px color-mix(in oklch, var(--cobalt, #1e3bd6) 45%, transparent),
+    6px 6px 14px -10px color-mix(in oklch, var(--ember, #e8501f) 45%, transparent);
+}
+:root[data-theme][data-theme] body .drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill:hover::before {
+  opacity: 0.95;
+}
+/* The ring quieter (5 Nov, review: too bright): about half its strength, a touch brighter on hover. */
+:root[data-theme][data-theme] body .drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill::before {
+  opacity: 0.42;
+}
+:root[data-theme][data-theme] body .drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill:hover::before {
+  opacity: 0.65;
+}
+/* More contrast on the right (5 Nov, review): the page's coral light sits behind the top right, so the ring's
+   Ember end is a deeper ember and a little stronger there; Cobalt and the pink stay as quiet as they were. */
+:root[data-theme][data-theme] body .drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill::before {
+  opacity: 1;
+  background: linear-gradient(
+    90deg in oklch,
+    color-mix(in srgb, var(--cobalt, #1e3bd6) 36%, transparent),
+    color-mix(in srgb, color-mix(in oklch, var(--cobalt, #1e3bd6), var(--ember, #e8501f)) 38%, transparent) 50%,
+    color-mix(in srgb, color-mix(in srgb, var(--ember, #e8501f) 82%, var(--ink, #0e1116)) 62%, transparent)
+  );
+}
+:root[data-theme][data-theme] body .drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill:hover::before {
+  opacity: 1;
+  background: linear-gradient(
+    90deg in oklch,
+    color-mix(in srgb, var(--cobalt, #1e3bd6) 58%, transparent),
+    color-mix(in srgb, color-mix(in oklch, var(--cobalt, #1e3bd6), var(--ember, #e8501f)) 58%, transparent) 50%,
+    color-mix(in srgb, color-mix(in srgb, var(--ember, #e8501f) 82%, var(--ink, #0e1116)) 80%, transparent)
+  );
+}
+
+/* One hover for every stroked (secondary) button (5 Nov): as Request proposal, it fills with Ink and its words turn
+   sand on hover. Covers Home's "Review proposal", "Review the file" and the reports' "View … report", the report
+   cards' Request proposal, the proposal's Request changes, and every text button of the secondary kind. Icon-only
+   buttons and the chat box's own buttons keep their looks. */
+:root[data-theme][data-theme] body :is(
+    .hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go,
+    .btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary:not(.btn--icon):not(.composer__bar > *)
+  ) {
+  transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+:root[data-theme][data-theme] body :is(
+    .hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go,
+    .btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary:not(.btn--icon):not(.composer__bar > *)
+  ):hover:not(:disabled) {
+  color: var(--sand, #f8f6f2);
+  background: linear-gradient(180deg, rgba(62, 68, 80, 0.94), rgba(30, 34, 42, 0.96));
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 6px 16px -8px rgba(14, 17, 22, 0.5);
+}
+
+/* The Spark Studios wordmark, smaller (5 Nov, review: it read heavy over the menu): about three quarters of its
+   size, 90px wide, so it signs the menu rather than heads it. */
+:root[data-theme][data-theme] .rail .rail__wordmark {
+  width: 90px;
+  height: auto;
+}
+
+/* ===== Buttons, one system (5 Nov, after the audit) =====================================================
+   Four kinds, one height (36px) and one type (13px, 500):
+   1 Primary: Ink, one a screen.            2 Secondary: clear with a hairline; Ink on hover.
+   3 Icon: round, 36px; with a hairline on cards and in dialogs (Ink on hover), bare in a panel's header.
+   4 Ask Dr.AI: the pill with his head (DrAi.tsx, AskPill).
+   The chat box keeps its own buttons (+, mic, send); tabs, filters and chips are their own family. */
+:root[data-theme][data-theme] body :is(
+    .btn--primary.btn--primary.btn--primary.btn--primary.btn--primary.btn--primary.btn--primary.btn--primary,
+    .btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary,
+    .hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go
+  ):not(.btn--icon):not(.composer__bar > *) {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+}
+/* 2 Secondary at rest: clear, a hairline, Ink words, whatever glass it had before (Download, Chats). */
+:root[data-theme][data-theme] body :is(
+    .btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary,
+    .hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go
+  ):not(.btn--icon):not(.composer__bar > *):not(:hover) {
+  color: var(--ink, #0e1116);
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.14);
+}
+:root[data-theme][data-theme] body :is(
+    .btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary,
+    .hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go
+  ):not(.btn--icon):not(.composer__bar > *)::before,
+:root[data-theme][data-theme] body :is(
+    .btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary,
+    .hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go
+  ):not(.btn--icon):not(.composer__bar > *)::after {
+  display: none;
+}
+/* 3 Icon buttons: round, 36px. On cards, in dialogs and in the file preview a hairline, Ink on hover. */
+:root[data-theme][data-theme] body .btn--icon.btn--icon.btn--icon.btn--icon.btn--icon.btn--icon.btn--icon.btn--icon:not(.composer__bar > *) {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border-radius: 999px;
+  color: var(--ink, #0e1116);
+  background: transparent;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.14);
+  transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+:root[data-theme][data-theme] body .btn--icon.btn--icon.btn--icon.btn--icon.btn--icon.btn--icon.btn--icon.btn--icon:not(.composer__bar > *):hover:not(:disabled) {
+  color: var(--sand, #f8f6f2);
+  background: linear-gradient(180deg, rgba(62, 68, 80, 0.94), rgba(30, 34, 42, 0.96));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 6px 16px -8px rgba(14, 17, 22, 0.5);
+}
+/* In a panel's header the icons stand bare: round, 36px, a soft fill on hover. */
+:root[data-theme][data-theme] body .chat-drawer__btn.chat-drawer__btn.chat-drawer__btn.chat-drawer__btn {
+  display: inline-grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: none;
+}
+:root[data-theme][data-theme] body .chat-drawer__btn.chat-drawer__btn.chat-drawer__btn.chat-drawer__btn:hover {
+  background: rgba(14, 17, 22, 0.06);
+}
+/* Ghost text buttons (Chats' "New") join the secondary kind: no fifth look. */
+:root[data-theme][data-theme] body .btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost:not(.btn--icon):not(.composer__bar > *) {
+  height: 36px;
+  padding: 0 16px;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink, #0e1116);
+  background: transparent;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.14);
+  transition: background 0.18s ease, color 0.18s ease, box-shadow 0.18s ease;
+}
+:root[data-theme][data-theme] body .btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost:not(.btn--icon):not(.composer__bar > *):hover:not(:disabled) {
+  color: var(--sand, #f8f6f2);
+  background: linear-gradient(180deg, rgba(62, 68, 80, 0.94), rgba(30, 34, 42, 0.96));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2),
+    0 6px 16px -8px rgba(14, 17, 22, 0.5);
+}
+/* The preview's Ask Dr.AI is the pill at its own width, not stretched across the bar. */
+:root[data-theme][data-theme] body .preview__ask.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill {
+  flex: none;
+  width: auto;
+  align-self: center;
+}
+
+/* Secondary in glass (5 Nov): the same light, clear glass as the Ask Dr.AI pill inside the hairline, so on the
+   page's coloured light (Download on a proposal, Chats on the chat page) it takes up what's behind it, and on a
+   white card it simply reads as a stroked button. One set of properties; the ground decides how it looks. */
+:root[data-theme][data-theme] body :is(
+    .btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary,
+    .hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go,
+    .btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost
+  ):not(.btn--icon):not(.composer__bar > *):not(:hover),
+:root[data-theme][data-theme] body .btn--icon.btn--icon.btn--icon.btn--icon.btn--icon.btn--icon.btn--icon.btn--icon:not(.composer__bar > *):not(:hover) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.22));
+  -webkit-backdrop-filter: blur(12px) saturate(1.3);
+  backdrop-filter: blur(12px) saturate(1.3);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.14);
+}
+
+/* Chat history's New (5 Nov): Home's "View all" link, a plus before the word; no box, no fill on hover. */
+button.hld-link.chats-hist__new {
+  gap: 4px;
+  height: auto;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink, #0e1116);
+  cursor: pointer;
+}
+
+/* Secondary on hover (5 Nov, review: beside Approve proposal it turned as dark as the primary): Ink belongs to the
+   primary alone. A secondary on hover comes forward instead: its glass all but white, its hairline darker, a
+   faint lift under it; the words stay Ink. Same for the stroked icon buttons. */
+:root[data-theme][data-theme] body :is(
+    .btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary,
+    .hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go,
+    .btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost
+  ):not(.btn--icon):not(.composer__bar > *):hover:not(:disabled),
+:root[data-theme][data-theme] body .btn--icon.btn--icon.btn--icon.btn--icon.btn--icon.btn--icon.btn--icon.btn--icon:not(.composer__bar > *):hover:not(:disabled) {
+  color: var(--ink, #0e1116);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.82));
+  -webkit-backdrop-filter: blur(12px) saturate(1.3);
+  backdrop-filter: blur(12px) saturate(1.3);
+  box-shadow:
+    inset 0 0 0 1px rgba(14, 17, 22, 0.3),
+    0 4px 10px -6px rgba(14, 17, 22, 0.25);
+}
+/* Hover, gentler (5 Nov, review): not a white fill, just the glass a little whiter; the hairline and shadow stay as
+   at rest. */
+:root[data-theme][data-theme] body :is(
+    .btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary.btn--secondary,
+    .hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go.hld-q__go,
+    .btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost.btn--ghost
+  ):not(.btn--icon):not(.composer__bar > *):hover:not(:disabled),
+:root[data-theme][data-theme] body .btn--icon.btn--icon.btn--icon.btn--icon.btn--icon.btn--icon.btn--icon.btn--icon:not(.composer__bar > *):hover:not(:disabled) {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.45));
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.14);
+}
+
+/* Chat history's rows as the menu's (5 Nov, review: grey there, white glass in the menu): hover a white glass
+   with a faint hairline, the open chat white glass with a soft lift; the same 12px corners. */
+:root[data-theme][data-theme] .hitem {
+  border-radius: 12px;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+:root[data-theme][data-theme] .hitem:not(.is-active):hover {
+  background: rgba(255, 255, 255, 0.62);
+  box-shadow: inset 0 1px 0 #fff, inset 0 0 0 1px rgba(14, 17, 22, 0.035);
+}
+:root[data-theme][data-theme] .hitem.is-active {
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: inset 0 0 0 1px #fff, 0 2px 8px -4px rgba(40, 30, 90, 0.18);
+}
+:root[data-theme][data-theme] .hitem__more:hover {
+  background: rgba(14, 17, 22, 0.06);
+}

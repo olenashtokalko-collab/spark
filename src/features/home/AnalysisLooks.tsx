@@ -26,6 +26,7 @@ import { Button, cx } from '../../components/ui/primitives';
 import { fmtDate } from '../../lib/format';
 import { ANALYSIS_ICON } from '../assistant/Home';
 import { ChatDrawer, Mascot, type DrawerTopic } from '../assistant/ChatDrawer';
+import { AskPill, useDrAi } from '../../components/ui/DrAi';
 import { Composer } from '../assistant/Composer';
 import type { CompanyAnalysis } from '../../data/types';
 import { SparkDisc } from '../../components/ui/BrandSpark';
@@ -64,14 +65,16 @@ function useAnalysis(a: CompanyAnalysis) {
 /** The chat drawer's suggestions on an analysis page: questions about this analysis, its top issue first.
  *  Each sends its question with the analysis named, so Spark knows what it's about. */
 export function analysisTopic(a: CompanyAnalysis): DrawerTopic {
-  const first = a.findings.filter((f) => !f.good).sort((x, y) => RANK[x.impact ?? 'Low'] - RANK[y.impact ?? 'Low'])[0];
+  // One question per issue (by impact) and per thing that works (5 Nov): the report's single Ask opens the panel
+  // with these, so a talk about one issue is still a click away.
+  const issues = a.findings.filter((f) => !f.good).sort((x, y) => RANK[x.impact ?? 'Low'] - RANK[y.impact ?? 'Low']);
+  const works = a.findings.filter((f) => f.good);
   const about = ` (About the ${a.title.toLowerCase()}.)`;
   const qs = [
-    ...(first ? [`What would fixing “${first.title}” take?`] : []),
     'What should we do first?',
-    'What would this cost, roughly?',
-    'How do we compare with competitors?',
-  ];
+    ...issues.map((f) => `How would we fix “${f.title}”?`),
+    ...works.map((f) => `How do we build on “${f.title}”?`),
+  ].slice(0, 5);
   return { label: a.title.toLowerCase(), questions: qs.map((q) => ({ label: q, prompt: q + about })) };
 }
 
@@ -149,7 +152,7 @@ function Impact({ f }: { f: Finding }) {
 
 /** An issue as the card on Home (4 Nov): the impact above the title, What we'd do on a plate with Spark's mark,
  *  then Request proposal (stroked) and Ask about this. One look for the issue wherever it shows. */
-function IssueCardBody({ f, askFix, request }: { f: Finding; askFix: () => void; request: () => void }) {
+function IssueCardBody({ f, request }: { f: Finding; askFix?: () => void; request: () => void }) {
   return (
     <>
     <span className="hl-fix__meta">
@@ -168,12 +171,10 @@ function IssueCardBody({ f, askFix, request }: { f: Finding; askFix: () => void;
       </div>
     )}
     <span className="hl-fix__acts hl-fix__tools anx-issue__acts">
+      {/* One Ask per report now (5 Nov), at its top; the card keeps the one action. */}
       <Button size="sm" variant="secondary" className="hl-fix__make" onClick={request}>
         Request proposal
       </Button>
-      <button type="button" className="hl-fix__asklink" onClick={askFix}>
-        <SparkStar size={13} strokeWidth={2} /> Ask about this
-      </button>
     </span>
     </>
   );
@@ -513,7 +514,7 @@ export function AnalysisView({ a, look, focus, inline, switcher, page }: { a: Co
               </button>
             ))}
           </div>
-          <Composer placeholder="Reply to Spark about this analysis" onSubmit={(t) => x.send(t)} />
+          <AnalysisReply onSend={(t) => x.send(t)} />
         </div>
         {x.drawer}
       </article>
@@ -735,7 +736,13 @@ function CardsLook({ a, x, focus, switcher, page }: { a: CompanyAnalysis; x: Ctx
         {switcher && <div className="anc-head__top">{switcher}</div>}
         {/* As its own page (G, 5 Nov): a small grey line first (when the report was made), then the verdict as the
             title and the lead under it. */}
-        {page && <span className="anc-head__date">Report created {fmtDate(a.updatedAt)}</span>}
+        {page && (
+          <div className="anc-head__bar">
+            <span className="anc-head__date">Report created {fmtDate(a.updatedAt)}</span>
+            {/* The report's one Ask (5 Nov): the panel opens with questions about this report and each issue. */}
+            <AskPill onClick={() => x.ask('')} />
+          </div>
+        )}
         <h2 className="anc-head__verdict">{a.headline ?? a.title}</h2>
         <p className="anc-head__lead">{a.summary}</p>
         <div className="hld-figs anc-figs" style={{ gridTemplateColumns: `repeat(${figs.length}, minmax(0, 1fr))` }}>
@@ -781,11 +788,6 @@ function CardsLook({ a, x, focus, switcher, page }: { a: CompanyAnalysis; x: Ctx
                   </span>
                   <b className="hl-fix__title">{f.title}</b>
                   <p className="hl-fix__body">{f.body}</p>
-                  <span className="hl-fix__acts hl-fix__tools anx-issue__acts">
-                    <button type="button" className="hl-fix__asklink" onClick={() => x.ask(`Tell me more about “${f.title}” and how we build on it.`)}>
-                      <SparkStar size={13} strokeWidth={2} /> Ask how to build on it
-                    </button>
-                  </span>
                 </div>
               </div>
             ))}
@@ -1085,4 +1087,10 @@ function AgentLook({ a, x, featured, focus }: { a: CompanyAnalysis; x: Ctx; feat
       {x.drawer}
     </article>
   );
+}
+
+/** The box at a report's foot: a question to the assistant about it (Dr.AI when he's on). */
+function AnalysisReply({ onSend }: { onSend: (text: string) => void }) {
+  const drai = useDrAi();
+  return <Composer placeholder={drai ? 'Ask Dr.AI about this analysis' : 'Reply to Spark about this analysis'} onSubmit={(t) => onSend(t)} />;
 }

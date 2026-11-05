@@ -1,8 +1,11 @@
 // A new chat in a drawer from the right, after the client's reference (an assistant panel beside the page):
+import { BeamEdge } from '../../components/ui/BeamEdge';
 // Spark's mark, "How can I help?", four ways to start (never a blank chat: the research dossier of 8 Oct), and
 // the box at the foot. Sending starts the chat and opens it on the Chats page; the expand button opens Chats
 // without sending. Used from Home, so a chat starts without leaving it.
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useDrAi } from '../../components/ui/DrAi';
+import { MascotClip } from '../demo/MascotDemo';
 import { createPortal } from 'react-dom';
 import { ArrowRight, Maximize2, X } from 'lucide-react';
 import { useStore } from '../../state/store';
@@ -28,6 +31,9 @@ export interface DrawerTopic {
  *  `topic` swaps the general suggestions for questions about what the page is about. */
 export function ChatDrawer({ open, onClose, initial, topic }: { open: boolean; onClose: () => void; initial?: string; topic?: DrawerTopic }) {
   const { actions } = useStore();
+  const drai = useDrAi();
+  const [typing, setTyping] = useState(false);
+  const [voice, setVoice] = useState(false);
 
   useEffect(() => {
     if (!open) return;
@@ -50,8 +56,9 @@ export function ChatDrawer({ open, onClose, initial, topic }: { open: boolean; o
       <div className="chat-drawer__scrim" onClick={onClose} />
       <aside className="chat-drawer" role="dialog" aria-modal="true" aria-label="New chat with Spark">
         <header className="chat-drawer__head">
-          <SparkDisc size={28} />
-          <h2>Ask Spark</h2>
+          {/* Dr.AI on: the title alone, "Ask Dr.AI"; he stands in the panel below, so no small head here (5 Nov). */}
+          {!drai && <SparkDisc size={28} />}
+          <h2>{drai ? 'Ask Dr.AI' : 'Ask Spark'}</h2>
           <button type="button" className="chat-drawer__btn" onClick={() => (onClose(), navigate('/assistant'))} aria-label="Open in Chats" data-tip="Open in Chats">
             <Maximize2 size={17} strokeWidth={1.8} />
           </button>
@@ -63,7 +70,14 @@ export function ChatDrawer({ open, onClose, initial, topic }: { open: boolean; o
           {/* One spark in the drawer, the one in its head (29 Oct); the ways to start as a list of plain lines
               (the Chats page's list without icons), an arrow on hover. Opened from something (an issue), the
               questions about it. */}
+          {/* Dr.AI on: he greets you, standing by, leaning in while you type (as Clara in the reference). */}
+          {drai && (
+            <div className="chat-drawer__drai">
+              <MascotClip state={typing || voice ? 'listening' : 'idle'} width={104} intro />
+            </div>
+          )}
           <h3>How can I help?</h3>
+          {drai && <p className="chat-drawer__lead">Ask anything about what you’re looking at.</p>}
           <ul className="chats-start__list chat-drawer__list">
             {(topic ? topic.questions.map((q) => ({ ...q, hint: '' })) : suggestedPrompts.slice(0, 4)).map((p) => (
               <li key={p.label}>
@@ -76,13 +90,17 @@ export function ChatDrawer({ open, onClose, initial, topic }: { open: boolean; o
           </ul>
         </div>
         <footer className="chat-drawer__foot">
-          <Composer
-            autoFocus
-            initial={initial}
-            placeholder="Ask Spark"
-            onSubmit={(text, attachments) => start(text, attachments)}
-          />
-          <p className="chat-drawer__note">Spark AI can make mistakes. Check important info.</p>
+          <BeamEdge>
+            <Composer
+              autoFocus
+              initial={initial}
+              placeholder={drai ? 'Ask Dr.AI' : 'Ask Spark'}
+              onTyping={setTyping}
+              onVoice={setVoice}
+              onSubmit={(text, attachments) => start(text, attachments)}
+            />
+          </BeamEdge>
+          <p className="chat-drawer__note">{drai ? 'Dr.AI' : 'Spark AI'} can make mistakes. Check important info.</p>
         </footer>
       </aside>
     </>,

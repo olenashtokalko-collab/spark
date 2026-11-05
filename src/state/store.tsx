@@ -193,12 +193,16 @@ function useStoreValue() {
       const steps = answer.steps ?? [];
       for (let i = 0; i < steps.length; i++) {
         updateMessage(convId, msgId, { steps: steps.slice(0, i + 1) });
-        await wait(520 + Math.random() * 380);
+        // Longer steps (5 Nov): Dr.AI's thinking (hand to the chin, a full loop) plays out before he answers.
+        await wait(1400 + Math.random() * 500);
         if (fail && i === 1) {
           updateMessage(convId, msgId, { state: 'error', durationMs: Date.now() - started });
           return;
         }
       }
+      // At least ~6.5s of thinking, however few the steps.
+      const thought = Date.now() - started;
+      if (thought < 6500) await wait(6500 - thought);
       updateMessage(convId, msgId, { state: 'streaming' });
       const words = (answer.text ?? '').split(/(\s+)/);
       let out = '';

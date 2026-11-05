@@ -23,6 +23,7 @@ import { navigate, useRoute } from '../../lib/router';
 import { Avatar, cx } from '../ui/primitives';
 import { Popover } from '../ui/overlay';
 import { CreditRing, CreditsOverlay, TopUpDialog } from './Credits';
+import { DrAiNavIcon, useDrAi } from '../ui/DrAi';
 import { fmtRelative } from '../../lib/format';
 import type { Notification } from '../../data/types';
 
@@ -107,6 +108,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       return !o;
     });
   const tip = (label: string) => (railOpen ? undefined : label);
+  const drai = useDrAi();
 
   // The sidebar holds everything around the work: logo, sections, notifications, and the person with
   // their company at the foot (feedback 21 Oct). The page sits beside it on its own rounded panel.
@@ -134,7 +136,10 @@ export function AppShell({ children }: { children: ReactNode }) {
             {railOpen ? <PanelLeftClose size={18} strokeWidth={1.7} /> : <PanelLeftOpen size={18} strokeWidth={1.7} />}
           </button>
         </div>
-        {navFor(route.path, route.query).map((n) => {
+        {navFor(route.path, route.query)
+          // Dr.AI on (#/demo/mascot): Chats leaves the list and comes back under a line as Ask Dr.AI.
+          .filter((n) => !(drai && n.path.startsWith('/assistant')))
+          .map((n) => {
           const active = n.match(route.path);
           const count = n.path === '/requests' ? counts.requests : n.path === '/documents' ? counts.documents : 0;
           return (
@@ -152,6 +157,22 @@ export function AppShell({ children }: { children: ReactNode }) {
             </a>
           );
         })}
+        {/* Dr.AI on: Spark's assistant apart from the sections, under a fine line, his head for its icon (after
+            the Clara AI reference, 5 Nov). */}
+        {drai && (
+          <>
+            <span className="rail__rule" aria-hidden />
+            <a
+              href="#/assistant"
+              className={cx('rail__btn rail__btn--drai', route.path.startsWith('/assistant') && 'is-active')}
+              aria-current={route.path.startsWith('/assistant') ? 'page' : undefined}
+              data-tip={tip('Ask Dr.AI')}
+            >
+              <DrAiNavIcon size={30} />
+              <span className="rail__label">Ask Dr.AI</span>
+            </a>
+          </>
+        )}
         {/* Notifications and the account sit at the foot, away from the daily sections. */}
         <span className="rail__end">
           <Notifications labels={railOpen} />

@@ -2,16 +2,19 @@
 // column of full-width cards, the company's description takes the top, the issues are paged one at a time and what
 // waits on the client is not on it. Four directions on the same data: A two columns, B brand health first, C Home and
 // Brand Analysis apart (two pages), and C+A, the recommendation.
-import { ArrowLeft, ArrowRight, Check, Plus, Globe, Instagram, Linkedin, Music2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Check, ChevronDown, Globe, Instagram, Linkedin, Music2 } from 'lucide-react';
+import { CreditRing, CreditsCard, TopUpDialog } from '../../components/layout/Credits';
 import { useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { useToast } from '../../components/ui/toast';
 import { navigate, useRoute } from '../../lib/router';
-import { PageHeader, cx } from '../../components/ui/primitives';
-import { createContext, useContext, useEffect, type ReactNode } from 'react';
+import { Avatar, PageHeader, cx } from '../../components/ui/primitives';
+import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { SparkDisc } from '../../components/ui/BrandSpark';
 import { SparkStar } from '../../components/ui/SparkStar';
 import { AnalysisView } from '../home/AnalysisLooks';
+import { AskButton, useDrAi } from '../../components/ui/DrAi';
+import { ChatDrawer } from '../assistant/ChatDrawer';
 import { ANALYSIS_ICON } from '../assistant/Home';
 import { GlassTabs } from '../../components/ui/GlassTabs';
 import { analyses } from '../../data/mock';
@@ -293,6 +296,9 @@ function ProfileSide() {
 
 /** F: the company card, its channels as round icons (after the client's reference); each opens the report on it. */
 function CompanyCard({ m, tabs, channels = true, team }: { m: Model; tabs?: ReactNode; channels?: boolean; team?: boolean }) {
+  const [chat, setChat] = useState(false);
+  // Dr.AI on: Ask lives in the menu ("Ask Dr.AI"), so the card drops its own (5 Nov).
+  const drai = useDrAi();
   const social = REPORTS.find((a) => a.kind === 'social');
   const web = REPORTS.find((a) => a.kind === 'website');
   const chans: [typeof Globe, string, CompanyAnalysis | undefined][] = [
@@ -325,9 +331,8 @@ function CompanyCard({ m, tabs, channels = true, team }: { m: Model; tabs?: Reac
       </span>
       <span className="hld-co__acts">
         <CreditsIndicator />
-        <button type="button" className="hl-mchat">
-          <SparkDisc size={28} /> Ask Spark
-        </button>
+        {!drai && <AskButton onClick={() => setChat(true)} />}
+        <ChatDrawer open={chat} onClose={() => setChat(false)} />
       </span>
       </div>
       {tabs}
@@ -878,9 +883,10 @@ function NeedsYou({ m }: { m: Model }) {
 function Latest() {
   return (
     <section className="hld-card">
-      {/* No "View all" (5 Nov): there's no history to open yet, so the card shows the last five. */}
+      {/* No "View all" (5 Nov): there's no history to open yet, so the card shows the last four (the team card
+          sits under it). */}
       <h3 className="hld-title">Latest from Spark</h3>
-      <LatestFromSpark bare limit={5} typed />
+      <LatestFromSpark bare limit={4} typed />
     </section>
   );
 }
@@ -918,11 +924,109 @@ const DEMO_PATHS: GPaths = {
 const PORTAL_PATHS: GPaths = { ba: '/brand-analysis', profile: '/brand-analysis?tab=profile', report: (k) => `/brand-analysis/${k}` };
 const GPathsCtx = createContext<GPaths>(DEMO_PATHS);
 
+/** Home's head (5 Nov): as every other page's, on the ground with no card: "Home" and a line on what the page
+ *  holds; the credits on the right where other pages keep their action. */
+function GHomeHead({ m }: { m: Model }) {
+  const [chat, setChat] = useState(false);
+  const drai = useDrAi();
+  return (
+    <header className="hld-page hld-page--home">
+      <span className="hld-page__text">
+        <h1 className="hld-greet">Home</h1>
+        <p>{m.brand.name} at a glance: what Spark found, what needs you, and what’s new.</p>
+      </span>
+      <span className="hld-page__acts">
+        <HomeCredits />
+        {!drai && <AskButton onClick={() => setChat(true)} />}
+        <ChatDrawer open={chat} onClose={() => setChat(false)} />
+      </span>
+    </header>
+  );
+}
+
+/** The credits on Home's head (5 Nov): plain text on one line: a small ring of what's left, the balance,
+ *  "credits" and a chevron that turns up while the breakdown (with Top up) is open. No hover; a click opens and
+ *  closes it, Escape or a click elsewhere closes it too. */
+function HomeCredits() {
+  const { state } = useStore();
+  const [open, setOpen] = useState(false);
+  const [topUp, setTopUp] = useState(false);
+  const box = useRef<HTMLSpanElement>(null);
+  const left = state.credits;
+  const total = state.creditsTotal;
+  const usd = (n: number) => `USD ${n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+  useEffect(() => {
+    if (!open) return;
+    const down = (e: MouseEvent) => !box.current?.contains(e.target as Node) && setOpen(false);
+    const key = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    document.addEventListener('mousedown', down);
+    window.addEventListener('keydown', key);
+    return () => {
+      document.removeEventListener('mousedown', down);
+      window.removeEventListener('keydown', key);
+    };
+  }, [open]);
+  return (
+    <span ref={box} className={cx('hld-credits', open && 'is-open', left < total * 0.2 && 'is-low')}>
+      <button type="button" className="hld-credits__main" aria-expanded={open} aria-controls="hld-credits-card" onClick={() => setOpen((o) => !o)}>
+        <CreditRing left={left} total={total} size={16} stroke={2.5} />
+        <b>{usd(left)}</b>
+        <span>credits</span>
+        <ChevronDown size={14} strokeWidth={2} className="hld-credits__chev" aria-hidden />
+      </button>
+      {open && (
+        <span className="hl-cind__card hld-credits__card" id="hld-credits-card" role="dialog" aria-label="Credits">
+          <CreditsCard
+            left={left}
+            total={total}
+            onTopUp={() => {
+              setOpen(false);
+              setTopUp(true);
+            }}
+          />
+        </span>
+      )}
+      <TopUpDialog open={topUp} onClose={() => setTopUp(false)} />
+    </span>
+  );
+}
+
+/** The team on Home (5 Nov): its own card under Latest from Spark, you first, then your colleagues, four at
+ *  most; View all opens the team. */
+function HomeTeamCard() {
+  const { state, me } = useStore();
+  const people = [me, ...state.people.filter((p) => p.org === 'client' && p.id !== me.id)];
+  return (
+    <section className="hld-card hld-teamcard">
+      <h3 className="hld-title">
+        {state.brand.name} team
+        <a className="hld-link" href="#/team?from=home">
+          View all <ArrowRight size={13} />
+        </a>
+      </h3>
+      <ul className="hld-team__list">
+        {people.slice(0, 4).map((p) => (
+          <li key={p.id}>
+            <Avatar person={p} size={32} />
+            <span>
+              <b>
+                {p.name}
+                {p.id === me.id && <i> · you</i>}
+              </b>
+              <span>{p.title}</span>
+            </span>
+          </li>
+        ))}
+      </ul>
+    </section>
+  );
+}
+
 function GHomeView({ m, empty }: { m: Model; empty?: boolean }) {
   const p = useContext(GPathsCtx);
   return (
     <>
-      <CompanyCard m={m} channels={false} team />
+      <GHomeHead m={m} />
       {/* 5 Nov, after review: the reports first (up to three, the rest in Brand Analysis), then what needs you; the
           latest from Spark beside them, a feed to glance at. */}
       <div className="hld-cols">
@@ -940,6 +1044,7 @@ function GHomeView({ m, empty }: { m: Model; empty?: boolean }) {
         </div>
         <aside className="hld-side">
           <Latest />
+          <HomeTeamCard />
         </aside>
       </div>
     </>
@@ -980,13 +1085,7 @@ function GBrandAnalysisView({ m, tab }: { m: Model; tab: 'overview' | 'profile' 
                 // The flow isn't designed yet (5 Nov): the card looks and feels clickable, a click says it's coming.
                 onClick={() => toast({ title: 'Requesting a report is coming soon.', tone: 'info' })}
               >
-                {/* As the Documents folders: the light on a back plate, frosted glass in front, the plus on the glass. */}
-                <span className="hld-new__icon" aria-hidden>
-                  <span className="hld-new__back" />
-                  <span className="hld-new__front">
-                    <Plus size={20} strokeWidth={2} />
-                  </span>
-                </span>
+                {/* No icon (5 Nov, review): the title and the line say it. */}
                 <b>Request a report</b>
                 <span>Your LinkedIn, a competitor, a campaign: ask Spark to look into anything, and the report appears here.</span>
               </button>

@@ -2,7 +2,9 @@ import { Fragment, useEffect, useState } from 'react';
 import { AlertCircle, ArrowRight, Check, Heart, ChevronDown, Copy, Globe, Inbox, Loader2, RotateCcw, FileText } from 'lucide-react';
 import type { Message, Source, Visual } from '../../data/types';
 import { Button, cx } from '../../components/ui/primitives';
+import { MascotClip } from '../demo/MascotDemo';
 import { SparkDisc } from '../../components/ui/BrandSpark';
+import { useDrAi } from '../../components/ui/DrAi';
 import { FileIcon, kindOf } from '../../components/domain';
 import { personById, TEAM_FOLDER, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
@@ -86,6 +88,8 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
   const [sourcesOpen, setSourcesOpen] = useState(false);
   const working = msg.state === 'thinking' || msg.state === 'streaming';
   const sources = msg.sources ?? [];
+  // Dr.AI off (the switch on #/demo/mascot): the chat as it was, Spark's disc and "On it".
+  const drai = useDrAi();
 
   // Workspace sources open in place; web sources are sample data, so the chip's tooltip is all there is.
   const openSource = (s: Source) => {
@@ -95,16 +99,31 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
 
   return (
     <div className="msg-ai">
-      {/* Spark's mark, the Ember spark on its disc as on Ask Spark (29 Oct); while Spark works the spark breathes. */}
-      <div className={cx('msg-ai__avatar', working && 'is-working')}>
-        <SparkDisc size={30} />
-      </div>
+      {/* Dr.AI, Spark's mascot (5 Nov, look L of #/demo/mascot): in full, with Sparki, while Spark works (thinking
+          while it researches, standing by while the answer writes itself); once the answer is in, the same clip zooms in to
+          his face and settles as the small avatar in its circle. Past answers hold him still. */}
+      {drai ? (
+        <div className={cx('msg-ai__avatar msg-ai__avatar--mascot', working && 'is-working')}>
+          <MascotClip
+            state={msg.state === 'thinking' ? 'thinking' : 'idle'}
+            crop={working ? 'body' : 'head'}
+            width={working ? 84 : 36}
+            shape={working ? 'free' : 'circle'}
+            className="msc-morph"
+            still={!working && !isLast}
+          />
+        </div>
+      ) : (
+        <div className={cx('msg-ai__avatar', working && 'is-working')}>
+          <SparkDisc size={30} />
+        </div>
+      )}
       <div className="msg-ai__body">
         {/* Research steps: live while working, collapsible once done */}
         {msg.state === 'thinking' ? (
           // One quiet line while Spark works: what it's doing, a live
           // timer; the steps open under it. The answer replaces it when it streams.
-          <Thinking steps={msg.steps ?? []} since={msg.at} open={stepsOpen} onToggle={() => setStepsOpen((o) => !o)} />
+          <Thinking steps={msg.steps ?? []} since={msg.at} open={stepsOpen} onToggle={() => setStepsOpen((o) => !o)} label={drai ? 'Thinking' : undefined} />
         ) : (
           msg.steps &&
           msg.steps.length > 0 && (
@@ -297,7 +316,7 @@ function VisualArt({ v }: { v: Visual }) {
 }
 
 /** "Thinking 5s ›": the current step (or "Thinking") shimmering, seconds since the question. */
-function Thinking({ steps, since, open, onToggle }: { steps: string[]; since: string; open: boolean; onToggle: () => void }) {
+function Thinking({ steps, since, open, onToggle, label: lead = 'On it' }: { steps: string[]; since: string; open: boolean; onToggle: () => void; label?: string }) {
   const [now, setNow] = useState(() => Date.now());
   useEffect(() => {
     const t = setInterval(() => setNow(Date.now()), 1000);
@@ -309,7 +328,7 @@ function Thinking({ steps, since, open, onToggle }: { steps: string[]; since: st
   return (
     <button className="thinking thinking--onit" onClick={onToggle} aria-expanded={open} aria-live="polite" disabled={!steps.length}>
       <span className="thk-glass thk-glass--warm thk-glass--tail">
-        On it
+        {lead}
         <span className="thk-dots" aria-hidden>
           <i />
           <i />
