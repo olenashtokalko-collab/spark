@@ -8866,3 +8866,373 @@ button.hld-link.chats-hist__new {
 :root[data-theme][data-theme] .hitem__more:hover {
   background: rgba(14, 17, 22, 0.06);
 }
+
+
+/* The small head drawn sharp (5 Nov): the canvas over the videos once he's settled; the videos stay underneath,
+   playing, and give it its frames. */
+.msc-clip__sharp {
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  width: 100%;
+  height: 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease;
+}
+.msc-clip.is-sharp .msc-clip__sharp {
+  opacity: 1;
+}
+.msc-clip.is-sharp video {
+  /* Hidden by a filter, not visibility, so the browser keeps playing and decoding them. */
+  filter: opacity(0);
+}
+
+/* U · Iridescent, no white light (6 Nov): L's rainbow ground (blue into lilac into pink into peach) on its own,
+   without the white bloom at the top or the glass glint. */
+img.drai-head.drai-head--irisflat {
+  background: linear-gradient(150deg, #9fb0ff 0%, #c8a6f5 40%, #f3a6c4 70%, #ffb58f 100%);
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.1), 0 6px 14px -8px rgba(40, 30, 90, 0.3);
+}
+
+/* Dr.AI in the menu (6 Nov, review): 26px, centred on the line icons' column (18px wide) and taking only its width,
+   so "Ask Dr.AI" starts where the other labels do and the row keeps its height. */
+:root[data-theme][data-theme] .rail__btn--drai img.drai-head {
+  margin: -4px;
+}
+
+/* E on light surfaces (6 Nov): the light circle keeps its edge with the menu's half-clear stroke. */
+:is(.rail, .chat-drawer header) img.drai-head.drai-head--light {
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.12), 0 4px 10px -6px rgba(40, 30, 90, 0.25);
+}
+
+/* ---- From the full figure to the small head (6 Nov demo) ----
+   One box: the figure (84px) while he works, the icon (36px) once the answer is in. The box itself shrinks with
+   the text beside it; each kind moves the two layers its own way. */
+.msc-settle {
+  position: relative;
+  display: block;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1), height 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.msc-settle.is-working {
+  width: 84px;
+  height: 106px;
+}
+.msc-settle.is-done {
+  width: 36px;
+  height: 36px;
+}
+.msc-settle__fig,
+.msc-settle__icon {
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+.msc-settle__fig {
+  transform-origin: 18px 18px;
+  transition: opacity 0.35s ease, transform 0.5s cubic-bezier(0.4, 0, 0.2, 1), filter 0.45s ease;
+}
+.msc-settle__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  opacity: 0;
+  transform: scale(0.6);
+  transition: opacity 0.3s ease 0.2s, transform 0.45s cubic-bezier(0.34, 1.56, 0.64, 1) 0.2s, filter 0.45s ease 0.15s;
+}
+.msc-settle.is-working .msc-settle__icon {
+  transition-delay: 0s;
+}
+.msc-settle.is-done .msc-settle__icon {
+  opacity: 1;
+  transform: none;
+}
+.msc-settle.is-done .msc-settle__fig {
+  opacity: 0;
+  pointer-events: none;
+}
+/* M: fade and pop. */
+.msc-settle--fade.is-done .msc-settle__fig {
+  transform: scale(0.85);
+}
+/* N: he sits down into the icon: the figure shrinks towards the avatar's place, the icon lands with a bounce. */
+.msc-settle--sit .msc-settle__fig {
+  transform-origin: 18px 30px;
+}
+.msc-settle--sit.is-done .msc-settle__fig {
+  transform: translateY(6px) scale(0.38);
+  transition: opacity 0.25s ease 0.3s, transform 0.5s cubic-bezier(0.5, 0, 0.3, 1);
+}
+.msc-settle--sit .msc-settle__icon {
+  transform: translateY(-6px) scale(0.85);
+  transition: opacity 0.2s ease 0.35s, transform 0.5s cubic-bezier(0.34, 1.7, 0.64, 1) 0.35s;
+}
+/* O: a ring of Spark's light draws round the icon as it appears, then fades. */
+@property --settle-a {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+.msc-settle__ring {
+  position: absolute;
+  inset: -3px;
+  border-radius: 50%;
+  padding: 2px;
+  background: conic-gradient(from -90deg, #5b6cf0, #b46cf0 35%, #f07ab0 65%, #ff7a59 calc(var(--settle-a) - 1deg), transparent var(--settle-a));
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  opacity: 0;
+}
+.msc-settle--ring.is-done .msc-settle__ring {
+  animation: msc-settle-ring 1.3s ease 0.2s both;
+}
+@keyframes msc-settle-ring {
+  0% { --settle-a: 0deg; opacity: 1; }
+  55% { --settle-a: 360deg; opacity: 1; }
+  100% { --settle-a: 360deg; opacity: 0; }
+}
+.msc-settle--ring .msc-settle__icon {
+  transform: scale(0.9);
+}
+/* P: blur dissolve. */
+.msc-settle--blur.is-done .msc-settle__fig {
+  filter: blur(8px);
+}
+.msc-settle--blur .msc-settle__icon {
+  transform: none;
+  filter: blur(8px);
+}
+.msc-settle--blur.is-done .msc-settle__icon {
+  filter: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .msc-settle,
+  .msc-settle * {
+    transition: none !important;
+    animation: none !important;
+  }
+}
+
+/* The head in the Ask pill (6 Nov, review): no ring of its own; Y's colour holds its edge, and the pill already
+   has its coloured rim. */
+:root[data-theme][data-theme] body .drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill img.drai-head.drai-head {
+  box-shadow: none;
+}
+
+/* Q · Sparki's flash (6 Nov, review): the flash brings the big figure in and takes it away. The flash sits over the
+   figure's box (84 x 106): a burst of light with Sparki popping in it; the figure fades in out of it as thinking
+   starts, and brightens away into it once the answer is in, the icon arriving as it fades. */
+.msc-settle__flash {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 84px;
+  height: 106px;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+  z-index: 3;
+}
+.msc-settle__flash.is-out {
+  width: 84px;
+  height: 84px;
+  top: -12px;
+  left: -24px;
+}
+.msc-settle__burst {
+  position: absolute;
+  inset: -10px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.95) 0%, rgba(200, 180, 255, 0.7) 28%, rgba(255, 150, 130, 0.35) 52%, transparent 70%);
+  opacity: 0;
+  transform: scale(0.3);
+  animation: msc-flash-burst 0.9s ease-out 0.12s both;
+}
+.msc-settle__sparki {
+  position: relative;
+  opacity: 0;
+  animation: msc-flash-sparki 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) 0.05s both;
+}
+@keyframes msc-flash-sparki {
+  0% { opacity: 0; transform: scale(0.2) rotate(-40deg); filter: brightness(1); }
+  35% { opacity: 1; transform: scale(1.15) rotate(10deg); filter: brightness(1.6) drop-shadow(0 0 6px rgba(160, 140, 255, 0.9)); }
+  65% { opacity: 1; transform: scale(1) rotate(0deg); filter: brightness(2.2) drop-shadow(0 0 10px #fff); }
+  100% { opacity: 0; transform: scale(1.5); filter: brightness(2.5); }
+}
+@keyframes msc-flash-burst {
+  0% { opacity: 0; transform: scale(0.3); }
+  50% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.35); }
+}
+/* The figure comes out of the flash, and goes into it. */
+.msc-settle--flash.is-working .msc-settle__fig {
+  animation: msc-flash-fig-in 0.7s ease 0.45s both;
+}
+.msc-settle--flash.is-done .msc-settle__fig {
+  animation: msc-flash-fig-out 0.55s ease both;
+}
+@keyframes msc-flash-fig-in {
+  0% { opacity: 0; transform: scale(0.9); filter: brightness(2.2) blur(3px); }
+  100% { opacity: 1; transform: none; filter: none; }
+}
+@keyframes msc-flash-fig-out {
+  0% { opacity: 1; filter: none; transform: none; }
+  60% { opacity: 0.8; filter: brightness(2.4) blur(2px); }
+  100% { opacity: 0; filter: brightness(3) blur(4px); transform: scale(0.92); }
+}
+.msc-settle--flash .msc-settle__icon {
+  transform: scale(0.9);
+  transition: opacity 0.35s ease 0.65s, transform 0.4s ease 0.65s;
+}
+.msc-settle--flash.is-working .msc-settle__icon {
+  transition: opacity 0.15s ease;
+}
+/* P2 · Blur and shrink. */
+.msc-settle--blurscale.is-done .msc-settle__fig {
+  filter: blur(8px);
+  transform: scale(0.45);
+}
+.msc-settle--blurscale .msc-settle__icon {
+  transform: scale(1.35);
+  filter: blur(8px);
+  transition: opacity 0.35s ease 0.2s, transform 0.55s cubic-bezier(0.4, 0, 0.2, 1) 0.15s, filter 0.5s ease 0.15s;
+}
+.msc-settle--blurscale.is-done .msc-settle__icon {
+  transform: none;
+  filter: none;
+}
+/* P3 · Blur through Spark's light. */
+.msc-settle__glow {
+  position: absolute;
+  left: -14px;
+  top: -14px;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(140, 130, 255, 0.55), rgba(240, 122, 176, 0.35) 45%, rgba(255, 140, 110, 0.15) 65%, transparent 72%);
+  filter: blur(4px);
+  opacity: 0;
+  pointer-events: none;
+}
+.msc-settle--blurglow.is-done .msc-settle__glow {
+  animation: msc-settle-glow 1.2s ease 0.1s both;
+}
+@keyframes msc-settle-glow {
+  0% { opacity: 0; transform: scale(0.6); }
+  40% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.15); }
+}
+.msc-settle--blurglow.is-done .msc-settle__fig {
+  filter: blur(8px);
+}
+.msc-settle--blurglow .msc-settle__icon {
+  transform: none;
+  filter: blur(8px);
+  transition: opacity 0.4s ease 0.3s, filter 0.6s ease 0.3s;
+}
+.msc-settle--blurglow.is-done .msc-settle__icon {
+  filter: none;
+}
+/* P4 · Slow blur, a little light. */
+.msc-settle--blurslow .msc-settle__fig {
+  transition: opacity 0.8s ease, filter 0.8s ease;
+}
+.msc-settle--blurslow.is-done .msc-settle__fig {
+  filter: blur(10px);
+}
+.msc-settle--blurslow .msc-settle__icon {
+  transform: none;
+  filter: blur(10px) brightness(1.25);
+  transition: opacity 0.7s ease 0.35s, filter 1s ease 0.35s;
+}
+.msc-settle--blurslow.is-done .msc-settle__icon {
+  filter: none;
+}
+/* The head in the Ask pill a little smaller (6 Nov): 22px, 7px in from the pill's edge. */
+:root[data-theme][data-theme] body .drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill {
+  padding-left: 7px;
+}
+
+/* R · Dr.AI pops like Sparki (6 Nov): the intro's pop (a bounce out of a soft bloom, a moment of glow, then calm)
+   for his big figure on the way in, the reverse on the way out, and a small pop for the icon. */
+.msc-settle--pop.is-working .msc-settle__fig {
+  animation: msc-pop-in 0.9s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+  transform-origin: 50% 60%;
+}
+.msc-settle--pop.is-done .msc-settle__fig {
+  animation: msc-pop-out 0.5s ease-in both;
+  transform-origin: 18px 18px;
+}
+@keyframes msc-pop-in {
+  0% { opacity: 0; transform: scale(0.35); filter: brightness(2.2) drop-shadow(0 0 18px rgba(255, 255, 255, 0.95)); }
+  45% { opacity: 1; transform: scale(1.06); filter: brightness(1.5) drop-shadow(0 0 16px rgba(170, 160, 255, 0.9)); }
+  75% { transform: scale(0.98); filter: brightness(1.12) drop-shadow(0 0 8px rgba(170, 160, 255, 0.5)); }
+  100% { opacity: 1; transform: none; filter: none; }
+}
+@keyframes msc-pop-out {
+  0% { opacity: 1; transform: none; filter: none; }
+  40% { opacity: 1; transform: scale(1.04); filter: brightness(1.6) drop-shadow(0 0 14px rgba(170, 160, 255, 0.9)); }
+  100% { opacity: 0; transform: scale(0.3); filter: brightness(2.4) drop-shadow(0 0 18px rgba(255, 255, 255, 0.9)); }
+}
+.msc-settle--pop .msc-settle__icon {
+  transform: none;
+  transition: none;
+}
+.msc-settle--pop.is-done .msc-settle__icon {
+  animation: msc-pop-icon 0.7s cubic-bezier(0.34, 1.56, 0.64, 1) 0.35s both;
+}
+@keyframes msc-pop-icon {
+  0% { opacity: 0; transform: scale(0.3); filter: brightness(2) drop-shadow(0 0 10px rgba(255, 255, 255, 0.95)); }
+  50% { opacity: 1; transform: scale(1.12); filter: brightness(1.4) drop-shadow(0 0 8px rgba(170, 160, 255, 0.8)); }
+  100% { opacity: 1; transform: none; filter: none; }
+}
+/* The bloom behind him: soft white into lavender, opening and fading. */
+.msc-settle__bloom {
+  position: absolute;
+  left: -18px;
+  top: -12px;
+  width: 120px;
+  height: 130px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(255, 255, 255, 0.9), rgba(190, 180, 255, 0.55) 45%, rgba(255, 160, 140, 0.18) 70%, transparent);
+  filter: blur(6px);
+  opacity: 0;
+  pointer-events: none;
+  z-index: -1;
+  animation: msc-pop-bloom 0.9s ease-out both;
+}
+.msc-settle__bloom.is-out {
+  left: -22px;
+  top: -22px;
+  width: 80px;
+  height: 80px;
+  animation-delay: 0.3s;
+}
+@keyframes msc-pop-bloom {
+  0% { opacity: 0; transform: scale(0.4); }
+  40% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(1.2); }
+}
+.msc-settle--pop {
+  isolation: isolate;
+}
+
+/* R in the chat (6 Nov): Sparki may circle him to the left, where the gutter is empty, but not over the answer;
+   an answer already done when it appears shows his head at once, without the pop. */
+.msc-settle--chat .msc-settle__fig {
+  clip-path: inset(-12% -6% -6% -60%);
+}
+.msc-settle--chat.is-settled .msc-settle__icon {
+  opacity: 1;
+  transform: none;
+  animation: none;
+}
+.msc-settle--chat .msc-settle__icon .msc-clip--circle {
+  box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.12);
+}
+/* The words closer to his head in the Ask pill (6 Nov): 5px between them. */
+:root[data-theme][data-theme] body .drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill {
+  gap: 5px;
+}

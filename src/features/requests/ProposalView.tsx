@@ -127,10 +127,9 @@ export function ProposalView({ requestId }: { requestId: string }) {
             <div className="proposal__headrow">
               <h1 className="proposal__title">{p.title}</h1>
               <div className="proposal__acts">
+                {/* Download first, as an icon (6 Nov), Ask Dr.AI at the end of the row, as the report's Ask sits at its right. */}
+                <Button size="sm" variant="secondary" icon={Download} onClick={exportProposal} aria-label="Download" data-tip="Download" />
                 <AskButton className="rq-ask" size={22} onClick={askSpark} />
-                <Button size="sm" variant="secondary" icon={Download} className="rq-new" onClick={exportProposal}>
-                  Download
-                </Button>
               </div>
             </div>
             <p className="proposal__sent">

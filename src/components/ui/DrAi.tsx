@@ -48,6 +48,12 @@ export const HEAD_CROPS = {
   head: { x: 350, y: 120, w: 720 },
   // The chat avatar's own crop (MascotClip's head box), so the still and the live head match.
   avatar: { x: 362, y: 66, w: 676 },
+  // The menu's face (5 Nov, review): his face filling the dark circle, the headband at the top, the robe out of it.
+  navface: { x: 384, y: 108, w: 654 },
+  // Closer still (6 Nov): the face and glasses fill the circle, the headband at its top edge.
+  close: { x: 452, y: 200, w: 520 },
+  // Closest: the screen face alone, glasses edge to edge.
+  closest: { x: 488, y: 238, w: 448 },
   // Tight, as the lookbook's tile: the headband cut at the top, the face filling the width, the collar below.
   tight: { x: 418, y: 178, w: 576 },
   // Closer: the screen face and glasses, the headdress only at the edges.
@@ -163,13 +169,18 @@ export const ICON_LOOKS = [
   { id: 'expr-circle', label: 'A · Expression, circle', crop: 'expression', look: 'circle light' },
   { id: 'expr-square', label: 'B · Expression, rounded square', crop: 'expression', look: 'square light' },
   { id: 'expr-dark', label: 'C · Expression, dark tile', crop: 'tile', look: 'square dark' },
-  { id: 'expr-dark-circle', label: 'F · Expression, dark circle', crop: 'round', look: 'circle dark' },
+  { id: 'expr-dark-circle', label: 'F · Expression, dark circle', crop: 'navface', look: 'circle dark' },
   { id: 'head-clear', label: 'G · Just the head, no frame', crop: 'head', look: 'clear' },
   { id: 'wide-soft', label: 'H · As the empty state, still', crop: 'wide', look: 'circle soft' },
   { id: 'wide-bubble', label: 'I · Bubble, blue', crop: 'wide', look: 'circle bubble' },
   { id: 'bubble-pearl', label: 'J · Bubble, pearl', crop: 'wide', look: 'circle bubble pearl' },
   { id: 'bubble-peach', label: 'K · Bubble, peach', crop: 'wide', look: 'circle bubble peach' },
   { id: 'bubble-iris', label: 'L · Bubble, iridescent', crop: 'wide', look: 'circle bubble iris' },
+  { id: 'iris-flat', label: 'U · Iridescent, no white light', crop: 'wide', look: 'circle irisflat' },
+  { id: 'close-dark', label: 'V · Close face, dark circle', crop: 'close', look: 'circle dark' },
+  { id: 'close-iris', label: 'W · Close face, iridescent', crop: 'close', look: 'circle irisflat' },
+  { id: 'closest-dark', label: 'X · Closest, dark circle', crop: 'closest', look: 'circle dark' },
+  { id: 'closest-iris', label: 'Y · Closest, iridescent', crop: 'closest', look: 'circle irisflat' },
   { id: 'bubble-graphite', label: 'M · Bubble, graphite', crop: 'wide', look: 'circle bubble graphite' },
   { id: 'wide-frost', label: 'N · Clear glass (the chat avatar, see-through)', crop: 'wide', look: 'circle frost' },
   { id: 'sq-navy', label: 'O · Tile, lookbook navy', crop: 'tight', look: 'square dark rim' },
@@ -183,14 +194,15 @@ export const ICON_LOOKS = [
   { id: 'wide-circle', label: 'Now · Whole head, circle', crop: 'wide', look: 'circle light' },
 ] as const satisfies readonly { id: string; label: string; crop: CropKey; look: string }[];
 export type IconLookId = (typeof ICON_LOOKS)[number]['id'];
-// v2 (5 Nov): the menu icon is the chat avatar's circle now; a choice saved before that is set aside.
-const ICON_KEY = 'spark-drai-icon-v2';
+// v5 (6 Nov): Dr.AI's head is Y, his screen face closest on the iridescent ground; a choice saved before that is
+// set aside.
+const ICON_KEY = 'spark-drai-icon-v5';
 function iconNow(): IconLookId {
   try {
     const v = localStorage.getItem(ICON_KEY);
-    return ICON_LOOKS.some((l) => l.id === v) ? (v as IconLookId) : 'chat-avatar';
+    return ICON_LOOKS.some((l) => l.id === v) ? (v as IconLookId) : 'closest-iris';
   } catch {
-    return 'chat-avatar';
+    return 'closest-iris';
   }
 }
 export function setDrAiIcon(id: IconLookId) {
@@ -262,7 +274,7 @@ export function AskButton({ onClick, className, about }: { onClick: () => void; 
   const on = useDrAi();
   return (
     <button type="button" className={['hl-mchat drai-pill', className].filter(Boolean).join(' ')} onClick={onClick} aria-label={`${on ? 'Ask Dr.AI' : 'Ask Spark'}${about ? ` ${about}` : ''}`}>
-      {on ? <DrAiHead size={26} /> : <SparkDisc size={26} />}
+      {on ? <DrAiHead size={22} /> : <SparkDisc size={22} />}
       {on ? 'Ask Dr.AI' : 'Ask Spark'}
     </button>
   );
@@ -274,7 +286,7 @@ export function AskPill({ onClick, className }: { onClick: () => void; className
   const on = useDrAi();
   return (
     <button type="button" className={['hl-mchat drai-pill', className].filter(Boolean).join(' ')} onClick={onClick}>
-      {on ? <DrAiHead size={26} /> : <SparkDisc size={26} />}
+      {on ? <DrAiHead size={22} /> : <SparkDisc size={22} />}
       {on ? 'Ask Dr.AI' : 'Ask Spark'}
     </button>
   );

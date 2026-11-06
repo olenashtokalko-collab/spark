@@ -2,7 +2,7 @@ import { Fragment, useEffect, useState } from 'react';
 import { AlertCircle, ArrowRight, Check, Heart, ChevronDown, Copy, Globe, Inbox, Loader2, RotateCcw, FileText } from 'lucide-react';
 import type { Message, Source, Visual } from '../../data/types';
 import { Button, cx } from '../../components/ui/primitives';
-import { MascotClip } from '../demo/MascotDemo';
+import { ChatAvatar } from '../demo/MascotDemo';
 import { SparkDisc } from '../../components/ui/BrandSpark';
 import { useDrAi } from '../../components/ui/DrAi';
 import { FileIcon, kindOf } from '../../components/domain';
@@ -99,19 +99,13 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
 
   return (
     <div className="msg-ai">
-      {/* Dr.AI, Spark's mascot (5 Nov, look L of #/demo/mascot): in full, with Sparki, while Spark works (thinking
+      {/* Dr.AI, Spark's mascot (6 Nov, look R of #/demo/mascot): in full, with Sparki, while Spark works (thinking
           while it researches, standing by while the answer writes itself); once the answer is in, the same clip zooms in to
           his face and settles as the small avatar in its circle. Past answers hold him still. */}
       {drai ? (
         <div className={cx('msg-ai__avatar msg-ai__avatar--mascot', working && 'is-working')}>
-          <MascotClip
-            state={msg.state === 'thinking' ? 'thinking' : 'idle'}
-            crop={working ? 'body' : 'head'}
-            width={working ? 84 : 36}
-            shape={working ? 'free' : 'circle'}
-            className="msc-morph"
-            still={!working && !isLast}
-          />
+          {/* R (6 Nov): he pops in, in full, while Spark works, and pops into his small head once it's done. */}
+          <ChatAvatar state={msg.state === 'thinking' ? 'thinking' : 'idle'} working={working} still={!working && !isLast} />
         </div>
       ) : (
         <div className={cx('msg-ai__avatar', working && 'is-working')}>

@@ -7,7 +7,7 @@ import { ChatDrawer } from '../assistant/ChatDrawer';
 import { SparkStar } from '../../components/ui/SparkStar';
 import { SparkDisc } from '../../components/ui/BrandSpark';
 import { Composer } from '../assistant/Composer';
-import { DrAiHead, DrAiNavIcon, ICON_LOOKS, setDrAi, setDrAiIcon, useDrAi, useDrAiIcon } from '../../components/ui/DrAi';
+import { SparkiStill, DrAiHead, DrAiNavIcon, ICON_LOOKS, setDrAi, setDrAiIcon, useDrAi, useDrAiIcon } from '../../components/ui/DrAi';
 
 type State = 'idle' | 'listening' | 'thinking' | 'speaking';
 // The client's clips (5 Nov, public/brand/drai/): transparent WebM, 1440×1440, one per state, plus the way in and
@@ -147,11 +147,62 @@ export function MascotClip({
     }
   }, [state, still]);
 
+  // A small head drawn sharp (5 Nov, review: rough at 36px). The browser shrinks the 1440 clip to ~72 device
+  // pixels in one step and the fine lines (glasses, headband) break up; so once he has settled into a small head,
+  // a canvas draws the clip's head through a larger step first, then down, with high-quality smoothing, every frame
+  // (once for a still one). It fades in after the zoom from the figure has ended.
+  const sharp = crop === 'head' && width <= 64;
+  const cv = useRef<HTMLCanvasElement>(null);
+  const [hq, setHq] = useState(false);
+  useEffect(() => {
+    if (!sharp) {
+      setHq(false);
+      return;
+    }
+    const canvas = cv.current;
+    if (!canvas) return;
+    const dpr = Math.min(3, window.devicePixelRatio || 1);
+    const W = Math.round(width * dpr);
+    const H = Math.round(c.h * k * dpr);
+    canvas.width = W;
+    canvas.height = H;
+    const g = canvas.getContext('2d');
+    const mid = document.createElement('canvas');
+    mid.width = W * 3;
+    mid.height = H * 3;
+    const mg = mid.getContext('2d');
+    if (!g || !mg) return;
+    g.imageSmoothingQuality = 'high';
+    mg.imageSmoothingQuality = 'high';
+    let raf = 0;
+    let shown = false;
+    const draw = () => {
+      const v = [a.current, b.current].find((x) => x && x.style.opacity === '1' && x.readyState >= 2);
+      if (v) {
+        mg.clearRect(0, 0, mid.width, mid.height);
+        mg.drawImage(v, c.x, c.y, c.w, c.h, 0, 0, mid.width, mid.height);
+        g.clearRect(0, 0, W, H);
+        g.drawImage(mid, 0, 0, W, H);
+        if (!shown) {
+          shown = true;
+          setHq(true);
+        }
+      }
+      if (!still || !shown) raf = requestAnimationFrame(draw);
+    };
+    const t = window.setTimeout(() => (raf = requestAnimationFrame(draw)), still ? 0 : 750);
+    return () => {
+      window.clearTimeout(t);
+      cancelAnimationFrame(raf);
+    };
+  }, [sharp, still, width, c.x, c.y, c.w, c.h, k]);
+
   const vstyle = { width: FRAME * k, height: FRAME * k, left: -c.x * k, top: -c.y * k };
   return (
-    <span className={cx('msc-clip', `msc-clip--${crop}`, `msc-clip--${shape ?? (crop === 'head' ? 'circle' : 'free')}`, className)} style={{ width, height: c.h * k }} aria-hidden>
+    <span className={cx('msc-clip', `msc-clip--${crop}`, `msc-clip--${shape ?? (crop === 'head' ? 'circle' : 'free')}`, sharp && hq && 'is-sharp', className)} style={{ width, height: c.h * k }} aria-hidden>
       <video ref={a} muted playsInline preload="auto" style={vstyle} />
       <video ref={b} muted playsInline preload="auto" style={{ ...vstyle, opacity: 0 }} />
+      {sharp && <canvas ref={cv} className="msc-clip__sharp" />}
     </span>
   );
 }
@@ -506,6 +557,76 @@ function VFullMorph() {
     </Play>
   );
 }
+// ---- From the full figure to the small head (6 Nov): ways for Dr.AI to settle once the answer is in ----
+type Settle = 'fade' | 'sit' | 'ring' | 'blur' | 'flash' | 'pop' | 'blurscale' | 'blurglow' | 'blurslow';
+function SettleAvatar({ kind, phase }: { kind: Settle; phase: Phase }) {
+  const working = phase !== 'done';
+  return (
+    <span className={cx('msc-settle', `msc-settle--${kind}`, working ? 'is-working' : 'is-done')}>
+      <span className="msc-settle__fig">
+        <MascotClip state={mood(phase)} width={84} />
+      </span>
+      <span className="msc-settle__icon">
+        <DrAiHead size={36} />
+        {kind === 'ring' && <span className="msc-settle__ring" aria-hidden />}
+      </span>
+      {/* Q: a flash with Sparki in it as the big figure appears (thinking starts) and again as it goes (the answer
+          is in); keyed so each plays from the start. */}
+      {kind === 'flash' && (
+        <span key={working ? 'in' : 'out'} className={cx('msc-settle__flash', working ? 'is-in' : 'is-out')} aria-hidden>
+          <span className="msc-settle__burst" />
+          <SparkiStill size={34} className="msc-settle__sparki" />
+        </span>
+      )}
+      {kind === 'blurglow' && <span className="msc-settle__glow" aria-hidden />}
+      {/* R: a soft bloom of light behind him as he pops, keyed so it plays on the way in and on the way out. */}
+      {kind === 'pop' && <span key={working ? 'in' : 'out'} className={cx('msc-settle__bloom', working ? 'is-in' : 'is-out')} aria-hidden />}
+    </span>
+  );
+}
+/** Dr.AI beside an answer in the chat (6 Nov, R): he pops in, in full, as Spark starts working (as Sparki pops in
+ *  the intro), thinks, and once the answer is in he glows and shrinks away while the menu's icon pops into his
+ *  place. An answer already done when it appears (older ones, a reload) shows the head at once. */
+export function ChatAvatar({ state, working }: { state: State; working: boolean; still?: boolean }) {
+  const fresh = useRef(working);
+  return (
+    <span className={cx('msc-settle msc-settle--pop msc-settle--chat', working ? 'is-working' : 'is-done', !fresh.current && 'is-settled')}>
+      {working || fresh.current ? (
+        <span className="msc-settle__fig">
+          <MascotClip state={working ? state : 'idle'} width={84} />
+        </span>
+      ) : null}
+      {/* The menu's icon (6 Nov): the same Dr.AI as the menu and the Ask buttons, sharp, still. */}
+      <span className="msc-settle__icon">
+        <DrAiHead size={36} />
+      </span>
+      {fresh.current && <span key={working ? 'in' : 'out'} className={cx('msc-settle__bloom', working ? 'is-in' : 'is-out')} aria-hidden />}
+    </span>
+  );
+}
+function VSettle({ kind }: { kind: Settle }) {
+  const p = usePlay();
+  return (
+    <Play p={p}>
+      <Thread avatar={<SettleAvatar kind={kind} phase={p.phase} />} working={p.phase === 'thinking' ? <OnIt step={p.step} label="Thinking" /> : <Researched />}>
+        <Text shown={p.shown} />
+      </Thread>
+    </Play>
+  );
+}
+const SETTLES = [
+  { title: 'L · Zoom into the face (now)', note: 'As the chat has it: the same clip zooms from the figure into his face and the circle closes round it. For comparison.', el: <VFullMorph /> },
+  { title: 'M · Fade, and the icon pops in', note: 'The figure fades and shrinks a little; the menu’s icon appears in its place with a small springy pop. Quick and clear: the same face you see in the menu.', el: <VSettle kind="fade" /> },
+  { title: 'N · He sits down into his icon', note: 'The figure shrinks down towards the avatar’s place, as if he sits down; the icon lands there with a soft bounce. The most character.', el: <VSettle kind="sit" /> },
+  { title: 'O · The figure goes, a ring draws the icon', note: 'The figure fades; Spark’s light draws a ring round the icon as it appears, then fades. Ties the settle to the chat box’s light.', el: <VSettle kind="ring" /> },
+  { title: 'P · Blur dissolve', note: 'The figure softens into a blur and away while the icon comes into focus out of one. The calmest.', el: <VSettle kind="blur" /> },
+  { title: 'Q · Sparki’s flash', note: 'As Sparki does in the intro, twice: when Dr.AI starts thinking, Sparki pops as a glowing star, flashes, and the big figure appears out of the flash; when the answer is in, a flash takes the figure away and the small icon is there as it fades.', el: <VSettle kind="flash" /> },
+  { title: 'R · Dr.AI pops like Sparki', note: 'Sparki’s own pop from the intro, given to Dr.AI: he appears with a bounce out of a soft bloom of light, glowing for a moment before he settles; when the answer is in he glows and shrinks away, and the small icon pops in the same way.', el: <VSettle kind="pop" /> },
+  { title: 'P2 · Blur and shrink', note: 'As P, and the figure also shrinks into the circle as it blurs; the icon comes into focus from a little larger. More sense of “he became this”.', el: <VSettle kind="blurscale" /> },
+  { title: 'P3 · Blur through Spark’s light', note: 'As P, with a soft glow of Spark’s colours behind the blur as one becomes the other, fading once the icon is sharp.', el: <VSettle kind="blurglow" /> },
+  { title: 'P4 · Slow blur, a little light', note: 'As P, slower (about a second), and the icon arrives a touch bright before it settles. The gentlest.', el: <VSettle kind="blurslow" /> },
+];
+
 const FULL = [
   { title: 'L · C + H: named, in full, settling into his head', note: 'While Spark works he stands in full beside the steps, the line says “Dr.AI is thinking”; when the answer is in, the same clip zooms in to his face and settles as the small live avatar in its circle, in one smooth move.', el: <VFullMorph /> },
   { title: 'G · The whole figure as the avatar', note: 'Dr.AI with Sparki, small, in the avatar’s place; thinking while Spark works, speaking while the text streams, standing by after. The most presence for the least change.', el: <VFullAvatar /> },
@@ -852,6 +973,8 @@ export function MascotDemo() {
       {cards(BEAMS)}
       <h2 className="msc-h2">While Spark answers</h2>
       {cards(ANSWERING)}
+      <h2 className="msc-h2">From the full figure to the small head</h2>
+      {cards(SETTLES)}
       <h2 className="msc-h2">While Spark answers · Dr.AI in full</h2>
       {cards(FULL)}
       <h2 className="msc-h2">Other places</h2>
