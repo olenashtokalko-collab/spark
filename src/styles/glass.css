@@ -9236,3 +9236,7 @@ img.drai-head.drai-head--irisflat {
 :root[data-theme][data-theme] body .drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill.drai-pill {
   gap: 5px;
 }
+/* Dr.AI in the menu a touch smaller (6 Nov): 24px, still centred on the icon column and taking its 18px. */
+:root[data-theme][data-theme] .rail__btn--drai img.drai-head {
+  margin: -3px;
+}

@@ -168,7 +168,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               aria-current={route.path.startsWith('/assistant') ? 'page' : undefined}
               data-tip={tip('Ask Dr.AI')}
             >
-              <DrAiNavIcon size={26} />
+              <DrAiNavIcon size={24} />
               <span className="rail__label">Ask Dr.AI</span>
             </a>
           </>
