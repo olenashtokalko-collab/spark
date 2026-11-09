@@ -95,7 +95,30 @@ const initial = (): State => ({
   },
 });
 
+// Signed out lasts only for this tab (9 Nov): every visit to the link opens the portal itself; the sign-in page shows
+// after Log out, and stays through reloads of that tab.
+const SIGNED_OUT = 'spark-signed-out';
+const signedOutHere = () => {
+  try {
+    return sessionStorage.getItem(SIGNED_OUT) === '1';
+  } catch {
+    return false;
+  }
+};
+const markSignedOut = (out: boolean) => {
+  try {
+    if (out) sessionStorage.setItem(SIGNED_OUT, '1');
+    else sessionStorage.removeItem(SIGNED_OUT);
+  } catch {
+    /* this page only */
+  }
+};
+
 function load(): State {
+  return { ...loadSaved(), signedIn: !signedOutHere() };
+}
+
+function loadSaved(): State {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
@@ -587,8 +610,14 @@ function useStoreValue() {
   );
 
   const setRequestLayout = useCallback((requestLayout: RequestLayout) => set(() => ({ requestLayout })), [set]);
-  const signOut = useCallback(() => set(() => ({ signedIn: false })), [set]);
-  const signIn = useCallback(() => set(() => ({ signedIn: true })), [set]);
+  const signOut = useCallback(() => {
+    markSignedOut(true);
+    set(() => ({ signedIn: false }));
+  }, [set]);
+  const signIn = useCallback(() => {
+    markSignedOut(false);
+    set(() => ({ signedIn: true }));
+  }, [set]);
   const seeDoc = useCallback((id: string) => set((s) => (s.seenDocs.includes(id) ? {} : { seenDocs: [...s.seenDocs, id] })), [set]);
   const topUp = useCallback((usd: number) => set((s) => ({ credits: s.credits + usd, creditsTotal: s.creditsTotal + usd })), [set]);
   const setTheme = useCallback((theme: Theme) => set(() => ({ theme })), [set]);
