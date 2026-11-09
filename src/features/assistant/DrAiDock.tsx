@@ -387,14 +387,41 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
   if (look === 'corner')
     return (
       <>
-        <div className="dk dk--corner" style={dragStyle}>
+        {/* What needs you, in the onboarding window's shape (9 Nov): a title and a count, one segment per thing (the
+            one shown lit, a click opens another), then its tag, Dr.AI's line and the way to act on it. */}
+        <div className="dk dk--corner dk--needs" style={dragStyle}>
           <div className="dk-card">
             <header className="dk-card__head">
-              <b>Dr.AI</b>
-              {tag}
-              {pager}
+              <b>Needs you</b>
+              <span className="dk-card__n">
+                {(i % msgs.length) + 1}/{msgs.length}
+              </span>
+              <span className="dk-card__sp" />
+              {msgs.length > 1 && (
+                <span className="dk-pager dk-pager--arrows">
+                  <button type="button" onClick={() => step(-1)} aria-label="Previous">
+                    <ChevronLeft size={15} />
+                  </button>
+                  <button type="button" onClick={() => step(1)} aria-label="Next">
+                    <ChevronRight size={15} />
+                  </button>
+                </span>
+              )}
               {fold}
             </header>
+            {msgs.length > 1 && (
+              <span className="og-stepper dk-pages" aria-hidden>
+                {msgs.map((x, k) => (
+                  <i
+                    key={x.key}
+                    className={cx(k === i % msgs.length && 'is-done')}
+                    style={{ ['--i' as string]: k, ['--of' as string]: msgs.length }}
+                    onClick={() => setI(k)}
+                  />
+                ))}
+              </span>
+            )}
+            <span className="dk-needs__tag">{tag}</span>
             {line}
             {acts}
           </div>

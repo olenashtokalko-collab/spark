@@ -6,13 +6,16 @@
 import { useEffect, useLayoutEffect, useRef, useState, type PointerEvent as RPointerEvent } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowRight } from 'lucide-react';
+import { AnalysisView } from '../home/AnalysisLooks';
+import { analyses } from '../../data/mock';
+import { CompactReports, ConsultCard } from '../demo/HomeCardsDemo';
 import { useRoute } from '../../lib/router';
 import { useStore, type State } from '../../state/store';
 import { cx } from '../../components/ui/primitives';
 import { SparkiStill } from '../../components/ui/DrAi';
 import { FactsCard, HomeCredits, ProfileFull } from '../demo/HomeRethinkDemo';
 import { navigate } from '../../lib/router';
-import { TeamLine } from '../home/HomeLayouts';
+import { LatestFromSpark, TeamLine } from '../home/HomeLayouts';
 import { MascotClip } from '../demo/MascotDemo';
 import { CreateRequestDialog, type RequestPrefill } from '../requests/CreateRequestDialog';
 
@@ -340,9 +343,12 @@ function WelcomeIntro() {
     const sc = to && from ? to.width / from.width : 0.6;
     setOut({ '--ix': `${tx}px`, '--iy': `${ty}px`, '--dx': `${tx - fx}px`, '--dy': `${ty - fy}px`, '--sc': `${sc}` });
   };
+  // The few seconds to read start once he is on screen (9 Nov, review: in a new browser the clip was still loading
+  // when the welcome left, so he never appeared). Until then his still stands in; after 9 s it goes on anyway.
+  const [ready, setReady] = useState(false);
   useEffect(() => {
     if (!show) return;
-    const t = setTimeout(leave, 4200);
+    const t = setTimeout(leave, ready ? 4200 : 9000);
     return () => clearTimeout(t);
   });
   // He lands at 1.15 s; then the flying figure and the corner one cross-fade in place (9 Nov, review: a blink when
@@ -365,7 +371,7 @@ function WelcomeIntro() {
       </span>
       <div ref={fig} className="og-intro__fig">
         <span className="og-intro__hop">
-          <MascotClip state="speaking" width={230} intro />
+          <MascotClip state="speaking" width={230} intro poster="/brand/drai/intro-still.webp" onReady={() => setReady(true)} />
           {/* He flies to his corner in a clear glass bubble that gathers round him on the way (9 Nov, demo E). */}
           <span className="og-intro__bubble" aria-hidden />
         </span>
@@ -397,10 +403,57 @@ function WelcomeIntro() {
   );
 }
 
+/** A report as Home's tab (9 Nov, the portal on the onboarding flow's tabs): the live report, its PDF copy in
+ *  Documents (Jean #26), the issues by impact as the deeper layer under the overview's figures (Jean #25). */
+function ReportTab({ kind, issue }: { kind: 'social' | 'website'; issue?: string }) {
+  const report = analyses.find((a) => a.kind === kind);
+  if (!report) return <ReportToCome kind={kind} />;
+  return (
+    <div className="og-report">
+      <span className="og-report__top">
+        <a className="hld-link hld-report-pdf" href={`#/documents/f-research?doc=d-rep-${kind}`}>
+          PDF copy in Documents · Research reports <ArrowRight size={13} />
+        </a>
+      </span>
+      <AnalysisView key={kind} a={report} look="cards" page focus={issue} />
+    </div>
+  );
+}
+
+/** The overview for a company past onboarding (9 Nov): the reports' figures in big type (Jean #22), the
+ *  consultation beside them (#22), the latest from Spark under them with Sparki by its title (#23). One level of
+ *  cards, nothing boxed twice (#20). */
+function FilledOverview() {
+  return (
+    <div className="og-full">
+      <div className="og-full__main">
+        <section className="og-full__sec">
+          <span className="og-eyebrow">Reports · October 2026</span>
+          <CompactReports />
+        </section>
+        {/* The same list as Home D (rows as tiles to click), Sparki by its title (Jean #23). */}
+        <section className="hc-card hd-fixes hd-latest og-full__latest">
+          <h3 className="hd-fixes__title og-full__latest-head">
+            <SparkiStill size={22} /> Latest from Spark
+          </h3>
+          <div className="hld-card hc-latest__list">
+            <LatestFromSpark bare limit={4} typed />
+          </div>
+        </section>
+      </div>
+      <aside className="og-full__side">
+        <ConsultCard look="ink" />
+      </aside>
+    </div>
+  );
+}
+
 export function OnboardingHome() {
   const { state } = useStore();
   const { query } = useRoute();
   const b = state.brand;
+  // The same Home for every company since 9 Nov: a new one sees what is to come, one past onboarding its reports.
+  const filled = !state.onboarding;
   const tab = (HOME_TABS.find(([k]) => k === query.get('tab'))?.[0] ?? 'overview') as HomeTab;
   // The underline slides from tab to tab (9 Nov, wave 1 of motion).
   const nav = useRef<HTMLElement>(null);
@@ -464,9 +517,10 @@ export function OnboardingHome() {
           </aside>
         </div>
       )}
-      {(tab === 'social' || tab === 'website') && <ReportToCome kind={tab} />}
+      {(tab === 'social' || tab === 'website') && (filled ? <ReportTab kind={tab} issue={query.get('issue') ?? undefined} /> : <ReportToCome kind={tab} />)}
 
-      {tab === 'overview' && (
+      {tab === 'overview' && filled && <FilledOverview />}
+      {tab === 'overview' && !filled && (
       <div className="og-later">
         {/* No reports yet (6 Nov): a new company has none until it asks for one. */}
         <section className="og-later__card">

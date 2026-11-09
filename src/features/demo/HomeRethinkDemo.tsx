@@ -1217,10 +1217,18 @@ function ProfilePage() {
   );
 }
 
+/** Old links (#/brand-analysis/website, ?tab=profile) open Home's tab since 9 Nov (the tabs Home). */
+function ToHomeTab({ tab, issue }: { tab: string; issue?: string | null }) {
+  useEffect(() => navigate(`/?tab=${tab}${issue ? `&issue=${encodeURIComponent(issue)}` : ''}`, { replace: true }), [tab, issue]);
+  return null;
+}
+
 export function GBrandAnalysisPage({ kind }: { kind?: string }) {
   const m = useModel(analyses);
   const { query } = useRoute();
   const empty = !!useStore().state.onboarding;
+  if (!empty && kind && REPORTS.some((a) => a.kind === kind)) return <ToHomeTab tab={kind} issue={query.get('issue')} />;
+  if (!empty && query.get('tab') === 'profile') return <ToHomeTab tab="profile" />;
   return (
     <GPathsCtx.Provider value={PORTAL_PATHS}>
       <div className="hld">

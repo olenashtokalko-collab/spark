@@ -50,7 +50,7 @@ import { AppShell } from './components/layout/AppShell';
 import { Invite } from './features/auth/Invite';
 import { ONBOARDING_ONLY, STORAGE_KEY, useStore } from './state/store';
 import { Assistant } from './features/assistant/Assistant';
-import { GHomePage, GBrandAnalysisPage } from './features/demo/HomeRethinkDemo';
+import { GBrandAnalysisPage } from './features/demo/HomeRethinkDemo';
 import { AnalysisPage } from './features/home/AnalysisPage';
 import { ComposerColorDemo } from './features/demo/ComposerColorDemo';
 import { NoteStripDemo } from './features/demo/NoteStripDemo';
@@ -68,13 +68,12 @@ import { navigate } from './lib/router';
 function Screen() {
   const { parts, query } = useRoute();
   const [section, a, b] = parts;
-  const onboarding = !!useStore().state.onboarding;
-
   switch (section) {
     case undefined:
     case 'home':
       // Onboarding (#/demo/dock): a new company's Home, the first steps.
-      return onboarding ? <OnboardingHome /> : <GHomePage />;
+      // One Home since 9 Nov, the onboarding flow's tabs: a new company sees what is to come, others their reports.
+      return <OnboardingHome />;
     // Brand Analysis, its own section since 5 Nov: #/brand-analysis (?tab=profile) and a report, #/brand-analysis/social.
     case 'brand-analysis':
       return <GBrandAnalysisPage kind={a} />;

@@ -61,6 +61,8 @@ export function MascotClip({
   className,
   still,
   intro,
+  poster,
+  onReady,
 }: {
   state: State;
   crop?: keyof typeof CROP;
@@ -71,6 +73,10 @@ export function MascotClip({
   still?: boolean;
   /** Open with the intro (Sparki flies out of his chest, circles his head and lights up), then the state. */
   intro?: boolean;
+  /** A still of the first frame (body crop), shown until a clip plays: a first visit loads megabytes of video. */
+  poster?: string;
+  /** Called once, when the first clip is on screen. */
+  onReady?: () => void;
 }) {
   const a = useRef<HTMLVideoElement>(null);
   const b = useRef<HTMLVideoElement>(null);
@@ -211,9 +217,25 @@ export function MascotClip({
     };
   }, [sharp, still, width, c.x, c.y, c.w, c.h, k]);
 
+  // On screen once either video plays (9 Nov: on a first visit the clips take seconds to arrive).
+  const [playing, setPlaying] = useState(false);
+  const readyRef = useRef(onReady);
+  readyRef.current = onReady;
+  useEffect(() => {
+    const vs = [a.current, b.current].filter(Boolean) as HTMLVideoElement[];
+    const on = () => {
+      setPlaying(true);
+      readyRef.current?.();
+      vs.forEach((v) => v.removeEventListener('playing', on));
+    };
+    vs.forEach((v) => v.addEventListener('playing', on));
+    return () => vs.forEach((v) => v.removeEventListener('playing', on));
+  }, []);
+
   const vstyle = { width: FRAME * k, height: FRAME * k, left: -c.x * k, top: -c.y * k };
   return (
     <span className={cx('msc-clip', `msc-clip--${crop}`, `msc-clip--${shape ?? (crop === 'head' ? 'circle' : 'free')}`, sharp && hq && 'is-sharp', className)} style={{ width, height: c.h * k }} aria-hidden>
+      {poster && crop === 'body' && <img className={cx('msc-clip__poster', playing && 'is-gone')} src={poster} alt="" draggable={false} />}
       <video ref={a} muted playsInline preload="auto" style={vstyle} />
       <video ref={b} muted playsInline preload="auto" style={{ ...vstyle, opacity: 0 }} />
       {sharp && <canvas ref={cv} className="msc-clip__sharp" />}

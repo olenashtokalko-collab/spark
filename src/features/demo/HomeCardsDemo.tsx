@@ -52,7 +52,8 @@ const web = REPORTS.find((a) => a.kind === 'website')!;
 const social = REPORTS.find((a) => a.kind === 'social')!;
 const ALL = fixes(REPORTS);
 const NAME: Record<string, string> = { social: 'Social media', website: 'Website' };
-const reportHref = (a: CompanyAnalysis) => `#/brand-analysis/${a.kind}`;
+// A report is a tab on Home since 9 Nov (the tabs Home, after the onboarding flow).
+const reportHref = (a: CompanyAnalysis) => `#/?tab=${a.kind}`;
 const webScore = parseInt(web.score?.value ?? '0', 10);
 
 function CardHead({ title, count, link }: { title: string; count?: number; link?: { label: string; href: string } }) {
@@ -320,7 +321,7 @@ function FinderArt() {
   );
 }
 
-function ConsultCard({ look }: { look: string }) {
+export function ConsultCard({ look }: { look: string }) {
   const { openRequest } = useUI();
   return (
     <section className={cx('hcs', `hcs--${look}`)}>
@@ -336,7 +337,7 @@ function ConsultCard({ look }: { look: string }) {
 
 /** D's report tiles, compact (9 Nov, review: B's figure cards, the metric under the figure). No bar: a score out of
  *  100 isn't progress. The tile is the link. */
-function CompactReports() {
+export function CompactReports() {
   const tiles = [
     { a: web, fig: <>{webScore}<i>/100</i></>, what: 'Mobile speed', delta: { up: true, text: '+6 since September' }, bench: undefined as string | undefined },
     { a: social, fig: <>{social.score?.value}</>, what: 'Engagement, Instagram', delta: { up: false, text: '−0.4 pt since September' }, bench: 'vs 1.9% typical for UAE retail' },
