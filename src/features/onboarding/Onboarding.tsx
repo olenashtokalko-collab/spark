@@ -388,9 +388,7 @@ function WelcomeIntro() {
               ? 'All four steps are done. Your workspace is ready.'
               : `${ob.count} of 4 steps done. Let’s pick up where you left off.`}
         </p>
-        <button type="button" className="dk-btn dk-btn--primary og-intro__go" onClick={leave}>
-          {back ? 'Carry on' : 'Let’s go'}
-        </button>
+        {/* No button (9 Nov, review): the welcome goes on its own after a few seconds, or on a click anywhere. */}
       </div>
     </div>,
     document.body,
