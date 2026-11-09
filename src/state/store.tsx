@@ -52,6 +52,12 @@ export interface State {
   prefs: Record<NotifKey, { inApp: boolean; email: boolean }>;
   /** Spark's files the client has opened; the others show as new in Latest from Spark on Home. */
   seenDocs: string[];
+  /** Prototype (6 Nov): a new company's first days, an empty portal with Dr.AI's onboarding (#/demo/dock). */
+  onboarding?: boolean;
+  /** Optional onboarding steps the client chose to skip. */
+  onboardingSkipped?: string[];
+  /** The tutorial is over (Finish): the account stays new, Dr.AI only reminds of what was put off. */
+  onboardingDone?: boolean;
 }
 
 export const STORAGE_KEY = 'spark-portal-v10';
@@ -102,6 +108,8 @@ function load(): State {
       const requests = missing(saved.requests, seed.requests);
       const proposals = missing(saved.proposals, seed.proposals);
       const notifications = missing(saved.notifications, seed.notifications);
+      // Onboarding: the empty portal stays empty; nothing from the seed is merged back in.
+      if (saved.onboarding) return { ...seed, ...saved, theme: 'sand', brand: seed.brand };
       // Light is the only theme for now (dark is switched off); saved demos open in it too.
       saved.theme = 'sand';
       // The company's profile is Spark's and the portal can't edit it, so its copy always comes from the seed.
@@ -586,6 +594,34 @@ function useStoreValue() {
   const setTheme = useCallback((theme: Theme) => set(() => ({ theme })), [set]);
   const setWeb = useCallback((web: boolean) => set(() => ({ web })), [set]);
   const setFailNext = useCallback((failNext: boolean) => set(() => ({ failNext })), [set]);
+  // Onboarding (6 Nov): the portal as a new company finds it: no requests, files, chats or invitations yet, the free
+  // 100 credits, the client's owner alone with Spark's team. reset() brings the full demo back.
+  const startOnboarding = useCallback(
+    () =>
+      set((s) => ({
+        onboarding: true,
+        onboardingSkipped: [],
+        onboardingDone: false,
+        requests: [],
+        proposals: [],
+        docs: [],
+        conversations: [],
+        notifications: [],
+        invitations: [],
+        seenDocs: [],
+        people: s.people.filter((p) => p.org === 'spark' || p.id === 'u-layla'),
+        credits: 100,
+        creditsTotal: 100,
+      })),
+    [set],
+  );
+  const skipStep = useCallback(
+    (key: string) => set((s) => ({ onboardingSkipped: [...(s.onboardingSkipped ?? []).filter((k) => k !== key), key] })),
+    [set],
+  );
+  const unskipStep = useCallback((key: string) => set((s) => ({ onboardingSkipped: (s.onboardingSkipped ?? []).filter((k) => k !== key) })), [set]);
+  // Finish (6 Nov): the tutorial goes, the new account stays as it is (still no reports, no seed data).
+  const endOnboarding = useCallback(() => set(() => ({ onboardingDone: true })), [set]);
   const reset = useCallback(() => {
     try {
       localStorage.removeItem(STORAGE_KEY);
@@ -628,6 +664,10 @@ function useStoreValue() {
       setWeb,
       setFailNext,
       reset,
+      startOnboarding,
+      endOnboarding,
+      skipStep,
+      unskipStep,
     },
   };
 }

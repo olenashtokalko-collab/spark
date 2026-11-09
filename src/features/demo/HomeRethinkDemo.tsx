@@ -13,6 +13,7 @@ import { createContext, useContext, useEffect, useRef, useState, type ReactNode 
 import { SparkDisc } from '../../components/ui/BrandSpark';
 import { SparkStar } from '../../components/ui/SparkStar';
 import { AnalysisView } from '../home/AnalysisLooks';
+import { NoReports } from '../onboarding/Onboarding';
 import { AskButton, useDrAi } from '../../components/ui/DrAi';
 import { ChatDrawer } from '../assistant/ChatDrawer';
 import { ANALYSIS_ICON } from '../assistant/Home';
@@ -947,7 +948,7 @@ function GHomeHead({ m }: { m: Model }) {
 /** The credits on Home's head (5 Nov): plain text on one line: a small ring of what's left, the balance,
  *  "credits" and a chevron that turns up while the breakdown (with Top up) is open. No hover; a click opens and
  *  closes it, Escape or a click elsewhere closes it too. */
-function HomeCredits() {
+export function HomeCredits() {
   const { state } = useStore();
   const [open, setOpen] = useState(false);
   const [topUp, setTopUp] = useState(false);
@@ -1051,7 +1052,7 @@ function GHomeView({ m, empty }: { m: Model; empty?: boolean }) {
   );
 }
 
-function GBrandAnalysisView({ m, tab }: { m: Model; tab: 'overview' | 'profile' }) {
+function GBrandAnalysisView({ m, tab, empty }: { m: Model; tab: 'overview' | 'profile'; empty?: boolean }) {
   const p = useContext(GPathsCtx);
   const toast = useToast();
   return (
@@ -1072,7 +1073,10 @@ function GBrandAnalysisView({ m, tab }: { m: Model; tab: 'overview' | 'profile' 
           ))}
         </nav>
       </header>
-      {tab === 'overview' ? (
+      {tab === 'overview' && empty ? (
+        // A new company (onboarding, 6 Nov): no reports until it asks for one.
+        <NoReports />
+      ) : tab === 'overview' ? (
         // The Reports tab (5 Nov): the report cards on the ground, no card around them nor a title repeating the tab.
         <section className="hld-ba-reports">
           <HealthCards
@@ -1142,13 +1146,14 @@ export function GHomePage() {
 export function GBrandAnalysisPage({ kind }: { kind?: string }) {
   const m = useModel(analyses);
   const { query } = useRoute();
+  const empty = !!useStore().state.onboarding;
   return (
     <GPathsCtx.Provider value={PORTAL_PATHS}>
       <div className="hld">
-        {kind ? (
+        {kind && !empty ? (
           <GReportView kind={kind} issue={query.get('issue') ?? undefined} />
         ) : (
-          <GBrandAnalysisView m={m} tab={query.get('tab') === 'profile' ? 'profile' : 'overview'} />
+          <GBrandAnalysisView m={m} tab={query.get('tab') === 'profile' ? 'profile' : 'overview'} empty={empty} />
         )}
       </div>
     </GPathsCtx.Provider>

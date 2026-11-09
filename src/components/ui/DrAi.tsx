@@ -105,47 +105,67 @@ function headStill(crop: CropKey): Promise<string> {
   return waits[crop]!;
 }
 
-/** Sparki on his own (5 Nov): cut from the same idle frame, everything right of Dr.AI's headdress (x > 1060),
- *  boxed square round where he is. Kept for the visit. */
+/** Sparki on his own (5 Nov; 6 Nov whole): cut from the same idle frame by his own shape, not by a straight line.
+ *  At this frame his left point reaches x ≈ 1030, past the headdress's edge, so a cut at x 1060 lost it. Now: find
+ *  him by colour right of the head, then take every opaque pixel joined to him (a flood fill on alpha); the gap of
+ *  clear air between him and the headdress keeps the head out. Boxed square round him with a little air. */
 let sparkiUrl: string | null = null;
 let sparkiWait: Promise<string> | null = null;
 function sparkiStill(): Promise<string> {
   if (sparkiUrl) return Promise.resolve(sparkiUrl);
   sparkiWait ??= frame().then((v) => {
-    const W = 720;
+    // The right part of the 1440 frame at full size: x 900–1440, y 0–800.
+    const X0 = 900, Y0 = 0, W = 540, H = 800;
     const probe = document.createElement('canvas');
-    probe.width = probe.height = W;
+    probe.width = W;
+    probe.height = H;
     const pg = probe.getContext('2d', { willReadFrequently: true })!;
-    pg.drawImage(v, 0, 0, W, W);
-    const d = pg.getImageData(0, 0, W, W).data;
-    let x0 = W, y0 = W, x1 = 0, y1 = 0;
-    // Sparki only: colourful pixels at his height, right of the headdress (the white cloth and the hands below
-    // stay out).
-    for (let y = 0; y < 330; y++)
-      for (let x = 535; x < W; x++) {
+    pg.drawImage(v, X0, Y0, W, H, 0, 0, W, H);
+    const img = pg.getImageData(0, 0, W, H);
+    const d = img.data;
+    // A seed inside him: the middle of the colourful pixels right of x 1100, above his shoulders.
+    let sx = 0, sy = 0, n = 0;
+    for (let y = 0; y < 700; y++)
+      for (let x = 200; x < W; x++) {
         const k = (y * W + x) * 4;
         const sat = Math.max(d[k], d[k + 1], d[k + 2]) - Math.min(d[k], d[k + 1], d[k + 2]);
-        if (d[k + 3] > 60 && sat > 60) {
-          if (x < x0) x0 = x;
-          if (y < y0) y0 = y;
-          if (x > x1) x1 = x;
-          if (y > y1) y1 = y;
+        if (d[k + 3] > 120 && sat > 70) {
+          sx += x;
+          sy += y;
+          n++;
         }
       }
-    // In the 1440 frame, a square round him with a little air.
-    const cx = (x0 + x1), cy = (y0 + y1);
-    const side = Math.max(x1 - x0, y1 - y0) * 2 * 1.25;
-    const S = 96;
+    sx = Math.round(sx / Math.max(1, n));
+    sy = Math.round(sy / Math.max(1, n));
+    // Flood fill from the seed over pixels with any real opacity.
+    const keep = new Uint8Array(W * H);
+    const stack = [sy * W + sx];
+    let x0 = W, y0 = H, x1 = 0, y1 = 0;
+    while (stack.length) {
+      const p = stack.pop()!;
+      if (keep[p] || d[p * 4 + 3] < 12) continue;
+      keep[p] = 1;
+      const x = p % W, y = (p - x) / W;
+      if (x < x0) x0 = x;
+      if (x > x1) x1 = x;
+      if (y < y0) y0 = y;
+      if (y > y1) y1 = y;
+      if (x > 0) stack.push(p - 1);
+      if (x < W - 1) stack.push(p + 1);
+      if (y > 0) stack.push(p - W);
+      if (y < H - 1) stack.push(p + W);
+    }
+    for (let p = 0; p < W * H; p++) if (!keep[p]) d[p * 4 + 3] = 0;
+    pg.putImageData(img, 0, 0);
+    // Square round him, 12% air each side.
+    const side = Math.max(x1 - x0, y1 - y0) * 1.24;
+    const cx = (x0 + x1) / 2, cy = (y0 + y1) / 2;
+    const S = 192;
     const c = document.createElement('canvas');
     c.width = c.height = S;
     const g = c.getContext('2d')!;
     g.imageSmoothingQuality = 'high';
-    g.beginPath();
-    const sx = cx - side / 2, sy = cy - side / 2;
-    // Only what lies right of the headdress.
-    g.rect(Math.max(0, ((1060 - sx) / side) * S), 0, S, S);
-    g.clip();
-    g.drawImage(v, sx, sy, side, side, 0, 0, S, S);
+    g.drawImage(probe, cx - side / 2, cy - side / 2, side, side, 0, 0, S, S);
     return (sparkiUrl = c.toDataURL('image/png'));
   });
   return sparkiWait;

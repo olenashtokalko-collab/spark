@@ -337,7 +337,15 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
               ))}
             </div>
           ) : (
-            <div className="file-list" role="table" aria-label="Files">
+            <div className="file-list rq-tbl file-tbl" role="table" aria-label="Files">
+              {/* Column labels as the Requests table (6 Nov): Diatype Mono, uppercase, on the rows' grid. */}
+              <div className="file-line file-cols" role="row">
+                <span role="columnheader">Name</span>
+                <span role="columnheader" className="hide-sm">{searching ? 'Folder' : 'Uploaded by'}</span>
+                <span role="columnheader" className="hide-sm">Added</span>
+                <span role="columnheader" className="hide-md file-tbl__num">Size</span>
+                <span aria-hidden />
+              </div>
               {files.map((d) => (
                 <FileListRow key={d.id} d={d} showFolder={searching} />
               ))}
@@ -389,10 +397,10 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
         <span className="faint hide-sm" role="cell">
           {showFolder ? state.folders.find((f) => f.id === d.folderId)?.name : by.name.split(' ')[0]}
         </span>
-        <span className="faint hide-sm" role="cell">
+        <span className="faint hide-sm mono" role="cell">
           {fmtRelative(d.uploadedAt)}
         </span>
-        <span className="faint hide-md mono" role="cell">
+        <span className="faint hide-md mono file-tbl__num" role="cell">
           {fmtSize(d.sizeKb)}
         </span>
         <span className="file-line__acts" role="cell">

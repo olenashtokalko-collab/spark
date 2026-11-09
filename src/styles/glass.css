@@ -9240,3 +9240,3575 @@ img.drai-head.drai-head--irisflat {
 :root[data-theme][data-theme] .rail__btn--drai img.drai-head {
   margin: -3px;
 }
+
+/* ---- Files in a folder as our tables (6 Nov) -------------------------------------------------------------------
+   The list view takes the Requests table: the same frosted card (.rq-tbl), column labels in Diatype Mono, uppercase
+   and tracked, 52px rows on full-width hairlines, the name in regular weight, date and size in mono. */
+:root[data-theme][data-theme] .file-list.file-tbl.file-tbl {
+  padding: 0;
+  gap: 0;
+  overflow: hidden;
+}
+:root[data-theme][data-theme] .file-tbl .file-line.file-line {
+  grid-template-columns: minmax(0, 1fr) 140px 90px 70px 72px;
+  column-gap: 20px;
+  min-height: 52px;
+  padding: 0 12px 0 16px;
+  border-radius: 0;
+  font-size: 14px;
+  box-shadow: inset 0 -1px 0 var(--line);
+  transition: background 0.15s;
+}
+:root[data-theme][data-theme] .file-tbl .file-line.file-line:last-child {
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .file-tbl .file-line.file-line:not(.file-cols):hover {
+  border-radius: 0;
+  background: var(--surface-hover);
+}
+:root[data-theme][data-theme] .file-tbl .file-line.file-cols {
+  min-height: 40px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  background: none;
+}
+:root[data-theme][data-theme] .file-tbl .file-line__main {
+  gap: 10px;
+  padding: 0;
+  min-height: 52px;
+  color: var(--text);
+}
+:root[data-theme][data-theme] .file-tbl .file-line__main svg {
+  flex: none;
+  color: var(--text-3);
+}
+:root[data-theme][data-theme] .file-tbl .file-line__name {
+  font-weight: 400;
+}
+:root[data-theme][data-theme] .file-tbl .file-line > .faint {
+  font-size: 13px;
+}
+:root[data-theme][data-theme] .file-tbl .file-line > .mono {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+}
+:root[data-theme][data-theme] .file-tbl .file-tbl__num {
+  text-align: right;
+}
+@media (max-width: 1100px) {
+  :root[data-theme][data-theme] .file-tbl .file-line.file-line {
+    grid-template-columns: minmax(0, 1fr) 120px 80px 72px;
+  }
+}
+@media (max-width: 720px) {
+  :root[data-theme][data-theme] .file-tbl .file-line.file-line {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+  :root[data-theme][data-theme] .file-tbl .file-line.file-cols {
+    display: none;
+  }
+}
+
+/* ---- File thumbnails as the folder cards (6 Nov) ---------------------------------------------------------------
+   Every thumbnail in the grid sits in the same frame as the folders above it: white frost at half, a white rim, a
+   soft shadow, 16px corners. A file with no preview (a zip) shows its icon on that frame, not on a grey that was lost
+   on the Sand; the page and sheet previews sit on it as before. On hover the shadow deepens, as on a folder. */
+:root[data-theme][data-theme] .file-card .file-card__thumb.file-card__thumb {
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    0 12px 32px -20px rgba(40, 30, 90, 0.16);
+}
+:root[data-theme][data-theme] button.file-card:hover .file-card__thumb.file-card__thumb {
+  box-shadow:
+    inset 0 0 0 1px #fff,
+    inset 0 1px 0 #fff,
+    0 18px 36px -18px rgba(40, 30, 90, 0.24);
+}
+:root[data-theme][data-theme] .file-card__thumb .doc-thumb__icon.doc-thumb__icon {
+  background: none;
+  color: var(--text-3);
+}
+
+/* ---- Sign-in with Dr.AI (6 Nov, #/demo/signin) -----------------------------------------------------------------
+   The page's left panel in four looks. Light: our haze, or Sand with the video's composition. Dark: the promo's
+   ground, a near-black navy with a Cobalt glow on the left and an Ember one on the right, a faint dot grid, a floor
+   shadow under his feet and the big gradient DR.AI (Cobalt → violet → Ember) behind him. */
+.sgd__bar {
+  position: fixed;
+  left: 50%;
+  bottom: 16px;
+  z-index: 50;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  max-width: calc(100vw - 32px);
+  padding: 4px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.08), 0 10px 30px -12px rgba(14, 17, 22, 0.3);
+}
+.sgd__tab {
+  height: 30px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font-size: 13px;
+  white-space: nowrap;
+  flex: none;
+  color: var(--text-2);
+}
+.sgd__tab:hover {
+  color: var(--text);
+  background: rgba(14, 17, 22, 0.05);
+}
+.sgd__tab.is-on {
+  color: #fff;
+  background: var(--ink, #0e1116);
+}
+.sgd__note {
+  flex: 0 0 280px;
+  padding: 0 12px 0 8px;
+  font-size: 12px;
+  line-height: 1.3;
+  color: var(--text-3);
+}
+@media (max-width: 1100px) {
+  .sgd__note {
+    display: none;
+  }
+}
+
+.sgd__sep {
+  flex: none;
+  width: 1px;
+  height: 18px;
+  margin: 0 4px;
+  background: rgba(14, 17, 22, 0.12);
+}
+.sgd__tab:disabled {
+  opacity: 0.4;
+}
+
+/* ---- Sign-in concepts, second round (6 Nov) --------------------------------------------------------------------
+   One idea per panel, nothing on top of anything. Light: Sand with a faint Cobalt glow at the top left and Ember at
+   the foot. Dark: the video's ground. */
+.sgx {
+  gap: 0;
+  isolation: isolate;
+}
+.sgx--light {
+  background:
+    radial-gradient(60% 40% at 0% 0%, rgba(60, 100, 240, 0.16), transparent 70%),
+    radial-gradient(70% 40% at 100% 100%, rgba(236, 106, 76, 0.18), transparent 70%),
+    #f6f2ec;
+}
+.sgx--dark {
+  color: #fff;
+  background:
+    radial-gradient(55% 50% at 10% 35%, rgba(40, 62, 150, 0.5), transparent 70%),
+    radial-gradient(55% 50% at 92% 75%, rgba(130, 52, 30, 0.45), transparent 70%),
+    linear-gradient(180deg, #0b0d18 0%, #07080f 100%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.06);
+}
+.sgx--dark::after {
+  opacity: 0.08;
+}
+.sgx--dark .signin-page__wordmark {
+  filter: invert(1);
+}
+.sgx-fig {
+  position: relative;
+}
+.sgx-name,
+.sgx-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.sgx--dark :is(.sgx-name, .sgx-eyebrow) {
+  color: rgba(255, 255, 255, 0.5);
+}
+.sgx-typed {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  text-align: left;
+}
+.sgx-typed__ghost {
+  color: transparent;
+}
+
+/* E · He says it. */
+.sgx-bubble {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+}
+.sgx-bubble__card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  width: min(380px, 100%);
+  padding: 18px 22px 20px;
+  border-radius: 22px 22px 22px 22px;
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), 0 18px 40px -24px rgba(40, 30, 90, 0.35);
+  color: var(--ink, #0e1116);
+  text-align: left;
+}
+/* The tail, pointing down at his head. */
+.sgx-bubble__card::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  bottom: -9px;
+  width: 18px;
+  height: 18px;
+  transform: translateX(-50%) rotate(45deg);
+  border-radius: 0 0 5px 0;
+  background: inherit;
+  box-shadow: inset -1px -1px 0 rgba(255, 255, 255, 0.95);
+}
+.sgx--dark .sgx-bubble__card {
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 18px 40px -24px rgba(0, 0, 0, 0.8);
+  color: #fff;
+}
+.sgx--dark .sgx-bubble__card::after {
+  background: #151827;
+  box-shadow: inset -1px -1px 0 rgba(255, 255, 255, 0.12);
+}
+
+/* F · Tiles. */
+.sgx-bento {
+  display: grid;
+  grid-template-columns: 1.35fr 1fr;
+  grid-template-rows: 1fr 1fr auto;
+  gap: 12px;
+  width: min(480px, 100%);
+}
+.sgx-tile {
+  position: relative;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), 0 12px 30px -22px rgba(40, 30, 90, 0.3);
+}
+.sgx--dark .sgx-tile {
+  background: linear-gradient(160deg, rgba(30, 34, 54, 0.85), rgba(13, 15, 26, 0.85));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 14px 30px -20px rgba(0, 0, 0, 0.8);
+}
+.sgx-tile--hero {
+  grid-row: 1 / 3;
+  padding: 18px 8px 40px;
+}
+.sgx-tile--sq {
+  aspect-ratio: 1;
+}
+.sgx-fill.msc-clip {
+  position: absolute;
+  inset: 0;
+  width: 100% !important;
+  height: 100% !important;
+}
+.sgx-tile__cap {
+  position: absolute;
+  z-index: 2;
+  left: 12px;
+  bottom: 10px;
+  display: flex;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--text-3);
+}
+.sgx-tile__cap b {
+  font-family: var(--font-mono);
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.sgx-tile--sq .sgx-tile__cap {
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.75);
+}
+.sgx--dark .sgx-tile__cap {
+  color: rgba(255, 255, 255, 0.5);
+}
+.sgx--dark .sgx-tile__cap b {
+  color: rgba(255, 255, 255, 0.85);
+}
+.sgx--dark .sgx-tile--sq .sgx-tile__cap {
+  background: rgba(10, 12, 22, 0.6);
+}
+.sgx-tile--text {
+  grid-column: 1 / 3;
+  place-items: start;
+  gap: 4px;
+  padding: 18px 20px;
+  text-align: left;
+}
+.sgx-tile--text h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  letter-spacing: -0.01em;
+}
+.sgx-tile--text p {
+  margin: 0;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.sgx--dark .sgx-tile--text p {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* G · Quiet. */
+.sgx-quiet {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.sgx-floor {
+  width: 200px;
+  height: 22px;
+  margin-top: -16px;
+  margin-bottom: 26px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(14, 17, 22, 0.2), transparent);
+  filter: blur(3px);
+}
+.sgx--dark .sgx-floor {
+  background: radial-gradient(closest-side, rgba(0, 0, 0, 0.75), transparent);
+}
+.sgx-title {
+  margin: 10px 0 0;
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 40px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.sgx-sub {
+  max-width: 340px;
+  margin: 12px 0 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+.sgx--dark .sgx-sub {
+  color: rgba(255, 255, 255, 0.65);
+}
+
+/* H · Chat. */
+.sgx-chat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  width: min(400px, 100%);
+}
+.sgx-chat__card {
+  width: 100%;
+  padding: 14px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.72);
+  -webkit-backdrop-filter: blur(18px);
+  backdrop-filter: blur(18px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), 0 18px 40px -24px rgba(40, 30, 90, 0.35);
+  color: var(--ink, #0e1116);
+  text-align: left;
+}
+.sgx--dark .sgx-chat__card {
+  background: rgba(255, 255, 255, 0.07);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.12), 0 18px 40px -24px rgba(0, 0, 0, 0.8);
+  color: #fff;
+}
+.sgx-chat__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 2px 10px;
+  font-size: 13px;
+}
+.sgx-chat__av {
+  display: grid;
+  width: 28px;
+  height: 28px;
+}
+.sgx-chat__on {
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--text-3);
+}
+.sgx-chat__on::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2eaf7d;
+}
+.sgx--dark .sgx-chat__on {
+  color: rgba(255, 255, 255, 0.5);
+}
+.sgx-chat__msg {
+  min-height: 64px;
+  padding: 12px 14px;
+  border-radius: 16px 16px 16px 6px;
+  background: rgba(14, 17, 22, 0.04);
+  font-size: 15px;
+  line-height: 1.45;
+}
+.sgx--dark .sgx-chat__msg {
+  background: rgba(255, 255, 255, 0.06);
+}
+.sgx-dots {
+  display: inline-flex;
+  gap: 4px;
+  padding: 6px 0;
+}
+.sgx-dots i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.35;
+  animation: sgx-dot 1s infinite;
+}
+.sgx-dots i:nth-child(2) {
+  animation-delay: 0.15s;
+}
+.sgx-dots i:nth-child(3) {
+  animation-delay: 0.3s;
+}
+@keyframes sgx-dot {
+  40% {
+    opacity: 0.9;
+    transform: translateY(-2px);
+  }
+}
+
+/* E · He says it, the bubble as the chat's "Thinking" (6 Nov): no separate arrow (its shadow flickered at the seam);
+   the tail is the small lower-left corner, his side, as on the chat's bubble. Clear glass: a gloss across the top,
+   a bright rim, a faint shade at the foot. It sits up and to the right of him, the small corner over his head. */
+.sgx--bubble .sgx-bubble {
+  gap: 14px;
+}
+.sgx--bubble .sgx-bubble__card {
+  width: 320px;
+  padding: 16px 20px 18px;
+  transform: translateX(80px);
+  border-radius: 22px 22px 22px 6px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.5) 0%, rgba(255, 255, 255, 0.06) 52%, rgba(255, 255, 255, 0.2) 100%);
+  -webkit-backdrop-filter: blur(6px) saturate(1.2);
+  backdrop-filter: blur(6px) saturate(1.2);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.8),
+    inset 0 7px 8px -7px rgba(255, 255, 255, 0.95),
+    inset 0 -4px 6px -4px rgba(14, 17, 22, 0.08),
+    0 0 0 0.5px rgba(14, 17, 22, 0.06),
+    0 4px 10px -6px rgba(14, 17, 22, 0.14);
+}
+.sgx--bubble .sgx-bubble__card::after {
+  content: none;
+}
+.sgx--bubble .sgx-fig {
+  transform: translateX(-40px);
+}
+.sgx--bubble .sgx-typed {
+  font-size: 18px;
+}
+/* Dark: the same bubble, its white kept faint so it stays glass on the navy. */
+.sgx--dark.sgx--bubble .sgx-bubble__card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0.03) 52%, rgba(255, 255, 255, 0.07) 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+    inset 0 7px 8px -7px rgba(255, 255, 255, 0.4),
+    inset 0 -4px 6px -4px rgba(0, 0, 0, 0.3),
+    0 6px 16px -8px rgba(0, 0, 0, 0.6);
+}
+
+/* E, one column (6 Nov): no wordmark; the bubble and Dr.AI on one centre line, the words centred in the bubble. */
+.sgx--bubble .sgx-bubble__card,
+.sgx--bubble .sgx-fig {
+  transform: none;
+}
+.sgx--bubble .sgx-bubble__card {
+  align-items: center;
+  text-align: center;
+}
+.sgx--bubble .sgx-typed {
+  text-align: center;
+}
+/* His body sits left of the clip's middle (the box leaves room for Sparki on his right): head centre x 700 against
+   the box's 810 in the 1440 frame, 110 × 270/1020 ≈ 29px at this size. Moved over, so he, not the box, is centred. */
+.sgx--bubble .sgx-fig.sgx-fig {
+  transform: translateX(29px);
+}
+
+/* His name in the bubble as the video writes it (6 Nov): "Dr.AI", not in caps, in the display type, filled with the
+   video's gradient (Cobalt → violet → Ember, as its "&"). */
+.sgx--bubble .sgx-name {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  text-transform: none;
+  background: linear-gradient(90deg, #4c6cf2 0%, #a45cf0 50%, #ec6a4c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.sgx--dark.sgx--bubble .sgx-name {
+  background: linear-gradient(90deg, #6f8bff 0%, #b77cff 50%, #ff8466 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Dark bubble, quieter (6 Nov): no shade along the foot and no drop shadow (they read as a dark band under it); the
+   rim and the top gloss at a fraction of the white, so the edge is a hint, not a line. */
+.sgx--dark.sgx--bubble .sgx-bubble__card {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.1),
+    inset 0 7px 8px -7px rgba(255, 255, 255, 0.18);
+}
+
+/* Even corners (6 Nov): the small lower-left corner asked for an avatar beside it; here he stands under the bubble,
+   so all four corners round alike. The dark fill in one smooth fade (the brighter foot read as a band). */
+.sgx--bubble .sgx-bubble__card.sgx-bubble__card {
+  border-radius: 22px;
+}
+.sgx--dark.sgx--bubble .sgx-bubble__card.sgx-bubble__card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.11) 0%, rgba(255, 255, 255, 0.05) 100%);
+}
+/* Light bubble without the shade along its foot and the drop shadow either (6 Nov): a rim and the top gloss only. */
+.sgx--light.sgx--bubble .sgx-bubble__card.sgx-bubble__card {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.8),
+    inset 0 7px 8px -7px rgba(255, 255, 255, 0.95);
+}
+
+/* E (6 Nov): no name over the words; the key words of each line in the video's gradient instead. Dr.AI stands
+   closer under the bubble and the pair sits a little higher in the panel. */
+.sgx--bubble .sgx-hl {
+  background: linear-gradient(90deg, #3c64f0 0%, #9a55ec 50%, #ec6a4c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.sgx--dark.sgx--bubble .sgx-hl {
+  background-image: linear-gradient(90deg, #6f8bff 0%, #b77cff 50%, #ff8466 100%);
+}
+.sgx--bubble .sgx-bubble {
+  gap: 0;
+  margin-top: -48px;
+}
+.sgx--bubble .sgx-fig.sgx-fig {
+  margin-top: -14px;
+}
+/* The bubble stays above the clip's box (its empty top overlapped the second line). */
+.sgx--bubble .sgx-bubble__card.sgx-bubble__card {
+  z-index: 3;
+}
+.sgx--bubble .sgx-fig.sgx-fig {
+  margin-top: -6px;
+}
+/* More air between the bubble and his head (6 Nov). */
+.sgx--bubble .sgx-fig.sgx-fig.sgx-fig {
+  margin-top: 18px;
+}
+/* Light bubble a shade whiter (6 Nov): at the chat's strength it melted into the Sand. Still glass, with its gloss. */
+.sgx--light.sgx--bubble .sgx-bubble__card.sgx-bubble__card {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.86) 0%, rgba(255, 255, 255, 0.62) 55%, rgba(255, 255, 255, 0.72) 100%);
+  -webkit-backdrop-filter: blur(10px) saturate(1.2);
+  backdrop-filter: blur(10px) saturate(1.2);
+  box-shadow:
+    inset 0 0 0 1px #fff,
+    inset 0 7px 8px -7px #fff,
+    0 0 0 0.5px rgba(14, 17, 22, 0.05);
+}
+
+/* I · Mix (6 Nov). He stands free (no box); two small squares at his side, no captions; the chat under them. */
+.sgx-mix {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 18px;
+  width: min(440px, 100%);
+}
+.sgx-mix__top {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+}
+.sgx-mix .sgx-fig {
+  transform: translateX(14px);
+}
+.sgx-mix__tiles {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.sgx-mix__sq {
+  position: relative;
+  display: block;
+  width: 112px;
+  height: 112px;
+  overflow: hidden;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), 0 10px 24px -18px rgba(40, 30, 90, 0.3);
+}
+.sgx--dark .sgx-mix__sq {
+  background: linear-gradient(160deg, rgba(30, 34, 54, 0.85), rgba(13, 15, 26, 0.85));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.08), 0 14px 30px -20px rgba(0, 0, 0, 0.8);
+}
+/* Sparki alone: his headdress (the box's left quarter) masked off; a spin every few seconds between the bobs. */
+.sgx-mix__spin {
+  position: absolute;
+  inset: 0;
+}
+/* The mask sits on the turning clip, so it turns with it and the headdress never swings into view. */
+.sgx-mix__spin .msc-clip {
+  -webkit-mask-image: linear-gradient(90deg, transparent 0 24%, #000 30%);
+  mask-image: linear-gradient(90deg, transparent 0 24%, #000 30%);
+  animation: sgx-spin 5s cubic-bezier(0.45, 0, 0.2, 1) infinite;
+  transform-origin: 50% 50%;
+}
+@keyframes sgx-spin {
+  0%,
+  70% {
+    transform: rotate(0deg) scale(1);
+  }
+  78% {
+    transform: rotate(200deg) scale(1.08);
+  }
+  86%,
+  100% {
+    transform: rotate(360deg) scale(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sgx-mix__spin .msc-clip {
+    animation: none;
+  }
+}
+.sgx-mix__chat {
+  width: 100%;
+}
+.sgx-mix__av {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+}
+.sgx-mix .sgx-hl {
+  background: linear-gradient(90deg, #3c64f0 0%, #9a55ec 50%, #ec6a4c 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.sgx--dark .sgx-mix .sgx-hl {
+  background-image: linear-gradient(90deg, #6f8bff 0%, #b77cff 50%, #ff8466 100%);
+}
+.sgx-mix .sgx-chat__msg {
+  min-height: 72px;
+}
+
+
+/* The peek (6 Nov): Dr.AI's head slips in from the tile's lower-left corner, tilted, settles, stays a while and
+   slips back out, on an 8s loop. The clip moves as one, so Sparki comes in with him. */
+.sgx-mix__sq--sparki .msc-clip.sgx-fill {
+  animation: sgx-peek 8s cubic-bezier(0.34, 1.2, 0.5, 1) infinite;
+  transform-origin: 0% 100%;
+}
+@keyframes sgx-peek {
+  0%,
+  6% {
+    transform: translate(-58px, 58px) rotate(-14deg);
+  }
+  20% {
+    transform: translate(-6px, 6px) rotate(-3deg);
+  }
+  26% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  78% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  92%,
+  100% {
+    transform: translate(-58px, 58px) rotate(-14deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sgx-mix__sq--sparki .msc-clip.sgx-fill {
+    animation: none;
+  }
+}
+
+/* The tile by turns (6 Nov). Two layers on one 10s clock: the first half Dr.AI's head (the head clip, so no Sparki
+   in it) leans in from the lower-left corner and stays, most of the head in view, blinking as the idle clip does;
+   the second half Sparki alone (the still cut-out) comes in from the upper-right, spins and leaves. */
+.sgx-mix__sq--turns .sgx-turn {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.sgx-turn--head {
+  animation: sgx-turn-head 10s cubic-bezier(0.34, 1.15, 0.5, 1) infinite;
+  transform-origin: 0% 100%;
+}
+.sgx-turn--head .msc-clip {
+  position: absolute;
+  inset: 0;
+}
+.sgx-turn--sparki {
+  animation: sgx-turn-sparki 10s cubic-bezier(0.34, 1.15, 0.5, 1) infinite;
+}
+.sgx-turn__spin {
+  display: block;
+  width: 64px;
+  height: 64px;
+  animation: sgx-turn-spin 10s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+  filter: drop-shadow(0 6px 10px rgba(60, 70, 200, 0.25));
+}
+.sgx-turn__spin img {
+  display: block;
+}
+@keyframes sgx-turn-head {
+  0% {
+    transform: translate(-80px, 80px) rotate(-16deg);
+  }
+  9% {
+    transform: translate(-10px, 12px) rotate(-3deg);
+  }
+  13%,
+  40% {
+    transform: translate(-14px, 16px) rotate(-5deg);
+  }
+  48%,
+  100% {
+    transform: translate(-80px, 80px) rotate(-16deg);
+  }
+}
+@keyframes sgx-turn-sparki {
+  0%,
+  50% {
+    transform: translate(104px, -104px);
+  }
+  59% {
+    transform: translate(-4px, 3px);
+  }
+  63%,
+  86% {
+    transform: translate(0, 0);
+  }
+  96%,
+  100% {
+    transform: translate(104px, -104px);
+  }
+}
+@keyframes sgx-turn-spin {
+  0%,
+  50% {
+    transform: rotate(40deg) scale(0.9);
+  }
+  59% {
+    transform: rotate(-8deg) scale(1.06);
+  }
+  64% {
+    transform: rotate(0deg) scale(1);
+  }
+  70% {
+    transform: rotate(0deg) scale(1);
+  }
+  80% {
+    transform: rotate(360deg) scale(1.08);
+  }
+  86% {
+    transform: rotate(360deg) scale(1);
+  }
+  96%,
+  100% {
+    transform: rotate(400deg) scale(0.9);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sgx-turn--head,
+  .sgx-turn--sparki,
+  .sgx-turn__spin {
+    animation: none;
+  }
+  .sgx-turn--sparki {
+    display: none;
+  }
+}
+.sgx-mix__av {
+  width: 22px;
+  height: 22px;
+}
+
+/* The head's turn, reworked (6 Nov). Sparki may drift into the head clip's corners, so the head layer is seen
+   through a soft round window (his head only). He leans in slowly ("here I am, curious who I am?"), stays, and
+   leans out as slowly, all the way out of the tile so not a thread of his headdress shows. */
+.sgx-turn--head.sgx-turn--head {
+  -webkit-mask-image: radial-gradient(circle at 50% 50%, #000 52%, transparent 64%);
+  mask-image: radial-gradient(circle at 50% 50%, #000 52%, transparent 64%);
+  animation: sgx-turn-head2 10s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+}
+@keyframes sgx-turn-head2 {
+  0%,
+  3% {
+    transform: translate(-140px, 140px) rotate(-14deg);
+  }
+  17% {
+    transform: translate(-12px, 14px) rotate(-4deg);
+  }
+  20% {
+    transform: translate(-10px, 12px) rotate(-2deg);
+  }
+  33% {
+    transform: translate(-12px, 14px) rotate(-5deg);
+  }
+  47%,
+  100% {
+    transform: translate(-140px, 140px) rotate(-14deg);
+  }
+}
+
+/* The turns, third pass (6 Nov). The head as it is in the clip: no round window (it blurred the headdress). The two
+   take over from each other without a gap: the head leans in, stays, leans out; Sparki comes straight in from the
+   upper right, hovers a beat, then spins faster and faster and shrinks away in the spin; the head again. */
+.sgx-turn--head.sgx-turn--head.sgx-turn--head {
+  -webkit-mask-image: none;
+  mask-image: none;
+  animation: sgx-turn-head3 10s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+}
+@keyframes sgx-turn-head3 {
+  0% {
+    transform: translate(-170px, 170px) rotate(-14deg);
+  }
+  14% {
+    transform: translate(-12px, 14px) rotate(-4deg);
+  }
+  18% {
+    transform: translate(-10px, 12px) rotate(-2deg);
+  }
+  32% {
+    transform: translate(-12px, 14px) rotate(-5deg);
+  }
+  46%,
+  100% {
+    transform: translate(-170px, 170px) rotate(-14deg);
+  }
+}
+.sgx-turn--sparki.sgx-turn--sparki {
+  animation: sgx-turn-sparki3 10s cubic-bezier(0.34, 1.15, 0.5, 1) infinite;
+}
+.sgx-turn__spin.sgx-turn__spin {
+  animation: sgx-turn-spin3 10s linear infinite;
+}
+@keyframes sgx-turn-sparki3 {
+  0%,
+  44% {
+    transform: translate(104px, -104px);
+  }
+  54%,
+  100% {
+    transform: translate(0, 0);
+  }
+}
+/* The spin speeds up as he shrinks: 0 → 90° over the hover, then 90 → 900° while the scale falls to nothing. */
+@keyframes sgx-turn-spin3 {
+  0%,
+  44% {
+    transform: rotate(30deg) scale(0.9);
+    opacity: 1;
+  }
+  54% {
+    transform: rotate(-6deg) scale(1.05);
+    animation-timing-function: ease-in-out;
+  }
+  66% {
+    transform: rotate(90deg) scale(1);
+    animation-timing-function: cubic-bezier(0.55, 0, 0.9, 0.6);
+  }
+  98% {
+    transform: rotate(900deg) scale(0);
+    opacity: 0.6;
+  }
+  98.1%,
+  100% {
+    transform: rotate(900deg) scale(0);
+    opacity: 0;
+  }
+}
+
+/* Turns, fourth pass (6 Nov). The head clip's box now clips its video: shifted into the corner, the video's edge
+   past the head box (where Sparki flies) had shown. An 8s round: the head leans in, stays, leans out; Sparki comes
+   in, hovers, spins twice quickly and goes out like a spark, a short flash of light where he was. */
+.sgx-turn--head .msc-clip {
+  overflow: hidden;
+}
+.sgx-turn--head.sgx-turn--head.sgx-turn--head.sgx-turn--head {
+  animation: sgx-turn-head4 8s cubic-bezier(0.45, 0, 0.25, 1) infinite;
+}
+@keyframes sgx-turn-head4 {
+  0% {
+    transform: translate(-170px, 170px) rotate(-14deg);
+  }
+  16% {
+    transform: translate(-12px, 14px) rotate(-4deg);
+  }
+  21% {
+    transform: translate(-10px, 12px) rotate(-2deg);
+  }
+  38% {
+    transform: translate(-12px, 14px) rotate(-5deg);
+  }
+  52%,
+  100% {
+    transform: translate(-170px, 170px) rotate(-14deg);
+  }
+}
+.sgx-turn--sparki.sgx-turn--sparki.sgx-turn--sparki {
+  animation: sgx-turn-sparki4 8s cubic-bezier(0.34, 1.15, 0.5, 1) infinite;
+}
+@keyframes sgx-turn-sparki4 {
+  0%,
+  48% {
+    transform: translate(104px, -104px);
+  }
+  58%,
+  100% {
+    transform: translate(0, 0);
+  }
+}
+.sgx-turn__spin.sgx-turn__spin.sgx-turn__spin {
+  animation: sgx-turn-spin4 8s linear infinite;
+}
+@keyframes sgx-turn-spin4 {
+  0%,
+  48% {
+    transform: rotate(30deg) scale(0.9);
+    opacity: 1;
+    filter: drop-shadow(0 6px 10px rgba(60, 70, 200, 0.25)) brightness(1);
+  }
+  58% {
+    transform: rotate(-6deg) scale(1.04);
+    animation-timing-function: ease-in-out;
+  }
+  64% {
+    transform: rotate(0deg) scale(1);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.6, 1);
+  }
+  80% {
+    transform: rotate(720deg) scale(1.05);
+    opacity: 1;
+    filter: drop-shadow(0 6px 10px rgba(60, 70, 200, 0.25)) brightness(1);
+    animation-timing-function: ease-out;
+  }
+  84% {
+    transform: rotate(760deg) scale(1.35);
+    opacity: 0;
+    filter: drop-shadow(0 0 14px rgba(160, 120, 255, 0.9)) brightness(2.6);
+  }
+  84.1%,
+  100% {
+    transform: rotate(760deg) scale(0);
+    opacity: 0;
+  }
+}
+/* The flash: a small burst of light where he was, gone in a breath. */
+.sgx-turn--sparki::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 90px;
+  height: 90px;
+  margin: -45px 0 0 -45px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, #fff 0%, rgba(170, 140, 255, 0.85) 30%, rgba(236, 106, 76, 0.4) 60%, transparent 100%);
+  opacity: 0;
+  pointer-events: none;
+  animation: sgx-turn-flash 8s ease-out infinite;
+}
+@keyframes sgx-turn-flash {
+  0%,
+  79% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  82% {
+    opacity: 1;
+    transform: scale(0.8);
+  }
+  88%,
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .sgx-turn--sparki::after {
+    display: none;
+  }
+}
+
+/* More room between his feet and the chat; he and the squares move up. */
+.sgx-mix.sgx-mix {
+  gap: 40px;
+  margin-top: -24px;
+}
+
+/* Sparki's turn later in the round (6 Nov), so the head is back almost as soon as his flash fades: in at 52%, two
+   quick turns, the flash at ~92%, the head on its way in from 100% (0%). */
+.sgx-turn--sparki.sgx-turn--sparki.sgx-turn--sparki.sgx-turn--sparki {
+  animation-name: sgx-turn-sparki5;
+}
+@keyframes sgx-turn-sparki5 {
+  0%,
+  54% {
+    transform: translate(104px, -104px);
+  }
+  64%,
+  100% {
+    transform: translate(0, 0);
+  }
+}
+.sgx-turn__spin.sgx-turn__spin.sgx-turn__spin.sgx-turn__spin {
+  animation-name: sgx-turn-spin5;
+}
+@keyframes sgx-turn-spin5 {
+  0%,
+  54% {
+    transform: rotate(30deg) scale(0.9);
+    opacity: 1;
+    filter: drop-shadow(0 6px 10px rgba(60, 70, 200, 0.25)) brightness(1);
+  }
+  64% {
+    transform: rotate(-6deg) scale(1.04);
+    animation-timing-function: ease-in-out;
+  }
+  70% {
+    transform: rotate(0deg) scale(1);
+    animation-timing-function: cubic-bezier(0.5, 0, 0.6, 1);
+  }
+  87% {
+    transform: rotate(720deg) scale(1.05);
+    opacity: 1;
+    filter: drop-shadow(0 6px 10px rgba(60, 70, 200, 0.25)) brightness(1);
+    animation-timing-function: ease-out;
+  }
+  91% {
+    transform: rotate(760deg) scale(1.35);
+    opacity: 0;
+    filter: drop-shadow(0 0 14px rgba(160, 120, 255, 0.9)) brightness(2.6);
+  }
+  91.1%,
+  100% {
+    transform: rotate(760deg) scale(0);
+    opacity: 0;
+  }
+}
+.sgx-turn--sparki.sgx-turn--sparki::after {
+  animation-name: sgx-turn-flash5;
+}
+@keyframes sgx-turn-flash5 {
+  0%,
+  86% {
+    opacity: 0;
+    transform: scale(0.2);
+  }
+  89% {
+    opacity: 1;
+    transform: scale(0.8);
+  }
+  95%,
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+
+/* Sign-in form (6 Nov): more room between the welcome (title and line) and the email field, so the head of the
+   form and its fields read as two parts. */
+:root[data-theme] .signin-page__form .itd-form__sub + .field,
+:root[data-theme] .signin-page__form .itd-form__sub + * {
+  margin-top: 28px;
+}
+
+/* Mix's chat, concentric corners (6 Nov): the message's corners run parallel to the card's. The card 24px, inset
+   14px, so the message 10px on all four (no small tail corner). */
+.sgx-mix .sgx-chat__card.sgx-chat__card {
+  border-radius: 24px;
+}
+.sgx-mix .sgx-chat__msg.sgx-chat__msg {
+  border-radius: 10px;
+}
+/* Sign-in form rhythm, second pass (6 Nov): the field closer again (44px from the line, was 64), the icon further
+   from the title, a little air between the title and its line. */
+:root[data-theme] .signin-page__form .itd-form__sub + .field.field,
+:root[data-theme] .signin-page__form .itd-form__sub + *:not(#x) {
+  margin-top: 8px;
+}
+:root[data-theme] .signin-page__form .signin-page__icon.signin-page__icon {
+  margin-bottom: 20px;
+}
+:root[data-theme] .signin-page__form .signin-page__title + .itd-form__sub {
+  margin-top: 6px;
+}
+/* Title and line closer again (6 Nov), and the sign-in button a size up from the field (52px against the field's
+   own height), only on this page. */
+:root[data-theme] .signin-page__form .signin-page__title + .itd-form__sub.itd-form__sub {
+  margin-top: -4px;
+}
+:root[data-theme][data-theme] .signin-page__form .btn.btn--primary[type='submit'] {
+  height: 52px;
+  min-height: 52px;
+  font-size: 15px;
+}
+
+/* The code boxes as the portal's fields (6 Nov): white with the fields' hairline, and on focus the rule the portal
+   uses for every field, a 1.5px Ink ring (the Cobalt ring here was the only one). An error keeps its red ring. */
+:root[data-theme][data-theme] .otp .otp__box {
+  border-radius: 8px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px var(--line-strong);
+}
+:root[data-theme][data-theme] .otp .otp__box:hover {
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.28);
+}
+:root[data-theme][data-theme] .otp .otp__box:focus {
+  box-shadow: 0 0 0 1.5px var(--ink);
+}
+:root[data-theme][data-theme] .otp.otp--error .otp__box {
+  box-shadow: 0 0 0 1.5px var(--danger);
+}
+/* The email field on this page takes the same Ink ring (its own rule had Cobalt). */
+:root[data-theme][data-theme] .itd--type .input:focus {
+  box-shadow: 0 0 0 1.5px var(--ink);
+}
+/* The version bar under the panel's middle, clear of the terms line under the form. */
+@media (min-width: 900px) {
+  .sgd .sgd__bar {
+    left: 25%;
+    bottom: 28px;
+  }
+}
+@media (min-width: 1100px) {
+  .sgd .sgd__bar {
+    left: calc(max(64px, (100vw - 1200px) / 2) + (100vw - 2 * max(64px, (100vw - 1200px) / 2) - 12px) / 4);
+  }
+}
+
+/* ---- Home variants (#/demo/home-variants, 6 Nov feedback) -------------------------------------------------------
+   One thing to see first, a real type scale (56 / 40 / 22 / 15 / 12), fewer boxes, Dr.AI and Sparki with a job. */
+.hv {
+  --hv-grad: linear-gradient(95deg, #3c64f0, #9a55ec 55%, #ec6a4c);
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 8px 0 120px;
+}
+.hv-hl {
+  background: var(--hv-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.hv-ghost {
+  visibility: hidden;
+}
+.hv-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.hv-eyebrow--light {
+  color: rgba(255, 255, 255, 0.6);
+}
+.hv-display {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 1.02;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.hv-h2 {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 0 16px;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.hv-count {
+  display: inline-grid;
+  place-items: center;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 7px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: #fff;
+  background: var(--ember, #e8501f);
+}
+.hv-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin-left: auto;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 450;
+  color: var(--text-2);
+  letter-spacing: 0;
+}
+.hv-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 20px;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  color: var(--ink);
+  background: none;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.hv-btn:hover {
+  transform: translateY(-1px);
+}
+.hv-btn--primary {
+  color: #fff;
+  background: var(--ink);
+}
+.hv-btn--white {
+  color: var(--ink);
+  background: #fff;
+}
+.hv-btn--ghost {
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 6px 18px -12px rgba(40, 30, 90, 0.25);
+}
+.hv-btn--line {
+  height: 36px;
+  padding: 0 16px;
+  font-size: 13px;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.16);
+}
+.hv-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+.hv-delta.is-up {
+  color: #2f7a4b;
+}
+.hv-delta.is-down {
+  color: var(--ember-text, #b9431a);
+}
+.hv-head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 24px;
+}
+.hv-head__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+.hv-head__sub {
+  margin: 6px 0 0;
+  font-size: 17px;
+  color: var(--text-2);
+}
+.hv-head__acts {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.hv-cols {
+  display: grid;
+  grid-template-columns: 1.15fr 1fr;
+  gap: 48px;
+}
+.hv-latest .hl-latest__list {
+  padding: 0;
+  background: none;
+  box-shadow: none;
+}
+
+/* A · Dr.AI briefs you */
+.hv-a-hero {
+  position: relative;
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  align-items: center;
+  gap: 32px;
+  padding-top: 8px;
+}
+.hv-a-hero__fig {
+  margin: -24px 0 -16px;
+}
+.hv-a-hero__text {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 680px;
+}
+.hv-a-hero__brief {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.45;
+  font-weight: 400;
+  color: var(--text);
+}
+.hv-a-hero__acts {
+  display: flex;
+  gap: 12px;
+  margin-top: 8px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.4s ease, transform 0.4s ease;
+}
+.hv-a-hero__acts.is-in {
+  opacity: 1;
+  transform: none;
+}
+.hv-a-hero__credits {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+.hv-figs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid rgba(14, 17, 22, 0.1);
+  border-bottom: 1px solid rgba(14, 17, 22, 0.1);
+}
+.hv-fig {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 24px 28px;
+  color: inherit;
+  text-decoration: none;
+  transition: background 0.18s ease;
+}
+.hv-fig + .hv-fig {
+  border-left: 1px solid rgba(14, 17, 22, 0.1);
+}
+.hv-fig:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+.hv-fig__num {
+  font-family: var(--font-display);
+  font-size: 48px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.hv-fig__label {
+  font-size: 14px;
+  font-weight: 500;
+}
+.hv-fig__note {
+  font-size: 12px;
+  color: var(--text-3);
+}
+.hv-moves {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hv-moves li {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(14, 17, 22, 0.08);
+}
+.hv-date {
+  display: grid;
+  place-items: center;
+  width: 52px;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95);
+}
+.hv-date b {
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1;
+}
+.hv-date span {
+  margin-top: -8px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.hv-moves__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+}
+.hv-moves__text b {
+  font-size: 16px;
+  font-weight: 500;
+}
+.hv-moves__text span {
+  font-size: 13px;
+  color: var(--text-3);
+}
+
+/* B · One thing first */
+.hv-b-focus {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1fr 300px;
+  min-height: 300px;
+  overflow: hidden;
+  border-radius: 28px;
+  color: #fff;
+  background: radial-gradient(60% 90% at 0% 100%, rgba(60, 100, 240, 0.45), transparent 70%),
+    radial-gradient(50% 80% at 100% 0%, rgba(236, 106, 76, 0.4), transparent 70%), #0d1024;
+}
+.hv-b-focus__text {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 40px 0 40px 44px;
+}
+.hv-b-focus__title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 48px;
+  line-height: 1.02;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.hv-b-focus__text p {
+  max-width: 460px;
+  margin: 0;
+  font-size: 17px;
+  line-height: 1.45;
+  color: rgba(255, 255, 255, 0.72);
+}
+.hv-b-focus__acts {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 12px;
+}
+.hv-b-focus__more {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+}
+.hv-b-focus__more:hover {
+  color: #fff;
+}
+.hv-b-focus__fig {
+  position: relative;
+  align-self: end;
+}
+.hv-b-focus__fig .msc-clip {
+  margin: 0 0 -28px auto;
+}
+.hv-b-focus__say {
+  position: absolute;
+  z-index: 2;
+  top: 36px;
+  left: -36px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  font-size: 13px;
+  white-space: nowrap;
+  color: #fff;
+  background: rgba(255, 255, 255, 0.12);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.14);
+  animation: hv-pop 0.5s 1.2s both cubic-bezier(0.2, 1.4, 0.4, 1);
+}
+@keyframes hv-pop {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.9);
+  }
+}
+.hv-b-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1.1fr;
+  gap: 20px;
+}
+.hv-b-tile {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+  border-radius: 22px;
+  color: inherit;
+  text-decoration: none;
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 12px 32px -20px rgba(40, 30, 90, 0.16);
+  transition: transform 0.18s ease, background 0.18s ease;
+}
+a.hv-b-tile:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.75);
+}
+.hv-b-tile__gauge {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 128px;
+  height: 116px;
+  margin: 4px 0 -6px;
+}
+.hv-gauge {
+  position: absolute;
+  inset: 0 0 -12px;
+  width: 128px;
+  height: 128px;
+}
+.hv-gauge circle {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+}
+.hv-gauge__track {
+  stroke: rgba(14, 17, 22, 0.08);
+}
+.hv-gauge__val {
+  stroke: url(#hv-g);
+}
+.hv-b-tile__gauge > span {
+  position: relative;
+  font-family: var(--font-display);
+}
+.hv-b-tile__gauge b {
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.hv-b-tile__gauge i {
+  font-style: normal;
+  font-size: 14px;
+  color: var(--text-3);
+}
+.hv-b-tile__big {
+  margin: 8px 0 4px;
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+.hv-b-tile__label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.hv-b-tile__why {
+  margin-top: auto;
+  padding-top: 8px;
+  font-size: 15px;
+  line-height: 1.4;
+  font-weight: 500;
+}
+.hv-b-tile .hv-link {
+  margin-left: 0;
+}
+.hv-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 4px;
+}
+.hv-bars > span {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  font-size: 11px;
+  color: var(--text-3);
+}
+.hv-bars i {
+  display: block;
+  height: 8px;
+  border-radius: 99px;
+  background: rgba(14, 17, 22, 0.14);
+}
+.hv-bars > span:first-child i {
+  background: var(--hv-grad);
+}
+.hv-b-new {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.hv-latest--short .hl-latest__row {
+  padding-left: 0;
+  padding-right: 0;
+}
+
+/* C · The headline */
+.hv-c-hero {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  padding-top: 8px;
+}
+.hv-c-hero__by {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.hv-c-hero__by b {
+  color: var(--ink);
+  font-weight: 600;
+}
+.hv-c-hero__credits {
+  margin-left: auto;
+}
+.hv-c-hero__line {
+  max-width: 920px;
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 64px;
+  line-height: 1.02;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+.hv-c-hero__acts {
+  display: flex;
+  gap: 12px;
+}
+.hv-c-figs {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+.hv-c-fig {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 20px 0 0;
+  border-top: 2px solid var(--ink);
+  color: inherit;
+  text-decoration: none;
+}
+.hv-c-fig > b {
+  font-family: var(--font-display);
+  font-size: 56px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.035em;
+}
+.hv-c-fig__label {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 13px;
+  color: var(--text-2);
+}
+.hv-c-fig__go {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 13px;
+  font-weight: 500;
+}
+.hv-c-fig:hover .hv-c-fig__go {
+  text-decoration: underline;
+}
+.hv-c-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.hv-c-list a {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  padding: 18px 0;
+  border-bottom: 1px solid rgba(14, 17, 22, 0.08);
+  color: inherit;
+  text-decoration: none;
+}
+.hv-c-list__n {
+  font-family: var(--font-display);
+  font-size: 32px;
+  font-weight: 700;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(14, 17, 22, 0.35);
+}
+.hv-c-list__text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 2px;
+}
+.hv-c-list__text b {
+  font-size: 17px;
+  font-weight: 500;
+}
+.hv-c-list__text span {
+  font-size: 13px;
+  color: var(--text-3);
+}
+.hv-c-list__go {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  opacity: 0.55;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+}
+.hv-c-list a:hover .hv-c-list__go {
+  opacity: 1;
+  transform: translateX(3px);
+}
+
+/* The switcher, at the foot */
+.hv-bar {
+  position: fixed;
+  z-index: 40;
+  bottom: 24px;
+  left: 50%;
+  display: flex;
+  gap: 4px;
+  padding: 5px;
+  border-radius: 999px;
+  transform: translateX(-50%);
+  background: rgba(14, 17, 22, 0.86);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+}
+.hv-bar > * {
+  height: 34px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 13px;
+  line-height: 34px;
+  white-space: nowrap;
+  cursor: pointer;
+  color: rgba(255, 255, 255, 0.7);
+  background: none;
+}
+.hv-bar > .is-on {
+  color: var(--ink);
+  background: #fff;
+}
+.hv-bar > a {
+  border-left: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 0 999px 999px 0;
+}
+@media (max-width: 900px) {
+  .hv-cols,
+  .hv-b-grid,
+  .hv-c-figs,
+  .hv-figs,
+  .hv-b-focus,
+  .hv-a-hero {
+    grid-template-columns: 1fr;
+  }
+  .hv-display,
+  .hv-c-hero__line {
+    font-size: 40px;
+  }
+}
+/* The feed borrows Home's card rules for its rows, without the card itself. */
+.hv .hv-latest.hld-card {
+  padding: 0;
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+.hv-b-focus__say {
+  top: 44px;
+  left: auto;
+  right: 200px;
+  border-bottom-right-radius: 4px;
+}
+.hv-b-focus__more {
+  max-width: 300px;
+  line-height: 1.4;
+}
+
+/* ---- Dr.AI's dock (#/demo/dock, 6 Nov) ---------------------------------------------------------------------------
+   He stands in full on every page and says only what is urgent; Ask me opens the side panel with the chat. */
+.dk {
+  --dk-grad: linear-gradient(95deg, #3c64f0, #9a55ec 55%, #ec6a4c);
+  --dk-glass: rgba(255, 255, 255, 0.72);
+}
+.dk-hl {
+  background: var(--dk-grad);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.dk-ghost {
+  visibility: hidden;
+}
+.dk-card,
+.dk--bar,
+.dk--top {
+  background: var(--dk-glass);
+  -webkit-backdrop-filter: blur(24px) saturate(1.3);
+  backdrop-filter: blur(24px) saturate(1.3);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), inset 0 1px 0 #fff, 0 18px 44px -22px rgba(40, 30, 90, 0.35);
+}
+.dk-card__head,
+.dk-bar__top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 13px;
+}
+.dk-card__head b,
+.dk-bar__top b {
+  font-weight: 600;
+}
+.dk-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 20px;
+  padding: 0 8px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.dk-tag::before {
+  content: '';
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.dk-tag--urgent {
+  color: #b9431a;
+  background: rgba(232, 80, 31, 0.1);
+}
+.dk-tag--critical {
+  color: #b42335;
+  background: rgba(214, 40, 70, 0.1);
+}
+.dk-tag--critical::before {
+  animation: dk-blink 1.6s ease-in-out infinite;
+}
+@keyframes dk-blink {
+  50% {
+    opacity: 0.25;
+  }
+}
+.dk-pager {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: auto;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+}
+.dk-pager button,
+.dk-fold {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 999px;
+  color: var(--text-2);
+  background: none;
+  cursor: pointer;
+}
+.dk-pager button:hover,
+.dk-fold:hover {
+  color: var(--ink);
+  background: rgba(14, 17, 22, 0.06);
+}
+.dk-msg {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--ink);
+}
+.dk-acts {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity 0.3s ease, transform 0.3s ease;
+}
+.dk-acts.is-in {
+  opacity: 1;
+  transform: none;
+}
+.dk-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  text-decoration: none;
+}
+.dk-btn--primary {
+  color: #fff;
+  background: var(--ink);
+}
+.dk-btn--ask {
+  padding-left: 10px;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.8);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.12);
+}
+.dk-btn:hover {
+  transform: translateY(-1px);
+}
+
+/* A · Corner: he stands at the lower right, the card at his side, its tail towards him. */
+.dk--corner {
+  position: fixed;
+  z-index: 50;
+  right: 24px;
+  bottom: 18px;
+  display: flex;
+  align-items: flex-end;
+  pointer-events: none;
+}
+.dk--corner > * {
+  pointer-events: auto;
+}
+.dk--corner .dk-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 330px;
+  margin: 0 -14px 70px 0;
+  padding: 14px 16px 16px;
+  border-radius: 20px 20px 4px 20px;
+  animation: dk-in 0.5s 0.6s both cubic-bezier(0.2, 1.3, 0.4, 1);
+}
+.dk--corner .dk-card__head {
+  margin-right: -6px;
+}
+.dk--corner .dk-fig {
+  margin-bottom: -8px;
+  filter: drop-shadow(0 16px 18px rgba(40, 30, 90, 0.18));
+}
+@keyframes dk-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.96);
+  }
+}
+
+/* B · Bar at the foot: a glass bar that stays at the foot of the page, him standing on its left end. */
+.dk--bar {
+  position: sticky;
+  z-index: 30;
+  bottom: 24px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  max-width: 920px;
+  min-height: 76px;
+  margin: 40px auto 0;
+  padding: 10px 14px 10px 0;
+  border-radius: 22px;
+  animation: dk-in 0.5s 0.4s both cubic-bezier(0.2, 1.3, 0.4, 1);
+}
+.dk--bar .dk-fig {
+  flex: none;
+  align-self: flex-end;
+  margin: -64px -6px -14px 6px;
+}
+.dk-bar__main {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+.dk-bar__top .dk-pager {
+  margin-left: 4px;
+}
+.dk--bar .dk-msg,
+.dk--top .dk-msg {
+  font-size: 15px;
+}
+
+/* C · Strip at the top: stays under the top edge as you scroll, him standing in it. */
+.dk--top {
+  position: sticky;
+  z-index: 30;
+  top: 20px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 4px 0 28px;
+  padding: 8px 14px 8px 4px;
+  border-radius: 22px;
+  animation: dk-in 0.5s 0.3s both cubic-bezier(0.2, 1.3, 0.4, 1);
+}
+.dk--top .dk-fig {
+  flex: none;
+  margin: -4px 0 -10px 4px;
+}
+
+/* Folded: his head with a count (corner), or a small pill (bar, top). */
+.dk-mini {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  border: 0;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  cursor: pointer;
+  background: var(--dk-glass, rgba(255, 255, 255, 0.72));
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), 0 14px 30px -16px rgba(40, 30, 90, 0.35);
+  animation: dk-in 0.35s both cubic-bezier(0.2, 1.3, 0.4, 1);
+}
+.dk-mini--corner {
+  position: fixed;
+  z-index: 50;
+  right: 24px;
+  bottom: 24px;
+  justify-content: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+}
+.dk-mini--bar,
+.dk-mini--top {
+  position: sticky;
+  z-index: 30;
+  height: 44px;
+  padding: 0 16px 0 8px;
+  border-radius: 999px;
+}
+.dk-mini--bar {
+  bottom: 24px;
+  display: flex;
+  width: max-content;
+  margin: 40px auto 0;
+}
+.dk-mini--top {
+  top: 20px;
+  display: flex;
+  width: max-content;
+  margin: 4px 0 20px auto;
+}
+.dk-mini__n {
+  display: grid;
+  place-items: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: 999px;
+  font-size: 11px;
+  color: #fff;
+  background: var(--ember, #e8501f);
+}
+.dk-mini--corner .dk-mini__n {
+  position: absolute;
+  top: -2px;
+  right: -2px;
+}
+
+/* In the chat panel, over the greeting: what needs you now. */
+.dk-now {
+  margin: 0 0 20px;
+  padding: 14px 16px;
+  border-radius: 16px;
+  text-align: left;
+  background: rgba(232, 80, 31, 0.05);
+  box-shadow: inset 0 0 0 1px rgba(232, 80, 31, 0.14);
+}
+.dk-now h4 {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin: 0 0 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.dk-now ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.dk-now li {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 4px 12px;
+  padding: 10px 0;
+  border-top: 1px solid rgba(14, 17, 22, 0.06);
+}
+.dk-now .dk-tag {
+  grid-column: 1 / -1;
+  justify-self: start;
+}
+.dk-now__text {
+  font-size: 13px;
+  line-height: 1.4;
+}
+.dk-now a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  align-self: end;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: var(--ink);
+}
+@media (prefers-reduced-motion: reduce) {
+  .dk-card,
+  .dk--bar,
+  .dk--top,
+  .dk-mini {
+    animation: none;
+  }
+}
+/* Room at the right for Sparki, who flies past the figure's box. */
+.dk--corner {
+  right: 44px;
+}
+
+/* ---- Corner dock, lighter (6 Nov, review): clear glass rather than a white card, a soft light of the brand behind
+   him, Sparki in the card's head (he leaves it to show the way). */
+.dk--corner::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  right: -40px;
+  bottom: -40px;
+  width: 360px;
+  height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(closest-side, rgba(154, 85, 236, 0.22), rgba(60, 100, 240, 0.1) 55%, transparent);
+  filter: blur(10px);
+  pointer-events: none;
+}
+.dk--corner .dk-card {
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.18));
+  -webkit-backdrop-filter: blur(18px) saturate(1.7);
+  backdrop-filter: blur(18px) saturate(1.7);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 10px 30px -18px rgba(60, 40, 140, 0.3);
+}
+.dk--corner .dk-btn--ask {
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+}
+.dk-card__n {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--text-3);
+}
+.dk-card__sp {
+  flex: 1;
+}
+.dk-sparki {
+  display: inline-grid;
+  transition: opacity 0.4s ease, transform 0.4s ease;
+  animation: og-bob 2.4s ease-in-out infinite;
+}
+.dk-sparki.is-away {
+  opacity: 0.25;
+  transform: scale(0.8);
+  animation: none;
+}
+
+/* The stepper: four segments, the done ones in the gradient, the current one breathing. */
+.og-stepper {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  gap: 4px;
+}
+.og-stepper i {
+  height: 5px;
+  border-radius: 99px;
+  background: rgba(14, 17, 22, 0.1);
+}
+.og-stepper i.is-done {
+  background: linear-gradient(90deg, #3c64f0, #9a55ec 60%, #ec6a4c);
+}
+.og-stepper i.is-now {
+  background: linear-gradient(90deg, rgba(60, 100, 240, 0.55), rgba(154, 85, 236, 0.25));
+  animation: og-breathe 1.8s ease-in-out infinite;
+}
+@keyframes og-breathe {
+  50% {
+    opacity: 0.45;
+  }
+}
+@keyframes og-bob {
+  50% {
+    transform: translateY(-4px) rotate(8deg);
+  }
+}
+
+/* Sparki on the way: flies to the target, bobs beside it with a word, the target ringed in the gradient. */
+.og-sparki {
+  position: fixed;
+  z-index: 55;
+  top: 0;
+  left: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  pointer-events: none;
+  opacity: 0;
+  transition: transform 0.9s cubic-bezier(0.45, 0, 0.2, 1), opacity 0.4s ease;
+  filter: drop-shadow(0 0 10px rgba(120, 140, 255, 0.55)) drop-shadow(0 0 22px rgba(236, 106, 76, 0.25));
+}
+.og-sparki.is-on {
+  opacity: 1;
+}
+.og-sparki.is-left {
+  flex-direction: row-reverse;
+}
+.og-sparki__bob {
+  display: grid;
+  animation: og-bob 1.6s ease-in-out infinite;
+}
+.og-sparki__tip {
+  padding: 5px 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+  color: #fff;
+  background: linear-gradient(95deg, #3c64f0, #9a55ec);
+  filter: none;
+  animation: og-tip 0.4s 0.8s both ease-out;
+}
+.og-sparki.is-left .og-sparki__tip {
+  background: linear-gradient(95deg, #9a55ec, #3c64f0);
+}
+@keyframes og-tip {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+.og-ring {
+  position: fixed;
+  z-index: 54;
+  border-radius: 14px;
+  pointer-events: none;
+  padding: 2px;
+  background: linear-gradient(120deg, #3c64f0, #9a55ec, #ec6a4c);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  animation: og-ring 1.8s ease-in-out infinite;
+  transition: left 0.5s ease, top 0.5s ease, width 0.5s ease, height 0.5s ease;
+}
+@keyframes og-ring {
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* Home while onboarding. */
+.og-home {
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  max-width: 1120px;
+  margin: 0 auto;
+  padding: 8px 0 240px;
+}
+.og-eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.og-home__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+}
+.og-home__head h1 {
+  margin: 8px 0 0;
+  font-family: var(--font-display);
+  font-size: 44px;
+  line-height: 1.05;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.og-home__head p {
+  margin: 10px 0 0;
+  font-size: 17px;
+  color: var(--text-2);
+}
+.og-steps {
+  padding: 28px;
+  border-radius: 24px;
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 12px 32px -20px rgba(40, 30, 90, 0.16);
+}
+.og-steps__head {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 24px;
+}
+.og-steps__head h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 22px;
+  font-weight: 700;
+}
+.og-steps__head p {
+  margin: 4px 0 0;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.og-ring-prog {
+  width: 72px;
+  height: 72px;
+  flex: none;
+}
+.og-ring-prog circle {
+  fill: none;
+  stroke-width: 7;
+  stroke-linecap: round;
+}
+.og-ring-prog__track {
+  stroke: rgba(14, 17, 22, 0.08);
+}
+.og-ring-prog__val {
+  stroke: url(#og-g);
+  transition: stroke-dasharray 0.8s ease;
+}
+.og-ring-prog__n {
+  position: absolute;
+  left: 0;
+  width: 72px;
+  text-align: center;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+}
+.og-steps__list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.og-step {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-height: 190px;
+  padding: 20px;
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9);
+}
+.og-step b {
+  margin-top: 10px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.og-step__line {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+.og-step__n {
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-3);
+  box-shadow: inset 0 0 0 1.5px rgba(14, 17, 22, 0.14);
+}
+.og-step.is-done .og-step__n {
+  color: #fff;
+  background: linear-gradient(135deg, #3c64f0, #9a55ec 60%, #ec6a4c);
+  box-shadow: none;
+}
+.og-step.is-now {
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: inset 0 0 0 1.5px rgba(154, 85, 236, 0.45), 0 14px 30px -18px rgba(90, 60, 200, 0.4);
+}
+.og-step.is-now .og-step__n {
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--ink);
+}
+.og-step__state {
+  margin-top: auto;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+.og-step.is-done .og-step__state {
+  color: #2f7a4b;
+}
+.og-step__go {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  gap: 6px;
+  height: 36px;
+  margin-top: auto;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: #fff;
+  background: var(--ink);
+  cursor: pointer;
+}
+.og-later {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.og-later__card {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 24px;
+  border-radius: 22px;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.08);
+  border: 1px dashed transparent;
+}
+.og-later__card b {
+  font-size: 16px;
+  font-weight: 600;
+}
+.og-later__card > span:last-child {
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+.og-later__bars {
+  display: flex;
+  align-items: flex-end;
+  gap: 8px;
+  height: 64px;
+  margin: 8px 0 6px;
+}
+.og-later__bars i {
+  width: 22px;
+  border-radius: 6px;
+  background: linear-gradient(180deg, rgba(154, 85, 236, 0.35), rgba(60, 100, 240, 0.12));
+  animation: og-breathe 2.4s ease-in-out infinite;
+}
+.og-later__bars i:nth-child(2) {
+  animation-delay: 0.3s;
+}
+.og-later__bars i:nth-child(3) {
+  animation-delay: 0.6s;
+}
+.og-later__bars i:nth-child(4) {
+  animation-delay: 0.9s;
+}
+.og-later__sparki {
+  display: grid;
+  height: 64px;
+  margin: 8px 0 6px;
+  align-items: center;
+  justify-items: start;
+}
+.og-later__sparki > * {
+  animation: og-bob 2.4s ease-in-out infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .og-sparki,
+  .og-ring {
+    transition: none;
+  }
+  .og-sparki__bob,
+  .dk-sparki,
+  .og-ring,
+  .og-stepper i.is-now,
+  .og-later__bars i,
+  .og-later__sparki > * {
+    animation: none;
+  }
+}
+/* The optional last step (6 Nov): marked Optional, with Skip for now; skipped, it stays quiet with a way back. */
+.og-step__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.og-step__opt {
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--text-3);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.12);
+}
+.og-step__acts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+  margin-top: auto;
+}
+.og-step__acts .og-step__go,
+.og-step__acts .og-step__state {
+  margin-top: 0;
+}
+.og-step__skip {
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  background: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: rgba(14, 17, 22, 0.25);
+  text-underline-offset: 3px;
+}
+.og-step__skip:hover {
+  color: var(--ink);
+}
+.og-step.is-skipped {
+  background: rgba(255, 255, 255, 0.25);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.08);
+}
+.og-step.is-skipped b,
+.og-step.is-skipped .og-step__line {
+  opacity: 0.6;
+}
+.og-step.is-optional,
+.og-step:has(.og-step__opt):not(.is-now):not(.is-skipped) {
+  border: 1px dashed rgba(14, 17, 22, 0.14);
+  background: rgba(255, 255, 255, 0.25);
+}
+.og-stepper i.is-optional:not(.is-done):not(.is-skipped) {
+  background: repeating-linear-gradient(90deg, rgba(14, 17, 22, 0.14) 0 4px, transparent 4px 7px);
+}
+.og-stepper i.is-optional.is-now {
+  background: repeating-linear-gradient(90deg, rgba(90, 100, 240, 0.6) 0 4px, transparent 4px 7px);
+}
+.og-stepper i.is-skipped {
+  background: rgba(14, 17, 22, 0.2);
+}
+/* Brand Analysis for a new company (6 Nov): no reports, the way to ask for one. */
+.og-noreports {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  max-width: 640px;
+  margin: 24px auto 0;
+  padding: 40px 32px 32px;
+  border-radius: 24px;
+  text-align: center;
+  background: rgba(255, 255, 255, 0.45);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 12px 32px -20px rgba(40, 30, 90, 0.16);
+}
+.og-noreports h2 {
+  margin: 8px 0 0;
+  font-family: var(--font-display);
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.og-noreports p {
+  max-width: 460px;
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+.og-noreports__art {
+  position: relative;
+  justify-content: center;
+}
+.og-noreports__sparki {
+  position: absolute;
+  top: -18px;
+  right: -34px;
+  animation: og-bob 2.4s ease-in-out infinite;
+}
+.og-noreports__go {
+  align-self: center;
+  height: 44px;
+  margin: 8px 0 0;
+  padding: 0 20px;
+  font-size: 14px;
+}
+.og-noreports__or {
+  margin-top: 20px;
+}
+.og-noreports__ideas {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.og-noreports__ideas button {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
+  height: 100%;
+  padding: 14px 32px 14px 14px;
+  border: 0;
+  border-radius: 14px;
+  font: inherit;
+  text-align: left;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95);
+  cursor: pointer;
+  transition: background 0.15s ease, transform 0.15s ease;
+}
+.og-noreports__ideas button:hover {
+  background: #fff;
+  transform: translateY(-1px);
+}
+.og-noreports__ideas b {
+  font-size: 14px;
+  font-weight: 600;
+}
+.og-noreports__ideas span {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--text-2);
+}
+.og-noreports__ideas svg {
+  position: absolute;
+  top: 15px;
+  right: 12px;
+  color: var(--text-3);
+}
+.og-later__link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-weight: 500;
+  color: var(--ink);
+}
+
+/* ---- Onboarding in the book's terms (6 Nov, review): Noor is glow and glass only (p. 30), never a fill. Progress is
+   a thin Noor line, as "Working it out" in the client's video; Sparki speaks in a small glass bubble, mono capitals
+   with a Noor hairline under them, as the video's "Speaking · medium". */
+.og-stepper {
+  gap: 6px;
+}
+.og-stepper i {
+  position: relative;
+  height: 2px;
+  overflow: hidden;
+  background: rgba(14, 17, 22, 0.1);
+}
+.og-stepper i.is-done,
+.og-stepper i.is-now::after {
+  background: var(--noor);
+  background-size: calc(var(--of) * 100% + (var(--of) - 1) * 6px) 100%;
+  background-position: calc(var(--i) / (var(--of) - 1) * 100%) 0;
+}
+.og-stepper i.is-now {
+  background: rgba(14, 17, 22, 0.1);
+  animation: none;
+}
+.og-stepper i.is-now::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform-origin: left;
+  animation: og-working 2.4s ease-in-out infinite;
+}
+@keyframes og-working {
+  0% {
+    transform: scaleX(0);
+    opacity: 1;
+  }
+  70% {
+    transform: scaleX(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scaleX(1);
+    opacity: 0;
+  }
+}
+.og-stepper i.is-optional:not(.is-done):not(.is-skipped),
+.og-stepper i.is-optional.is-now {
+  background: repeating-linear-gradient(90deg, rgba(14, 17, 22, 0.18) 0 3px, transparent 3px 6px);
+}
+.og-stepper i.is-skipped {
+  background: rgba(14, 17, 22, 0.22);
+}
+
+/* The ring on Home: a thin line. */
+.og-ring-prog circle {
+  stroke-width: 3;
+}
+/* A done step: Ink's check in a Noor line, no fill. */
+.og-step.is-done .og-step__n {
+  position: relative;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.7);
+}
+.og-step.is-done .og-step__n::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  padding: 1.5px;
+  border-radius: 50%;
+  background: var(--noor);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+/* The ring round what Sparki points at: a hairline and a soft glow. */
+.og-ring {
+  padding: 1.5px;
+  box-shadow: none;
+  filter: drop-shadow(0 0 8px rgba(154, 85, 236, 0.35));
+}
+
+/* Sparki speaks. */
+.og-sparki {
+  filter: none;
+}
+.og-sparki__bob {
+  filter: drop-shadow(0 0 10px rgba(120, 140, 255, 0.55)) drop-shadow(0 0 22px rgba(236, 106, 76, 0.25));
+}
+.og-say {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 12px 11px;
+  border-radius: 12px 12px 12px 4px;
+  white-space: nowrap;
+  background: rgba(255, 255, 255, 0.6);
+  -webkit-backdrop-filter: blur(16px) saturate(1.5);
+  backdrop-filter: blur(16px) saturate(1.5);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), 0 10px 24px -14px rgba(60, 40, 140, 0.35);
+  animation: og-tip 0.3s 0.8s both ease-out;
+}
+.og-sparki.is-left .og-say {
+  border-radius: 12px 12px 4px 12px;
+}
+.og-say__dot {
+  width: 7px;
+  height: 7px;
+  flex: none;
+  border-radius: 50%;
+  background: var(--ember);
+  box-shadow: 0 0 8px rgba(232, 80, 31, 0.6);
+}
+.og-say__text {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink);
+  clip-path: inset(0 100% 0 0);
+  animation: og-say-type calc(var(--n) * 40ms) 1.1s steps(var(--n)) forwards;
+}
+@keyframes og-say-type {
+  to {
+    clip-path: inset(0 0 0 0);
+  }
+}
+.og-say__line {
+  position: absolute;
+  left: 27px;
+  right: 12px;
+  bottom: 6px;
+  height: 1.5px;
+  border-radius: 2px;
+  background: var(--noor);
+  transform-origin: left;
+  transform: scaleX(0);
+  animation: og-say-line calc(var(--n) * 40ms) 1.1s ease-out forwards;
+}
+@keyframes og-say-line {
+  to {
+    transform: scaleX(1);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .og-say__text,
+  .og-say__line,
+  .og-stepper i.is-now::after {
+    animation: none;
+    clip-path: none;
+    transform: none;
+  }
+}
+/* Brand Analysis with no reports (6 Nov): Home's card, full width, left aligned; Request a report primary. */
+.og-noreports.og-noreports {
+  align-items: stretch;
+  max-width: none;
+  margin: 8px 0 0;
+  padding: 24px;
+  border-radius: 22px;
+  text-align: left;
+  background: none;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.08);
+}
+.og-noreports.og-noreports > b {
+  font-size: 18px;
+}
+.og-noreports.og-noreports > span:not(.og-eyebrow):not(.og-later__bars) {
+  max-width: 560px;
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+.og-noreports .og-noreports__or {
+  margin-top: 24px;
+}
+.og-noreports .og-noreports__ideas {
+  max-width: 720px;
+}
+.og-report__go.og-report__go {
+  align-self: flex-start;
+  height: 40px;
+  margin-top: 12px;
+  padding: 0 18px;
+}
+.og-later__card > span:last-child {
+  font-size: 14px;
+}
+.og-later__card > b + span {
+  font-size: 14px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+
+/* Sparki's bubble (6 Nov, review): the same glass as Dr.AI's card, so the two read as one family: clear white glass
+   with a white rim, no underline and no coloured outline; Ember's dot breathes while Sparki points. */
+.og-say {
+  padding: 9px 14px 9px 12px;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.5), rgba(255, 255, 255, 0.18));
+  -webkit-backdrop-filter: blur(18px) saturate(1.7);
+  backdrop-filter: blur(18px) saturate(1.7);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.95), 0 10px 30px -18px rgba(60, 40, 140, 0.3);
+}
+.og-say__dot {
+  animation: og-dot 1.6s ease-in-out infinite;
+}
+@keyframes og-dot {
+  0%,
+  100% {
+    transform: scale(1);
+    box-shadow: 0 0 0 0 rgba(232, 80, 31, 0.45);
+  }
+  50% {
+    transform: scale(0.85);
+    box-shadow: 0 0 0 6px rgba(232, 80, 31, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .og-say__dot {
+    animation: none;
+  }
+}
+/* Sparki's word above him (6 Nov, review), its low corner at his tip; on the left of a target it ends over him. */
+.og-sparki .og-say {
+  position: absolute;
+  bottom: calc(100% - 2px);
+  left: 22px;
+  transform-origin: 0 100%;
+}
+.og-sparki.is-left .og-say {
+  left: auto;
+  right: 22px;
+  transform-origin: 100% 100%;
+}
+/* More air between Sparki and his word (6 Nov, review). */
+.og-sparki .og-say {
+  bottom: calc(100% + 10px);
+  left: 30px;
+}
+.og-sparki.is-left .og-say {
+  left: auto;
+  right: 30px;
+}
+.og-sparki .og-say {
+  bottom: calc(100% + 18px);
+  left: 36px;
+}
+.og-sparki.is-left .og-say {
+  left: auto;
+  right: 36px;
+}
+/* The optional step's segment: a solid line like the others (6 Nov, review). */
+.og-stepper i.is-optional:not(.is-done):not(.is-skipped),
+.og-stepper i.is-optional.is-now {
+  background: rgba(14, 17, 22, 0.1);
+}
+/* 12px between Sparki and his word (6 Nov, review). */
+.og-sparki .og-say {
+  bottom: calc(100% + 12px);
+  left: 24px;
+}
+.og-sparki.is-left .og-say {
+  left: auto;
+  right: 24px;
+}
+.og-sparki .og-say {
+  bottom: calc(100% + 8px);
+}
+/* Over dialogs too, when Sparki points at something in one (Go to requests). */
+.og-sparki {
+  z-index: 90;
+}
+.og-ring {
+  z-index: 89;
+}
+/* Dialogs sit at 100 (.dialog-root); Sparki over them. */
+.og-sparki {
+  z-index: 110;
+}
+.og-ring {
+  z-index: 109;
+}
+/* Sparki can be picked up and moved aside (6 Nov). */
+.og-sparki__bob {
+  pointer-events: auto;
+  cursor: grab;
+  touch-action: none;
+}
+.og-sparki.is-dragging {
+  transition: opacity 0.4s ease;
+}
+.og-sparki.is-dragging .og-sparki__bob {
+  cursor: grabbing;
+  animation-play-state: paused;
+}
+/* Reminders (6 Nov): Cobalt, the human colour, calmer than what's due. */
+.dk-tag--reminder {
+  color: var(--cobalt, #1e3bd6);
+  background: rgba(30, 59, 214, 0.08);
+}
+/* Fold always at the top right of Dr.AI's card, with or without the pager (6 Nov, review). */
+.dk-card__head .dk-fold {
+  margin-left: auto;
+  margin-right: -6px;
+}
+.dk-card__head .dk-pager + .dk-fold,
+.dk-card__head .dk-card__sp + .dk-fold {
+  margin-left: 0;
+}
+
+/* ---- Setup on Home (6 Nov, review): the corner card's family. Same glass, same straight stepper, black checks,
+   smaller steps. Three looks: A compact row, B checklist, C on the line. */
+.og-setup {
+  position: relative;
+  padding: 22px 24px 20px;
+  border-radius: 22px;
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0.22));
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  backdrop-filter: blur(18px) saturate(1.5);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8), inset 0 1px 0 #fff, 0 12px 32px -22px rgba(60, 40, 140, 0.25);
+}
+.og-setup__head {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  gap: 4px 14px;
+}
+.og-setup__head h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.015em;
+}
+.og-setup__sub {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  color: var(--text-3);
+}
+.og-setup__head .og-stepper {
+  grid-column: 1 / -1;
+  margin: 14px 0 18px;
+}
+.og-setup__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+.og-s__top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.og-s__top b {
+  flex: 1;
+  min-width: 0;
+  font-size: 15px;
+  font-weight: 600;
+}
+.og-s__top .og-step__opt {
+  flex: none;
+  padding: 2px 7px;
+  font-size: 9.5px;
+}
+.og-s__line {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+.og-s.is-skipped b,
+.og-s.is-skipped .og-s__line {
+  opacity: 0.55;
+}
+/* The mark: a number in a fine ring; done, Ink with a white check; put off, a dashed ring. */
+.og-mark {
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-family: var(--font-display);
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-3);
+  box-shadow: inset 0 0 0 1.25px rgba(14, 17, 22, 0.18);
+}
+.og-s.is-now .og-mark {
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--ink);
+}
+.og-mark.is-done {
+  color: #fff;
+  background: var(--ink);
+  box-shadow: none;
+}
+.og-mark.is-skipped {
+  box-shadow: none;
+  border: 1.25px dashed rgba(14, 17, 22, 0.3);
+}
+.og-act {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px 12px;
+}
+.og-act__go.og-act__go {
+  height: 32px;
+  margin: 0;
+  padding: 0 14px;
+  font-size: 12.5px;
+}
+.og-act__state {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+.og-act__state.is-done {
+  color: var(--ink);
+}
+.og-setup__looks {
+  position: absolute;
+  top: 18px;
+  right: 20px;
+  display: flex;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  background: rgba(14, 17, 22, 0.05);
+}
+.og-setup__looks button {
+  height: 26px;
+  padding: 0 10px;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 11.5px;
+  color: var(--text-2);
+  background: none;
+  cursor: pointer;
+}
+.og-setup__looks button.is-on {
+  color: var(--ink);
+  background: #fff;
+  box-shadow: 0 1px 3px rgba(14, 17, 22, 0.1);
+}
+
+/* A · Compact row: four small cards in a row under the stepper. */
+.og-setup--row .og-setup__list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+}
+.og-setup--row .og-s {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 14px 16px 16px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95);
+}
+.og-setup--row .og-s.is-now {
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.12), 0 10px 24px -16px rgba(40, 30, 90, 0.3);
+}
+.og-setup--row .og-s .og-act,
+.og-setup--row .og-s > .og-act__state {
+  margin-top: auto;
+  padding-top: 4px;
+}
+.og-setup--row .og-s.is-done .og-s__line {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+/* B · Checklist: one row a step, its action at the right; done steps keep only their title. */
+.og-setup--list .og-s {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: 2px 24px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(14, 17, 22, 0.07);
+}
+.og-setup--list .og-s__top {
+  grid-column: 1;
+}
+.og-setup--list .og-s__line {
+  grid-column: 1;
+  padding-left: 34px;
+  max-width: 640px;
+}
+.og-setup--list .og-s > .og-act,
+.og-setup--list .og-s > .og-act__state {
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  justify-self: end;
+}
+.og-setup--list .og-s.is-done .og-s__line {
+  display: none;
+}
+.og-setup--list .og-s__top b {
+  flex: none;
+}
+.og-setup--list .og-s.is-now .og-s__top b {
+  font-size: 16px;
+}
+
+/* C · On the line: the stepper split over the four steps, each step under its own stretch of it; no boxes. */
+.og-setup--track .og-setup__head {
+  margin-bottom: 18px;
+}
+.og-setup--track .og-setup__list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.og-setup--track .og-s {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.og-s__bar {
+  position: relative;
+  display: block;
+  height: 2px;
+  margin-bottom: 8px;
+  overflow: hidden;
+  border-radius: 2px;
+  background: rgba(14, 17, 22, 0.1);
+}
+.og-s__bar.is-done,
+.og-s__bar.is-now::after {
+  background: var(--noor);
+  background-size: calc(var(--of) * 100% + (var(--of) - 1) * 20px) 100%;
+  background-position: calc(var(--i) / (var(--of) - 1) * 100%) 0;
+}
+.og-s__bar.is-now::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  transform-origin: left;
+  animation: og-working 2.4s ease-in-out infinite;
+}
+.og-setup--track .og-s .og-act,
+.og-setup--track .og-s > .og-act__state {
+  margin-top: 4px;
+}
+@media (max-width: 1100px) {
+  .og-setup--row .og-setup__list,
+  .og-setup--track .og-setup__list {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+/* A: the mark and Optional on top, the title on its own line under them, so it doesn't break narrow. */
+.og-setup--row .og-s__top,
+.og-setup--track .og-s__top {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  grid-template-areas: 'mark . tag' 'title title title';
+  row-gap: 10px;
+}
+.og-setup--row .og-s__top .og-mark,
+.og-setup--track .og-s__top .og-mark {
+  grid-area: mark;
+}
+.og-setup--row .og-s__top .og-step__opt,
+.og-setup--track .og-s__top .og-step__opt {
+  grid-area: tag;
+}
+.og-setup--row .og-s__top b,
+.og-setup--track .og-s__top b {
+  grid-area: title;
+}
+/* Skip for now (6 Nov): a quiet link at the right of the card's buttons, so Ask me keeps its place. */
+.dk-acts {
+  width: 100%;
+}
+.dk-skip {
+  margin-left: auto;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  background: none;
+  cursor: pointer;
+  text-decoration: underline;
+  text-decoration-color: rgba(14, 17, 22, 0.25);
+  text-underline-offset: 3px;
+}
+.dk-skip:hover {
+  color: var(--ink);
+}
+/* Brand Analysis with no reports (6 Nov, review): the only thing on the page, so no frame; everything centred. */
+.og-noreports.og-noreports {
+  align-items: center;
+  margin: 40px auto 0;
+  padding: 0;
+  text-align: center;
+  box-shadow: none;
+}
+.og-noreports.og-noreports > span:not(.og-eyebrow):not(.og-later__bars) {
+  max-width: 520px;
+}
+.og-noreports .og-later__bars {
+  justify-content: center;
+}
+.og-noreports .og-report__go.og-report__go {
+  align-self: center;
+}
+.og-noreports .og-noreports__ideas {
+  max-width: 760px;
+}
+
+/* Setup on Home as a summary (6 Nov, review): a dashboard row, read only. Four columns between fine rules, no
+   cards, no hover, no stepper, no buttons; the count in the head; each step's state as a dot and a word. */
+.og-setup--dash .og-setup__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 20px;
+}
+.og-setup__count {
+  font-family: var(--font-display);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--text-3);
+}
+.og-setup__count b {
+  font-size: 28px;
+  color: var(--ink);
+  letter-spacing: -0.02em;
+}
+.og-setup--dash .og-setup__list {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+.og-setup--dash .og-s {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 2px 24px 4px;
+  cursor: default;
+}
+.og-setup--dash .og-s:first-child {
+  padding-left: 0;
+}
+.og-setup--dash .og-s:last-child {
+  padding-right: 0;
+}
+.og-setup--dash .og-s + .og-s {
+  border-left: 1px solid rgba(14, 17, 22, 0.08);
+}
+.og-setup--dash .og-s__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+}
+.og-s__title {
+  font-size: 15px;
+  font-weight: 600;
+}
+.og-setup--dash .og-s__line {
+  font-size: 13px;
+}
+.og-setup--dash .og-s.is-now .og-mark {
+  color: var(--ink);
+  box-shadow: inset 0 0 0 1.5px var(--ink);
+}
+.og-s__state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--text-3);
+}
+.og-s__state i {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(14, 17, 22, 0.25);
+}
+.og-s__state.is-done {
+  color: var(--ink);
+}
+.og-s__state.is-done i {
+  background: var(--ink);
+}
+.og-s__state.is-in-progress {
+  color: var(--ember-text, #b9431a);
+}
+.og-s__state.is-in-progress i {
+  background: var(--ember);
+  animation: og-dot 1.6s ease-in-out infinite;
+}
+.og-s__state.is-skipped i {
+  background: none;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.35);
+}
+@media (max-width: 1100px) {
+  .og-setup--dash .og-setup__list {
+    grid-template-columns: repeat(2, 1fr);
+    row-gap: 20px;
+  }
+}
+/* Setup in the Brand Analysis card's style (6 Nov, review): a fine frame, no glass, the same label and title. */
+.og-setup.og-setup--dash {
+  padding: 24px;
+  border-radius: 22px;
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.08);
+}
+.og-setup--dash > b {
+  margin-top: 8px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.og-setup--dash .og-setup__list {
+  margin-top: 16px;
+  padding-top: 20px;
+  border-top: 1px solid rgba(14, 17, 22, 0.08);
+}
+
+/* Empty-card pictures (6 Nov): still, the same size in every card. */
+.og-later__art {
+  display: flex;
+  align-items: center;
+  height: 72px;
+  margin: 8px 0 6px;
+}
+.og-noreports .og-later__art {
+  justify-content: center;
+}
+.ea {
+  display: block;
+  overflow: visible;
+}
+.ead-h {
+  margin: 32px 0 12px;
+  font-size: 16px;
+  font-weight: 600;
+}
+.ead-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+.ead-tile {
+  border: 0;
+  font: inherit;
+  text-align: left;
+  color: inherit;
+  cursor: pointer;
+  background: rgba(255, 255, 255, 0.3);
+  transition: box-shadow 0.15s ease, background 0.15s ease;
+}
+.ead-tile:hover {
+  background: rgba(255, 255, 255, 0.6);
+}
+.ead-tile.is-on {
+  background: rgba(255, 255, 255, 0.75);
+  box-shadow: inset 0 0 0 1.5px var(--ink);
+}
+.ead-tile > span:not(.og-eyebrow):not(.og-later__art):not(.ead-pick) {
+  font-size: 13px;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+.ead-pick {
+  margin-top: 8px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+}
+.ead-tile.is-on .ead-pick {
+  color: var(--ink);
+}
+/* Setup, shorter (6 Nov, review): the label and the count on one line, then the steps, briefly. */
+.og-setup__label {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.og-setup--dash .og-setup__list {
+  margin-top: 18px;
+  padding-top: 0;
+  border-top: 0;
+}
+.og-setup--dash .og-s {
+  gap: 6px;
+}

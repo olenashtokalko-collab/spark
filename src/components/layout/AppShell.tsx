@@ -24,6 +24,7 @@ import { Avatar, cx } from '../ui/primitives';
 import { Popover } from '../ui/overlay';
 import { CreditRing, CreditsOverlay, TopUpDialog } from './Credits';
 import { DrAiNavIcon, useDrAi } from '../ui/DrAi';
+import { DrAiDock } from '../../features/assistant/DrAiDock';
 import { fmtRelative } from '../../lib/format';
 import type { Notification } from '../../data/types';
 
@@ -181,8 +182,12 @@ export function AppShell({ children }: { children: ReactNode }) {
       </nav>
 
       <main className="content" id="content">
+        {/* Dr.AI's dock (6 Nov, #/demo/dock): the strip at the top, the bar at the foot, or the corner. */}
+        <DrAiDock place="top" />
         {children}
+        <DrAiDock place="foot" />
       </main>
+      <DrAiDock place="fixed" />
       <Shortcuts />
       {/* keep me in scope for screen readers */}
       <span className="sr-only">Signed in as {me.name}</span>

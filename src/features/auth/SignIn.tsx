@@ -9,6 +9,10 @@ import { useStore } from '../../state/store';
 import { Button, Field, Input, cx } from '../../components/ui/primitives';
 import { navigate } from '../../lib/router';
 import { OtpCode, ResendCode } from './OtpCode';
+import { LookPanel, type Concept, type Ground } from './SignInLooks';
+
+/** The panel's looks, shown on #/demo/signin (6 Nov). 'current' is the page as it is: the mascot's place held. */
+export type SignInLook = 'current' | `${Concept}-${Ground}`;
 
 // What the agent can do, in its own voice: general, no client's names, nothing the portal doesn't do.
 const LINES = [
@@ -69,7 +73,25 @@ type Mode = 'email' | 'code';
 const validEmail = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v.trim());
 const wait = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-export function SignIn() {
+/** The left panel: the page as it is ('current'), or one of the concepts on a ground (#/demo/signin). */
+function Panel({ look }: { look: SignInLook }) {
+  if (look === 'current')
+    return (
+      <section className="itd-type__panel itd-type__panel--haze">
+        {/* The primary wordmark (Ink on Sand, p. 29) in the panel's top-left corner. */}
+        <img className="signin-page__wordmark" src="/brand/spark-wordmark.png" alt="Spark Studios" />
+        <div className="itd-type__mascot">
+          <span>Mascot</span>
+        </div>
+        <span className="itd-type__label">Your AI agent</span>
+        <AgentLine />
+      </section>
+    );
+  const [concept, ground] = look.split('-') as [Concept, Ground];
+  return <LookPanel concept={concept} ground={ground} />;
+}
+
+export function SignIn({ look = 'current' }: { look?: SignInLook } = {}) {
   const { me, actions } = useStore();
   const [mode, setMode] = useState<Mode>('email');
   const [email, setEmail] = useState(me.email);
@@ -108,15 +130,7 @@ export function SignIn() {
 
   return (
     <div className="itd itd--type signin-page">
-      <section className="itd-type__panel itd-type__panel--haze">
-        {/* The primary wordmark (Ink on Sand, p. 29) in the panel's top-left corner. */}
-        <img className="signin-page__wordmark" src="/brand/spark-wordmark.png" alt="Spark Studios" />
-        <div className="itd-type__mascot">
-          <span>Mascot</span>
-        </div>
-        <span className="itd-type__label">Your AI agent</span>
-        <AgentLine />
-      </section>
+      <Panel look={look} />
       <section className="itd-type__main">
         <div className="itd-type__form">
           {mode === 'email' && (
@@ -132,7 +146,6 @@ export function SignIn() {
               <Button type="submit" variant="primary" loading={busy}>
                 Continue with email
               </Button>
-              <p className="signin-page__hint">We’ll email you a 6-digit code. No password needed.</p>
             </form>
           )}
 
@@ -143,7 +156,9 @@ export function SignIn() {
               </span>
               <h1 className="itd-form__title signin-page__title signin-page__title--sm">Check your email</h1>
               <p className="itd-form__sub">
-                Enter the 6-digit code we sent to <strong>{email.trim()}</strong>. It works for 10 minutes.
+                Enter the 6-digit code we sent to <strong>{email.trim()}</strong>.
+                <br />
+                It works for 10 minutes.
               </p>
               <OtpCode onComplete={verify} />
               {err}

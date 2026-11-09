@@ -3,7 +3,7 @@ import { BeamEdge } from '../../components/ui/BeamEdge';
 // Spark's mark, "How can I help?", four ways to start (never a blank chat: the research dossier of 8 Oct), and
 // the box at the foot. Sending starts the chat and opens it on the Chats page; the expand button opens Chats
 // without sending. Used from Home, so a chat starts without leaving it.
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { useDrAi } from '../../components/ui/DrAi';
 import { MascotClip } from '../demo/MascotDemo';
 import { createPortal } from 'react-dom';
@@ -29,7 +29,7 @@ export interface DrawerTopic {
 
 /** `initial` opens it with a question already written (e.g. Ask Spark to fix on Home), to edit and send.
  *  `topic` swaps the general suggestions for questions about what the page is about. */
-export function ChatDrawer({ open, onClose, initial, topic }: { open: boolean; onClose: () => void; initial?: string; topic?: DrawerTopic }) {
+export function ChatDrawer({ open, onClose, initial, topic, top }: { open: boolean; onClose: () => void; initial?: string; topic?: DrawerTopic; /** Above the greeting: what needs the client now (Dr.AI's dock, 6 Nov). */ top?: ReactNode }) {
   const { actions } = useStore();
   const drai = useDrAi();
   const [typing, setTyping] = useState(false);
@@ -76,6 +76,7 @@ export function ChatDrawer({ open, onClose, initial, topic }: { open: boolean; o
               <MascotClip state={typing || voice ? 'listening' : 'idle'} width={104} intro />
             </div>
           )}
+          {top}
           <h3>How can I help?</h3>
           {drai && <p className="chat-drawer__lead">Ask anything about what you’re looking at.</p>}
           <ul className="chats-start__list chat-drawer__list">

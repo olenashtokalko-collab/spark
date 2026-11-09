@@ -21,7 +21,21 @@ const FRAME = 1440;
 // full while he works); 104px in full in the panel and empty states, 150px on the chat's start.
 // Boxes in the 1440 frame: the whole figure (Sparki may fly beyond it), or the head for avatars. The head box
 // ends at x 1038, short of where Sparki drifts by his head, so no piece of him flickers in the circle (5 Nov).
-const CROP = { body: { x: 300, y: 100, w: 1020, h: 1290 }, head: { x: 362, y: 66, w: 676, h: 676 } };
+const CROP = {
+  body: { x: 300, y: 100, w: 1020, h: 1290 },
+  head: { x: 362, y: 66, w: 676, h: 676 },
+  // Tiles on the sign-in page (6 Nov), as the close-ups in the client's video: his face (with the hand at his chin
+  // while he thinks), and Sparki alone, bobbing by his head (x 1048–1292, y 152–650 over the idle loop), the edge of
+  // his headdress at the left as in the video's Sparki tile.
+  face: { x: 340, y: 60, w: 720, h: 720 },
+  sparki: { x: 860, y: 110, w: 580, h: 580 },
+  // Sparki with nothing of him (6 Nov): centred on Sparki's path (x ≈ 1170, y 150–650); the tile masks off the
+  // left quarter, where his headdress ends (x 1040).
+  sparkiOnly: { x: 920, y: 150, w: 500, h: 500 },
+  // Sparki's tile as in the video, his head peeking in at the left (6 Nov): more of the head than the video shows
+  // (x 800–1038 of it, about 40% of the tile), Sparki's path to its right.
+  peek: { x: 800, y: 110, w: 600, h: 600 },
+};
 
 /** Which clip follows `cur` while the mascot is in `state`. */
 function nextClip(cur: Clip | null, state: State): Clip {

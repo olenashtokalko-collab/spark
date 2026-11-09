@@ -31,11 +31,15 @@ import { TabLooksDemo } from './features/demo/TabLooksDemo';
 import { AskGlassDemo } from './features/demo/AskGlassDemo';
 import { RailHoverDemo } from './features/demo/RailHoverDemo';
 import { HomeRethinkDemo } from './features/demo/HomeRethinkDemo';
+import { HomeVariantsDemo } from './features/demo/HomeVariantsDemo';
+import { DockDemo } from './features/demo/DockDemo';
+import { EmptyArtDemo } from './features/demo/EmptyArtDemo';
+import { OnboardingHome } from './features/onboarding/Onboarding';
 import { MascotDemo } from './features/demo/MascotDemo';
+import { SignInDemo } from './features/demo/SignInDemo';
 import { useEffect } from 'react';
 import { useRoute } from './lib/router';
 import { AppShell } from './components/layout/AppShell';
-import { SignIn } from './features/auth/SignIn';
 import { Invite } from './features/auth/Invite';
 import { STORAGE_KEY, useStore } from './state/store';
 import { Assistant } from './features/assistant/Assistant';
@@ -57,11 +61,13 @@ import { navigate } from './lib/router';
 function Screen() {
   const { parts, query } = useRoute();
   const [section, a, b] = parts;
+  const onboarding = !!useStore().state.onboarding;
 
   switch (section) {
     case undefined:
     case 'home':
-      return <GHomePage />;
+      // Onboarding (#/demo/dock): a new company's Home, the first steps.
+      return onboarding ? <OnboardingHome /> : <GHomePage />;
     // Brand Analysis, its own section since 5 Nov: #/brand-analysis (?tab=profile) and a report, #/brand-analysis/social.
     case 'brand-analysis':
       return <GBrandAnalysisPage kind={a} />;
@@ -112,6 +118,9 @@ function Screen() {
       if (a === 'ask-glass') return <AskGlassDemo />;
       if (a === 'rail-hover') return <RailHoverDemo />;
       if (a === 'home-rethink') return <HomeRethinkDemo />;
+      if (a === 'home-variants') return <HomeVariantsDemo />;
+      if (a === 'dock') return <DockDemo />;
+      if (a === 'empty-art') return <EmptyArtDemo />;
       if (a === 'mascot') return <MascotDemo />;
       break;
     case 'reset':
@@ -173,6 +182,8 @@ export default function App() {
   if (path === '/invite') return <Invite standalone={INVITE_ONLY} />;
   // A build with only the invitation (VITE_INVITE_ONLY=1, for sharing that flow on its own): every page is it.
   if (INVITE_ONLY) return <Invite standalone />;
+  // The sign-in looks with Dr.AI: the page in full, signed in or out.
+  if (path.startsWith('/demo/signin')) return <SignInDemo />;
   // Signed out: the sign-in page, except for the sign-in options demo, which is about that page.
   if (!state.signedIn)
     return path.startsWith('/demo/intro') ? (
@@ -180,7 +191,8 @@ export default function App() {
         <IntroDemo />
       </div>
     ) : (
-      <SignIn />
+      // Two versions with Dr.AI side by side while the team picks one (6 Nov): the bar at the bottom switches them.
+      <SignInDemo />
     );
   return (
     <AppShell>
