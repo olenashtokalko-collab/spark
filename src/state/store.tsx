@@ -644,7 +644,8 @@ function useStoreValue() {
   }, [set]);
   const signIn = useCallback(() => {
     markSignedOut(false);
-    set(() => ({ signedIn: true }));
+    // Back after logging out: Dr.AI greets again (9 Nov, review).
+    set(() => ({ signedIn: true, onboardingIntro: false }));
   }, [set]);
   const seeDoc = useCallback((id: string) => set((s) => (s.seenDocs.includes(id) ? {} : { seenDocs: [...s.seenDocs, id] })), [set]);
   const topUp = useCallback((usd: number) => set((s) => ({ credits: s.credits + usd, creditsTotal: s.creditsTotal + usd })), [set]);

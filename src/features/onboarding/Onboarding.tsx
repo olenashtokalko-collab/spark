@@ -321,7 +321,9 @@ function ReportToCome({ kind }: { kind: 'social' | 'website' }) {
 function WelcomeIntro() {
   const { state, me, actions } = useStore();
   const ob = useOnboarding();
-  const show = ob.on && ob.count === 0 && !state.onboardingIntro;
+  // The first visit, and every return after logging out (9 Nov, review): a returning visitor is welcomed back.
+  const show = ob.on && !state.onboardingIntro;
+  const back = ob.count > 0;
   // The way out (9 Nov, review: "a nicer exit"): the words lift away, Dr.AI hops in an arc to his corner, shrinking
   // to the corner figure's size, the ground closes after him as an iris into that spot, and the corner lights up as
   // he lands. The corner figure is measured, so he lands exactly where it stands, even if it was dragged.
@@ -367,13 +369,27 @@ function WelcomeIntro() {
         </span>
       </div>
       <div className="og-intro__text">
-        <span className="og-intro__label">Welcome to Spark</span>
+        <span className="og-intro__label">{back ? 'Welcome back' : 'Welcome to Spark'}</span>
         <h1>
-          Hi {me.name.split(' ')[0]}, I’m <span className="dk-hl">Dr.AI</span>.
+          {back ? (
+            <>
+              Good to see you, {me.name.split(' ')[0]}. <span className="dk-hl">Dr.AI</span> here.
+            </>
+          ) : (
+            <>
+              Hi {me.name.split(' ')[0]}, I’m <span className="dk-hl">Dr.AI</span>.
+            </>
+          )}
         </h1>
-        <p>Four short steps and your workspace is ready. I’ll show you the way.</p>
+        <p>
+          {!back
+            ? 'Four short steps and your workspace is ready. I’ll show you the way.'
+            : ob.all
+              ? 'All four steps are done. Your workspace is ready.'
+              : `${ob.count} of 4 steps done. Let’s pick up where you left off.`}
+        </p>
         <button type="button" className="dk-btn dk-btn--primary og-intro__go" onClick={leave}>
-          Let’s go
+          {back ? 'Carry on' : 'Let’s go'}
         </button>
       </div>
     </div>,
