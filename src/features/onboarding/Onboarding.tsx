@@ -366,6 +366,8 @@ function WelcomeIntro() {
       <div ref={fig} className="og-intro__fig">
         <span className="og-intro__hop">
           <MascotClip state="speaking" width={230} intro />
+          {/* He flies to his corner in a clear glass bubble that gathers round him on the way (9 Nov, demo E). */}
+          <span className="og-intro__bubble" aria-hidden />
         </span>
       </div>
       <div className="og-intro__text">
