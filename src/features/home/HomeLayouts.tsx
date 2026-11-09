@@ -395,10 +395,7 @@ function WaitingRows({ items, compact }: { items: Waiting[]; compact?: boolean }
               <span className="hl-wait__title">{w.title}</span>
               <span className="hl-wait__meta">
                 <span className="hl-type">{w.type}</span>
-                <span className={`rstatus rstatus--${w.status}`}>
-                  <span className="rstatus__dot" />
-                  {w.statusLabel}
-                </span>
+                <RequestStatus status={w.status} />
                 {w.note && <span className="hl-wait__note">{w.note}</span>}
               </span>
             </span>

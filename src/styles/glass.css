@@ -18104,3 +18104,1826 @@ body:has(.og-intro:not(.is-landed)) .dk--corner .dk-fig {
 .msc-clip__poster.is-gone {
   opacity: 0;
 }
+
+/* ---- The filled overview, reworked (9 Nov, Jean #22): one column. The reports as two score tiles with the figures in
+   big type, the consultation across the page under them, then the latest from Spark. The tiles' titles and the
+   latest's title share one heading type. */
+.og-full {
+  grid-template-columns: minmax(0, 1fr);
+}
+.og-full__h {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 20px;
+  line-height: 1.2;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+.og-full__latest-head {
+  margin-bottom: 8px;
+}
+.og-scores {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+.og-score {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 24px;
+  border-radius: 22px;
+  color: var(--ink);
+  text-decoration: none;
+  transition: transform 0.15s ease, background 0.15s ease;
+}
+.og-score:hover {
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.8);
+}
+.og-score__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.og-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.og-chip::before {
+  content: '';
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.og-chip--warn {
+  color: var(--ember-text);
+  background: rgba(232, 80, 31, 0.1);
+}
+.og-chip--good {
+  color: #2f7a4b;
+  background: rgba(47, 122, 75, 0.1);
+}
+.og-score__body {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  min-height: 128px;
+}
+.og-score__ring {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 128px;
+  height: 128px;
+}
+.og-score__ring .hv-gauge {
+  inset: 0;
+}
+.og-score__ring .hv-gauge circle {
+  stroke-width: 11;
+}
+.og-score__ring .hv-gauge__val {
+  stroke: var(--ember);
+}
+.og-score__ring > span {
+  position: relative;
+  display: flex;
+  align-items: baseline;
+  font-family: var(--font-display);
+}
+.og-score__ring b {
+  font-size: 48px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.og-score__ring i,
+.og-score__fig i {
+  font-style: normal;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--text-3);
+}
+.og-score__fig {
+  flex: none;
+  min-width: 128px;
+  font-family: var(--font-display);
+  font-size: 72px;
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.04em;
+}
+.og-score__facts {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+.og-score__what {
+  font-size: 16px;
+  font-weight: 600;
+}
+.og-score__delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 14px;
+  font-weight: 600;
+}
+.og-score__delta.is-up {
+  color: #2f7a4b;
+}
+.og-score__delta.is-down {
+  color: var(--ember-text);
+}
+.og-score__bench {
+  font-size: 13px;
+  font-weight: 300;
+  color: var(--text-3);
+}
+.og-score__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(14, 17, 22, 0.08);
+}
+.og-score__line {
+  font-size: 15px;
+  font-weight: 500;
+}
+.og-score__go {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex: none;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cobalt);
+}
+.og-score:hover .og-score__go svg {
+  transform: translateX(2px);
+}
+.og-score__go svg {
+  transition: transform 0.15s ease;
+}
+/* The consultation across the page: the picture, the words, the button on the right. */
+.og-full > .hcs {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: 'art title go' 'art p go';
+  align-items: center;
+  column-gap: 20px;
+  row-gap: 4px;
+  padding: 24px 28px;
+  border-radius: 22px;
+}
+.og-full > .hcs .hcs-art {
+  grid-area: art;
+  margin: 0;
+  place-items: center;
+}
+.og-full > .hcs .hcs-title {
+  grid-area: title;
+  align-self: end;
+}
+.og-full > .hcs p {
+  grid-area: p;
+  align-self: start;
+  max-width: 640px;
+}
+.og-full > .hcs .hcs-go {
+  grid-area: go;
+  margin: 0;
+  height: 44px;
+  padding: 0 22px;
+}
+@media (max-width: 900px) {
+  .og-scores {
+    grid-template-columns: 1fr;
+  }
+  .og-full > .hcs {
+    grid-template-columns: auto minmax(0, 1fr);
+    grid-template-areas: 'art title' 'art p' 'go go';
+  }
+  .og-full > .hcs .hcs-go {
+    justify-self: start;
+    margin-top: 12px;
+  }
+}
+@media (max-width: 560px) {
+  .og-score__body {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .og-score__foot {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+}
+
+/* ---- #/demo/ask-pill (9 Nov): the Ask Dr.AI pill with volume, Dr.AI with air round him ---------------------- */
+.apd-stage {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  padding: 8px 0 4px;
+}
+.apd-card {
+  display: flex;
+  justify-content: flex-end;
+  align-items: flex-start;
+  width: 260px;
+  height: 120px;
+  padding: 22px 22px 0 0;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.72);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 1px 2px rgba(14, 17, 22, 0.04);
+}
+.apd {
+  --c: 30, 59, 214;
+  --e: 232, 80, 31;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 44px;
+  padding: 0 18px 0 5px;
+  border: 0;
+  border-radius: 999px;
+  font: 500 14px/1 var(--font-body, inherit);
+  white-space: nowrap;
+  color: var(--ink);
+  cursor: pointer;
+  isolation: isolate;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.apd:hover {
+  transform: translateY(-1px);
+}
+.apd:active {
+  transform: translateY(0) scale(0.98);
+}
+.apd__port {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+}
+.apd__port img.drai-head {
+  position: relative;
+  z-index: 1;
+}
+/* Just the head (the demo's looks): no ground, no circle. */
+.apd__port img.drai-head--clear {
+  border-radius: 0;
+  background: none;
+  filter: drop-shadow(0 2px 3px rgba(14, 17, 22, 0.22));
+  transition: transform 0.3s ease;
+}
+.apd:hover .apd__port img.drai-head {
+  transform: translateY(-1px) rotate(-4deg);
+}
+
+/* A · glass capsule: a gloss on top, the brand light along the lower edge, a coloured shadow, a sunken porthole */
+.apd--glass {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98) 0%, rgba(255, 255, 255, 0.82) 48%, rgba(238, 242, 252, 0.9) 100%);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 -3px 6px -2px rgba(var(--c), 0.14),
+    0 1px 2px rgba(14, 17, 22, 0.08),
+    -6px 10px 18px -10px rgba(var(--c), 0.5),
+    6px 10px 18px -10px rgba(var(--e), 0.5);
+}
+.apd--glass::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0) 45%),
+    linear-gradient(90deg, rgb(var(--c)), #c8d8f0 50%, rgb(var(--e)));
+  -webkit-mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.apd--glass:hover {
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 -3px 6px -2px rgba(var(--c), 0.18),
+    0 1px 2px rgba(14, 17, 22, 0.08),
+    -8px 14px 22px -10px rgba(var(--c), 0.6),
+    8px 14px 22px -10px rgba(var(--e), 0.6);
+}
+.apd--glass .apd__port {
+  background: radial-gradient(circle at 50% 30%, #fff 0%, #eef3fc 55%, #c8d8f0 100%);
+  box-shadow: inset 0 2px 4px rgba(14, 17, 22, 0.14), inset 0 -1px 0 rgba(255, 255, 255, 0.9), 0 1px 0 #fff;
+}
+
+/* B · Dr.AI in his bubble: a clear glass bubble bigger than the pill, sitting out of it */
+.apd--bubble {
+  height: 40px;
+  margin-left: 8px;
+  padding-left: 0;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 255, 255, 0.78));
+  box-shadow: inset 0 1px 0 #fff, inset 0 -2px 4px -2px rgba(var(--c), 0.18), 0 6px 16px -8px rgba(14, 17, 22, 0.3);
+}
+.apd--bubble::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(var(--c), 0.55), rgba(200, 216, 240, 0.8) 50%, rgba(var(--e), 0.6));
+  -webkit-mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.apd--bubble .apd__port {
+  width: 50px;
+  height: 50px;
+  margin: -5px 0 -5px -10px;
+  background: radial-gradient(circle at 50% 60%, rgba(200, 216, 240, 0.35), rgba(255, 255, 255, 0.15) 70%);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.95),
+    inset 4px -6px 10px -4px rgba(var(--e), 0.35),
+    inset -4px 6px 10px -4px rgba(var(--c), 0.35),
+    0 6px 14px -6px rgba(var(--c), 0.45);
+  -webkit-backdrop-filter: blur(2px);
+  backdrop-filter: blur(2px);
+}
+.apd--bubble .apd__port::after {
+  content: '';
+  position: absolute;
+  top: 7px;
+  left: 10px;
+  z-index: 2;
+  width: 14px;
+  height: 7px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #fff, rgba(255, 255, 255, 0));
+  transform: rotate(-30deg);
+}
+.apd--bubble:hover .apd__port {
+  animation: apd-bob 1.2s ease-in-out infinite;
+}
+@keyframes apd-bob {
+  0%,
+  100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-2px) scale(1.03, 0.98);
+  }
+}
+
+/* C · light runs round the rim */
+@property --apd-a {
+  syntax: '<angle>';
+  inherits: false;
+  initial-value: 0deg;
+}
+.apd--light {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0.8));
+  box-shadow: inset 0 1px 0 #fff, 0 10px 22px -12px rgba(var(--c), 0.45), 0 10px 22px -14px rgba(var(--e), 0.45);
+}
+.apd--light::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  padding: 2.5px;
+  border-radius: inherit;
+  background: conic-gradient(from var(--apd-a), rgb(var(--c)), #c8d8f0, #fff, rgb(var(--e)), #c8d8f0, rgb(var(--c)));
+  -webkit-mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.apd--light:hover::before {
+  animation: apd-spin 2.4s linear infinite;
+}
+@keyframes apd-spin {
+  to {
+    --apd-a: 360deg;
+  }
+}
+.apd--light .apd__port {
+  background: #fff;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.9), 0 0 0 4px rgba(14, 17, 22, 0.06), 0 3px 8px -2px rgba(var(--c), 0.35);
+}
+
+/* D · ink glass: Cobalt on the left edge, Ember on the right, a white gloss on top */
+.apd--ink {
+  color: var(--sand, #f5f2ec);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.16) 0%, rgba(255, 255, 255, 0) 46%),
+    radial-gradient(60% 140% at 0% 100%, rgba(var(--c), 0.75), transparent 70%),
+    radial-gradient(60% 140% at 100% 100%, rgba(var(--e), 0.7), transparent 70%),
+    #0e1116;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.12),
+    0 10px 20px -10px rgba(14, 17, 22, 0.55);
+}
+.apd--ink:hover {
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.16),
+    -6px 12px 22px -10px rgba(var(--c), 0.7),
+    6px 12px 22px -10px rgba(var(--e), 0.7);
+}
+.apd--ink .apd__port {
+  background: radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.95), rgba(200, 216, 240, 0.85) 70%, rgba(200, 216, 240, 0.6));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 2px 6px rgba(0, 0, 0, 0.35);
+}
+
+/* Latest from Spark, what stands by the title */
+.apd-head2 {
+  margin-top: 48px;
+}
+.apd-switch {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+.apd-switch button {
+  height: 34px;
+  padding: 0 14px;
+  border: 1px solid rgba(14, 17, 22, 0.12);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.6);
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.apd-switch button.is-on {
+  color: var(--sand, #fff);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+.apd-mark-note {
+  max-width: 720px;
+  margin-bottom: 16px;
+}
+.apd-latest {
+  position: relative;
+  max-width: 1080px;
+}
+.apd-latest__head {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 50% 30%, #fff 0%, #eef3fc 55%, #c8d8f0 100%);
+  box-shadow: inset 0 2px 4px rgba(14, 17, 22, 0.12), 0 1px 0 #fff;
+}
+.apd-latest__head img.drai-head {
+  border-radius: 0;
+  background: none;
+  filter: drop-shadow(0 2px 3px rgba(14, 17, 22, 0.2));
+}
+.apd-latest__team {
+  display: inline-flex;
+  margin-left: 6px;
+}
+.apd-latest__team > * + * {
+  margin-left: -8px;
+}
+.apd-latest--spark .og-full__latest-head svg {
+  flex: none;
+}
+.apd-peek {
+  position: absolute;
+  top: -104px;
+  right: 24px;
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  height: 104px;
+  pointer-events: none;
+}
+.apd-peek__win {
+  display: block;
+  height: 104px;
+  overflow: hidden;
+}
+.apd-peek__win .msc-clip {
+  margin-top: -26px;
+}
+.apd-peek__say {
+  margin-top: 30px;
+  padding: 8px 12px;
+  border-radius: 14px 14px 4px 14px;
+  font-size: 13px;
+  color: var(--sand, #fff);
+  background: var(--ink);
+  white-space: nowrap;
+}
+.apd-latest--peek {
+  margin-top: 116px;
+}
+@media (max-width: 700px) {
+  .apd-stage {
+    flex-wrap: wrap;
+  }
+  .apd-peek__say {
+    display: none;
+  }
+}
+
+/* Dr.AI's window over something dark (9 Nov, review): the same glass, frosted up nearly to white so the words stay
+   sharp; back to clear once the page under it is light again. Set by useFrostOverDark in DrAiDock. */
+.dk--corner:not(.dl-scene) .dk-card,
+.dk-mini--corner {
+  transition: background 0.35s ease, -webkit-backdrop-filter 0.35s ease, backdrop-filter 0.35s ease;
+}
+.dk--corner:not(.dl-scene) .dk-card.is-over-dark,
+.dk-mini--corner.is-over-dark {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.86));
+  -webkit-backdrop-filter: blur(24px) saturate(1.2);
+  backdrop-filter: blur(24px) saturate(1.2);
+}
+
+/* Home's title, tabs and cards closer together (9 Nov, review): 16px from the title to the tabs, 24px from the tabs to
+   what they hold. Home's column has a 32px gap, so the margins take it back. */
+.og-home > .og-ba-title.og-ba-title {
+  margin-bottom: -16px;
+}
+.og-home > .og-tabs.og-tabs {
+  margin-top: 0;
+  margin-bottom: -8px;
+}
+/* The score tiles side by side only while each has room for its figure and its facts (9 Nov). */
+.og-scores {
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+}
+@media (max-width: 560px) {
+  .og-scores {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Dr.AI's window titled by what it says (9 Nov, review): Needs you, Reminder or Latest from Spark; the count between
+   the arrows, no stepper. News is green, as the reports' good news. */
+.dk--needs .dk-needs__title {
+  animation: dk-title-in 0.35s ease both;
+}
+@keyframes dk-title-in {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+}
+.dk--needs .dk-pager--arrows {
+  align-items: center;
+}
+.dk--needs .dk-pager--arrows .dk-card__n {
+  min-width: 26px;
+  margin: 0;
+  text-align: center;
+}
+.dk-tag--news {
+  color: #2f7a4b;
+  background: rgba(47, 122, 75, 0.1);
+}
+
+/* Ask Dr.AI on the portal's pages (9 Nov): the ink glass pill from #/demo/ask-pill, a touch lower than the demo's
+   so it sits level with the page's other buttons. */
+.apd.drai-ink {
+  height: 40px;
+  padding: 0 16px 0 4px;
+  font-size: 13px;
+}
+.apd.drai-ink .apd__port {
+  width: 32px;
+  height: 32px;
+}
+
+/* E · Ember glass, the Ask Dr.AI pill on the portal (9 Nov): see-through Ember with a white light inside, as the
+   folders' glass on Documents; a bright rim, its lower edge lit, a warm shadow. Ink words (Ink on Ember 5.1:1). */
+.apd--ember {
+  color: var(--ink);
+  background:
+    radial-gradient(70% 130% at 45% 20%, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0) 72%),
+    linear-gradient(170deg, rgba(244, 150, 115, 0.5), rgba(232, 80, 31, 0.42));
+  -webkit-backdrop-filter: blur(12px) saturate(1.5);
+  backdrop-filter: blur(12px) saturate(1.5);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 0 0 1px rgba(255, 255, 255, 0.72),
+    inset 0 -3px 5px -2px rgba(255, 255, 255, 0.7),
+    0 8px 18px -9px rgba(232, 80, 31, 0.6);
+}
+.apd--ember:hover {
+  background:
+    radial-gradient(70% 130% at 45% 20%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 72%),
+    linear-gradient(170deg, rgba(244, 150, 115, 0.6), rgba(232, 80, 31, 0.52));
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 0 0 1px rgba(255, 255, 255, 0.8),
+    inset 0 -3px 5px -2px rgba(255, 255, 255, 0.75),
+    0 12px 22px -9px rgba(232, 80, 31, 0.7);
+}
+.apd--ember .apd__port {
+  background: radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.35) 75%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), inset 0 -2px 4px rgba(232, 80, 31, 0.25), 0 2px 5px -1px rgba(232, 80, 31, 0.35);
+}
+.apd--ember .apd__port::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 7px;
+  z-index: 2;
+  width: 10px;
+  height: 5px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, #fff, rgba(255, 255, 255, 0));
+  transform: rotate(-30deg);
+}
+
+/* Cobalt as the system's accent (9 Nov, review: balance the Ink buttons). The brand book: "Cobalt for human, Ember for
+   AI". Ink stays for the main buttons; Cobalt marks what's yours and what you set: links, switches, ticks, the
+   credits ring, focus. Ember stays with Dr.AI and with what's wrong. */
+:root[data-theme][data-theme] .switch.is-on {
+  background: var(--cobalt);
+}
+:root[data-theme][data-theme] .checkbox input:checked + .checkbox__box {
+  background: var(--cobalt);
+}
+:root[data-theme][data-theme] {
+  accent-color: var(--cobalt);
+}
+
+/* E · Ember glass, saturated (9 Nov, review: to sit well beside the Ink buttons, as the "High impact" chip): Ember
+   glass nearly solid, a white gloss over its top half, a lit lower edge, a warm shadow; white words. */
+.apd--ember {
+  color: #fff;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.06) 48%, rgba(255, 255, 255, 0) 52%),
+    radial-gradient(80% 140% at 50% 120%, rgba(255, 170, 130, 0.55), rgba(255, 170, 130, 0) 70%),
+    linear-gradient(180deg, rgba(240, 98, 50, 0.94), rgba(214, 70, 24, 0.96));
+  -webkit-backdrop-filter: blur(12px) saturate(1.4);
+  backdrop-filter: blur(12px) saturate(1.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.65),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+    inset 0 -1px 0 rgba(255, 210, 190, 0.6),
+    0 8px 18px -8px rgba(214, 70, 24, 0.65);
+  text-shadow: 0 1px 1px rgba(150, 40, 10, 0.25);
+}
+.apd--ember:hover {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.38) 0%, rgba(255, 255, 255, 0.08) 48%, rgba(255, 255, 255, 0) 52%),
+    radial-gradient(80% 140% at 50% 120%, rgba(255, 170, 130, 0.65), rgba(255, 170, 130, 0) 70%),
+    linear-gradient(180deg, rgba(244, 106, 58, 0.96), rgba(220, 74, 26, 0.98));
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.75),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.32),
+    inset 0 -1px 0 rgba(255, 210, 190, 0.7),
+    0 12px 22px -8px rgba(214, 70, 24, 0.75);
+}
+.apd--ember .apd__port {
+  background: radial-gradient(circle at 50% 35%, rgba(255, 255, 255, 0.95), rgba(255, 236, 226, 0.75) 75%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), inset 0 -2px 4px rgba(232, 80, 31, 0.3), 0 2px 5px -1px rgba(120, 30, 5, 0.35);
+}
+.apd.drai-ink {
+  font-weight: 600;
+}
+
+/* E · Ember glass, review 2 (9 Nov): no straight gloss band (it read as a flat linear gradient) and no shadow; the
+   light as glass holds it, a soft bloom at the top and a warmer glow rising from the lower edge. Dr.AI's bubble with a
+   faint rim, not a white ring. */
+.apd--ember,
+.apd--ember:hover {
+  background:
+    radial-gradient(90% 70% at 35% 0%, rgba(255, 255, 255, 0.34), rgba(255, 255, 255, 0) 70%),
+    radial-gradient(70% 90% at 70% 110%, rgba(255, 150, 110, 0.55), rgba(255, 150, 110, 0) 70%),
+    rgba(232, 80, 31, 0.92);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.45),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.18),
+    inset 0 -1px 0 rgba(255, 200, 175, 0.45);
+}
+.apd--ember:hover {
+  background:
+    radial-gradient(90% 70% at 35% 0%, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0) 70%),
+    radial-gradient(70% 90% at 70% 110%, rgba(255, 150, 110, 0.65), rgba(255, 150, 110, 0) 70%),
+    rgba(236, 88, 38, 0.95);
+}
+.apd--ember .apd__port {
+  background: radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.55), rgba(255, 210, 190, 0.28) 75%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.38), inset 0 -2px 4px rgba(150, 40, 10, 0.18);
+}
+.apd--ember .apd__port::after {
+  opacity: 0.7;
+}
+
+/* E · Ember, review 3 (9 Nov): one even fill and one even rim, no light spots; Dr.AI's head as in the menu, on its
+   own, with no bubble round it. */
+.apd--ember,
+.apd--ember:hover {
+  background: var(--ember);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22);
+  text-shadow: none;
+}
+.apd--ember:hover {
+  background: #ec5d2e;
+}
+.apd--ember .apd__port {
+  background: none;
+  box-shadow: none;
+}
+.apd--ember .apd__port::after {
+  content: none;
+}
+.apd--ember .apd__port img.drai-head {
+  filter: none;
+}
+.apd.drai-ink {
+  padding-left: 5px;
+}
+
+/* Dr.AI's window lower (9 Nov, review: it covered too much of the page): its foot level with his hand. */
+.dk.dk--corner:not(.dl-scene) > .dk-card {
+  margin-bottom: 34px;
+}
+
+/* Ask Dr.AI, review 4 (9 Nov): his head at the menu's size (24px) in a clear glass circle, air round him. */
+.apd--ember .apd__port {
+  width: 32px;
+  height: 32px;
+  background: rgba(255, 255, 255, 0.16);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.35);
+}
+.apd.drai-ink .apd__port {
+  width: 32px;
+  height: 32px;
+}
+
+/* Ask Dr.AI's panel (9 Nov, review): "How can I help you?", quick chips to start, the box at the foot. */
+.chat-drawer__chips {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 16px;
+}
+.chat-drawer__chip {
+  height: 34px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink);
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.1);
+  cursor: pointer;
+  transition: background 0.15s ease, box-shadow 0.15s ease;
+}
+.chat-drawer__chip:hover {
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.2);
+}
+
+/* ---- #/demo/status-glass, more 3D (9 Nov, review: "more modern, bubbly, as the brand book") ------------------ */
+/* D · soap bubble */
+.sg--bubble {
+  isolation: isolate;
+  background:
+    radial-gradient(120% 140% at 50% 120%, rgba(var(--c), 0.18), rgba(var(--c), 0) 60%),
+    rgba(255, 255, 255, 0.28);
+  -webkit-backdrop-filter: blur(6px) saturate(1.6);
+  backdrop-filter: blur(6px) saturate(1.6);
+  box-shadow: inset 0 -2px 4px rgba(var(--c), 0.12), 0 4px 10px -6px rgba(var(--c), 0.45);
+}
+.sg--bubble::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  padding: 1.5px;
+  border-radius: inherit;
+  background: conic-gradient(from 200deg, rgba(var(--c), 0.9), rgba(255, 255, 255, 0.95) 25%, rgba(200, 216, 240, 0.9) 45%, rgba(var(--c), 0.7) 70%, rgba(255, 255, 255, 0.9) 88%, rgba(var(--c), 0.9));
+  -webkit-mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+}
+.sg--bubble::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 9px;
+  width: 16px;
+  height: 5px;
+  border-radius: 50%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.95), rgba(255, 255, 255, 0));
+  transform: rotate(-6deg);
+  pointer-events: none;
+}
+.sg--bubble.sg-s--delivered {
+  color: #fff;
+  background: radial-gradient(120% 140% at 50% 120%, rgba(90, 96, 120, 0.6), rgba(var(--c), 0) 70%), rgba(var(--c), 0.82);
+}
+
+/* E · jelly */
+.sg--jelly {
+  isolation: isolate;
+  overflow: hidden;
+  background:
+    radial-gradient(90% 90% at 50% 115%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 65%),
+    linear-gradient(180deg, rgba(var(--c), 0.32), rgba(var(--c), 0.5));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    inset 0 -2px 3px rgba(var(--c), 0.45),
+    inset 0 -6px 10px -6px rgba(255, 255, 255, 0.7),
+    0 5px 12px -6px rgba(var(--c), 0.7),
+    0 1px 2px rgba(var(--c), 0.25);
+}
+.sg--jelly::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 2px;
+  left: 6px;
+  right: 6px;
+  height: 46%;
+  border-radius: 999px 999px 60% 60% / 999px 999px 100% 100%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.15));
+}
+.sg--jelly.sg-s--delivered {
+  color: #fff;
+  background:
+    radial-gradient(90% 90% at 50% 115%, rgba(160, 170, 200, 0.45), rgba(255, 255, 255, 0) 65%),
+    linear-gradient(180deg, rgba(var(--c), 0.78), rgba(var(--c), 0.95));
+}
+.sg--jelly.sg-s--delivered::after {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.04));
+}
+
+/* F · clear capsule with a glass orb */
+.sg--orb {
+  isolation: isolate;
+  overflow: hidden;
+  padding-left: 8px;
+  background:
+    radial-gradient(40px 30px at 14px 50%, rgba(var(--c), 0.32), rgba(var(--c), 0) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.45));
+  -webkit-backdrop-filter: blur(8px) saturate(1.4);
+  backdrop-filter: blur(8px) saturate(1.4);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), inset 0 1px 0 #fff, 0 0 0 0.5px rgba(14, 17, 22, 0.1), 0 4px 10px -7px rgba(14, 17, 22, 0.35);
+}
+.sg--orb .sg-bead {
+  width: 14px;
+  height: 14px;
+  background:
+    radial-gradient(circle at 34% 28%, #fff 0 14%, rgba(255, 255, 255, 0) 32%),
+    radial-gradient(circle at 60% 80%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 45%),
+    radial-gradient(circle at 50% 45%, rgba(var(--c), 0.75), rgba(var(--c), 1) 75%);
+  box-shadow: inset 0 -2px 3px rgba(0, 0, 0, 0.22), 0 2px 5px rgba(var(--c), 0.55);
+}
+
+/* The demo's ground: a little colour behind, so the glass shows it holds light */
+.sg-page .dl-tile {
+  background-image: radial-gradient(60% 80% at 85% 20%, rgba(200, 216, 240, 0.45), transparent 70%), radial-gradient(50% 60% at 10% 90%, rgba(232, 80, 31, 0.08), transparent 70%);
+}
+
+/* The team's name on the company card in Cobalt, as the other links (9 Nov, review: "3 to fix · 1 high impact"). */
+:root[data-theme][data-theme] .hl-team .hl-team__text b {
+  color: var(--cobalt);
+  font-weight: 600;
+}
+
+/* G · lit from below: clear frosted glass, the colour as light along the lower edge and on the page under it */
+.sg--lit {
+  isolation: isolate;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.5));
+  -webkit-backdrop-filter: blur(10px) saturate(1.4);
+  backdrop-filter: blur(10px) saturate(1.4);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 0 -2px 0 rgba(var(--c), 0.75),
+    inset 0 -6px 8px -4px rgba(var(--c), 0.35),
+    0 6px 10px -6px rgba(var(--c), 0.8);
+}
+.sg--lit.sg-s--delivered {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), inset 0 -2px 0 rgba(var(--c), 0.9), inset 0 -6px 8px -4px rgba(var(--c), 0.3), 0 6px 10px -6px rgba(var(--c), 0.7);
+}
+
+/* H · liquid glass: clear, thick, bending the light */
+.sg--liquid {
+  isolation: isolate;
+  background:
+    radial-gradient(80% 120% at 85% 110%, rgba(var(--c), 0.28), rgba(var(--c), 0) 60%),
+    rgba(255, 255, 255, 0.22);
+  -webkit-backdrop-filter: blur(3px) saturate(1.8) brightness(1.06);
+  backdrop-filter: blur(3px) saturate(1.8) brightness(1.06);
+  box-shadow:
+    inset 1.5px 1.5px 1px rgba(255, 255, 255, 0.95),
+    inset -1.5px -1.5px 1px rgba(var(--c), 0.55),
+    inset -4px -4px 8px -3px rgba(var(--c), 0.35),
+    inset 4px 4px 8px -3px rgba(255, 255, 255, 0.7),
+    0 0 0 0.5px rgba(14, 17, 22, 0.1),
+    0 6px 14px -8px rgba(14, 17, 22, 0.35);
+}
+
+/* I · pearl: a pearly white pill with a sheen of the colour drifting into Haze */
+.sg--pearl {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0) 55%),
+    linear-gradient(105deg, rgba(var(--c), 0.32) 0%, rgba(200, 216, 240, 0.55) 45%, rgba(255, 255, 255, 0.85) 70%, rgba(var(--c), 0.18) 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 -2px 3px rgba(var(--c), 0.18),
+    0 0 0 0.5px rgba(var(--c), 0.25),
+    0 3px 8px -5px rgba(var(--c), 0.5);
+}
+.sg--pearl.sg-s--delivered {
+  color: #fff;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.35) 0%, rgba(255, 255, 255, 0) 55%),
+    linear-gradient(105deg, rgba(var(--c), 0.95) 0%, rgba(80, 90, 120, 0.9) 60%, rgba(var(--c), 0.9) 100%);
+}
+
+/* J · the colour fading into glass from the left */
+.sg--fade {
+  overflow: hidden;
+  padding-left: 14px;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.7) 0%, rgba(255, 255, 255, 0) 50%),
+    linear-gradient(90deg, rgba(var(--c), 0.75) 0%, rgba(var(--c), 0.28) 38%, rgba(255, 255, 255, 0.55) 80%);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8), inset 0 -2px 3px rgba(var(--c), 0.2), 0 3px 8px -5px rgba(var(--c), 0.55);
+}
+.sg--fade.sg-s--delivered {
+  color: #fff;
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 50%),
+    linear-gradient(90deg, rgba(var(--c), 1) 0%, rgba(var(--c), 0.8) 60%, rgba(var(--c), 0.6) 100%);
+}
+/* G a touch stronger, so the colour reads at the table's size */
+.sg--lit,
+.sg--lit.sg-s--delivered {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85) 0%, rgba(255, 255, 255, 0.55) 60%, rgba(var(--c), 0.14) 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 0 -2.5px 0 rgba(var(--c), 0.9),
+    inset 0 -8px 10px -5px rgba(var(--c), 0.45),
+    0 7px 12px -6px rgba(var(--c), 0.85);
+}
+
+/* K · glass capsule with an emoji in a clear bubble */
+.sg--emoji {
+  isolation: isolate;
+  overflow: hidden;
+  gap: 6px;
+  padding-left: 3px;
+  background:
+    radial-gradient(40px 30px at 14px 50%, rgba(var(--c), 0.3), rgba(var(--c), 0) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.45));
+  -webkit-backdrop-filter: blur(8px) saturate(1.4);
+  backdrop-filter: blur(8px) saturate(1.4);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), inset 0 1px 0 #fff, 0 0 0 0.5px rgba(14, 17, 22, 0.1), 0 4px 10px -7px rgba(14, 17, 22, 0.35);
+}
+.sg-emoji {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-style: normal;
+  font-size: 12px;
+  line-height: 1;
+  background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.9), rgba(var(--c), 0.22) 85%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), inset 0 -2px 3px rgba(var(--c), 0.3), 0 1px 4px -1px rgba(var(--c), 0.5);
+}
+.sg-emoji::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 5px;
+  width: 7px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  transform: rotate(-25deg);
+}
+/* K: Delivered glows green, not grey (9 Nov, review) */
+.sg--emoji.sg-s--delivered {
+  --c: 47, 160, 90;
+}
+
+/* ---- Request statuses, K (9 Nov, picked on #/demo/status-glass): a clear glass capsule, the status's emoji in a
+   clear glass bubble glowing its colour. New ⭐, In review 👀, Proposal 🎁, Changes requested ✏️, Approved ✅,
+   In progress ⏳, Delivered 📦 (green), Declined 🚫. Same colours otherwise: Ember waits on the client, Cobalt is with
+   Spark, grey is out of play. The Team page's "Active" stays plain text. */
+:root[data-theme][data-theme] .rstatus {
+  --c: 46, 84, 255;
+  isolation: isolate;
+  overflow: hidden;
+  gap: 6px;
+  height: 26px;
+  padding: 0 11px 0 2px;
+  color: var(--ink);
+  background:
+    radial-gradient(36px 26px at 12px 50%, rgba(var(--c), 0.3), rgba(var(--c), 0) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.45));
+  -webkit-backdrop-filter: blur(8px) saturate(1.4);
+  backdrop-filter: blur(8px) saturate(1.4);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), inset 0 1px 0 #fff, 0 0 0 0.5px rgba(14, 17, 22, 0.1), 0 4px 10px -7px rgba(14, 17, 22, 0.35);
+}
+:root[data-theme][data-theme] .rstatus--submitted {
+  --c: 120, 160, 255;
+}
+:root[data-theme][data-theme] .rstatus:is(.rstatus--proposal, .rstatus--you) {
+  --c: 255, 106, 42;
+}
+:root[data-theme][data-theme] .rstatus:is(.rstatus--declined, .rstatus--superseded) {
+  --c: 150, 146, 160;
+}
+:root[data-theme][data-theme] .rstatus.rstatus--delivered {
+  --c: 47, 160, 90;
+  color: var(--ink);
+  background:
+    radial-gradient(36px 26px at 12px 50%, rgba(var(--c), 0.3), rgba(var(--c), 0) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.45));
+}
+/* Without an emoji (a few older spots): the plain capsule with its text */
+:root[data-theme][data-theme] .rstatus:not(:has(.rstatus__emoji)) {
+  padding-left: 11px;
+}
+.rstatus__emoji {
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex: none;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  font-style: normal;
+  font-size: 12px;
+  line-height: 1;
+  background: radial-gradient(circle at 50% 40%, rgba(255, 255, 255, 0.9), rgba(var(--c), 0.22) 85%);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), inset 0 -2px 3px rgba(var(--c), 0.3), 0 1px 4px -1px rgba(var(--c), 0.5);
+}
+.rstatus__emoji::after {
+  content: '';
+  position: absolute;
+  top: 3px;
+  left: 5px;
+  width: 7px;
+  height: 3px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  transform: rotate(-25deg);
+}
+:root[data-theme][data-theme] .team .rstatus {
+  height: auto;
+  padding: 0;
+  overflow: visible;
+  background: none;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  font-weight: 400;
+}
+
+/* ---- Request statuses, E · jelly (9 Nov, picked on #/demo/status-glass in place of K): a thick see-through capsule
+   of the status's colour, a gloss across the top like a lens, light pooling in its lower half, a darker edge under
+   it. Ember waits on the client, Cobalt is with Spark, Ink is done, grey is out of play. */
+:root[data-theme][data-theme] .rstatus {
+  --c: 46, 84, 255;
+  isolation: isolate;
+  overflow: hidden;
+  gap: 0;
+  height: 26px;
+  padding: 0 11px;
+  color: var(--ink);
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  background:
+    radial-gradient(90% 90% at 50% 115%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 65%),
+    linear-gradient(180deg, rgba(var(--c), 0.32), rgba(var(--c), 0.5));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    inset 0 -2px 3px rgba(var(--c), 0.45),
+    inset 0 -6px 10px -6px rgba(255, 255, 255, 0.7),
+    0 5px 12px -6px rgba(var(--c), 0.7),
+    0 1px 2px rgba(var(--c), 0.25);
+}
+:root[data-theme][data-theme] .rstatus::after {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  top: 2px;
+  left: 6px;
+  right: 6px;
+  height: 46%;
+  border-radius: 999px 999px 60% 60% / 999px 999px 100% 100%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.15));
+}
+:root[data-theme][data-theme] .rstatus:not(:has(.rstatus__emoji)) {
+  padding-left: 11px;
+}
+:root[data-theme][data-theme] .rstatus.rstatus--delivered {
+  --c: 40, 44, 56;
+  color: #fff;
+  background:
+    radial-gradient(90% 90% at 50% 115%, rgba(160, 170, 200, 0.45), rgba(255, 255, 255, 0) 65%),
+    linear-gradient(180deg, rgba(var(--c), 0.78), rgba(var(--c), 0.95));
+}
+:root[data-theme][data-theme] .rstatus.rstatus--delivered::after {
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.04));
+}
+:root[data-theme][data-theme] .team .rstatus {
+  height: auto;
+  padding: 0;
+  overflow: visible;
+  background: none;
+  box-shadow: none;
+  font-weight: 400;
+}
+:root[data-theme][data-theme] .team .rstatus::after {
+  content: none;
+}
+
+/* ---- #/demo/status-glass, after the brand book's frosted glass objects (9 Nov) ------------------------------- */
+/* L · frosted slab: satin glass, the colour deep in one corner, the slab's side showing under its face */
+.sg--slab {
+  isolation: isolate;
+  height: 28px;
+  border-radius: 10px;
+  background:
+    radial-gradient(120% 160% at 0% 0%, rgba(var(--c), 0.75), rgba(var(--c), 0) 70%),
+    linear-gradient(135deg, rgba(var(--c), 0.25), rgba(255, 255, 255, 0.7) 75%);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    inset 0 0 6px rgba(255, 255, 255, 0.7),
+    inset 0 1px 0 rgba(255, 255, 255, 0.85),
+    0 2.5px 0 rgba(var(--c), 0.42),
+    0 2.5px 0 0.5px rgba(255, 255, 255, 0.6),
+    0 10px 14px -8px rgba(var(--c), 0.55);
+}
+.sg--slab.sg-s--delivered {
+  color: #fff;
+  background:
+    radial-gradient(120% 160% at 0% 0%, rgba(var(--c), 0.95), rgba(var(--c), 0.55) 75%),
+    linear-gradient(135deg, rgba(var(--c), 0.8), rgba(90, 100, 130, 0.75));
+}
+
+/* M · clear tile with a wash of colour inside */
+.sg--wash {
+  isolation: isolate;
+  height: 28px;
+  border-radius: 10px;
+  background:
+    radial-gradient(70% 120% at 10% 100%, rgba(var(--c), 0.55), rgba(var(--c), 0) 70%),
+    radial-gradient(60% 100% at 95% 0%, rgba(200, 216, 240, 0.7), rgba(200, 216, 240, 0) 70%),
+    rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(12px) saturate(1.3);
+  backdrop-filter: blur(12px) saturate(1.3);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 0 0 0 3px rgba(255, 255, 255, 0.25),
+    inset 0 -1.5px 0 rgba(var(--c), 0.25),
+    0 1.5px 0 rgba(200, 216, 240, 0.9),
+    0 8px 14px -8px rgba(var(--c), 0.5);
+}
+.sg--wash.sg-s--delivered {
+  background:
+    radial-gradient(70% 120% at 10% 100%, rgba(var(--c), 0.7), rgba(var(--c), 0) 75%),
+    radial-gradient(60% 100% at 95% 0%, rgba(200, 216, 240, 0.7), rgba(200, 216, 240, 0) 70%),
+    rgba(255, 255, 255, 0.5);
+}
+
+/* N · spectrum slab: the colour flowing through satin glass into its neighbour */
+.sg--spectrum {
+  --c2: 200, 216, 240;
+  isolation: isolate;
+  height: 28px;
+  border-radius: 10px;
+  background:
+    radial-gradient(90% 140% at 15% 20%, rgba(255, 255, 255, 0.35), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(120deg, rgba(var(--c), 0.62) 0%, rgba(var(--c2), 0.75) 70%, rgba(255, 255, 255, 0.7) 100%);
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    inset 0 0 8px rgba(255, 255, 255, 0.55),
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.5),
+    0 3px 0 rgba(var(--c), 0.35),
+    0 3px 0 0.5px rgba(255, 255, 255, 0.5),
+    0 12px 16px -9px rgba(var(--c), 0.6);
+}
+.sg--spectrum.sg-s--proposal {
+  --c2: 255, 196, 160;
+}
+.sg--spectrum.sg-s--declined {
+  --c2: 230, 228, 236;
+}
+.sg--spectrum.sg-s--delivered {
+  --c2: 46, 84, 255;
+  color: #fff;
+  background:
+    radial-gradient(90% 140% at 15% 20%, rgba(255, 255, 255, 0.18), rgba(255, 255, 255, 0) 60%),
+    linear-gradient(120deg, rgba(var(--c), 0.95) 0%, rgba(var(--c2), 0.85) 100%);
+}
+
+/* O · the colour gathered in the edge, the middle frosted */
+.sg--edge {
+  isolation: isolate;
+  height: 28px;
+  border-radius: 11px;
+  background:
+    radial-gradient(60% 70% at 30% 25%, rgba(255, 255, 255, 0.55), rgba(255, 255, 255, 0) 70%),
+    radial-gradient(120% 140% at 50% 50%, rgba(var(--c), 0.08) 40%, rgba(var(--c), 0.45) 100%),
+    rgba(255, 255, 255, 0.4);
+  -webkit-backdrop-filter: blur(10px) saturate(1.4);
+  backdrop-filter: blur(10px) saturate(1.4);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(var(--c), 0.85),
+    inset 0 0 6px 1px rgba(var(--c), 0.6),
+    inset 1.5px 1.5px 0 2px rgba(255, 255, 255, 0.35),
+    0 6px 12px -7px rgba(var(--c), 0.7);
+}
+
+/* P · a satin block of the full colour */
+.sg--satin {
+  height: 28px;
+  border-radius: 10px;
+  color: #fff;
+  font-weight: 600;
+  background:
+    radial-gradient(90% 90% at 60% 0%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 65%),
+    linear-gradient(180deg, rgba(var(--c), 0.82), rgba(var(--c), 0.97));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.28),
+    inset 0 0 8px rgba(255, 255, 255, 0.22),
+    0 6px 12px -7px rgba(var(--c), 0.8);
+}
+.sg--satin.sg-s--submitted,
+.sg--satin.sg-s--declined {
+  color: var(--ink);
+}
+
+/* Q · a clear frosted pill laid over a block of colour */
+.sg--layer {
+  isolation: isolate;
+  height: 28px;
+  margin-left: 6px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.42);
+  -webkit-backdrop-filter: blur(6px) saturate(1.5);
+  backdrop-filter: blur(6px) saturate(1.5);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    inset 0 -2px 4px rgba(var(--c), 0.18),
+    0 6px 12px -8px rgba(14, 17, 22, 0.35);
+}
+.sg-layer {
+  position: absolute;
+  z-index: -1;
+  top: -3px;
+  bottom: 5px;
+  left: -6px;
+  width: 22px;
+  border-radius: 8px;
+  background: linear-gradient(180deg, rgba(var(--c), 0.95), rgba(var(--c), 0.75));
+}
+.sg--layer.sg-s--delivered {
+  background: rgba(255, 255, 255, 0.42);
+}
+/* Q: the glass as its own layer over the colour, so the colour shows blurred through it */
+.sg--layer,
+.sg--layer.sg-s--delivered {
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: 0 6px 12px -8px rgba(14, 17, 22, 0.35);
+}
+.sg--layer::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.4);
+  -webkit-backdrop-filter: blur(5px) saturate(1.5);
+  backdrop-filter: blur(5px) saturate(1.5);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    inset 0 -2px 4px rgba(var(--c), 0.18);
+}
+.sg-layer {
+  z-index: -2;
+}
+/* O softer: the colour as depth in the edge, not an outline */
+.sg--edge {
+  box-shadow:
+    inset 0 0 0 1px rgba(var(--c), 0.45),
+    inset 0 0 9px 2px rgba(var(--c), 0.55),
+    inset 0 -3px 6px rgba(var(--c), 0.35),
+    inset 2px 2px 2px rgba(255, 255, 255, 0.7),
+    0 6px 12px -7px rgba(var(--c), 0.7);
+}
+
+/* R · the colour only through the glass: deep at the left end, along the lower edge, a touch in the lower right */
+.sg--through {
+  isolation: isolate;
+  height: 28px;
+  border-radius: 11px;
+  background:
+    radial-gradient(30% 140% at 0% 50%, rgba(var(--c), 0.85), rgba(var(--c), 0.35) 55%, rgba(var(--c), 0) 100%),
+    radial-gradient(70% 55% at 22% 112%, rgba(var(--c), 0.5), rgba(var(--c), 0) 100%),
+    radial-gradient(22% 60% at 102% 112%, rgba(var(--c), 0.32), rgba(var(--c), 0) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.5));
+  -webkit-backdrop-filter: blur(10px) saturate(1.4);
+  backdrop-filter: blur(10px) saturate(1.4);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 0 1px 0 #fff,
+    inset 0 0 4px rgba(255, 255, 255, 0.6),
+    0 6px 12px -8px rgba(14, 17, 22, 0.3);
+  padding-left: 16px;
+}
+.sg--through.sg-s--delivered {
+  background:
+    radial-gradient(30% 140% at 0% 50%, rgba(var(--c), 0.9), rgba(var(--c), 0.4) 55%, rgba(var(--c), 0) 100%),
+    radial-gradient(70% 55% at 22% 112%, rgba(var(--c), 0.55), rgba(var(--c), 0) 100%),
+    radial-gradient(22% 60% at 102% 112%, rgba(var(--c), 0.35), rgba(var(--c), 0) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.5));
+}
+/* R: the flow along the lower edge and the lower right corner stronger */
+.sg--through,
+.sg--through.sg-s--delivered {
+  background:
+    radial-gradient(28% 150% at 0% 50%, rgba(var(--c), 0.88), rgba(var(--c), 0.4) 55%, rgba(var(--c), 0) 100%),
+    radial-gradient(95% 42% at 35% 104%, rgba(var(--c), 0.6), rgba(var(--c), 0) 100%),
+    radial-gradient(16% 75% at 100% 100%, rgba(var(--c), 0.5), rgba(var(--c), 0) 100%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(255, 255, 255, 0.5));
+}
+
+/* S · Q's clear glass over colour, the colour wholly under the pill: a block at the left end, a strip along the lower
+   edge, a patch in the lower right corner, all blurred through the glass layer above them. */
+.sg--under {
+  isolation: isolate;
+  overflow: hidden;
+  height: 28px;
+  border-radius: 11px;
+  padding-left: 14px;
+  background: none;
+  box-shadow: 0 6px 12px -8px rgba(14, 17, 22, 0.35);
+}
+.sg-under {
+  position: absolute;
+  z-index: -2;
+  inset: 0;
+  background:
+    linear-gradient(rgba(var(--c), 0.95), rgba(var(--c), 0.8)) left / 30% 100% no-repeat,
+    linear-gradient(rgba(var(--c), 0.65), rgba(var(--c), 0.65)) left bottom / 78% 26% no-repeat,
+    linear-gradient(rgba(var(--c), 0.55), rgba(var(--c), 0.55)) right bottom / 12% 34% no-repeat;
+}
+.sg--under::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.42);
+  -webkit-backdrop-filter: blur(6px) saturate(1.5);
+  backdrop-filter: blur(6px) saturate(1.5);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    inset 0 -2px 4px rgba(var(--c), 0.18);
+}
+/* S: real shapes under the glass (as Q's block), so their rounded edges read through it */
+.sg-under {
+  inset: 0 auto 0 0;
+  width: 30%;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(var(--c), 0.98), rgba(var(--c), 0.82));
+}
+.sg-under::before {
+  content: '';
+  position: absolute;
+  left: 40%;
+  bottom: 0;
+  width: 190%;
+  height: 32%;
+  border-radius: 999px 999px 8px 8px;
+  background: rgba(var(--c), 0.62);
+}
+.sg-under::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: calc(333% - 26px);
+  width: 26px;
+  height: 46%;
+  border-radius: 10px 0 10px 0;
+  background: rgba(var(--c), 0.5);
+}
+.sg--under::before {
+  -webkit-backdrop-filter: blur(4px) saturate(1.5);
+  backdrop-filter: blur(4px) saturate(1.5);
+}
+/* S, review 2: exactly Q's colour under the glass (the strip of its block that lies under the pill: 16px at the left,
+   from the top to 5px above the foot), cut at the pill's edge so nothing shows outside. */
+.sg--under {
+  padding-left: 12px;
+  margin-left: 0;
+}
+.sg-under {
+  inset: 0 auto 5px 0;
+  width: 16px;
+  border-radius: 0 8px 8px 0;
+  background: linear-gradient(180deg, rgba(var(--c), 0.95), rgba(var(--c), 0.75));
+}
+.sg-under::before,
+.sg-under::after {
+  content: none;
+}
+.sg--under::before {
+  background: rgba(255, 255, 255, 0.4);
+  -webkit-backdrop-filter: blur(5px) saturate(1.5);
+  backdrop-filter: blur(5px) saturate(1.5);
+}
+
+/* T · a clear pill, the colour a small soft dot of light at its front; Delivered green */
+.sg--glow {
+  isolation: isolate;
+  padding-left: 24px;
+  background: transparent;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.95), 0 0 0 0.5px rgba(14, 17, 22, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.9);
+}
+.sg--glow::before {
+  content: '';
+  position: absolute;
+  left: 9px;
+  top: 50%;
+  width: 10px;
+  height: 10px;
+  margin-top: -5px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(var(--c), 1) 0%, rgba(var(--c), 0.75) 45%, rgba(var(--c), 0) 100%);
+  filter: blur(1.5px);
+  box-shadow: 0 0 6px 2px rgba(var(--c), 0.35);
+}
+.sg--glow.sg-s--delivered {
+  --c: 47, 160, 90;
+}
+
+/* U · Q's clear glass laid on a solid base of the status's colour, the base 3px lower: a solid underline at the
+   foot, and the colour blurred through the glass above it */
+.sg--base {
+  isolation: isolate;
+  height: 28px;
+  margin-bottom: 3px;
+  border-radius: 10px;
+  background: none;
+  box-shadow: 0 9px 12px -8px rgba(var(--c), 0.55);
+}
+.sg-base {
+  position: absolute;
+  z-index: -2;
+  inset: 3px 0 -3px;
+  border-radius: inherit;
+  background: rgb(var(--c));
+}
+.sg--base::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(5px) saturate(1.5);
+  backdrop-filter: blur(5px) saturate(1.5);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff,
+    inset 0 -2px 4px rgba(var(--c), 0.18);
+}
+/* U, review: the base only along the foot, so the face stays Q's light glass: 3px solid under the pill, the rest
+   showing through its lower edge */
+.sg-base {
+  inset: auto 0 -3px;
+  height: 11px;
+  border-radius: 0 0 10px 10px;
+}
+.sg--base::before {
+  background: rgba(255, 255, 255, 0.45);
+}
+/* U, review 2: a thinner underline, 2px */
+.sg-base {
+  bottom: -2px;
+  height: 9px;
+}
+.sg--base {
+  margin-bottom: 2px;
+}
+/* U, review 3: on the left the underline starts flat where the pill's corner ends, no curl round the corner */
+.sg-base {
+  left: 9px;
+  border-radius: 0 0 10px 0;
+}
+/* U, review 4: the corner rounding back on the left; the underline thinner still, 1.5px */
+.sg-base {
+  left: 0;
+  bottom: -1.5px;
+  height: 8.5px;
+  border-radius: 0 0 10px 10px;
+}
+.sg--base {
+  margin-bottom: 1.5px;
+}
+/* U, review 5: a softer, flatter glow inside (less of the strip under the glass, more blur, no inner shade) and a
+   lighter shadow; Delivered green */
+.sg-base {
+  height: 6px;
+}
+.sg--base::before {
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(7px) saturate(1.3);
+  backdrop-filter: blur(7px) saturate(1.3);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), inset 0 1px 0 #fff;
+}
+.sg--base {
+  box-shadow: 0 6px 10px -8px rgba(var(--c), 0.4);
+}
+.sg--base.sg-s--delivered {
+  --c: 47, 160, 90;
+}
+/* U, review 6: the underline as the pill's own offset shadow, so it follows the corner exactly and thins out up
+   the sides; the glow under the glass a soft strip kept clear of the corners */
+.sg--base {
+  margin-bottom: 1.5px;
+  box-shadow: 0 1.5px 0 rgb(var(--c)), 0 6px 10px -8px rgba(var(--c), 0.4);
+}
+.sg-base {
+  inset: auto 8px 0 8px;
+  height: 5px;
+  border-radius: 999px;
+  background: rgba(var(--c), 0.9);
+}
+
+/* ---- Request statuses, U (9 Nov, picked on #/demo/status-glass): clear frosted glass on a line of the status's
+   colour. The line shows as a 1.5px underline that follows the pill's corners (its own offset shadow), and glows up
+   softly through the glass from a strip under its foot (the dot). Ember waits on the client, Cobalt is with Spark,
+   green is delivered, grey is out of play. The Team page's "Active" stays plain text. */
+:root[data-theme][data-theme] .rstatus {
+  --c: 46, 84, 255;
+  isolation: isolate;
+  overflow: visible;
+  gap: 0;
+  height: 26px;
+  margin-bottom: 1.5px;
+  padding: 0 11px;
+  border-radius: 10px;
+  color: var(--ink);
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: 0 1.5px 0 rgb(var(--c)), 0 6px 10px -8px rgba(var(--c), 0.4);
+}
+:root[data-theme][data-theme] .rstatus::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: rgba(255, 255, 255, 0.55);
+  -webkit-backdrop-filter: blur(7px) saturate(1.3);
+  backdrop-filter: blur(7px) saturate(1.3);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), inset 0 1px 0 #fff;
+}
+:root[data-theme][data-theme] .rstatus::after {
+  content: none;
+}
+:root[data-theme][data-theme] .rstatus .rstatus__dot {
+  display: block;
+  position: absolute;
+  z-index: -2;
+  inset: auto 8px 0 8px;
+  width: auto;
+  height: 5px;
+  margin: 0;
+  border-radius: 999px;
+  background: rgba(var(--c), 0.9);
+}
+:root[data-theme][data-theme] .rstatus--submitted {
+  --c: 120, 160, 255;
+}
+:root[data-theme][data-theme] .rstatus:is(.rstatus--proposal, .rstatus--you) {
+  --c: 232, 80, 31;
+}
+:root[data-theme][data-theme] .rstatus:is(.rstatus--declined, .rstatus--superseded) {
+  --c: 150, 146, 160;
+}
+:root[data-theme][data-theme] .rstatus.rstatus--delivered {
+  --c: 47, 160, 90;
+  color: var(--ink);
+  background: none;
+}
+:root[data-theme][data-theme] .rstatus.rstatus--delivered::after {
+  content: none;
+}
+:root[data-theme][data-theme] .team .rstatus {
+  height: auto;
+  margin: 0;
+  padding: 0;
+  background: none;
+  box-shadow: none;
+  font-weight: 400;
+}
+:root[data-theme][data-theme] .team .rstatus::before {
+  content: none;
+}
+:root[data-theme][data-theme] .team .rstatus .rstatus__dot {
+  display: none;
+}
+/* U on the portal: the strip blurs itself (in a table with its own backdrop blur, the glass's blur can't reach it) */
+:root[data-theme][data-theme] .rstatus .rstatus__dot {
+  inset: auto 10px 0 10px;
+  height: 6px;
+  filter: blur(3px);
+  background: rgba(var(--c), 0.75);
+}
+/* Statuses lighter in the table (9 Nov, review: they read heavy): smaller type, a regular weight, a lower pill */
+:root[data-theme][data-theme] .rstatus {
+  height: 22px;
+  padding: 0 9px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 450;
+}
+:root[data-theme][data-theme] .rstatus .rstatus__dot {
+  inset: auto 9px 0 9px;
+  height: 5px;
+}
+/* The underline half see-through, not so bright (9 Nov, review) */
+:root[data-theme][data-theme] .rstatus {
+  box-shadow: 0 1.5px 0 rgba(var(--c), 0.5), 0 6px 10px -8px rgba(var(--c), 0.3);
+}
+/* The underline as a gradient (9 Nov, review): as now in the middle, nearly clear towards the sides. Drawn as the
+   pill's shape 1.5px lower, behind the glass, masked to its foot, so it still follows the corners. */
+:root[data-theme][data-theme] .rstatus {
+  box-shadow: 0 6px 10px -8px rgba(var(--c), 0.25);
+}
+:root[data-theme][data-theme] .rstatus::after,
+:root[data-theme][data-theme] .rstatus.rstatus--delivered::after {
+  content: '';
+  position: absolute;
+  inset: 1.5px 0 -1.5px;
+  z-index: -3;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(var(--c), 0.06), rgba(var(--c), 0.45) 50%, rgba(var(--c), 0.06));
+  -webkit-mask: linear-gradient(to top, #000 0 3px, transparent 3px);
+  mask: linear-gradient(to top, #000 0 3px, transparent 3px);
+}
+:root[data-theme][data-theme] .team .rstatus::after {
+  content: none;
+}
+:root[data-theme][data-theme] .rstatus::after,
+:root[data-theme][data-theme] .rstatus.rstatus--delivered::after {
+  height: auto;
+  width: auto;
+}
+/* Statuses, the colour flatter (9 Nov, review: less volume): a fainter glow under the glass, no shadow under the pill */
+:root[data-theme][data-theme] .rstatus {
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .rstatus .rstatus__dot {
+  height: 4px;
+  filter: blur(3.5px);
+  background: rgba(var(--c), 0.4);
+}
+/* Statuses, a stroke all round (9 Nov, review): the underline becomes a 1px ring of the status's colour, a linear
+   gradient as before (fuller in the middle, clearer towards the ends), over the glass's own white rim. */
+:root[data-theme][data-theme] .rstatus {
+  margin-bottom: 0;
+}
+:root[data-theme][data-theme] .rstatus::after,
+:root[data-theme][data-theme] .rstatus.rstatus--delivered::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(var(--c), 0.2), rgba(var(--c), 0.55) 50%, rgba(var(--c), 0.2));
+  -webkit-mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+}
+
+/* The folders' "N to review" in the statuses' style (9 Nov, review): the same pill (22px, 8px radius, 11.5px type),
+   frosted glass, a faint Ember glow at its foot and the gradient ring in Ember (it waits on the client); the dot stays. */
+:root[data-theme][data-theme] .gfo-badge {
+  position: relative;
+  isolation: isolate;
+  height: 22px;
+  padding: 0 9px;
+  gap: 6px;
+  border-radius: 8px;
+  font-size: 11.5px;
+  font-weight: 450;
+  background:
+    radial-gradient(60% 45% at 50% 115%, rgba(232, 80, 31, 0.22), rgba(232, 80, 31, 0) 100%),
+    rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), inset 0 1px 0 #fff;
+}
+:root[data-theme][data-theme] .gfo-badge::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(232, 80, 31, 0.2), rgba(232, 80, 31, 0.55) 50%, rgba(232, 80, 31, 0.2));
+  -webkit-mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+}
+
+/* Ask Dr.AI's chips two by two, the last alone and centred (9 Nov, review) */
+.chat-drawer__chips {
+  display: grid;
+  grid-template-columns: repeat(2, max-content);
+  justify-content: center;
+}
+.chat-drawer__chips > :last-child:nth-child(odd) {
+  grid-column: 1 / -1;
+  justify-self: center;
+}
+.chat-drawer__lead {
+  text-wrap: initial;
+}
+.chat-drawer__chips {
+  gap: 6px;
+  max-width: 100%;
+}
+.chat-drawer__chip {
+  padding: 0 12px;
+  font-size: 12.5px;
+  white-space: nowrap;
+}
+
+/* Ask Dr.AI's side panel: the page's four ways to start (9 Nov, review), on the panel's white a touch of sand so they
+   show; the name on its line and what you get under it, as the panel is narrower than the page. */
+.chat-drawer .chat-drawer__list {
+  gap: 8px;
+  margin-top: 18px;
+}
+.chat-drawer .chats-start__row {
+  min-height: 0;
+  padding: 10px 14px 10px 16px;
+  border-radius: 12px;
+  text-align: left;
+  background: rgba(248, 246, 242, 0.9);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.06), inset 0 1px 0 #fff;
+}
+.chat-drawer .chats-start__row:hover {
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.1), 0 4px 12px -8px rgba(14, 17, 22, 0.3);
+}
+.chat-drawer .chats-start__row > span {
+  font-size: 13px;
+  line-height: 1.35;
+  color: var(--text-3);
+}
+.chat-drawer .chats-start__row b {
+  display: block;
+  margin-bottom: 1px;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ink);
+}
+.chat-drawer .chat-drawer__drai .msc-clip {
+  margin-bottom: -6px;
+}

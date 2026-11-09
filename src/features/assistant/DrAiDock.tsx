@@ -7,14 +7,14 @@
 //   top:    a glass strip at the top of the page that stays as you scroll, him standing in it.
 // Folded, he becomes small (his head with a count), one click brings the message back.
 import { useEffect, useRef, useState } from 'react';
-import { ArrowRight, ChevronLeft, ChevronRight, Minus } from 'lucide-react';
+import { ChevronLeft, ChevronRight, Minus } from 'lucide-react';
 import { navigate, useRoute } from '../../lib/router';
 import { useStore } from '../../state/store';
 import { STEPS, SparkiGuide, Stepper, useJustDone, useOnboarding } from '../onboarding/Onboarding';
 import { analyses } from '../../data/mock';
 import { fmtDate } from '../../lib/format';
 import { cx } from '../../components/ui/primitives';
-import { DrAiHead, SparkiStill } from '../../components/ui/DrAi';
+import { DrAiHead } from '../../components/ui/DrAi';
 import { MascotClip } from '../demo/MascotDemo';
 import { useModel } from '../home/HomeLayouts';
 import { ChatDrawer } from './ChatDrawer';
@@ -55,7 +55,17 @@ export function useDockLook() {
   return v;
 }
 
-type Msg = { key: string; tag: string; tone: 'urgent' | 'critical' | 'reminder'; text: string; action: { label: string; href: string } };
+/** `kind` names the window (9 Nov, review): what needs you, a reminder, or news from Spark. */
+type Msg = {
+  key: string;
+  kind?: 'needs' | 'reminder' | 'news';
+  /** The chip over the line; none when the window's title already says it. */
+  tag?: string;
+  tone: 'urgent' | 'critical' | 'reminder' | 'news';
+  text: string;
+  action: { label: string; href: string };
+};
+const KIND_TITLE = { needs: 'Needs you', reminder: 'Reminder', news: 'Latest from Spark' } as const;
 
 /** Only what can't wait: the decisions due first, and the finding that costs the most. [Brackets]: the gradient. */
 function useMessages(): Msg[] {
@@ -78,7 +88,7 @@ function useMessages(): Msg[] {
     if (!state.docs.some((d) => d.uploadedBy === 'u-layla'))
       later.push({
         key: 'files',
-        tag: 'Reminder',
+        kind: 'reminder',
         tone: 'reminder',
         text: 'Spark doesn’t have your [brand files] yet. Share them, and your first proposal fits you better.',
         action: { label: 'Upload files', href: '#/documents' },
@@ -86,7 +96,7 @@ function useMessages(): Msg[] {
     if (!state.invitations.length)
       later.push({
         key: 'team',
-        tag: 'Reminder',
+        kind: 'reminder',
         tone: 'reminder',
         text: 'Your team can’t see requests yet. [Invite them] when you’re ready.',
         action: { label: 'Invite people', href: '#/team' },
@@ -101,6 +111,15 @@ function useMessages(): Msg[] {
       tone: 'critical',
       text: 'Your website is [slow on mobile]: 6.8 s on 4G. It’s costing you sales.',
       action: { label: 'See the fix', href: '#/brand-analysis/website' },
+    },
+    // What Spark did this week (9 Nov, review): the news in Dr.AI's window too, after what needs you, titled as news.
+    {
+      key: 'news',
+      kind: 'news',
+      tag: 'This week',
+      tone: 'news',
+      text: '[Two new reports] this week, and the shoot is booked.',
+      action: { label: 'See what’s new', href: '#/?see=latest' },
     },
   ];
 }
@@ -141,36 +160,70 @@ function Typed({ text, n }: { text: string; n: number }) {
   );
 }
 
-/** What needs you, on top of the chat panel when Ask me opens it. */
-function NowList({ msgs, onGo }: { msgs: Msg[]; onGo: () => void }) {
-  return (
-    <section className="dk-now">
-      <h4>
-        <SparkiStill size={18} /> Needs you now
-      </h4>
-      <ul>
-        {msgs.map((x) => (
-          <li key={x.key}>
-            <span className={cx('dk-tag', `dk-tag--${x.tone}`)}>{x.tag}</span>
-            <span className="dk-now__text">{plain(x.text)}</span>
-            <a href={x.action.href} onClick={onGo}>
-              {x.action.label} <ArrowRight size={13} />
-            </a>
-          </li>
-        ))}
-      </ul>
-    </section>
-  );
-}
-
 // One intro a visit: Sparki flies out the first time he appears, not on every page.
 const NO_DOCK = import.meta.env.VITE_NO_DOCK === '1';
 let introDone = false;
 // Where Dr.AI was dragged to, for the rest of the visit (9 Nov).
 let dockOff = { dx: 0, dy: 0 };
 
+/** How light a computed colour is, 0 (black) to 1 (white); -1 when it is too clear to count. */
+function lightness(c: string): number {
+  const n = (c.match(/-?[\d.]+/g) ?? []).map(Number);
+  if (c.startsWith('oklch') || c.startsWith('oklab')) return (n[3] ?? 1) < 0.5 ? -1 : n[0];
+  const scale = c.startsWith('color(') ? 1 : 255;
+  const [r = 1, g = 1, b = 1, a = 1] = n;
+  if (a < 0.5) return -1;
+  return (0.2126 * r + 0.7152 * g + 0.0722 * b) / scale;
+}
+
+/** Dr.AI's window keeps its clear glass over the light page and frosts up to white over something dark (9 Nov,
+ *  review: over the Ink consultation strip the words blurred into grey). It looks at what lies under nine points
+ *  of the window as the page scrolls, and sets .is-over-dark on the card when enough of them are dark. */
+function useFrostOverDark() {
+  useEffect(() => {
+    let wait = 0;
+    const check = () => {
+      wait = 0;
+      document.querySelectorAll<HTMLElement>('.dk--corner .dk-card, .dk-mini--corner').forEach((card) => {
+        const r = card.getBoundingClientRect();
+        if (!r.width) return;
+        let dark = 0;
+        for (const fx of [0.15, 0.5, 0.85])
+          for (const fy of [0.2, 0.5, 0.8]) {
+            const under = document.elementsFromPoint(r.left + r.width * fx, r.top + r.height * fy).filter((e) => !e.closest('.dk, .dk-mini'));
+            let l = 1;
+            for (const e of under) {
+              const v = lightness(getComputedStyle(e).backgroundColor);
+              if (v >= 0) {
+                l = v;
+                break;
+              }
+            }
+            if (l < 0.45) dark++;
+          }
+        card.classList.toggle('is-over-dark', dark >= 2);
+      });
+    };
+    const ask = () => {
+      if (!wait) wait = window.setTimeout(check, 40);
+    };
+    window.addEventListener('scroll', ask, { passive: true, capture: true });
+    window.addEventListener('resize', ask);
+    // Dragging him, folding the window, a page changing under him: a slow look as well.
+    const t = setInterval(ask, 400);
+    ask();
+    return () => {
+      clearTimeout(wait);
+      clearInterval(t);
+      window.removeEventListener('scroll', ask, { capture: true });
+      window.removeEventListener('resize', ask);
+    };
+  }, []);
+}
+
 export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
   const look = useDockLook();
+  useFrostOverDark();
   const { path } = useRoute();
   const msgs = useMessages();
   const [i, setI] = useState(0);
@@ -361,13 +414,14 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
       </button>
     </span>
   );
-  const tag = <span className={cx('dk-tag', `dk-tag--${msg.tone}`)}>{msg.tag}</span>;
+  const tag = msg.tag ? <span className={cx('dk-tag', `dk-tag--${msg.tone}`)}>{msg.tag}</span> : null;
   const fold = (
     <button type="button" className="dk-fold" onClick={() => setFolded(true)} aria-label="Fold">
       <Minus size={15} />
     </button>
   );
-  const drawer = <ChatDrawer open={chat} onClose={() => setChat(false)} top={<NowList msgs={msgs} onGo={() => setChat(false)} />} />;
+  // No list of what needs you in the chat (9 Nov, review): the window by Dr.AI already shows it.
+  const drawer = <ChatDrawer open={chat} onClose={() => setChat(false)} />;
 
   // While the panel is open he stands in it, so the dock steps aside.
   if (chat) return drawer;
@@ -391,17 +445,21 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
             one shown lit, a click opens another), then its tag, Dr.AI's line and the way to act on it. */}
         <div className="dk dk--corner dk--needs" style={dragStyle}>
           <div className="dk-card">
+            {/* The title says what kind of message it is; the count sits between the arrows (9 Nov, review), no
+                stepper: these aren't steps. */}
             <header className="dk-card__head">
-              <b>Needs you</b>
-              <span className="dk-card__n">
-                {(i % msgs.length) + 1}/{msgs.length}
-              </span>
+              <b key={msg.kind ?? 'needs'} className="dk-needs__title">
+                {KIND_TITLE[msg.kind ?? 'needs']}
+              </b>
               <span className="dk-card__sp" />
               {msgs.length > 1 && (
                 <span className="dk-pager dk-pager--arrows">
                   <button type="button" onClick={() => step(-1)} aria-label="Previous">
                     <ChevronLeft size={15} />
                   </button>
+                  <span className="dk-card__n">
+                    {(i % msgs.length) + 1}/{msgs.length}
+                  </span>
                   <button type="button" onClick={() => step(1)} aria-label="Next">
                     <ChevronRight size={15} />
                   </button>
@@ -409,19 +467,7 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
               )}
               {fold}
             </header>
-            {msgs.length > 1 && (
-              <span className="og-stepper dk-pages" aria-hidden>
-                {msgs.map((x, k) => (
-                  <i
-                    key={x.key}
-                    className={cx(k === i % msgs.length && 'is-done')}
-                    style={{ ['--i' as string]: k, ['--of' as string]: msgs.length }}
-                    onClick={() => setI(k)}
-                  />
-                ))}
-              </span>
-            )}
-            <span className="dk-needs__tag">{tag}</span>
+            {msg.tag && <span className="dk-needs__tag">{tag}</span>}
             {line}
             {acts}
           </div>

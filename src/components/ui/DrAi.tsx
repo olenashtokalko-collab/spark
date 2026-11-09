@@ -292,10 +292,26 @@ export function AskLabel({ size = 28, about }: { size?: number; about?: string }
  *  on, Spark's disc and "Ask Spark" when he's off. `about` stays in the label for screen readers. */
 export function AskButton({ onClick, className, about }: { onClick: () => void; className?: string; size?: number; headSize?: number; about?: string }) {
   const on = useDrAi();
+  if (on) return <DrAiInkPill onClick={onClick} className={className} label={`Ask Dr.AI${about ? ` ${about}` : ''}`} />;
   return (
-    <button type="button" className={['hl-mchat drai-pill', className].filter(Boolean).join(' ')} onClick={onClick} aria-label={`${on ? 'Ask Dr.AI' : 'Ask Spark'}${about ? ` ${about}` : ''}`}>
-      {on ? <DrAiHead size={22} /> : <SparkDisc size={22} />}
-      {on ? 'Ask Dr.AI' : 'Ask Spark'}
+    <button type="button" className={['hl-mchat drai-pill', className].filter(Boolean).join(' ')} onClick={onClick} aria-label={`Ask Spark${about ? ` ${about}` : ''}`}>
+      <SparkDisc size={22} />
+      Ask Spark
+    </button>
+  );
+}
+
+/** Ask Dr.AI as Ember glass (9 Nov, #/demo/ask-pill, E; the brand book p. 19: "Pills: Cobalt for human, Ember for
+ *  AI"): see-through Ember glass after the book's glass objects and the folders on Documents, a white light inside,
+ *  a bright rim, Dr.AI's head floating in a clear bubble with air round him. */
+export function DrAiInkPill({ onClick, className, label = 'Ask Dr.AI' }: { onClick: () => void; className?: string; label?: string }) {
+  return (
+    <button type="button" className={['apd apd--ember drai-ink', className].filter(Boolean).join(' ')} onClick={onClick} aria-label={label}>
+      {/* The same head as in the menu (9 Nov, review). */}
+      <span className="apd__port">
+        <DrAiNavIcon size={24} />
+      </span>
+      Ask Dr.AI
     </button>
   );
 }
@@ -304,10 +320,11 @@ export function AskButton({ onClick, className, about }: { onClick: () => void; 
  *  at its top, to talk about what the page holds. Off, Spark's disc and "Ask Spark". */
 export function AskPill({ onClick, className }: { onClick: () => void; className?: string }) {
   const on = useDrAi();
+  if (on) return <DrAiInkPill onClick={onClick} className={className} />;
   return (
     <button type="button" className={['hl-mchat drai-pill', className].filter(Boolean).join(' ')} onClick={onClick}>
-      {on ? <DrAiHead size={22} /> : <SparkDisc size={22} />}
-      {on ? 'Ask Dr.AI' : 'Ask Spark'}
+      <SparkDisc size={22} />
+      Ask Spark
     </button>
   );
 }

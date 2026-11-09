@@ -77,14 +77,21 @@ export function ChatDrawer({ open, onClose, initial, topic, top }: { open: boole
             </div>
           )}
           {top}
-          <h3>How can I help?</h3>
-          {drai && <p className="chat-drawer__lead">Ask anything about what you’re looking at.</p>}
+          <h3>{drai ? 'How can I help you?' : 'How can I help?'}</h3>
+          {drai && (
+            <p className="chat-drawer__lead">
+              Ask anything about what
+              <br />
+              you’re looking at.
+            </p>
+          )}
+          {/* The same four ways to start as on the Ask Dr.AI page (9 Nov, review): the name, what you get, an arrow on hover. */}
           <ul className="chats-start__list chat-drawer__list">
             {(topic ? topic.questions.map((q) => ({ ...q, hint: '' })) : suggestedPrompts.slice(0, 4)).map((p) => (
               <li key={p.label}>
                 <button type="button" className="chats-start__row" onClick={() => start(p.prompt)}>
                   <span>{p.hint ? <><b>{p.label}</b> {p.hint.charAt(0).toLowerCase() + p.hint.slice(1)}</> : p.label}</span>
-                  <ArrowRight size={15} strokeWidth={1.7} className="chat-drawer__go" />
+                  <ArrowRight size={15} strokeWidth={1.7} className="chats-start__go" />
                 </button>
               </li>
             ))}

@@ -1,7 +1,7 @@
 // Topping up the company's credits (the balance itself shows on Home, beside the company's name). The
 // top-up: pay by card, or contact Spark (invoice, bank transfer, larger amounts). Prototype: the card payment
 // is simulated and adds the amount at once; the real one opens the payment provider's checkout here.
-import { useEffect, useId, useLayoutEffect, useRef, useState } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { GlassTabs } from '../ui/GlassTabs';
 import { createPortal } from 'react-dom';
 import { CreditCard, Mail, Plus } from 'lucide-react';
@@ -111,16 +111,8 @@ export function CreditRing({ left, total, size = 16, stroke = 2.5 }: { left: num
   const c = 2 * Math.PI * r;
   const part = Math.max(0, Math.min(1, left / Math.max(total, 1)));
   // The stepper's spectrum (9 Nov, review), not Cobalt alone.
-  const gid = `cr-${useId().replace(/:/g, '')}`;
   return (
     <svg className="credit-ring" width={size} height={size} viewBox={`0 0 ${size} ${size}`} role="img" aria-label={`${Math.round(part * 100)}% of credits left`}>
-      <defs>
-        <linearGradient id={gid} x1="0" x2="1" y1="0" y2="1">
-          <stop offset="0" stopColor="#3c64f0" />
-          <stop offset="0.6" stopColor="#9a55ec" />
-          <stop offset="1" stopColor="#ec6a4c" />
-        </linearGradient>
-      </defs>
       <circle cx={size / 2} cy={size / 2} r={r} fill="none" strokeWidth={stroke} className="credit-ring__track" />
       <circle
         cx={size / 2}
@@ -132,7 +124,8 @@ export function CreditRing({ left, total, size = 16, stroke = 2.5 }: { left: num
         strokeDasharray={`${c * part} ${c}`}
         transform={`rotate(-90 ${size / 2} ${size / 2})`}
         className="credit-ring__value"
-        style={{ stroke: `url(#${gid})` }}
+        // Cobalt, the portal's one accent for what's yours and what you set (9 Nov), in place of the spectrum.
+        style={{ stroke: 'var(--cobalt, #1e3bd6)' }}
       />
     </svg>
   );

@@ -5,10 +5,11 @@
 // Started and stopped on #/demo/dock.
 import { useEffect, useLayoutEffect, useRef, useState, type PointerEvent as RPointerEvent } from 'react';
 import { createPortal } from 'react-dom';
-import { ArrowRight } from 'lucide-react';
+import { ArrowDown, ArrowRight, ArrowUp } from 'lucide-react';
 import { AnalysisView } from '../home/AnalysisLooks';
 import { analyses } from '../../data/mock';
-import { CompactReports, ConsultCard } from '../demo/HomeCardsDemo';
+import { ConsultCard } from '../demo/HomeCardsDemo';
+import { Gauge } from '../demo/HomeVariantsDemo';
 import { useRoute } from '../../lib/router';
 import { useStore, type State } from '../../state/store';
 import { cx } from '../../components/ui/primitives';
@@ -410,40 +411,79 @@ function ReportTab({ kind, issue }: { kind: 'social' | 'website'; issue?: string
   if (!report) return <ReportToCome kind={kind} />;
   return (
     <div className="og-report">
-      <span className="og-report__top">
-        <a className="hld-link hld-report-pdf" href={`#/documents/f-research?doc=d-rep-${kind}`}>
-          PDF copy in Documents · Research reports <ArrowRight size={13} />
-        </a>
-      </span>
+      {/* No link to the PDF copy above the report (9 Nov, review): the copies sit in Documents · Research reports. */}
       <AnalysisView key={kind} a={report} look="cards" page focus={issue} />
     </div>
   );
 }
 
-/** The overview for a company past onboarding (9 Nov): the reports' figures in big type (Jean #22), the
- *  consultation beside them (#22), the latest from Spark under them with Sparki by its title (#23). One level of
- *  cards, nothing boxed twice (#20). */
+/** A report's tile on the overview (9 Nov, Jean #22: "numbers, score, big font, to make the results more engaging
+ *  and easy to understand… encourage to learn more and book consultation"): the report's name, a verdict chip, the
+ *  figure in big type (the website's score on a ring), the change since last month, how many things to fix, and the
+ *  way into the report. The tile is the link. */
+function ScoreTile({ kind }: { kind: 'website' | 'social' }) {
+  const a = analyses.find((x) => x.kind === kind);
+  if (!a) return null;
+  const toFix = a.findings.filter((f) => !f.good).length;
+  const high = a.findings.filter((f) => !f.good && f.impact === 'High').length;
+  const web = kind === 'website';
+  const score = parseInt(a.score?.value ?? '0', 10);
+  return (
+    <a className="hc-card og-score" href={`#/?tab=${kind}`}>
+      <span className="og-score__head">
+        <h3 className="og-full__h">{web ? 'Website report' : 'Social media report'}</h3>
+        <span className={cx('og-chip', web ? 'og-chip--warn' : 'og-chip--good')}>{web ? 'Needs work' : 'Above the market'}</span>
+      </span>
+      <span className="og-score__body">
+        {web ? (
+          <span className="og-score__ring">
+            <Gauge value={score} />
+            <span>
+              <b>{score}</b>
+              <i>/100</i>
+            </span>
+          </span>
+        ) : (
+          <b className="og-score__fig">{a.score?.value}</b>
+        )}
+        <span className="og-score__facts">
+          <span className="og-score__what">{a.score?.label}</span>
+          <span className={cx('og-score__delta', web ? 'is-up' : 'is-down')}>
+            {web ? <ArrowUp size={14} /> : <ArrowDown size={14} />}
+            {web ? '+6 since September' : '−0.4 pt since September'}
+          </span>
+          <span className="og-score__bench">{web ? 'Fast sites score 90 and up' : 'vs 1.9% typical for UAE retail'}</span>
+        </span>
+      </span>
+      <span className="og-score__foot">
+        <span className="og-score__line">{a.headline}</span>
+        <span className="og-score__go">
+          {toFix} to fix{high ? ` · ${high} high impact` : ''} <ArrowRight size={14} />
+        </span>
+      </span>
+    </a>
+  );
+}
+
+/** The overview for a company past onboarding (9 Nov): the two reports' figures in big type (Jean #22), the
+ *  consultation across the page under them (#22), then the latest from Spark with Sparki by its title (#23), its
+ *  title in the reports' type. One level of cards, nothing boxed twice (#20). */
 function FilledOverview() {
   return (
     <div className="og-full">
-      <div className="og-full__main">
-        <section className="og-full__sec">
-          <span className="og-eyebrow">Reports · October 2026</span>
-          <CompactReports />
-        </section>
-        {/* The same list as Home D (rows as tiles to click), Sparki by its title (Jean #23). */}
-        <section className="hc-card hd-fixes hd-latest og-full__latest">
-          <h3 className="hd-fixes__title og-full__latest-head">
-            <SparkiStill size={22} /> Latest from Spark
-          </h3>
-          <div className="hld-card hc-latest__list">
-            <LatestFromSpark bare limit={4} typed />
-          </div>
-        </section>
+      <div className="og-scores">
+        <ScoreTile kind="website" />
+        <ScoreTile kind="social" />
       </div>
-      <aside className="og-full__side">
-        <ConsultCard look="ink" />
-      </aside>
+      <ConsultCard look="ink" />
+      {/* The same list as Home D (rows as tiles to click). */}
+      <section id="latest" className="hc-card hd-fixes hd-latest og-full__latest">
+        {/* No icon by the title (9 Nov, review): the news is in Dr.AI's window too, Sparki is for hints. */}
+        <h3 className="og-full__h og-full__latest-head">Latest from Spark</h3>
+        <div className="hld-card hc-latest__list">
+          <LatestFromSpark bare limit={4} typed />
+        </div>
+      </section>
     </div>
   );
 }
@@ -455,6 +495,13 @@ export function OnboardingHome() {
   // The same Home for every company since 9 Nov: a new one sees what is to come, one past onboarding its reports.
   const filled = !state.onboarding;
   const tab = (HOME_TABS.find(([k]) => k === query.get('tab'))?.[0] ?? 'overview') as HomeTab;
+  // Dr.AI's "See what's new" (#/?see=latest): down to the latest from Spark.
+  const see = query.get('see');
+  useEffect(() => {
+    if (see !== 'latest') return;
+    const t = setTimeout(() => document.getElementById('latest')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
+    return () => clearTimeout(t);
+  }, [see]);
   // The underline slides from tab to tab (9 Nov, wave 1 of motion).
   const nav = useRef<HTMLElement>(null);
   const [bar, setBar] = useState<{ left: number; width: number } | null>(null);
