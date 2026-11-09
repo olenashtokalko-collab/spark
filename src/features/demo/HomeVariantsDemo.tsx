@@ -222,7 +222,7 @@ function VariantA({ m, onAsk }: { m: Model; onAsk: () => void }) {
 // ---- B · One thing first --------------------------------------------------------------------------
 // The one decision that's due first, big, on the video's dark ground, Dr.AI's face leaning in to say why; the
 // reports as two different pictures (a gauge, a comparison bar), each with the reason to open it; what's new short.
-function Gauge({ value, max = 100 }: { value: number; max?: number }) {
+export function Gauge({ value, max = 100 }: { value: number; max?: number }) {
   const r = 52;
   const c = 2 * Math.PI * r;
   const part = 0.75; // a three-quarter ring
@@ -441,6 +441,44 @@ export function HomeVariantsDemo() {
         ))}
         <a href="#/">Current Home</a>
       </nav>
+    </div>
+  );
+}
+
+/** Home's Brand Analysis (9 Nov, Jean #22: "numbers, score, big font… spark the client's interest"): B's two
+ *  tiles, the website on a gauge and social media against what's typical, each with the reason to open it. */
+export function ReportTiles({ href = reportHref }: { href?: (a: CompanyAnalysis) => string }) {
+  const web = REPORTS.find((a) => a.kind === 'website')!;
+  const social = REPORTS.find((a) => a.kind === 'social')!;
+  return (
+    <div className="hv hv-tiles">
+      <a className="hv-b-tile" href={href(web)}>
+        <span className="hv-eyebrow">{NAME.website}</span>
+        <span className="hv-b-tile__gauge">
+          <Gauge value={parseInt(web.score?.value ?? '0', 10)} />
+          <span>
+            <b>{parseInt(web.score?.value ?? '0', 10)}</b>
+            <i>/100</i>
+          </span>
+        </span>
+        <span className="hv-b-tile__label">
+          {web.score?.label} <Delta a={web} />
+        </span>
+        <b className="hv-b-tile__why">{topIssue(web)?.title}: product pages take 6.8 s on 4G.</b>
+      </a>
+      <a className="hv-b-tile" href={href(social)}>
+        <span className="hv-eyebrow">{NAME.social}</span>
+        <span className="hv-b-tile__big">{social.score?.value}</span>
+        <span className="hv-b-tile__label">
+          {social.score?.label} <Delta a={social} />
+        </span>
+        {/* No bars (9 Nov, review): two bars read as progress. The market's figure as a line instead; a trend
+            line comes when there are monthly reports to draw it from. */}
+        <span className="hv-bench">
+          vs <b>1.9%</b> typical for UAE retail
+        </span>
+        <b className="hv-b-tile__why">Instagram works. TikTok is reposted Reels, under 2K views.</b>
+      </a>
     </div>
   );
 }

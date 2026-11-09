@@ -58,6 +58,8 @@ export interface State {
   onboardingSkipped?: string[];
   /** The tutorial is over (Finish): the account stays new, Dr.AI only reminds of what was put off. */
   onboardingDone?: boolean;
+  /** The welcome (9 Nov): shown once per new company, before the steps. */
+  onboardingIntro?: boolean;
 }
 
 export const STORAGE_KEY = 'spark-portal-v10';
@@ -67,7 +69,7 @@ export const TEAM_FOLDER = 'f-uploads';
 // Files attached to a message are read like a workspace document.
 const attachedContext = (files?: Attachment[]) => (files?.length ? (files.length === 1 ? files[0].name : `${files.length} attached files`) : undefined);
 
-const initial = (): State => ({
+const seedState = (): State => ({
   theme: 'sand',
   requestLayout: 1,
   signedIn: true,
@@ -94,6 +96,31 @@ const initial = (): State => ({
     team: { inApp: true, email: false },
   },
 });
+
+// A build that opens as a new company (VITE_ONBOARDING_ONLY=1, 9 Nov: spark-lead-preview shows the onboarding
+// flow): the seed's people at Spark and Layla, nothing else yet, the tutorial on.
+export const ONBOARDING_ONLY = import.meta.env.VITE_ONBOARDING_ONLY === '1';
+const initial = (): State => {
+  const s = seedState();
+  if (!ONBOARDING_ONLY) return s;
+  return {
+    ...s,
+    onboarding: true,
+    onboardingSkipped: [],
+    onboardingDone: false,
+    onboardingIntro: false,
+    requests: [],
+    proposals: [],
+    docs: [],
+    conversations: [],
+    notifications: [],
+    invitations: [],
+    seenDocs: [],
+    people: s.people.filter((p) => p.org === 'spark' || p.id === 'u-layla'),
+    credits: 100,
+    creditsTotal: 100,
+  };
+};
 
 // Signed out lasts only for this tab (9 Nov): every visit to the link opens the portal itself; the sign-in page shows
 // after Log out, and stays through reloads of that tab.
@@ -131,12 +158,13 @@ function loadSaved(): State {
       const requests = missing(saved.requests, seed.requests);
       const proposals = missing(saved.proposals, seed.proposals);
       const notifications = missing(saved.notifications, seed.notifications);
+      const docs = missing(saved.docs, seed.docs);
       // Onboarding: the empty portal stays empty; nothing from the seed is merged back in.
       if (saved.onboarding) return { ...seed, ...saved, theme: 'sand', brand: seed.brand };
       // Light is the only theme for now (dark is switched off); saved demos open in it too.
       saved.theme = 'sand';
       // The company's profile is Spark's and the portal can't edit it, so its copy always comes from the seed.
-      return { ...seed, ...saved, brand: seed.brand, ...(folders && { folders }), ...(requests && { requests }), ...(proposals && { proposals }), ...(notifications && { notifications }) };
+      return { ...seed, ...saved, brand: seed.brand, ...(folders && { folders }), ...(requests && { requests }), ...(proposals && { proposals }), ...(notifications && { notifications }), ...(docs && { docs }) };
     }
   } catch {
     /* storage unavailable: fall back to seed */
@@ -631,6 +659,7 @@ function useStoreValue() {
         onboarding: true,
         onboardingSkipped: [],
         onboardingDone: false,
+    onboardingIntro: false,
         requests: [],
         proposals: [],
         docs: [],
@@ -651,6 +680,7 @@ function useStoreValue() {
   const unskipStep = useCallback((key: string) => set((s) => ({ onboardingSkipped: (s.onboardingSkipped ?? []).filter((k) => k !== key) })), [set]);
   // Finish (6 Nov): the tutorial goes, the new account stays as it is (still no reports, no seed data).
   const endOnboarding = useCallback(() => set(() => ({ onboardingDone: true })), [set]);
+  const seeIntro = useCallback(() => set(() => ({ onboardingIntro: true })), [set]);
   const reset = useCallback(() => {
     try {
       localStorage.removeItem(STORAGE_KEY);
@@ -695,6 +725,7 @@ function useStoreValue() {
       reset,
       startOnboarding,
       endOnboarding,
+      seeIntro,
       skipStep,
       unskipStep,
     },

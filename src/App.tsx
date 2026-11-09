@@ -32,7 +32,13 @@ import { AskGlassDemo } from './features/demo/AskGlassDemo';
 import { RailHoverDemo } from './features/demo/RailHoverDemo';
 import { HomeRethinkDemo } from './features/demo/HomeRethinkDemo';
 import { HomeVariantsDemo } from './features/demo/HomeVariantsDemo';
+import { HomeStylesDemo } from './features/demo/HomeStylesDemo';
+import { HomeCardsDemo } from './features/demo/HomeCardsDemo';
 import { DockDemo } from './features/demo/DockDemo';
+import { DockLooksDemo } from './features/demo/DockLooksDemo';
+import { HighlightLooksDemo } from './features/demo/HighlightLooksDemo';
+import { SparkiBubbleDemo } from './features/demo/SparkiBubbleDemo';
+import { StatusGlassDemo } from './features/demo/StatusGlassDemo';
 import { EmptyArtDemo } from './features/demo/EmptyArtDemo';
 import { OnboardingHome } from './features/onboarding/Onboarding';
 import { MascotDemo } from './features/demo/MascotDemo';
@@ -41,7 +47,7 @@ import { useEffect } from 'react';
 import { useRoute } from './lib/router';
 import { AppShell } from './components/layout/AppShell';
 import { Invite } from './features/auth/Invite';
-import { STORAGE_KEY, useStore } from './state/store';
+import { ONBOARDING_ONLY, STORAGE_KEY, useStore } from './state/store';
 import { Assistant } from './features/assistant/Assistant';
 import { GHomePage, GBrandAnalysisPage } from './features/demo/HomeRethinkDemo';
 import { AnalysisPage } from './features/home/AnalysisPage';
@@ -119,7 +125,13 @@ function Screen() {
       if (a === 'rail-hover') return <RailHoverDemo />;
       if (a === 'home-rethink') return <HomeRethinkDemo />;
       if (a === 'home-variants') return <HomeVariantsDemo />;
+      if (a === 'home-styles') return <HomeStylesDemo />;
+      if (a === 'home-cards') return <HomeCardsDemo />;
       if (a === 'dock') return <DockDemo />;
+      if (a === 'dock-looks') return <DockLooksDemo />;
+      if (a === 'highlight-looks') return <HighlightLooksDemo />;
+      if (a === 'sparki-bubbles') return <SparkiBubbleDemo />;
+      if (a === 'status-glass') return <StatusGlassDemo />;
       if (a === 'empty-art') return <EmptyArtDemo />;
       if (a === 'mascot') return <MascotDemo />;
       break;
@@ -147,7 +159,8 @@ function Reset() {
     } catch {
       /* storage can be blocked; the reload below still gives a fresh state in memory */
     }
-    window.location.hash = '#/requests';
+    // The onboarding-only build starts over on Home, as a new company.
+    window.location.hash = ONBOARDING_ONLY ? '#/' : '#/requests';
     window.location.reload();
   }, []);
   return null;

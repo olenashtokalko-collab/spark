@@ -6,7 +6,7 @@
 //   bar:    a glass bar at the foot of the page, him standing on its left end;
 //   top:    a glass strip at the top of the page that stays as you scroll, him standing in it.
 // Folded, he becomes small (his head with a count), one click brings the message back.
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { ArrowRight, ChevronLeft, ChevronRight, Minus } from 'lucide-react';
 import { navigate, useRoute } from '../../lib/router';
 import { useStore } from '../../state/store';
@@ -81,7 +81,7 @@ function useMessages(): Msg[] {
         tag: 'Reminder',
         tone: 'reminder',
         text: 'Spark doesn’t have your [brand files] yet. Share them, and your first proposal fits you better.',
-        action: { label: 'Upload files', href: '#/documents/f-uploads' },
+        action: { label: 'Upload files', href: '#/documents' },
       });
     if (!state.invitations.length)
       later.push({
@@ -164,7 +164,10 @@ function NowList({ msgs, onGo }: { msgs: Msg[]; onGo: () => void }) {
 }
 
 // One intro a visit: Sparki flies out the first time he appears, not on every page.
+const NO_DOCK = import.meta.env.VITE_NO_DOCK === '1';
 let introDone = false;
+// Where Dr.AI was dragged to, for the rest of the visit (9 Nov).
+let dockOff = { dx: 0, dy: 0 };
 
 export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
   const look = useDockLook();
@@ -173,6 +176,32 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
   const [i, setI] = useState(0);
   const [folded, setFolded] = useState(false);
   const [chat, setChat] = useState(false);
+  // Drag Dr.AI aside by the mascot, as Sparki (9 Nov, review); the window comes with him. Kept for the visit.
+  const [off, setOff] = useState(() => dockOff);
+  const grab = useRef<{ x: number; y: number; dx: number; dy: number } | null>(null);
+  const dragProps = {
+    className: 'dk-drag',
+    title: 'Drag me aside',
+    onPointerDown: (e: React.PointerEvent<HTMLElement>) => {
+      e.currentTarget.setPointerCapture(e.pointerId);
+      grab.current = { x: e.clientX, y: e.clientY, dx: off.dx, dy: off.dy };
+    },
+    onPointerMove: (e: React.PointerEvent<HTMLElement>) => {
+      const g = grab.current;
+      if (g) {
+        const next = { dx: g.dx + e.clientX - g.x, dy: g.dy + e.clientY - g.y };
+        dockOff = next;
+        setOff(next);
+      }
+    },
+    onPointerUp: () => {
+      grab.current = null;
+    },
+    onPointerCancel: () => {
+      grab.current = null;
+    },
+  };
+  const dragStyle = off.dx || off.dy ? { transform: `translate(${off.dx}px, ${off.dy}px)` } : undefined;
   const [intro] = useState(() => {
     const first = !introDone;
     introDone = true;
@@ -181,6 +210,18 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
   const ob = useOnboarding();
   // Well done only for what was really done, not for a step put off (that would thank you for files you didn't send).
   const just = useJustDone(ob.done.map((d, k) => d && !ob.skipped[k]));
+  // The finale (9 Nov): the first time every step is done or put off, glass sparks burst from the window.
+  const [party, setParty] = useState(false);
+  const wasAll = useRef(ob.all);
+  useEffect(() => {
+    if (ob.on && ob.all && !wasAll.current) {
+      setParty(true);
+      const t = setTimeout(() => setParty(false), 2800);
+      wasAll.current = ob.all;
+      return () => clearTimeout(t);
+    }
+    wasAll.current = ob.all;
+  }, [ob.all, ob.on]);
   const { actions, state } = useStore();
   const [guiding, setGuiding] = useState(true);
   // Onboarding: what he says is the step (or well done for the one just done); otherwise what's urgent.
@@ -203,6 +244,9 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
   );
   // Not on the chat itself, where he already is; Sparki still points the way there.
   if (!mine || path.startsWith('/assistant')) return guide || null;
+  // A build without the corner Dr.AI (VITE_NO_DOCK=1, 9 Nov: spark-glass-share keeps him out for now); onboarding's
+  // Sparki still guides where there is onboarding.
+  if (NO_DOCK) return guide || null;
   // Nothing to say (a new account with nothing put off): he waits in the corner, his head opens the chat.
   if (!ob.on && !msg)
     return where === 'corner' ? (
@@ -230,8 +274,9 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
     return (
       <>
         {guide}
-        <div className="dk dk--corner dk--ob">
-          <div className="dk-card">
+        <div className="dk dk--corner dk--ob" style={dragStyle}>
+          {party && <Confetti />}
+          <div className={cx('dk-card', just !== null && 'is-cheer', party && 'is-cheer')}>
             <header className="dk-card__head">
               <b>{ob.all ? 'All set' : step?.optional ? 'Optional step' : 'Getting started'}</b>
               <span className="dk-card__n">
@@ -242,7 +287,7 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
                 <Minus size={15} />
               </button>
             </header>
-            <Stepper done={ob.done} current={ob.current} skipped={ob.skipped} />
+            <Stepper done={ob.done} current={ob.current} skipped={ob.skipped} just={just} />
             <p className="dk-msg" aria-live="polite" aria-label={plain(obText)}>
               <Typed text={obText} n={typed.n} />
             </p>
@@ -277,7 +322,9 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
               )}
             </span>
           </div>
-          <MascotClip key="fig" state={typed.n > 0 && !typed.done ? 'speaking' : 'idle'} width={150} intro={intro} className="dk-fig" />
+          <span key="fig" {...dragProps}>
+            <MascotClip state={typed.n > 0 && !typed.done ? 'speaking' : 'idle'} width={150} intro={intro} className="dk-fig" />
+          </span>
         </div>
         {ask}
       </>
@@ -340,7 +387,7 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
   if (look === 'corner')
     return (
       <>
-        <div className="dk dk--corner">
+        <div className="dk dk--corner" style={dragStyle}>
           <div className="dk-card">
             <header className="dk-card__head">
               <b>Dr.AI</b>
@@ -351,7 +398,9 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
             {line}
             {acts}
           </div>
-          <MascotClip key="fig" state={speaking ? 'speaking' : 'idle'} width={150} intro={intro} className="dk-fig" />
+          <span key="fig" {...dragProps}>
+            <MascotClip state={speaking ? 'speaking' : 'idle'} width={150} intro={intro} className="dk-fig" />
+          </span>
         </div>
         {drawer}
       </>
@@ -394,5 +443,31 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
       </div>
       {drawer}
     </>
+  );
+}
+
+/** Glass sparks bursting from Dr.AI's window when onboarding is done (9 Nov). Still for reduced motion: none. */
+// Brand book only: Cobalt, Ember, Haze and white light (9 Nov, review: no pink).
+const SPARK_TONES = ['#1E3BD6', '#E8501F', '#C8D8F0', '#ffffff', '#1E3BD6', '#E8501F'];
+function Confetti() {
+  const bits = Array.from({ length: 26 }, (_, i) => {
+    const a = (i / 26) * Math.PI * 2 + (i % 3) * 0.3;
+    const d = 90 + (i % 5) * 34;
+    return { x: Math.cos(a) * d, y: Math.sin(a) * d * 0.8 - 40, r: (i * 47) % 360, s: 0.6 + (i % 4) * 0.25, c: SPARK_TONES[i % SPARK_TONES.length], t: (i % 6) * 0.04 };
+  });
+  return (
+    <span className="dk-confetti" aria-hidden>
+      {bits.map((b, i) => (
+        <svg
+          key={i}
+          viewBox="0 0 20 20"
+          width="14"
+          height="14"
+          style={{ ['--x' as string]: `${b.x}px`, ['--y' as string]: `${b.y}px`, ['--r' as string]: `${b.r}deg`, ['--s' as string]: b.s, ['--t' as string]: `${b.t}s` }}
+        >
+          <path d="M10 0 C10.6 7 13 9.4 20 10 C13 10.6 10.6 13 10 20 C9.4 13 7 10.6 0 10 C7 9.4 9.4 7 10 0 Z" fill={b.c} />
+        </svg>
+      ))}
+    </span>
   );
 }

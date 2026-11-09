@@ -50,7 +50,11 @@ export function ChatHistory() {
     <div className="history history--sidebar">
 
       <div className="history__list">
-        {list.length === 0 && <div className="history__empty">No chats yet. Start one above.</div>}
+        {list.length === 0 && (
+          <div className="history__empty">
+            No chats yet. Start one above.
+          </div>
+        )}
         {group(list).map((g) => (
           <div key={g.label} className="history__group">
             <div className="history__label">{g.label}</div>

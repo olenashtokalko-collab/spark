@@ -210,6 +210,23 @@ export const docs: Doc[] = [
     id: 'd-photo-difc', name: 'Store photography — DIFC.jpg', kind: 'image', folderId: 'f-creative', sizeKb: 8700, uploadedBy: 's-youssef', uploadedAt: '2026-07-14T10:00:00',
     preview: { type: 'art', palette: ['#2B211B', '#B98D63', '#EFE6D8'], motif: 'store' },
   },
+  // The reports' PDF copies (9 Nov, Jean #26): Brand Analysis holds the live report, Research reports a copy to share.
+  {
+    id: 'd-rep-website', name: 'Website report — Oct 2026.pdf', kind: 'pdf', folderId: 'f-research', sizeKb: 2100, uploadedBy: 's-mira', uploadedAt: '2026-10-20T10:00:00',
+    summary: 'Mobile speed 41/100: on brand, but slow on mobile. Three issues to fix, one working well.',
+    preview: pages(
+      ['Website report · October 2026', 'Spark Studios · Digital'],
+      ['In one line', 'The site looks like Brand Co., but product pages take 6.8 s on 4G; most visitors are on phones.'],
+    ),
+  },
+  {
+    id: 'd-rep-social', name: 'Social media report — Oct 2026.pdf', kind: 'pdf', folderId: 'f-research', sizeKb: 1800, uploadedBy: 's-mira', uploadedAt: '2026-10-20T10:00:00',
+    summary: 'Engagement 3.4% on Instagram: Instagram works, TikTok doesn’t yet. Two issues to fix.',
+    preview: pages(
+      ['Social media report · October 2026', 'Spark Studios · Social & Insights'],
+      ['In one line', 'Instagram carries the brand; TikTok is reposted Reels with under 2K views.'],
+    ),
+  },
   {
     id: 'd-audit', name: 'Brand audit — Sep 2026.pdf', kind: 'pdf', folderId: 'f-research', sizeKb: 3900, uploadedBy: 's-mira', uploadedAt: '2026-09-18T09:00:00',
     summary: 'Awareness, perception and consistency across 14 stores and 6 channels.',

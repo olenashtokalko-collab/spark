@@ -876,8 +876,15 @@ export function TeamLine() {
   const { state, me } = useStore();
   const others = state.people.filter((p) => p.org === 'client' && p.id !== me.id);
   if (!others.length)
+    // Just you so far (9 Nov, review): your face, and an empty dotted one for whoever you invite.
     return (
       <a className="hl-team" href="#/team?from=home">
+        <span className="hl-team__faces">
+          <Avatar person={me} size={26} ring />
+          <span className="hl-team__invite" aria-hidden>
+            +
+          </span>
+        </span>
         <span className="hl-team__text">
           <b>{state.brand.name} team</b> · just you so far, invite your colleagues
         </span>

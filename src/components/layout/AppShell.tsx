@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
   Bell,
-  ChartPie,
   Check,
   CheckCheck,
   FileText,
@@ -36,11 +35,7 @@ function navFor(path: string, query: URLSearchParams) {
   // G is the demo's default (5 Nov): no v means G's Home.
   const v = query.get('v') ?? 'g';
   if (path !== '/demo/home-rethink' || !v.startsWith('g')) return NAV;
-  return [
-    { ...NAV[0], path: '/demo/home-rethink?v=g', match: () => v === 'g' },
-    { ...NAV[1], path: '/demo/home-rethink?v=g-ba', match: () => v === 'g-ba' || v === 'g-report' },
-    ...NAV.slice(2),
-  ];
+  return [{ ...NAV[0], path: '/demo/home-rethink?v=g', match: () => v.startsWith('g') }, ...NAV.slice(1)];
 }
 
 const NAV = [
@@ -48,15 +43,9 @@ const NAV = [
     path: '/',
     label: 'Home',
     icon: House,
-    // An analysis page belongs to Home: it opens from there and goes back there.
-    match: (p: string) => p === '/' || p === '/home',
-  },
-  // Brand Analysis, its own section since 5 Nov: the reports and the company profile.
-  {
-    path: '/brand-analysis',
-    label: 'Brand Analysis',
-    icon: ChartPie,
-    match: (p: string) => p.startsWith('/brand-analysis') || p.startsWith('/analysis'),
+    // Home is the brand analysis since 9 Nov (the tab only repeated it, Jean #25): a report and the company
+    // profile open from Home and go back there, so Home stays lit on them.
+    match: (p: string) => p === '/' || p === '/home' || p.startsWith('/brand-analysis') || p.startsWith('/analysis'),
   },
   {
     path: '/assistant',
@@ -250,7 +239,9 @@ function Notifications({ labels }: { labels?: boolean }) {
             </button>
           </div>
           {list.length === 0 ? (
-            <div className="notifs__empty">You're all caught up.</div>
+            <div className="notifs__empty">
+              You're all caught up.
+            </div>
           ) : (
             <div className="notifs__list">
               {list.slice(0, 12).map((n) => {

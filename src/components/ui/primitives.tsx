@@ -185,9 +185,10 @@ export function Skeleton({ w = '100%', h = 14, r = 6, className }: { w?: number 
 
 /** Quiet by design: a short line of muted text, an optional hint and action.
  *  `panel` sets it in a filled card, for empty sections inside a page. */
-export function EmptyState({ title, body, action, panel }: { title: string; body?: ReactNode; action?: ReactNode; panel?: boolean }) {
+export function EmptyState({ title, body, action, panel, art }: { title: string; body?: ReactNode; action?: ReactNode; panel?: boolean; art?: ReactNode }) {
   return (
     <div className={cx('empty', panel && 'empty--panel')}>
+      {art && <div className="empty__art">{art}</div>}
       <div className="empty__title">{title}</div>
       {body && <div className="empty__body">{body}</div>}
       {action && <div className="empty__action">{action}</div>}

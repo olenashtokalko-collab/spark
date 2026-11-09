@@ -2,7 +2,7 @@
 // (6 Nov). Pick one of each; Home and Brand Analysis use the pick (kept in this browser).
 import { PageHeader, cx } from '../../components/ui/primitives';
 import { SparkiStill } from '../../components/ui/DrAi';
-import { BA_ARTS, BrandArt, LATEST_ARTS, LatestArtView, setArt, useArt } from '../onboarding/EmptyArt';
+import { BA_ARTS, BrandArt, LATEST_ARTS, LatestArtView, PAGE_ARTS, PageArtView, setArt, useArt, type PageKey } from '../onboarding/EmptyArt';
 
 export function EmptyArtDemo() {
   const art = useArt();
@@ -10,7 +10,7 @@ export function EmptyArtDemo() {
     <div className="cdemo">
       <PageHeader
         title="Empty cards · pictures"
-        sub="Still pictures, no motion. Pick one for Brand Analysis and one for Latest from Spark; Home and Brand Analysis show the pick. Prototype only."
+        sub="Still pictures, no motion. Pick one for each empty place; the portal shows the pick. Prototype only."
       />
       <h3 className="ead-h">Brand Analysis · no reports yet</h3>
       <div className="ead-grid">
@@ -40,6 +40,25 @@ export function EmptyArtDemo() {
           </button>
         ))}
       </div>
+      {(Object.keys(PAGE_ARTS) as PageKey[]).map((k) => {
+        const g = PAGE_ARTS[k];
+        return (
+          <div key={k}>
+            <h3 className="ead-h">{g.title}</h3>
+            <div className="ead-grid">
+              {g.list.map((x) => (
+                <button key={x.v} type="button" className={cx('og-later__card ead-tile ead-tile--page', art[k] === x.v && 'is-on')} onClick={() => setArt(k, x.v)}>
+                  <span className="og-eyebrow">{x.label}</span>
+                  <span className="og-later__art">{x.v === 'none' ? <span className="ead-none">No picture</span> : <PageArtView v={x.v} />}</span>
+                  <b>{g.head}</b>
+                  {g.body && <span>{g.body}</span>}
+                  <span className="ead-pick">{art[k] === x.v ? 'In the portal' : 'Use this'}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      })}
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { ArrowLeft, Calendar, FileText, LayoutGrid, List, Lock, MessageSquare, Search, Upload, UserRound, X, Download } from 'lucide-react';
+import { ArrowLeft, Calendar, FileText, LayoutGrid, List, Lock, MessageSquare, Search, Upload, X, Download } from 'lucide-react';
 import { Mascot } from '../../components/ui/Mascot';
 import { personById, TEAM_FOLDER, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
@@ -15,7 +15,6 @@ import { downloadDoc } from './DocPreview';
 import { GlassTabs } from '../../components/ui/GlassTabs';
 
 type KindFilter = 'all' | DocKind;
-type ByFilter = 'anyone' | 'spark' | 'team';
 type DateFilter = 'any' | 'week' | 'month';
 const DATE_DAYS: Record<Exclude<DateFilter, 'any'>, number> = { week: 7, month: 30 };
 const MAX_MB = 25;
@@ -26,7 +25,6 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
   const toast = useToast();
   const [q, setQ] = useState('');
   const [kind, setKind] = useState<KindFilter>('all');
-  const [by, setBy] = useState<ByFilter>('anyone');
   const [date, setDate] = useState<DateFilter>('any');
   const [view, setView] = useState<'grid' | 'list'>(() => {
     try {
@@ -37,7 +35,8 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
   });
   const [loading, setLoading] = useState(true);
   // The top level splits Spark's folders from your team's (picked on #/demo/folders, D).
-  const [side, setSide] = useState<'spark' | 'team'>('spark');
+  // Your team first (9 Nov, review): it's where the client adds files, so Documents opens on it.
+  const [side, setSide] = useState<'spark' | 'team'>('team');
   const [over, setOver] = useState(false);
   const [uploads, setUploads] = useState<{ name: string; progress: number }[]>([]);
   const fileInput = useRef<HTMLInputElement>(null);
@@ -51,10 +50,13 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
     for (let f = state.folders.find((x) => x.id === fid); f; f = state.folders.find((x) => x.id === f!.parentId)) if (f.id === TEAM_FOLDER) return true;
     return false;
   };
-  const canUpload = !!folder && isTeam(folder.id);
+  // Your team at the top level shows its files at once, with the drop card (9 Nov, Jean #28: one folder, so no
+  // extra layer to click into).
+  const teamRoot = !folder && side === 'team' && !q.trim();
+  const canUpload = teamRoot || (!!folder && isTeam(folder.id));
   const teamFolder = state.folders.find((f) => f.id === TEAM_FOLDER);
   const team = state.people.filter((p) => p.org === 'client');
-  const shownFolders = folder ? children : children.filter((f) => (side === 'team') === isTeam(f.id));
+  const shownFolders = folder ? children : teamRoot ? state.folders.filter((f) => f.parentId === TEAM_FOLDER) : children.filter((f) => !isTeam(f.id));
 
   useEffect(() => {
     setLoading(true);
@@ -79,22 +81,19 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
   }, [view]);
 
   const searching = q.trim().length > 0;
-  const filtered = kind !== 'all' || by !== 'anyone' || date !== 'any';
+  const filtered = kind !== 'all' || date !== 'any';
   const clearFilters = () => {
     setQ('');
     setKind('all');
-    setBy('anyone');
     setDate('any');
   };
   const files = useMemo(() => {
-    const base = searching ? state.docs.filter((d) => d.name.toLowerCase().includes(q.toLowerCase())) : state.docs.filter((d) => d.folderId === (folder?.id ?? '__root'));
-    const fromSpark = (d: Doc) => state.people.find((p) => p.id === d.uploadedBy)?.org === 'spark';
+    const base = searching ? state.docs.filter((d) => d.name.toLowerCase().includes(q.toLowerCase())) : state.docs.filter((d) => d.folderId === (teamRoot ? TEAM_FOLDER : (folder?.id ?? '__root')));
     return base
       .filter((d) => kind === 'all' || d.kind === kind)
-      .filter((d) => by === 'anyone' || (by === 'spark') === fromSpark(d))
       .filter((d) => date === 'any' || Date.now() - new Date(d.uploadedAt).getTime() <= DATE_DAYS[date] * 86400000)
       .sort((a, b) => b.uploadedAt.localeCompare(a.uploadedAt));
-  }, [state.docs, state.people, folder, q, kind, by, date, searching]);
+  }, [state.docs, folder, teamRoot, q, kind, date, searching]);
 
   const countIn = (fid: string): number => state.docs.filter((d) => d.folderId === fid).length + state.folders.filter((f) => f.parentId === fid).reduce((a, f) => a + countIn(f.id), 0);
   const reviewIn = (fid: string): number =>
@@ -155,7 +154,8 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
         title={folder ? folder.name : 'Documents'}
         sub={folder ? folder.description : 'Guidelines, strategy, proposals, creative and the files your team shares.'}
         actions={
-          canUpload ? (
+          // At the team level files go in by the drop card (9 Nov, review): no second Upload at the top.
+          canUpload && !teamRoot ? (
             <Button size="sm" variant="primary" icon={Upload} onClick={() => fileInput.current?.click()}>
               Upload
             </Button>
@@ -182,8 +182,8 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
               value={side}
               onChange={setSide}
               items={[
-                { value: 'spark', label: 'From Spark', count: children.filter((f) => !isTeam(f.id)).length },
-                { value: 'team', label: 'Your team', count: children.filter((f) => isTeam(f.id)).length },
+                { value: 'team', label: 'Your team', count: state.docs.filter((d) => isTeam(d.folderId)).length },
+                { value: 'spark', label: 'From Spark', count: state.docs.filter((d) => !isTeam(d.folderId)).length },
               ]}
             />
           )}
@@ -196,17 +196,6 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
               value={kind}
               onChange={setKind}
               options={[{ value: 'all', label: 'Any type' }, ...(['pdf', 'deck', 'image', 'sheet', 'archive'] as DocKind[]).map((k) => ({ value: k, label: kindLabel[k] }))]}
-            />
-            <FilterMenu
-              icon={UserRound}
-              label="Uploaded by"
-              value={by}
-              onChange={setBy}
-              options={[
-                { value: 'anyone', label: 'Anyone' },
-                { value: 'spark', label: 'Spark' },
-                { value: 'team', label: 'Your team' },
-              ]}
             />
             <FilterMenu
               icon={Calendar}
@@ -289,7 +278,7 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
                 >
                   <Upload size={18} />
                   <b>Drop files here</b>
-                  <span className="faint">Or click to choose. They go to {teamFolder?.name}.</span>
+                  <span className="faint">Or click to choose. Spark sees them as soon as they’re in.</span>
                 </button>
               )}
             </div>
@@ -309,7 +298,7 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
               )}
             </div>
           ) : files.length === 0 ? (
-            folder || searching || filtered ? (
+            (folder || searching || filtered) && !(teamRoot && !filtered) ? (
               <EmptyState
                 panel
                 title={searching || filtered ? 'No files match these filters.' : canUpload ? 'No files added.' : 'No files yet.'}

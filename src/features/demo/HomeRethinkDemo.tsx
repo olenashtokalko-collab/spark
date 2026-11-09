@@ -8,12 +8,15 @@ import { useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { useToast } from '../../components/ui/toast';
 import { navigate, useRoute } from '../../lib/router';
-import { Avatar, PageHeader, cx } from '../../components/ui/primitives';
+import { PageHeader, cx } from '../../components/ui/primitives';
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { SparkDisc } from '../../components/ui/BrandSpark';
 import { SparkStar } from '../../components/ui/SparkStar';
 import { AnalysisView } from '../home/AnalysisLooks';
 import { NoReports } from '../onboarding/Onboarding';
+import { ReportTiles } from './HomeVariantsDemo';
+import { PortalHome } from './HomeCardsDemo';
+import { SparkiStill } from '../../components/ui/DrAi';
 import { AskButton, useDrAi } from '../../components/ui/DrAi';
 import { ChatDrawer } from '../assistant/ChatDrawer';
 import { ANALYSIS_ICON } from '../assistant/Home';
@@ -633,7 +636,7 @@ function Tags({ items }: { items: string[] }) {
     </span>
   );
 }
-function ProfileFull() {
+export function ProfileFull() {
   const { state } = useStore();
   const b = state.brand;
   // The Overview card's three groups first, in its order and look; the rest under "More about…".
@@ -763,7 +766,7 @@ function SideBrief() {
 
 
 /** F2's Company profile: the company's register facts beside what Spark works from. */
-function FactsCard() {
+export function FactsCard({ more }: { more?: string }) {
   const { state } = useStore();
   const b = state.brand;
   const facts: [string, string][] = [
@@ -775,7 +778,14 @@ function FactsCard() {
   ];
   return (
     <section className="hld-card">
-      <h3 className="hld-title">Company details</h3>
+      <h3 className="hld-title">
+        Company details
+        {more && (
+          <a className="hld-link" href={`#${more}`}>
+            Full profile <ArrowRight size={13} />
+          </a>
+        )}
+      </h3>
       <dl className="hld-facts">
         {facts.map(([k, v]) => (
           <div key={k}>
@@ -838,6 +848,7 @@ function IssueList({ limit, kind }: { limit?: number; kind?: string }) {
   const list = fixes(REPORTS)
     .filter(({ a }) => !kind || a.kind === kind)
     .slice(0, limit);
+  const p = useContext(GPathsCtx);
   return (
     <ol className="hld-issues">
       {list.map(({ a, f }) => (
@@ -848,7 +859,7 @@ function IssueList({ limit, kind }: { limit?: number; kind?: string }) {
             <span>{f.fix ?? f.body}</span>
           </span>
           <span className="hld-label">{NAME[a.kind]}</span>
-          <a className="hld-link" href={reportHref(a, f.title)}>
+          <a className="hld-link" href={`#${p.report(a.kind)}${p.report(a.kind).includes('?') ? '&' : '?'}issue=${encodeURIComponent(f.title)}`}>
             See in report <ArrowRight size={13} />
           </a>
         </li>
@@ -886,7 +897,11 @@ function Latest() {
     <section className="hld-card">
       {/* No "View all" (5 Nov): there's no history to open yet, so the card shows the last four (the team card
           sits under it). */}
-      <h3 className="hld-title">Latest from Spark</h3>
+      {/* Sparki by the title (9 Nov, Jean #23: "mascot in this section to make it visually interesting"). */}
+      <h3 className="hld-title hld-title--sparki">
+        <SparkiStill size={28} />
+        Latest from Spark
+      </h3>
       <LatestFromSpark bare limit={4} typed />
     </section>
   );
@@ -924,26 +939,6 @@ const DEMO_PATHS: GPaths = {
 };
 const PORTAL_PATHS: GPaths = { ba: '/brand-analysis', profile: '/brand-analysis?tab=profile', report: (k) => `/brand-analysis/${k}` };
 const GPathsCtx = createContext<GPaths>(DEMO_PATHS);
-
-/** Home's head (5 Nov): as every other page's, on the ground with no card: "Home" and a line on what the page
- *  holds; the credits on the right where other pages keep their action. */
-function GHomeHead({ m }: { m: Model }) {
-  const [chat, setChat] = useState(false);
-  const drai = useDrAi();
-  return (
-    <header className="hld-page hld-page--home">
-      <span className="hld-page__text">
-        <h1 className="hld-greet">Home</h1>
-        <p>{m.brand.name} at a glance: what Spark found, what needs you, and what’s new.</p>
-      </span>
-      <span className="hld-page__acts">
-        <HomeCredits />
-        {!drai && <AskButton onClick={() => setChat(true)} />}
-        <ChatDrawer open={chat} onClose={() => setChat(false)} />
-      </span>
-    </header>
-  );
-}
 
 /** The credits on Home's head (5 Nov): plain text on one line: a small ring of what's left, the balance,
  *  "credits" and a chevron that turns up while the breakdown (with Top up) is open. No hover; a click opens and
@@ -992,34 +987,54 @@ export function HomeCredits() {
   );
 }
 
-/** The team on Home (5 Nov): its own card under Latest from Spark, you first, then your colleagues, four at
- *  most; View all opens the team. */
-function HomeTeamCard() {
-  const { state, me } = useStore();
-  const people = [me, ...state.people.filter((p) => p.org === 'client' && p.id !== me.id)];
+/** The company's bar on Home (9 Nov, Jean #29: "there was a company name bar at the top in last version, which
+ *  was good"; #21: the profile near the scores, not two layers down): the mark, the name and the line, the
+ *  channels Spark reports on, a link to the company profile; the credits on the right. */
+function HomeCompanyBar({ m }: { m: Model }) {
+  const p = useContext(GPathsCtx);
+  const [chat, setChat] = useState(false);
+  const drai = useDrAi();
+  // No channel icons (9 Nov, review): the report tiles under the bar lead to the same reports.
   return (
-    <section className="hld-card hld-teamcard">
-      <h3 className="hld-title">
-        {state.brand.name} team
-        <a className="hld-link" href="#/team?from=home">
-          View all <ArrowRight size={13} />
-        </a>
-      </h3>
-      <ul className="hld-team__list">
-        {people.slice(0, 4).map((p) => (
-          <li key={p.id}>
-            <Avatar person={p} size={32} />
-            <span>
-              <b>
-                {p.name}
-                {p.id === me.id && <i> · you</i>}
-              </b>
-              <span>{p.title}</span>
-            </span>
-          </li>
-        ))}
-      </ul>
-    </section>
+    <header className="hld-cobar">
+      <span className="hld-co__mark">{m.brand.name[0]}</span>
+      <span className="hld-cobar__text">
+        <h1>{m.brand.name}</h1>
+        <span>
+          {m.brand.category} · {m.brand.hq}
+          <a className="hld-link hld-cobar__profile" href={`#${p.profile}`}>
+            Company profile <ArrowRight size={13} />
+          </a>
+        </span>
+      </span>
+      <span className="hld-cobar__acts">
+        <HomeCredits />
+        {!drai && <AskButton onClick={() => setChat(true)} />}
+        <ChatDrawer open={chat} onClose={() => setChat(false)} />
+      </span>
+    </header>
+  );
+}
+
+/** Under the figures (9 Nov, Jean #22: "encourage to learn more and book consultation, services"): one line and a
+ *  button that opens a request to talk it through with Spark. */
+export function BookSpark() {
+  const { openRequest } = useUI();
+  return (
+    <div className="hld-book">
+      <span className="hld-book__label">Spark strategists · 30 min</span>
+      <span>
+        <b>Want these numbers to move?</b>
+        <span>We walk you through the reports and what to fix first.</span>
+      </span>
+      <button
+        type="button"
+        className="hv-btn hv-btn--white hld-book__go"
+        onClick={() => openRequest({ type: 'Strategy', title: 'Consultation on the brand analysis' })}
+      >
+        Book a consultation
+      </button>
+    </div>
   );
 }
 
@@ -1027,25 +1042,27 @@ function GHomeView({ m, empty }: { m: Model; empty?: boolean }) {
   const p = useContext(GPathsCtx);
   return (
     <>
-      <GHomeHead m={m} />
-      {/* 5 Nov, after review: the reports first (up to three, the rest in Brand Analysis), then what needs you; the
-          latest from Spark beside them, a feed to glance at. */}
+      {/* 9 Nov, Jean's review of 6 Nov: the company's bar back at the top (#29), with its profile one click away
+          (#21); Brand Analysis in big figures with a way to book Spark (#22); fewer boxes (#20); Sparki at the
+          latest (#23); no team card, Home was heavy (#24). */}
+      <HomeCompanyBar m={m} />
       <div className="hld-cols">
         <div className="hld-main">
-          <section className="hld-card">
+          <section className="hld-ba-home">
             <h3 className="hld-title">
               Brand Analysis
               <a className="hld-link" href={`#${p.ba}`}>
-                View all <ArrowRight size={13} />
+                All reports <ArrowRight size={13} />
               </a>
             </h3>
-            <HealthCards named limit={3} to={(a) => `#${p.report(a.kind)}`} />
+            <ReportTiles href={(a) => `#${p.report(a.kind)}`} />
           </section>
           <NeedsAction m={m} empty={empty} />
         </div>
         <aside className="hld-side">
+          {/* The consultation, accented, first in the side column (9 Nov, review). */}
+          <BookSpark />
           <Latest />
-          <HomeTeamCard />
         </aside>
       </div>
     </>
@@ -1077,7 +1094,11 @@ function GBrandAnalysisView({ m, tab, empty }: { m: Model; tab: 'overview' | 'pr
         // A new company (onboarding, 6 Nov): no reports until it asks for one.
         <NoReports />
       ) : tab === 'overview' ? (
-        // The Reports tab (5 Nov): the report cards on the ground, no card around them nor a title repeating the tab.
+        // The Reports tab, a layer under Home (9 Nov, Jean #25: "different layer information"; #21: the profile near
+        // the scores): Home has the headline figures; here each report's card, then every issue by impact, and the
+        // company's details beside them.
+        <div className="hld-cols">
+        <div className="hld-main">
         <section className="hld-ba-reports">
           <HealthCards
             named
@@ -1096,6 +1117,17 @@ function GBrandAnalysisView({ m, tab, empty }: { m: Model; tab: 'overview' | 'pr
             }
           />
         </section>
+          <section className="hld-card">
+            <h3 className="hld-title">
+              What to fix, by impact <span>{fixes(REPORTS).length}</span>
+            </h3>
+            <IssueList />
+          </section>
+        </div>
+          <aside className="hld-side">
+            <FactsCard more={p.profile} />
+          </aside>
+        </div>
       ) : (
         <div className="hld-cols">
           <ProfileFull />
@@ -1113,9 +1145,22 @@ function GReportView({ kind, issue }: { kind?: string; issue?: string }) {
   const report = REPORTS.find((a) => a.kind === kind) ?? REPORTS[0];
   return (
     <>
-      <a className="back hld-back" href={`#${p.ba}`}>
-        <ArrowLeft size={15} /> Brand Analysis
-      </a>
+      <span className="hld-report-top">
+        {/* In the portal a report goes back to Home (9 Nov: no Brand Analysis tab, Home is the analysis). */}
+        {p === PORTAL_PATHS ? (
+          <a className="back hld-back" href="#/">
+            <ArrowLeft size={15} /> Home
+          </a>
+        ) : (
+          <a className="back hld-back" href={`#${p.ba}`}>
+            <ArrowLeft size={15} /> Brand Analysis
+          </a>
+        )}
+        {/* Jean #26 (9 Nov): the live report lives here; a PDF copy, to share or download, is in Documents. */}
+        <a className="hld-link hld-report-pdf" href={`#/documents/f-research?doc=d-rep-${report.kind}`}>
+          PDF copy in Documents · Research reports <ArrowRight size={13} />
+        </a>
+      </span>
       <AnalysisView key={report.kind} a={report} look="cards" page focus={issue} />
     </>
   );
@@ -1137,12 +1182,41 @@ export function GHomePage() {
   }, [old, query]);
   return (
     <GPathsCtx.Provider value={PORTAL_PATHS}>
+      {/* Home since 9 Nov: the reports and the consultation, the latest from Spark (#/demo/home-cards?v=d). */}
       <div className="hld">
-        <GHomeView m={m} />
+        <PortalHome m={m} />
       </div>
     </GPathsCtx.Provider>
   );
 }
+
+/** The company profile, its own page under Home (9 Nov): back to Home, the profile and the company's details. */
+function ToHome() {
+  useEffect(() => navigate('/', { replace: true }), []);
+  return null;
+}
+
+function ProfilePage() {
+  const { state } = useStore();
+  return (
+    <>
+      <a className="back hld-back" href="#/">
+        <ArrowLeft size={15} /> Home
+      </a>
+      <header className="hld-page">
+        <h1 className="hld-greet">Company profile</h1>
+        <p>What Spark knows about {state.brand.name} and works from.</p>
+      </header>
+      <div className="hld-cols">
+        <ProfileFull />
+        <aside className="hld-side">
+          <FactsCard />
+        </aside>
+      </div>
+    </>
+  );
+}
+
 export function GBrandAnalysisPage({ kind }: { kind?: string }) {
   const m = useModel(analyses);
   const { query } = useRoute();
@@ -1152,8 +1226,14 @@ export function GBrandAnalysisPage({ kind }: { kind?: string }) {
       <div className="hld">
         {kind && !empty ? (
           <GReportView kind={kind} issue={query.get('issue') ?? undefined} />
+        ) : query.get('tab') === 'profile' ? (
+          <ProfilePage />
+        ) : empty ? (
+          // A new company: no reports yet (onboarding keeps this page for its links).
+          <GBrandAnalysisView m={m} tab="overview" empty />
         ) : (
-          <GBrandAnalysisView m={m} tab={query.get('tab') === 'profile' ? 'profile' : 'overview'} empty={empty} />
+          // No Brand Analysis tab since 9 Nov: the overview is Home.
+          <ToHome />
         )}
       </div>
     </GPathsCtx.Provider>
