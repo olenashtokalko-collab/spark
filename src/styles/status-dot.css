@@ -1,0 +1,60 @@
+/* Statuses in the Current UI (11 Nov, review): a coloured dot and a word, no pill, glass or light strip.
+   After the reference "Status  ● Building": a soft round dot, the word in Ink at the line's own size.
+   The colours keep their meaning: Ember waits on the client, violet is with Spark, blue is new, green is
+   delivered, grey is out of play. Loaded last, so it wins over the glass pills' layers in glass.css. */
+:root[data-ui='a'][data-theme][data-theme] .rstatus {
+  --dot: #a58cf2;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: auto;
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  color: var(--ink, #0e1116);
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+  font-size: 13px;
+  font-weight: 450;
+  line-height: 1.3;
+  white-space: nowrap;
+}
+:root[data-ui='a'][data-theme][data-theme] .rstatus::before,
+:root[data-ui='a'][data-theme][data-theme] .rstatus::after,
+:root[data-ui='a'][data-theme][data-theme] .rstatus.rstatus--delivered::after {
+  content: none;
+}
+:root[data-ui='a'][data-theme][data-theme] .rstatus .rstatus__dot {
+  display: block;
+  position: static;
+  flex: none;
+  inset: auto;
+  width: 8px;
+  height: 8px;
+  margin: 0;
+  border-radius: 50%;
+  background: var(--dot);
+  filter: none;
+  box-shadow: none;
+}
+:root[data-ui='a'][data-theme][data-theme] .rstatus--submitted {
+  --dot: #7d9cff;
+}
+:root[data-ui='a'][data-theme][data-theme] .rstatus:is(.rstatus--proposal, .rstatus--you) {
+  --dot: #f07d52;
+}
+:root[data-ui='a'][data-theme][data-theme] .rstatus.rstatus--delivered {
+  --dot: #4cb782;
+  color: var(--ink, #0e1116);
+  background: none;
+}
+:root[data-ui='a'][data-theme][data-theme] .rstatus:is(.rstatus--declined, .rstatus--superseded) {
+  --dot: #b7b3bf;
+}
+/* the Team page's "Active" stays plain text, as before */
+:root[data-ui='a'][data-theme][data-theme] .team .rstatus .rstatus__dot {
+  display: none;
+}

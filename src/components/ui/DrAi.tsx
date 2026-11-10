@@ -3,6 +3,7 @@
 // is as it was. The switch lives on #/demo/mascot and is kept in this browser only.
 import { useEffect, useState } from 'react';
 import { SparkDisc } from './BrandSpark';
+import { MetalButton, useMetalUi } from './MetalButton';
 
 const KEY = 'spark-drai';
 const EVENT = 'spark-drai';
@@ -305,6 +306,17 @@ export function AskButton({ onClick, className, about }: { onClick: () => void; 
  *  AI"): see-through Ember glass after the book's glass objects and the folders on Documents, a white light inside,
  *  a bright rim, Dr.AI's head floating in a clear bubble with air round him. */
 export function DrAiInkPill({ onClick, className, label = 'Ask Dr.AI' }: { onClick: () => void; className?: string; label?: string }) {
+  // Current UI (11 Nov, review): the Ask pill in the portal's new style, the Spark metal button, his head inside
+  const metal = useMetalUi();
+  if (metal)
+    return (
+      <MetalButton tone="spark" profile="portal" className={['drai-metal', className].filter(Boolean).join(' ')} onClick={onClick} aria-label={label}>
+        <span className="drai-metal__head" aria-hidden>
+          <DrAiNavIcon size={26} />
+        </span>
+        Ask Dr.AI
+      </MetalButton>
+    );
   return (
     <button type="button" className={['apd apd--ember drai-ink', className].filter(Boolean).join(' ')} onClick={onClick} aria-label={label}>
       {/* The same head as in the menu (9 Nov, review). */}

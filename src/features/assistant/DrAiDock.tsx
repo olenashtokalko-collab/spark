@@ -14,6 +14,7 @@ import { STEPS, SparkiGuide, Stepper, useJustDone, useOnboarding } from '../onbo
 import { analyses } from '../../data/mock';
 import { fmtDate } from '../../lib/format';
 import { cx } from '../../components/ui/primitives';
+import { MetalInner, metalClass, useMetalUi } from '../../components/ui/MetalButton';
 import { DrAiHead } from '../../components/ui/DrAi';
 import { MascotClip } from '../demo/MascotDemo';
 import { useModel } from '../home/HomeLayouts';
@@ -57,7 +58,7 @@ export function useDockLook() {
 }
 
 /** `kind` names the window (9 Nov, review): what needs you, a reminder, or news from Spark. */
-type Msg = {
+export type Msg = {
   key: string;
   kind?: 'needs' | 'reminder' | 'news';
   /** The chip over the line; none when the window's title already says it. */
@@ -66,10 +67,10 @@ type Msg = {
   text: string;
   action: { label: string; href: string };
 };
-const KIND_TITLE = { needs: 'Needs you', reminder: 'Reminder', news: 'Latest from Spark' } as const;
+export const KIND_TITLE = { needs: 'Needs you', reminder: 'Reminder', news: 'Latest from Spark' } as const;
 
 /** Only what can't wait: the decisions due first, and the finding that costs the most. [Brackets]: the gradient. */
-function useMessages(): Msg[] {
+export function useMessages(): Msg[] {
   const m = useModel(analyses);
   const { state } = useStore();
   const ob = useOnboarding();
@@ -225,6 +226,9 @@ function useFrostOverDark() {
 export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
   const look = useDockLook();
   useFrostOverDark();
+  // Current UI (11 Nov): the window's pill buttons wear the portal's metal, as every filled pill does
+  const metal = useMetalUi();
+  const dk = (kind: 'primary' | 'ask') => cx('dk-btn', `dk-btn--${kind}`, metal && metalClass('spark', 'portal'));
   const { path } = useRoute();
   const msgs = useMessages();
   const [i, setI] = useState(0);
@@ -391,13 +395,13 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
             </p>
             <span className={cx('dk-acts', typed.done && 'is-in')}>
               {ob.all ? (
-                <button type="button" className="dk-btn dk-btn--primary" onClick={() => actions.endOnboarding()}>
-                  Finish
+                <button type="button" className={dk('primary')} onClick={() => actions.endOnboarding()}>
+                  <MetalInner on={metal}>Finish</MetalInner>
                 </button>
               ) : (
                 <button
                   type="button"
-                  className="dk-btn dk-btn--primary"
+                  className={dk('primary')}
                   onClick={() => {
                     setGuiding(true);
                     // Takes you to where the step starts; Sparki then lights up the button there.
@@ -405,12 +409,12 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
                     if (!path.startsWith(to)) navigate(to);
                   }}
                 >
-                  Show me
+                  <MetalInner on={metal}>Show me</MetalInner>
                 </button>
               )}
               {/* Ask me stays on every step, so the chat is always one click away (6 Nov). */}
-              <button type="button" className="dk-btn dk-btn--ask" onClick={() => setChat(true)}>
-                Ask me
+              <button type="button" className={dk('ask')} onClick={() => setChat(true)}>
+                <MetalInner on={metal}>Ask me</MetalInner>
               </button>
               {step?.optional && !ob.all && (
                 // Optional steps: a quiet link at the right; Dr.AI reminds you afterwards.
@@ -451,11 +455,11 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
   );
   const acts = (
     <span className={cx('dk-acts', typed.done && 'is-in')}>
-      <a className="dk-btn dk-btn--primary" href={msg.action.href}>
-        {msg.action.label}
+      <a className={dk('primary')} href={msg.action.href}>
+        <MetalInner on={metal}>{msg.action.label}</MetalInner>
       </a>
-      <button type="button" className="dk-btn dk-btn--ask" onClick={() => setChat(true)}>
-        Ask me
+      <button type="button" className={dk('ask')} onClick={() => setChat(true)}>
+        <MetalInner on={metal}>Ask me</MetalInner>
       </button>
     </span>
   );

@@ -62,7 +62,7 @@ export function Assistant({ convId }: { convId?: string }) {
     <div className={cx('assistant assistant--chats', hist && 'is-hist')}>
       <section className="assistant__main">
         <div className="chats-top">
-          <Button size="sm" icon={History} onClick={() => setHist((h) => !h)} aria-expanded={hist} aria-controls="chats-hist">
+          <Button size="sm" plain icon={History} onClick={() => setHist((h) => !h)} aria-expanded={hist} aria-controls="chats-hist">
             Chats
           </Button>
         </div>

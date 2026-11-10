@@ -13,6 +13,8 @@ import './styles/glass.css';
 // The UI variants' layers (lib/uiVariant): the shared type and Direction A (b), then Direction B (c). Loaded last.
 import './styles/ui-b.css';
 import './styles/ui-c.css';
+// Current UI's statuses as a dot and a word (11 Nov), after every other layer.
+import './styles/status-dot.css';
 import { UiVariantRoot } from './lib/uiVariant';
 
 createRoot(document.getElementById('root')!).render(

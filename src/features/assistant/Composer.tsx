@@ -1,3 +1,4 @@
+import { MetalButton } from '../../components/ui/MetalButton';
 import { useEffect, useRef, useState } from 'react';
 import { ArrowUp, Check, Mic, Paperclip, Plus, Square, X } from 'lucide-react';
 import { Button, cx } from '../../components/ui/primitives';
@@ -20,6 +21,8 @@ interface Props {
   onVoice?: (recording: boolean) => void;
   /** 'box' (everywhere since 29 Oct): a plain white box, the words over a row of the portal's buttons
    *  (Attach, Send), no mascot. 'round': the earlier glass pill with the mascot, the plus and the mic. */
+  /** The send button as the Spark metal button once there is something to send (11 Nov, #/demo/ask-attention). */
+  metalSend?: boolean;
   look?: 'round' | 'box';
 }
 
@@ -34,7 +37,7 @@ const sizeLabel = (kb: number) => (kb >= 1024 ? `${(kb / 1024).toFixed(1)} MB` :
  *  lights up, the box grows (up to ~8 lines) and the mic turns into a send
  *  button. Files can be attached with the plus or dropped onto
  *  the box; the prototype keeps only name and size. */
-export function Composer({ onSubmit, busy, placeholder: placeholderIn, autoFocus, size = 'md', initial = '', onTyping, onVoice, className, look = 'box' }: Props) {
+export function Composer({ onSubmit, busy, placeholder: placeholderIn, autoFocus, size = 'md', initial = '', onTyping, onVoice, className, look = 'box', metalSend }: Props) {
   const box = look === 'box';
   // The assistant's name (5 Nov): Dr.AI when he's on, Spark AI otherwise. Spark alone is the studio.
   const drai = useDrAi();
@@ -206,7 +209,7 @@ export function Composer({ onSubmit, busy, placeholder: placeholderIn, autoFocus
       />
       {box ? (
         <div className="composer__bar">
-          <Button size="sm" icon={Paperclip} onClick={() => picker.current?.click()} title="Attach documents or images">
+          <Button size="sm" plain icon={Paperclip} onClick={() => picker.current?.click()} title="Attach documents or images">
             Attach
           </Button>
           <span className="composer__spacer" />
@@ -225,7 +228,13 @@ export function Composer({ onSubmit, busy, placeholder: placeholderIn, autoFocus
                 <Mic size={17} strokeWidth={1.8} />
               </button>
               {/* Send as a round icon, after the reference (30 Oct): Ink when there is something to send, faint before. */}
-              <Button variant="primary" size="sm" icon={ArrowUp} className="composer__go" onClick={send} disabled={!canSend} aria-label={busy ? `${who} is answering` : 'Send'} />
+              {metalSend && canSend ? (
+                <MetalButton tone="spark" profile="portal" className="composer__go composer__go--metal" onClick={send} aria-label="Send">
+                  <ArrowUp size={16} strokeWidth={2} />
+                </MetalButton>
+              ) : (
+                <Button variant="primary" size="sm" icon={ArrowUp} className="composer__go" onClick={send} disabled={!canSend} aria-label={busy ? `${who} is answering` : 'Send'} />
+              )}
             </>
           )}
         </div>

@@ -12752,6 +12752,12 @@ a.hv-b-tile:hover {
 .og-noreports .og-later__art {
   justify-content: center;
 }
+/* A Blender render (11 Nov): the same 72px as the drawings beside it, so the cards stay level. */
+.ea-render {
+  display: block;
+  height: 100%;
+  width: auto;
+}
 .ea {
   display: block;
   overflow: visible;

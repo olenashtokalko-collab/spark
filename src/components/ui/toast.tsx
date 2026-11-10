@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useState, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { AlertCircle, CheckCircle2, Info, X } from 'lucide-react';
+import { MetalInner, metalClass, useMetalUi } from './MetalButton';
 
 export interface ToastInput {
   title: string;
@@ -17,6 +18,7 @@ const ToastContext = createContext<(t: ToastInput) => void>(() => {});
 
 export function ToastProvider({ children }: { children: ReactNode }) {
   const [items, setItems] = useState<ToastItem[]>([]);
+  const metal = useMetalUi(); // Current UI: the action is a metal pill like every filled pill (11 Nov)
   const dismiss = useCallback((id: number) => setItems((l) => l.filter((t) => t.id !== id)), []);
   const push = useCallback(
     (t: ToastInput) => {
@@ -42,13 +44,13 @@ export function ToastProvider({ children }: { children: ReactNode }) {
                 </div>
                 {t.action && (
                   <button
-                    className="toast__action"
+                    className={metal ? `toast__action ${metalClass('spark', 'portal')}` : 'toast__action'}
                     onClick={() => {
                       t.action!.onClick();
                       dismiss(t.id);
                     }}
                   >
-                    {t.action.label}
+                    <MetalInner on={metal}>{t.action.label}</MetalInner>
                   </button>
                 )}
                 <button className="toast__close" onClick={() => dismiss(t.id)} aria-label="Dismiss">

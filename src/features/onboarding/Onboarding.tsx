@@ -3,7 +3,7 @@
 // store says so, nothing is ticked by hand). Dr.AI says the step from his corner, with a small stepper; Sparki leaves
 // him and flies to where the step starts (a link in the sidebar, then the button on the page), lighting it up.
 // Started and stopped on #/demo/dock.
-import { useEffect, useLayoutEffect, useRef, useState, type PointerEvent as RPointerEvent } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, type PointerEvent as RPointerEvent, type ReactNode } from 'react';
 import { createPortal } from 'react-dom';
 import { ArrowDown, ArrowRight, ArrowUp } from 'lucide-react';
 import { AnalysisView } from '../home/AnalysisLooks';
@@ -13,6 +13,7 @@ import { Gauge } from '../demo/HomeVariantsDemo';
 import { useRoute } from '../../lib/router';
 import { useStore, type State } from '../../state/store';
 import { SlideTabs, cx } from '../../components/ui/primitives';
+import { MetalParts, metalClass, useMetalUi } from '../../components/ui/MetalButton';
 import { SparkiStill } from '../../components/ui/DrAi';
 import { FactsCard, HomeCredits, ProfileFull } from '../demo/HomeRethinkDemo';
 import { navigate } from '../../lib/router';
@@ -318,9 +319,7 @@ function ReportToCome({ kind }: { kind: 'social' | 'website' }) {
       </span>
       <b>{what.title}</b>
       <span>{what.body}</span>
-      <button type="button" className="og-step__go og-report__go" onClick={() => setOpen(true)}>
-        Request this report <ArrowRight size={14} />
-      </button>
+      <ReportGo onClick={() => setOpen(true)}>Request this report</ReportGo>
       <CreateRequestDialog open={open} onClose={() => setOpen(false)} prefill={{ type: 'Research', title: what.ask }} />
     </section>
   );
@@ -658,13 +657,24 @@ const REPORT_IDEAS: { label: string; line: string; prefill: RequestPrefill }[] =
 ];
 
 /** Request a report (6 Nov): a primary button that opens the New request form, set to Research. */
+/** The report call to action: an Ink pill, or in the Current UI the Spark metal button (11 Nov). */
+function ReportGo({ onClick, children }: { onClick: () => void; children: ReactNode }) {
+  const metal = useMetalUi();
+  return (
+    <button type="button" className={cx('og-step__go og-report__go', metal && metalClass('spark', 'portal'))} onClick={onClick}>
+      {metal && <MetalParts tone="spark" profile="portal" />}
+      <span className="metal__label">
+        {children} <ArrowRight size={14} />
+      </span>
+    </button>
+  );
+}
+
 function RequestReport({ prefill = { type: 'Research', title: '' } }: { prefill?: RequestPrefill }) {
   const [open, setOpen] = useState(false);
   return (
     <>
-      <button type="button" className="og-step__go og-report__go" onClick={() => setOpen(true)}>
-        Request a report <ArrowRight size={14} />
-      </button>
+      <ReportGo onClick={() => setOpen(true)}>Request a report</ReportGo>
       <CreateRequestDialog open={open} onClose={() => setOpen(false)} prefill={prefill} />
     </>
   );

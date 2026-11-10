@@ -1,0 +1,282 @@
+/* Metal button (11 Nov, #/demo/metal-button), after adamperlis.com's "Run ⏎": a glass face inset 2.5px inside a
+   ring of liquid metal, with the ring's blurred glow around it. Hover clears the glass and brightens the glow;
+   a press sinks the button a little. */
+.metal {
+  --metal-radius: 12px;
+  position: relative;
+  transition: scale 0.2s ease-out;
+}
+/* the demo's own buttons (#/demo/metal-button) */
+.mbd .metal {
+  display: inline-flex;
+  align-items: center;
+  padding: 10px 18px;
+  border: 0;
+  border-radius: var(--metal-radius);
+  background: none;
+  color: var(--ink, #0e1116);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+/* The portal's buttons in the Current UI (11 Nov): they keep their own size and pill shape; the metal takes over
+   from their fill, shadow and white text. */
+.btn.metal,
+.og-step__go.metal,
+.dk-btn.metal,
+.toast__action.metal {
+  --metal-radius: 999px;
+  border: 0;
+  background: none !important;
+  box-shadow: none !important;
+  filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  animation: none !important;
+  color: var(--ink, #0e1116) !important;
+}
+.btn.metal .metal__label,
+.og-step__go.metal .metal__label,
+.dk-btn.metal .metal__label,
+.toast__action.metal .metal__label {
+  gap: inherit;
+}
+/* the AI pill's dark inner face and turning ring give way to the metal */
+.btn--ai.metal::before {
+  display: none !important;
+}
+/* the toast's action was a text link; as a metal pill it needs a pill's room */
+.toast__action.metal {
+  display: inline-flex;
+  align-items: center;
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+.metal:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+.metal:disabled .metal__halo {
+  opacity: 0.2;
+}
+.metal:active {
+  scale: 0.96;
+}
+.metal:focus-visible {
+  outline: 2px solid #1e3bd6;
+  outline-offset: 4px;
+}
+.metal__ring,
+.metal__halo {
+  position: absolute;
+  top: -18px;
+  left: -18px;
+  width: calc(100% + 36px);
+  height: calc(100% + 36px);
+  pointer-events: none;
+}
+.metal__halo {
+  opacity: 0.45;
+  transition: opacity 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.metal--spark .metal__halo {
+  opacity: 0.6;
+}
+.metal__glass {
+  position: absolute;
+  inset: 2.5px;
+  border-radius: calc(var(--metal-radius) - 2.5px);
+  /* clear white glass under the label (11 Nov): what's behind shows through, only a little softened */
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(4px) saturate(1.3);
+  -webkit-backdrop-filter: blur(4px) saturate(1.3);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -1px 0 rgba(22, 22, 21, 0.06);
+  pointer-events: none;
+  transition:
+    background-color 0.45s cubic-bezier(0.25, 1, 0.5, 1),
+    backdrop-filter 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.metal__label {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+@media (hover: hover) {
+  .metal:hover .metal__glass {
+    /* hover lights the glass up: whiter and brighter, still clear */
+    background: rgba(255, 255, 255, 0.3);
+    backdrop-filter: blur(4px) saturate(1.4) brightness(1.15);
+    -webkit-backdrop-filter: blur(4px) saturate(1.4) brightness(1.15);
+  }
+  .metal:hover .metal__halo {
+    opacity: 0.9;
+  }
+}
+.metal:focus-visible .metal__halo {
+  opacity: 0.9;
+}
+
+/* the demo page */
+.mbd {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding: 40px 32px 80px;
+}
+.mbd-eyebrow {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #e8501f;
+}
+.mbd h1 {
+  margin: 10px 0 8px;
+  font-size: 40px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+}
+.mbd-sub {
+  max-width: 640px;
+  margin: 0 0 32px;
+  color: rgba(14, 17, 22, 0.62);
+  line-height: 1.5;
+}
+.mbd-pair {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  margin-bottom: 20px;
+}
+.mbd-stage {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  min-height: 260px;
+  padding: 24px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #f8f6f2;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.06);
+}
+.mbd-stage--noor::before {
+  content: '';
+  position: absolute;
+  inset: -20%;
+  background:
+    radial-gradient(40% 50% at 28% 62%, rgba(30, 59, 214, 0.75), transparent 70%),
+    radial-gradient(35% 45% at 55% 40%, rgba(163, 58, 191, 0.55), transparent 70%),
+    radial-gradient(40% 50% at 78% 66%, rgba(232, 80, 31, 0.7), transparent 70%),
+    #f8f6f2;
+  filter: blur(18px);
+}
+.mbd-stage > * {
+  position: relative;
+}
+.mbd-label {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(14, 17, 22, 0.55);
+}
+.mbd-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 22px;
+  margin: auto 0;
+}
+.mbd-note {
+  margin: 28px 0 0;
+  max-width: 720px;
+  font-size: 14px;
+  line-height: 1.55;
+  color: rgba(14, 17, 22, 0.6);
+}
+@media (max-width: 760px) {
+  .mbd-pair {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* adamperlis.com's own values (profile "reference"), in Spark's colours for the side-by-side on the demo:
+   radius 10, glass white 42% over the whole metal, blur 9 / saturate 1.5, clearing to 22% on hover; halo 45 → 90%. */
+.metal--ref {
+  --metal-radius: 10px;
+}
+.mbd .metal--ref {
+  padding: 8px 16px;
+}
+.metal--ref .metal__glass {
+  background: rgba(255, 255, 255, 0.42);
+  backdrop-filter: blur(9px) saturate(1.5);
+  -webkit-backdrop-filter: blur(9px) saturate(1.5);
+}
+.metal.metal--ref .metal__halo {
+  opacity: 0.45;
+}
+@media (hover: hover) {
+  .metal--ref:hover .metal__glass {
+    background: rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(6px) saturate(1.6);
+    -webkit-backdrop-filter: blur(6px) saturate(1.6);
+  }
+  .metal.metal--ref:hover .metal__halo {
+    opacity: 0.9;
+  }
+}
+
+/* side by side on the demo */
+.mbd-vs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 18px;
+  margin: auto 0;
+}
+.mbd-vs > div {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+}
+.mbd-vs small {
+  font-size: 12px;
+  line-height: 1.45;
+  color: rgba(14, 17, 22, 0.6);
+}
+
+/* Ask Dr.AI in the Current UI (11 Nov, review): the metal button with his head at the start */
+.drai-metal.metal {
+  --metal-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 18px 0 6px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--ink, #0e1116);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.drai-metal .metal__label {
+  gap: 9px;
+}
+.drai-metal__head {
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  overflow: hidden;
+}

@@ -1,0 +1,746 @@
+/* Welcome, liquid light (11 Nov, #/demo/welcome-liquid): a full-screen first step over the portal. The card holds
+   Dr.AI's typed greeting; Start floods a hole open from the button, a ring of Noor light riding its edge, and the
+   portal shows through. A: liquid metal card on Sand. B: frosted glass card on the p.42 Noor blob. */
+.wl-stage {
+  --fx: 50vw;
+  --fy: 50vh;
+  --fr: 0px;
+  position: fixed;
+  inset: 0;
+  z-index: 200;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+  background: #f8f6f2;
+}
+.wl-stage.is-flooding {
+  -webkit-mask-image: radial-gradient(circle at var(--fx) var(--fy), transparent var(--fr), #000 calc(var(--fr) + 70px));
+  mask-image: radial-gradient(circle at var(--fx) var(--fy), transparent var(--fr), #000 calc(var(--fr) + 70px));
+}
+.wl-field {
+  position: absolute;
+  inset: -12%;
+  z-index: -1; /* under the light centre and the grain */
+  /* p.42 is light seen through frost: the blob blurred soft, not its grainy edge */
+  filter: blur(42px) saturate(1.15);
+  opacity: 0.92;
+}
+.wl-stage--noor::before,
+.wl-stage--noor::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+/* the light centre of p.42's ring */
+.wl-stage--noor::before {
+  background: radial-gradient(38% 42% at 50% 50%, rgba(248, 246, 242, 0.92), rgba(248, 246, 242, 0.55) 45%, transparent 75%);
+}
+/* and its fine grain, over everything */
+.wl-stage--noor::after {
+  z-index: 2;
+  opacity: 0.16;
+  mix-blend-mode: multiply;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0 0.5 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+.wl-stage > :not(.wl-field) {
+  z-index: 1;
+}
+
+/* the card, and the sound choice under it on the first screen */
+.wl-center {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+.wl-card {
+  position: relative;
+  width: min(86vw, 560px, 74vh);
+  aspect-ratio: 1 / 0.94;
+  opacity: 0;
+  transform: scale(0.97);
+  filter: blur(6px);
+  transition:
+    opacity 0.7s cubic-bezier(0.25, 1, 0.5, 1),
+    transform 0.9s cubic-bezier(0.25, 1, 0.5, 1),
+    filter 0.7s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.wl-card.is-ready {
+  opacity: 1;
+  transform: none;
+  filter: none;
+}
+.wl-card.is-melting {
+  transform: scale(0.95);
+  filter: blur(4px);
+  transition-duration: 1.1s;
+}
+.wl-surface {
+  position: absolute;
+  inset: 0;
+}
+.wl-surface canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+.wl-card--noor {
+  border-radius: 19% / 20%;
+  background: rgba(255, 255, 255, 0.3);
+  -webkit-backdrop-filter: blur(28px) saturate(1.5);
+  backdrop-filter: blur(28px) saturate(1.5);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 40px 90px -40px rgba(30, 59, 214, 0.45);
+}
+
+/* Dr.AI's typed lines */
+.wl-term {
+  position: absolute;
+  top: 10%;
+  left: 9%;
+  right: 9%;
+  color: #fff;
+  text-shadow: 0 1px 14px rgba(8, 10, 30, 0.35);
+}
+.wl-term--ink {
+  color: var(--ink, #0e1116);
+  text-shadow: none;
+}
+.wl-line {
+  min-height: 1.4em;
+  margin: 0 0 8px;
+  white-space: pre;
+}
+.wl-line--meta {
+  font-family: var(--font-mono, ui-monospace, 'SF Mono', Menlo, monospace);
+  font-size: 14px;
+  letter-spacing: 0.02em;
+  opacity: 0.72;
+}
+.wl-line--hi {
+  margin-top: 18px;
+  font-size: clamp(24px, 3.3vw, 34px);
+  font-weight: 600;
+  letter-spacing: -0.015em;
+  line-height: 1.15;
+}
+.wl-line--sub {
+  font-size: clamp(16px, 1.6vw, 18px);
+  opacity: 0.85;
+}
+.wl-caret {
+  display: inline-block;
+  width: 0.5em;
+  height: 1.05em;
+  margin-left: 2px;
+  vertical-align: -0.15em;
+  background: currentColor;
+  animation: wl-blink 1s steps(1) infinite;
+}
+@keyframes wl-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
+/* "Press return to start": corners nested in the card's (11 Nov, review). The bar sits the same distance from the
+   card's sides and foot, its corner is the card's corner less that distance, and Start's corner is the bar's less
+   the gap around Start, so every curve shares a centre. Measured in the card's width (container units). */
+.wl-card {
+  container-type: inline-size;
+  --inset: 6.5cqw;
+  --corner: 17cqw; /* the squircle's visual corner */
+  --gap: 8px;
+}
+.wl-bar {
+  position: absolute;
+  left: var(--inset);
+  right: var(--inset);
+  bottom: var(--inset);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  height: 64px;
+  padding: 0 var(--gap) 0 24px;
+  border-radius: min(calc(var(--corner) - var(--inset)), 32px);
+  color: rgba(14, 17, 22, 0.55);
+  font-size: 15px;
+  background: rgba(255, 255, 255, 0.78);
+  -webkit-backdrop-filter: blur(14px) saturate(1.3);
+  backdrop-filter: blur(14px) saturate(1.3);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  opacity: 0;
+  transform: translateY(10px);
+  pointer-events: none;
+  transition:
+    opacity 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+    transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.wl-bar.is-on {
+  opacity: 1;
+  transform: none;
+  pointer-events: auto;
+}
+.wl-bar kbd {
+  margin: 0 4px;
+  padding: 5px 9px;
+  border-radius: 8px;
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 14px;
+  color: var(--ink, #0e1116);
+  background: rgba(14, 17, 22, 0.06);
+}
+.wl-bar .metal {
+  --metal-radius: max(calc(min(calc(var(--corner) - var(--inset)), 32px) - var(--gap)), 8px);
+  display: inline-flex;
+  align-items: center;
+  height: calc(64px - 2 * var(--gap));
+  padding: 0 20px;
+  border: 0;
+  border-radius: var(--metal-radius);
+  background: none;
+  color: var(--ink, #0e1116);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+}
+/* the greeting near the middle of the light, a touch above it, clear of the bar (11 Nov, review) */
+.wl-term {
+  top: var(--inset);
+  bottom: calc(var(--inset) + 64px);
+  left: var(--inset);
+  right: var(--inset);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding-bottom: 4cqw;
+  text-align: center;
+}
+.wl-term .wl-line--hi {
+  margin-top: 0;
+  font-size: clamp(30px, 6.4cqw, 44px);
+}
+.wl-term .wl-line--sub {
+  margin-bottom: 0;
+}
+
+/* sound on or off, first */
+.wl-sound {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.8);
+  -webkit-backdrop-filter: blur(14px);
+  backdrop-filter: blur(14px);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.08), 0 10px 30px -18px rgba(14, 17, 22, 0.35);
+  font-size: 14px;
+  animation: wl-rise 0.6s cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+.wl-sound__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 10px 0 12px;
+  color: rgba(14, 17, 22, 0.55);
+}
+.wl-sound button {
+  height: 34px;
+  padding: 0 16px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: rgba(14, 17, 22, 0.6);
+  font: inherit;
+  cursor: pointer;
+}
+.wl-sound button:hover {
+  color: var(--ink, #0e1116);
+}
+.wl-sound .wl-sound__on {
+  color: #fff;
+  background: var(--ink, #0e1116);
+}
+@keyframes wl-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.wl-skip,
+.wl-sound-state {
+  position: absolute;
+  bottom: 26px;
+  font-size: 13px;
+  color: rgba(14, 17, 22, 0.5);
+}
+.wl-skip {
+  right: 30px;
+  padding: 6px 8px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 13px;
+  cursor: pointer;
+}
+.wl-skip:hover {
+  color: var(--ink, #0e1116);
+}
+.wl-sound-state {
+  left: 30px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+/* the ring of light on the flood's edge */
+.wl-ring {
+  position: fixed;
+  z-index: 201;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  background: conic-gradient(from 200deg, #1e3bd6, #6a3fe0, #c33ad0, #ff3d8b, #e8501f, #ffb07a, #c8d8f0, #1e3bd6);
+  -webkit-mask: radial-gradient(closest-side, transparent 86%, #000 93%, transparent 100%);
+  mask: radial-gradient(closest-side, transparent 86%, #000 93%, transparent 100%);
+  filter: blur(12px);
+  opacity: 0;
+}
+
+/* the page under it */
+.wld {
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 48px 32px 80px;
+}
+.wld-eyebrow {
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #e8501f;
+}
+.wld h1 {
+  margin: 10px 0 8px;
+  font-size: 44px;
+  letter-spacing: -0.02em;
+}
+.wld-sub {
+  max-width: 640px;
+  margin: 0 0 28px;
+  line-height: 1.55;
+  color: rgba(14, 17, 22, 0.62);
+}
+.wld-looks {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  margin-bottom: 24px;
+}
+.wld-looks button {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 18px 20px;
+  border: 0;
+  border-radius: 18px;
+  text-align: left;
+  font: inherit;
+  color: var(--ink, #0e1116);
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.08);
+  cursor: pointer;
+}
+.wld-looks button.is-on {
+  box-shadow: inset 0 0 0 1.5px #1e3bd6;
+}
+.wld-looks span {
+  font-size: 13px;
+  line-height: 1.5;
+  color: rgba(14, 17, 22, 0.6);
+}
+.wld-acts {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.wld-acts .metal {
+  --metal-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  font: inherit;
+  font-weight: 500;
+  cursor: pointer;
+}
+.wld-reset {
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 14px;
+  color: rgba(14, 17, 22, 0.55);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+@media (max-width: 720px) {
+  .wld-looks {
+    grid-template-columns: 1fr;
+  }
+  .wl-bar {
+    height: 56px;
+    font-size: 13px;
+  }
+}
+
+/* ---- Start: the card pours itself into Dr.AI (11 Nov, review) ---------------------------------------------------
+   The card and his metal figure sit in one cell under a gooey filter while they cross, so they run together like one
+   liquid; then the filter lets go, the metal clears to the man himself, and his hello and "Let's go" come in. */
+.wl-stage {
+  --lift: -64px; /* Dr.AI stands a little high, to leave room for his bubble */
+  /* his body sits left of his frame's middle (Sparki floats at his right), so his words line up with him */
+  --nudge: -26px;
+  --fig-h: 341px;
+}
+.wl-defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+}
+.wl-morph,
+.wl-hello {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+}
+.wl-morph > *,
+.wl-hello > * {
+  grid-area: 1 / 1;
+}
+.wl-morph.is-on {
+  filter: url(#wl-goo);
+}
+.wl-morph.is-on.is-settled {
+  filter: none;
+}
+.wl-card.is-leaving {
+  transition: none;
+  pointer-events: none;
+}
+.wl-card.is-leaving .wl-term,
+.wl-card.is-leaving .wl-bar {
+  opacity: 0;
+  transition: opacity 0.25s ease-out;
+}
+.wl-fig {
+  position: relative;
+  translate: 0 var(--lift);
+  opacity: 0;
+  pointer-events: none;
+}
+.wl-fig--metal .wl-surface {
+  position: absolute;
+  inset: 0;
+}
+.wl-hello {
+  pointer-events: none;
+}
+.wl-bubble {
+  translate: var(--nudge) calc(var(--lift) + var(--fig-h) / 2 + 62px);
+  min-width: 300px;
+  padding: 14px 22px 15px;
+  border-radius: 22px;
+  text-align: center;
+  color: var(--ink, #0e1116);
+  background: rgba(255, 255, 255, 0.78);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.95),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.6),
+    0 18px 40px -24px rgba(30, 59, 214, 0.45);
+  opacity: 0;
+  transform: translateY(8px) scale(0.96);
+  transition:
+    opacity 0.45s cubic-bezier(0.25, 1, 0.5, 1),
+    transform 0.55s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.wl-bubble.is-on {
+  opacity: 1;
+  transform: none;
+}
+.wl-bubble p {
+  min-height: 1.35em;
+  margin: 0;
+}
+.wl-bubble__hi {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.wl-bubble__sub {
+  margin-top: 2px !important;
+  font-size: 15px;
+  color: rgba(14, 17, 22, 0.7);
+}
+.wl-go-slot {
+  translate: var(--nudge) calc(var(--lift) + var(--fig-h) / 2 + 142px);
+}
+.wl-go.metal {
+  --metal-radius: 999px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 46px;
+  padding: 0 22px;
+  border: 0;
+  border-radius: 999px;
+  background: none;
+  color: var(--ink, #0e1116);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.45s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.wl-go.metal.is-on {
+  opacity: 1;
+  pointer-events: auto;
+}
+@media (max-height: 720px) {
+  .wl-stage {
+    --lift: -90px;
+  }
+}
+
+/* ---- 11 Nov, review 2 -----------------------------------------------------------------------------------------
+   The card: where and who in its top corners (mono), "Hi Layla" in white on the light, the bar raised toward it.
+   After Start: no bubble and no "Let's go"; his words sit on the ground, and once said, Home opens under the scene
+   while he shrinks to the bottom-right corner, the mascot alone, a few words beside him. */
+.wl-layer {
+  --lift: -64px;
+  --nudge: 0px; /* the solo crop centres his body, Sparki left out */
+  --fig-h: 341px;
+}
+.wl-corner {
+  position: absolute;
+  top: var(--inset);
+  z-index: 1;
+  font-family: var(--font-mono, ui-monospace, 'SF Mono', Menlo, monospace);
+  font-size: 13px;
+  letter-spacing: 0.02em;
+  color: #fff;
+  opacity: 0.9;
+  white-space: pre;
+  text-shadow: 0 1px 10px rgba(20, 8, 50, 0.35);
+}
+.wl-corner--l {
+  left: var(--inset);
+}
+.wl-corner--r {
+  right: var(--inset);
+}
+.wl-card {
+  --bar-up: 9cqw;
+}
+.wl-bar {
+  bottom: calc(var(--inset) + var(--bar-up));
+}
+.wl-term {
+  bottom: calc(var(--inset) + var(--bar-up) + 64px);
+}
+.wl-term--light {
+  color: #fff;
+  text-shadow:
+    0 1px 2px rgba(20, 8, 50, 0.22),
+    0 2px 28px rgba(20, 8, 50, 0.38);
+}
+.wl-card.is-leaving .wl-corner {
+  opacity: 0;
+  transition: opacity 0.25s ease-out;
+}
+
+/* Dr.AI over the scene, so he stays while it floods away */
+.wl-hello {
+  position: fixed;
+  inset: 0;
+  z-index: 202;
+}
+.wl-words {
+  translate: var(--nudge) calc(var(--lift) + var(--fig-h) / 2 + 54px);
+  text-align: center;
+  color: var(--ink, #0e1116);
+  opacity: 0;
+  transition: opacity 0.35s ease-out;
+}
+.wl-words.is-on {
+  opacity: 1;
+}
+.wl-words p {
+  min-height: 1.35em;
+  margin: 0;
+}
+.wl-words__hi {
+  font-size: 22px;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.wl-words__sub {
+  margin-top: 4px !important;
+  font-size: 16px;
+  color: rgba(14, 17, 22, 0.66);
+}
+
+/* in his corner: the mascot alone, clickable, a few words beside him */
+.wl-fig__open {
+  position: absolute;
+  inset: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  pointer-events: auto;
+}
+.wl-say {
+  position: fixed;
+  right: calc(26px + 92px + 16px);
+  bottom: 74px;
+  max-width: 250px;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--ink, #0e1116);
+  opacity: 0;
+  transition: opacity 0.4s ease-out;
+}
+.wl-say.is-on {
+  opacity: 1;
+}
+.wl-say__more {
+  color: rgba(14, 17, 22, 0.45);
+}
+/* while he stands alone in the corner, the portal's own corner window waits */
+:root[data-welcome-mascot] :is(.dk, .dk-mini) {
+  visibility: hidden;
+}
+/* the corner labels clear of the card's curve; white type held by a soft shadow on the light bands */
+.wl-corner {
+  top: 10cqw;
+  text-shadow: 0 1px 2px rgba(20, 8, 50, 0.3), 0 1px 14px rgba(20, 8, 50, 0.4);
+}
+.wl-corner--l {
+  left: 12cqw;
+}
+.wl-corner--r {
+  right: 12cqw;
+}
+.wl-term--light {
+  text-shadow:
+    0 1px 2px rgba(20, 8, 50, 0.3),
+    0 2px 30px rgba(20, 8, 50, 0.5);
+}
+/* the solo crop keeps Sparki out: nothing of the video shows past the box */
+.wl-fig .msc-clip.msc-clip--solo {
+  overflow: hidden;
+}
+/* in the corner his words sit over the page: a soft wash of Sand behind them, no box */
+.wl-say {
+  padding: 14px 18px;
+  margin: -14px -18px;
+  background: radial-gradient(closest-side, rgba(248, 246, 242, 0.96), rgba(248, 246, 242, 0.85) 62%, rgba(248, 246, 242, 0));
+  border-radius: 40px;
+}
+/* the bar as far from the card's sides as from its foot (11 Nov, review) */
+.wl-card {
+  --bar-up: 4.5cqw;
+}
+.wl-bar {
+  left: calc(var(--inset) + var(--bar-up));
+  right: calc(var(--inset) + var(--bar-up));
+}
+
+/* ---- 11 Nov, review 3 -----------------------------------------------------------------------------------------
+   Sparki fully out: the solo crop also cuts the upper-right corner of the frame, where he bobs by Dr.AI's head
+   (his glow reached in), and keeps the lower right, where Dr.AI's hand is. */
+.wl-fig .msc-clip.msc-clip--solo {
+  clip-path: polygon(0 0, 94% 0, 94% 54%, 100% 54%, 100% 100%, 0 100%);
+}
+/* his words a little closer to him */
+.wl-say {
+  right: calc(26px + 92px - 4px);
+}
+/* the bubble he floats to his corner in: clear glass with the card's light in its rim (lilac, pink, peach,
+   orange), a gloss at the top left; it swells in as he lifts off and breaks when he lands */
+.wl-orb {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: calc(var(--fig-h) * 1.12);
+  aspect-ratio: 1;
+  translate: -50% -50%;
+  border-radius: 50%;
+  pointer-events: none;
+  animation: wl-orb-in 0.55s cubic-bezier(0.25, 1, 0.5, 1) both;
+}
+.wl-orb::before,
+.wl-orb::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+}
+.wl-orb::before {
+  background: conic-gradient(from 210deg, #a48cff, #ff7ad9, #ffb38a, #ff6a3d, #ffd2b8, #c58cff, #a48cff);
+  -webkit-mask: radial-gradient(circle, transparent 0 63%, #000 67%, #000 69.5%, transparent 71%);
+  mask: radial-gradient(circle, transparent 0 63%, #000 67%, #000 69.5%, transparent 71%);
+  filter: blur(1.5px) saturate(1.2);
+  opacity: 0.9;
+}
+.wl-orb::after {
+  background:
+    radial-gradient(circle at 32% 24%, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0) 12%),
+    radial-gradient(circle at 70% 80%, rgba(255, 210, 184, 0.45), rgba(255, 255, 255, 0) 16%),
+    radial-gradient(circle, rgba(255, 255, 255, 0.04) 0 52%, rgba(255, 196, 236, 0.22) 64%, rgba(255, 255, 255, 0) 70.5%);
+}
+.wl-orb.is-popping {
+  animation: wl-orb-pop 0.38s cubic-bezier(0.2, 0.7, 0.3, 1) forwards;
+}
+@keyframes wl-orb-in {
+  from {
+    opacity: 0;
+    scale: 0.82;
+  }
+}
+@keyframes wl-orb-pop {
+  to {
+    opacity: 0;
+    scale: 1.22;
+    filter: blur(3px);
+  }
+}
+/* the words as wide as they are, so they end right beside him (11 Nov, review) */
+.wl-say {
+  right: calc(26px + 92px + 4px);
+  width: max-content;
+  max-width: 260px;
+}
+.wl-say > span {
+  display: block;
+}

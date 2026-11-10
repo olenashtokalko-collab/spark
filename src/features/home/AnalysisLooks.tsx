@@ -172,7 +172,7 @@ function IssueCardBody({ f, request }: { f: Finding; askFix?: () => void; reques
     )}
     <span className="hl-fix__acts hl-fix__tools anx-issue__acts">
       {/* One Ask per report now (5 Nov), at its top; the card keeps the one action. */}
-      <Button size="sm" variant="secondary" className="hl-fix__make" onClick={request}>
+      <Button size="sm" variant="secondary" plain className="hl-fix__make" onClick={request}>
         Request proposal
       </Button>
     </span>

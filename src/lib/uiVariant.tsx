@@ -10,11 +10,9 @@ import { ONBOARDING_BUILD, PORTAL_VIEW, VIEW_KEY, type PortalView } from '../sta
 // a: the glass UI as committed on 9 Nov (b81dc78). b and c: the two directions in the "Spark Redesign Directions"
 // design file, built on the same pages, structure and content: b is its row A (brand-aligned: Sand and Ink, Cobalt
 // leads, Ember sparks, glass only in pictures), c its row B (glass as the interface).
-export const UI_VARIANTS = [
-  { v: 'a', label: 'Current' },
-  { v: 'b', label: 'Direction A' },
-  { v: 'c', label: 'Direction B' },
-] as const;
+// 11 Nov (review): only Current stays; Directions A and B are gone from the switch, and a browser that kept one
+// (or a ?ui=b / ?ui=c link) opens Current. Their stylesheets stay scoped to data-ui and so never apply.
+export const UI_VARIANTS = [{ v: 'a', label: 'Current' }] as const;
 export type UiVariant = (typeof UI_VARIANTS)[number]['v'];
 
 const KEY = 'spark-ui-variant';

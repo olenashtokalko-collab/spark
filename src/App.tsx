@@ -47,7 +47,13 @@ import { DockMotionDemo } from './features/demo/DockMotionDemo';
 import { OnboardingHome } from './features/onboarding/Onboarding';
 import { MascotDemo } from './features/demo/MascotDemo';
 import { SignInDemo } from './features/demo/SignInDemo';
-import { useEffect } from 'react';
+import { Suspense, lazy, useEffect } from 'react';
+// three.js stays out of the main bundle: the 3D glass demo loads on its own (10 Nov).
+const Glass3DDemo = lazy(() => import('./features/demo/Glass3DDemo').then((m) => ({ default: m.Glass3DDemo })));
+// The shader library stays out of the main bundle too (11 Nov).
+const MetalButtonDemo = lazy(() => import('./features/demo/MetalButtonDemo').then((m) => ({ default: m.MetalButtonDemo })));
+const WelcomeLiquidDemo = lazy(() => import('./features/demo/WelcomeLiquidDemo').then((m) => ({ default: m.WelcomeLiquidDemo })));
+const AskAttentionDemo = lazy(() => import('./features/demo/AskAttentionDemo').then((m) => ({ default: m.AskAttentionDemo })));
 import { useRoute } from './lib/router';
 import { AppShell } from './components/layout/AppShell';
 import { Invite } from './features/auth/Invite';
@@ -141,6 +147,30 @@ function Screen() {
       if (a === 'empty-art') return <EmptyArtDemo />;
       if (a === 'dock-motion') return <DockMotionDemo />;
       if (a === 'mascot') return <MascotDemo />;
+      if (a === 'glass-3d')
+        return (
+          <Suspense fallback={null}>
+            <Glass3DDemo />
+          </Suspense>
+        );
+      if (a === 'metal-button')
+        return (
+          <Suspense fallback={null}>
+            <MetalButtonDemo />
+          </Suspense>
+        );
+      if (a === 'ask-attention')
+        return (
+          <Suspense fallback={null}>
+            <AskAttentionDemo />
+          </Suspense>
+        );
+      if (a === 'welcome-liquid')
+        return (
+          <Suspense fallback={null}>
+            <WelcomeLiquidDemo />
+          </Suspense>
+        );
       break;
     case 'reset':
       // For rehearsals: forget everything that was done in the prototype and start from the seed data again.

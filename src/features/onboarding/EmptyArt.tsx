@@ -25,6 +25,9 @@ import {
 
 // The key-visual series (10 Nov, after the brand book p. 36): first in each list. "r-" pictures are drawn by KeyArt.
 export const BA_ARTS = [
+  // Rendered in Blender (11 Nov): the Frosted Light icon family, blender/icon_reports.py → public/brand/glass.
+  { v: 'x-chart', label: 'Blender · Bar chart' },
+  { v: 'x-report', label: 'Blender · Report sheet' },
   { v: 'q-report', label: 'Glass · Report sheet' },
   { v: 's-lenschart', label: 'Soft · Magnifier + chart (main)' },
   { v: 's-report', label: 'Soft · Report sheet' },
@@ -57,6 +60,7 @@ export const BA_ARTS = [
   { v: 'line', label: 'Line chart' },
 ] as const;
 export const LATEST_ARTS = [
+  { v: 'x-bell', label: 'Blender · Bell' },
   { v: 'q-bell', label: 'Glass · Bell' },
   { v: 's-spark', label: 'Soft · Spark (main)' },
   { v: 's-bell', label: 'Soft · Bell' },
@@ -212,8 +216,8 @@ export type PageArt = (typeof PAGE_ARTS)[PageKey]['list'][number]['v'];
 
 // "-2" (10 Nov): the picks below became the portal's own, so picks a browser kept from before don't hide them.
 const KEYS = {
-  ba: 'spark-art-ba-2',
-  latest: 'spark-art-latest-2',
+  ba: 'spark-art-ba-3', // "-3" (11 Nov): the Blender report sheet became the pick
+  latest: 'spark-art-latest-3', // "-3" (11 Nov): the Blender bell became the pick
   requests: 'spark-art-requests-2',
   files: 'spark-art-files-2',
   chats: 'spark-art-chats-2',
@@ -223,8 +227,8 @@ const KEYS = {
 // The portal's pictures (10 Nov, picked by the team on #/demo/empty-art): the soft series (notifications too, the
 // same bell as Latest from Spark's), and the first still pictures' magnifier for search.
 const PICKS: Partial<Record<keyof typeof KEYS, string>> = {
-  ba: 's-report',
-  latest: 's-bell',
+  ba: 'x-chart',
+  latest: 'x-bell',
   requests: 's-docplus',
   files: 's-folder',
   chats: 's-chat-pair',
@@ -288,8 +292,20 @@ function Defs({ id }: { id: string }) {
   );
 }
 
+/** Blender renders (11 Nov), the Frosted Light icon family: blender/icon_*.py → blender/to_web.py → public/brand/glass. */
+const RENDERS: Record<string, { src: string; w: number; h: number }> = {
+  'x-report': { src: 'brand/glass/reports.webp', w: 442, h: 400 },
+  'x-chart': { src: 'brand/glass/chart.webp', w: 483, h: 400 },
+  'x-bell': { src: 'brand/glass/bell.webp', w: 421, h: 400 },
+};
+function RenderArt({ v }: { v: string }) {
+  const r = RENDERS[v];
+  return <img className="ea-render" src={r.src} alt="" width={r.w / 2} height={r.h / 2} />;
+}
+
 export function BrandArt({ v }: { v: BaArt }) {
   const id = useId().replace(/:/g, '');
+  if (v.startsWith('x-')) return <RenderArt v={v} />;
   if (v.startsWith('q-')) return <GlassPillArt v={v} />;
   if (v.startsWith('s-')) return <SoftArt v={v} />;
   if (v.startsWith('r-')) return <KeyArt v={v} />;
@@ -355,6 +371,7 @@ export function LatestArtView({ v, sparki }: { v: LatestArt; sparki?: ReactNode 
   const B = `url(#${id}b)`;
   const S = `url(#${id}s)`;
   if (v === 'sparki') return <>{sparki}</>;
+  if (v.startsWith('x-')) return <RenderArt v={v} />;
   if (v.startsWith('q-')) return <GlassPillArt v={v} />;
   if (v.startsWith('s-')) return <SoftArt v={v} />;
   if (v.startsWith('r-')) return <KeyArt v={v} />;

@@ -3,6 +3,7 @@ import type { LucideIcon } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 import type { Person } from '../../data/types';
 import { initials } from '../../lib/format';
+import { MetalParts, metalClass, useMetalUi } from './MetalButton';
 
 const cx = (...c: (string | false | null | undefined)[]) => c.filter(Boolean).join(' ');
 export { cx };
@@ -18,23 +19,42 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   iconRight?: LucideIcon;
   lead?: ReactNode; // any leading graphic, e.g. the Spark AI glyph
   loading?: boolean;
+  /** Keep the plain pill in the Current UI, without the metal (11 Nov: Chats, the composer's Attach). */
+  plain?: boolean;
 }
 
 export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button(
-  { variant = 'secondary', size = 'md', icon: Icon, iconRight: IconR, lead, loading, className, children, disabled, type = 'button', ...rest },
+  { variant = 'secondary', size = 'md', icon: Icon, iconRight: IconR, lead, loading, plain, className, children, disabled, type = 'button', ...rest },
   ref,
 ) {
+  // Current UI (11 Nov, from #/demo/metal-button): a primary button is glass over Spark-tinted metal, adamperlis.com's
+  // look with our motion (profile "portal")
+  // Every filled pill wears it (11 Nov): primary, secondary and ai, with a label. Ghost and quiet stay text-like,
+  // danger keeps its red, icon-only buttons stay small and plain.
+  const metal = useMetalUi() && !plain && (variant === 'primary' || variant === 'secondary' || variant === 'ai') && !!children;
+  const inner = (
+    <>
+      {loading ? <Loader2 className="spin" size={15} /> : Icon ? <Icon size={size === 'sm' ? 14 : 16} strokeWidth={1.8} /> : lead}
+      {children && <span>{children}</span>}
+      {IconR && <IconR size={size === 'sm' ? 14 : 16} strokeWidth={1.8} />}
+    </>
+  );
   return (
     <button
       ref={ref}
       type={type}
-      className={cx('btn', `btn--${variant}`, `btn--${size}`, !children && 'btn--icon', className)}
+      className={cx('btn', `btn--${variant}`, `btn--${size}`, !children && 'btn--icon', metal && metalClass('spark', 'portal'), className)}
       disabled={disabled || loading}
       {...rest}
     >
-      {loading ? <Loader2 className="spin" size={15} /> : Icon ? <Icon size={size === 'sm' ? 14 : 16} strokeWidth={1.8} /> : lead}
-      {children && <span>{children}</span>}
-      {IconR && <IconR size={size === 'sm' ? 14 : 16} strokeWidth={1.8} />}
+      {metal ? (
+        <>
+          <MetalParts tone="spark" profile="portal" />
+          <span className="metal__label">{inner}</span>
+        </>
+      ) : (
+        inner
+      )}
     </button>
   );
 });

@@ -1750,7 +1750,7 @@ function IssueActs({
       <span className={cx('hl-fix__acts hl-fix__tools', className)}>
         {/* Request proposal first (the action that turns the issue into work), then Ask about this as the spark
             and words, no fill (feedback 29 Oct): it opens Spark on this issue, so not the header's Ask Spark (2 Nov). */}
-        <Button size="sm" variant="secondary" className="hl-fix__make" onClick={make}>
+        <Button size="sm" variant="secondary" plain className="hl-fix__make" onClick={make}>
           Request proposal
         </Button>
         <button type="button" className="hl-fix__asklink" onClick={() => onAsk(issueTopic(a, f))}>
@@ -1765,7 +1765,7 @@ function IssueActs({
         <SparkDisc size={22} />
         Ask about this
       </button>
-      <Button size="sm" variant="secondary" className="hl-fix__req" onClick={make}>
+      <Button size="sm" variant="secondary" plain className="hl-fix__req" onClick={make}>
         Request proposal
       </Button>
     </span>

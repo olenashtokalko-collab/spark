@@ -3,6 +3,7 @@ import { ArrowLeft, BadgeCheck, Check, CircleDot, ChevronDown, CircleX, Clock, E
 import { TEAM_FOLDER, latestProposal, personById, proposalTotal, proposalWeeks, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
 import { Avatar, Button, EmptyState, SlideTabs, Textarea, cx } from '../../components/ui/primitives';
+import { MetalInner, metalClass, useMetalUi } from '../../components/ui/MetalButton';
 import { FileIcon, ProposalStatus, RequestStatus, STAGES, STAGE_INFO, stageIndex } from '../../components/domain';
 import { useToast } from '../../components/ui/toast';
 import { aed, daysUntil, dueLabel, fmtDate, fmtRelative, fmtTime } from '../../lib/format';
@@ -33,6 +34,7 @@ export function RequestDetail({ id }: { id: string }) {
   const { state, me, actions } = useStore();
   const { openDoc } = useUI();
   const toast = useToast();
+  const metal = useMetalUi(); // Current UI: the hand-built pills below wear the metal like every filled pill (11 Nov)
   // ?tab=messages opens the conversation (from a reply in Latest from Spark on Home, or "See message").
   const { query } = useRoute();
   const [tab, setTab] = useState<Tab>(query.get('tab') === 'messages' ? 'messages' : 'overview');
@@ -118,8 +120,8 @@ export function RequestDetail({ id }: { id: string }) {
                       </span>
                     )}
                   </div>
-                  <a className="btn btn--md btn--primary" href={`#/requests/${r.id}/proposal`}>
-                    Review & decide
+                  <a className={cx('btn btn--md btn--primary', metal && metalClass('spark', 'portal'))} href={`#/requests/${r.id}/proposal`}>
+                    <MetalInner on={metal}>Review & decide</MetalInner>
                   </a>
                 </div>
               )}
@@ -148,7 +150,9 @@ export function RequestDetail({ id }: { id: string }) {
                   <p className="prop-card__summary">{p.summary}</p>
                   <div className="prop-card__foot">
                     {/* The whole card is the link; this just looks like its button. Once decided, so secondary. */}
-                    <span className="btn btn--md btn--secondary prop-card__cta">Open proposal</span>
+                    <span className={cx('btn btn--md btn--secondary prop-card__cta', metal && metalClass('spark', 'portal'))}>
+                      <MetalInner on={metal}>Open proposal</MetalInner>
+                    </span>
                   </div>
                 </a>
               )}

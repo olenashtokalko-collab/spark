@@ -24,6 +24,9 @@ const FRAME = 1440;
 const CROP = {
   body: { x: 300, y: 100, w: 1020, h: 1290 },
   head: { x: 362, y: 66, w: 676, h: 676 },
+  // Dr.AI alone, without Sparki by his head (11 Nov: the client doesn't need Sparki beside him): the body box cut at
+  // x 1066, where Sparki starts to drift; his right hand still fits.
+  solo: { x: 280, y: 100, w: 786, h: 1290 },
   // Tiles on the sign-in page (6 Nov), as the close-ups in the client's video: his face (with the hand at his chin
   // while he thinks), and Sparki alone, bobbing by his head (x 1048–1292, y 152–650 over the idle loop), the edge of
   // his headdress at the left as in the video's Sparki tile.
