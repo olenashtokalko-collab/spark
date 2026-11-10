@@ -165,6 +165,9 @@ function loadSaved(): State {
     if (raw) {
       const seed = initial();
       const saved = JSON.parse(raw) as Partial<State>;
+      // The onboarding view starts as a new company: a portal saved by an earlier build on the same link (the
+      // client's share had the full portal, 10 Nov) is not carried over into it.
+      if (ONBOARDING_ONLY && !saved.onboarding) return seed;
       // Folder copy comes from the seed, so edits to it reach saved demos too.
       const folders = saved.folders?.map((f) => ({ ...f, description: seed.folders.find((x) => x.id === f.id)?.description ?? f.description }));
       // Requests, proposals and notifications added to the seed later reach saved demos too.
