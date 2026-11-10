@@ -12,12 +12,14 @@ import { ConsultCard } from '../demo/HomeCardsDemo';
 import { Gauge } from '../demo/HomeVariantsDemo';
 import { useRoute } from '../../lib/router';
 import { useStore, type State } from '../../state/store';
-import { cx } from '../../components/ui/primitives';
+import { SlideTabs, cx } from '../../components/ui/primitives';
 import { SparkiStill } from '../../components/ui/DrAi';
 import { FactsCard, HomeCredits, ProfileFull } from '../demo/HomeRethinkDemo';
 import { navigate } from '../../lib/router';
 import { LatestFromSpark, TeamLine } from '../home/HomeLayouts';
 import { MascotClip } from '../demo/MascotDemo';
+import { BrandArt, LatestArtView, useArt } from './EmptyArt';
+import { useUiVariant } from '../../lib/uiVariant';
 import { CreateRequestDialog, type RequestPrefill } from '../requests/CreateRequestDialog';
 
 /** The first element matching `sel` whose text includes `text`. */
@@ -303,12 +305,17 @@ type HomeTab = (typeof HOME_TABS)[number][0];
 /** A report not made yet (a new company): what it will hold, and a way to ask for it. */
 function ReportToCome({ kind }: { kind: 'social' | 'website' }) {
   const [open, setOpen] = useState(false);
+  const art = useArt();
   const what =
     kind === 'social'
       ? { title: 'No social media report yet', body: 'Spark looks at your Instagram, TikTok and LinkedIn: what people engage with, what falls flat, and what to fix first.', ask: 'Social media report' }
       : { title: 'No website report yet', body: 'Spark checks your site on mobile and desktop: speed, how easy it is to find and buy, and whether it looks like your brand.', ask: 'Website report' };
   return (
     <section className="og-later__card og-tocome">
+      {/* The reports' picture, as on Home's "No reports yet" (10 Nov, review). */}
+      <span className="og-later__art">
+        <BrandArt v={art.ba} />
+      </span>
       <b>{what.title}</b>
       <span>{what.body}</span>
       <button type="button" className="og-step__go og-report__go" onClick={() => setOpen(true)}>
@@ -322,11 +329,21 @@ function ReportToCome({ kind }: { kind: 'social' | 'website' }) {
 /** The welcome (9 Nov, wave 1 of motion): before the first step, Dr.AI on a clear ground, the spectrum's light
  *  behind him, a few words; then he heads for his corner and the page comes up behind. Once per new company. A
  *  click, or Let's go, skips it. */
-function WelcomeIntro() {
+// How the welcome opens (10 Nov, review, on #/demo/intro-bubble): 'now', Dr.AI on the ground with the words, the
+// bubble gathering round him only as he flies; 'words', the ground alone first, then Dr.AI floats in already in his
+// clear bubble, the words come, and the bubble carries him to his corner and breaks there; 'only', the same without
+// the words. The bubble breaks as a burst of drops, or cleanly.
+export type WelcomeLook = 'now' | 'words' | 'only';
+export type WelcomePop = 'burst' | 'clean';
+
+export function WelcomeIntro({ demo }: { demo?: { look: WelcomeLook; pop: WelcomePop; onDone: () => void } } = {}) {
   const { state, me, actions } = useStore();
   const ob = useOnboarding();
   // The first visit, and every return after logging out (9 Nov, review): a returning visitor is welcomed back.
-  const show = ob.on && !state.onboardingIntro;
+  const show = demo ? true : ob.on && !state.onboardingIntro;
+  const look: WelcomeLook = demo?.look ?? 'now';
+  const pop: WelcomePop = demo?.pop ?? 'clean';
+  const bubble = look !== 'now';
   const back = ob.count > 0;
   // The way out (9 Nov, review: "a nicer exit"): the words lift away, Dr.AI hops in an arc to his corner, shrinking
   // to the corner figure's size, the ground closes after him as an iris into that spot, and the corner lights up as
@@ -342,14 +359,16 @@ function WelcomeIntro() {
     const fx = from ? from.left + from.width / 2 : window.innerWidth / 2;
     const fy = from ? from.top + from.height / 2 : window.innerHeight / 2;
     const sc = to && from ? to.width / from.width : 0.6;
-    setOut({ '--ix': `${tx}px`, '--iy': `${ty}px`, '--dx': `${tx - fx}px`, '--dy': `${ty - fy}px`, '--sc': `${sc}` });
+    // --br: the bubble's radius once it has shrunk to the corner, where it breaks.
+    setOut({ '--ix': `${tx}px`, '--iy': `${ty}px`, '--dx': `${tx - fx}px`, '--dy': `${ty - fy}px`, '--sc': `${sc}`, '--br': `${185 * sc}px` });
   };
   // The few seconds to read start once he is on screen (9 Nov, review: in a new browser the clip was still loading
   // when the welcome left, so he never appeared). Until then his still stands in; after 9 s it goes on anyway.
   const [ready, setReady] = useState(false);
   useEffect(() => {
     if (!show) return;
-    const t = setTimeout(leave, ready ? 4200 : 9000);
+    // With the bubble the opening takes longer (the ground first, then he floats in): the words get their time after.
+    const t = setTimeout(leave, !ready ? 9000 : look === 'words' ? 5400 : look === 'only' ? 2900 : 4200);
     return () => clearTimeout(t);
   });
   // He lands at 1.15 s; then the flying figure and the corner one cross-fade in place (9 Nov, review: a blink when
@@ -358,7 +377,8 @@ function WelcomeIntro() {
   useEffect(() => {
     if (!out) return;
     const t1 = setTimeout(() => setLanded(true), 1150);
-    const t2 = setTimeout(() => actions.seeIntro(), 1600);
+    // A burst needs a moment longer to scatter before the welcome goes.
+    const t2 = setTimeout(() => (demo ? demo.onDone() : actions.seeIntro()), bubble && pop === 'burst' ? 2000 : 1600);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
@@ -366,7 +386,13 @@ function WelcomeIntro() {
   }, [out, actions]);
   if (!show) return null;
   return createPortal(
-    <div className={cx('og-intro', out && 'is-out', landed && 'is-landed')} style={out ?? undefined} onClick={leave} role="dialog" aria-label="Welcome">
+    <div
+      className={cx('og-intro', bubble && 'og-intro--bubble', look === 'only' && 'og-intro--only', bubble && pop === 'burst' && 'og-intro--burst', out && 'is-out', landed && 'is-landed')}
+      style={out ?? undefined}
+      onClick={leave}
+      role="dialog"
+      aria-label="Welcome"
+    >
       <span className="og-intro__ground" aria-hidden>
         <span className="og-intro__light" />
       </span>
@@ -377,6 +403,15 @@ function WelcomeIntro() {
           <span className="og-intro__bubble" aria-hidden />
         </span>
       </div>
+      {/* Where the bubble breaks, in his corner: drops of the glass flying off, and a ring of light. */}
+      {bubble && pop === 'burst' && (
+        <span className="og-intro__burst" aria-hidden>
+          <i className="og-intro__ring" />
+          {Array.from({ length: 14 }, (_, i) => (
+            <i key={i} className="og-intro__drop" style={{ ['--a' as string]: `${i * (360 / 14) + (i % 2 ? 9 : -4)}deg`, ['--d' as string]: `${(i % 3) * 0.03}s`, ['--f' as string]: `${1 + (i % 4) * 0.22}` }} />
+          ))}
+        </span>
+      )}
       <div className="og-intro__text">
         <span className="og-intro__label">{back ? 'Welcome back' : 'Welcome to Spark'}</span>
         <h1>
@@ -488,12 +523,14 @@ function FilledOverview() {
   );
 }
 
-export function OnboardingHome() {
+export function OnboardingHome({ noIntro }: { noIntro?: boolean } = {}) {
   const { state } = useStore();
+  const art = useArt();
   const { query } = useRoute();
   const b = state.brand;
   // The same Home for every company since 9 Nov: a new one sees what is to come, one past onboarding its reports.
   const filled = !state.onboarding;
+  const ui = useUiVariant();
   const tab = (HOME_TABS.find(([k]) => k === query.get('tab'))?.[0] ?? 'overview') as HomeTab;
   // Dr.AI's "See what's new" (#/?see=latest): down to the latest from Spark.
   const see = query.get('see');
@@ -503,20 +540,17 @@ export function OnboardingHome() {
     return () => clearTimeout(t);
   }, [see]);
   // The underline slides from tab to tab (9 Nov, wave 1 of motion).
-  const nav = useRef<HTMLElement>(null);
-  const [bar, setBar] = useState<{ left: number; width: number } | null>(null);
-  useLayoutEffect(() => {
-    const place = () => {
-      const on = nav.current?.querySelector<HTMLElement>('button.is-on');
-      if (on) setBar({ left: on.offsetLeft, width: on.offsetWidth });
-    };
-    place();
-    window.addEventListener('resize', place);
-    return () => window.removeEventListener('resize', place);
-  }, [tab]);
   return (
     <div className="og-home">
-      <WelcomeIntro />
+      {!noIntro && <WelcomeIntro />}
+      {/* The redesign directions (UI variants b, c): the page's name in mono and the credits as a figure at the top
+          right, as in the design file; the company card keeps the rest. */}
+      {ui !== 'a' && (
+        <div className="og-top">
+          <span className="og-top__eyebrow">{b.name} · Home</span>
+          <HomeCredits look="top" />
+        </div>
+      )}
       {/* The company's card back at the top (9 Nov, the client): the mark, the name, what it does and where it sells,
           the team, the credits. No greeting and no setup steps on Home: Dr.AI in the corner walks through them. */}
       <header className="hld-card hld-co og-co">
@@ -533,28 +567,22 @@ export function OnboardingHome() {
               <TeamLine />
             </span>
           </span>
-          <span className="hld-co__acts">
-            <HomeCredits />
-          </span>
+          {ui === 'a' && (
+            <span className="hld-co__acts">
+              <HomeCredits />
+            </span>
+          )}
         </div>
       </header>
 
       {/* The section's name over its tabs, as Jean asked (#19): "name it Brand Analysis, the tabs underneath". */}
       <h2 className="og-ba-title">Brand Analysis</h2>
-      <nav ref={nav} className="hl-tabs og-tabs" aria-label="Brand Analysis">
-        {bar && <span className="og-tabs__bar" style={{ transform: `translateX(${bar.left}px)`, width: bar.width }} aria-hidden />}
-        {HOME_TABS.map(([k, label]) => (
-          <button
-            key={k}
-            type="button"
-            className={cx(tab === k && 'is-on')}
-            aria-current={tab === k ? 'page' : undefined}
-            onClick={() => navigate(k === 'overview' ? '/' : `/?tab=${k}`, { replace: true })}
-          >
-            {label}
-          </button>
-        ))}
-      </nav>
+      <SlideTabs
+        label="Brand Analysis"
+        value={tab}
+        items={HOME_TABS.map(([k, label]) => ({ value: k, label }))}
+        onChange={(k) => navigate(k === 'overview' ? '/' : `/?tab=${k}`, { replace: true })}
+      />
 
       {tab === 'profile' && (
         <div className="hld-cols og-profile">
@@ -572,12 +600,19 @@ export function OnboardingHome() {
         {/* No reports yet (6 Nov): a new company has none until it asks for one. */}
         <section className="og-later__card">
           <span className="og-eyebrow">Reports</span>
+          {/* The pictures picked on #/demo/empty-art (10 Nov), back in the cards. */}
+          <span className="og-later__art">
+            <BrandArt v={art.ba} />
+          </span>
           <b>No reports yet</b>
           <span>Ask Spark to look into your website, social media or a competitor.</span>
           <RequestReport />
         </section>
         <section className="og-later__card">
           <span className="og-eyebrow">Latest from Spark</span>
+          <span className="og-later__art">
+            <LatestArtView v={art.latest} />
+          </span>
           <b>Nothing yet, and that’s fine</b>
           <span>Files, replies and updates from Spark will land here, and Sparki will mark the new ones.</span>
         </section>
@@ -639,9 +674,13 @@ function RequestReport({ prefill = { type: 'Research', title: '' } }: { prefill?
  *  a line, Request a report as the primary button), with three common reports to start from. */
 export function NoReports() {
   const [ask, setAsk] = useState<RequestPrefill | null>(null);
+  const art = useArt();
   return (
     <section className="og-later__card og-noreports">
       {/* No "Reports" label: the tab above says it (6 Nov, review). */}
+      <span className="og-later__art">
+        <BrandArt v={art.ba} />
+      </span>
       <b>No reports yet</b>
       <span>Ask Spark to look into anything: your website, your social media, a competitor, a campaign. The report appears here, with what to fix first.</span>
       <RequestReport />

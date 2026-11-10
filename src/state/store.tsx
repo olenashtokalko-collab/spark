@@ -62,7 +62,21 @@ export interface State {
   onboardingIntro?: boolean;
 }
 
-export const STORAGE_KEY = 'spark-portal-v10';
+// The onboarding build (VITE_ONBOARDING_ONLY=1) can also show the portal as it is today, with a company's data
+// (10 Nov: a switch at the foot of spark-lead-preview, Onboarding or Current). The pick lives in this browser; each
+// view keeps its own saved state, so going back and forth doesn't mix them.
+export const ONBOARDING_BUILD = import.meta.env.VITE_ONBOARDING_ONLY === '1';
+export type PortalView = 'onboarding' | 'current';
+export const VIEW_KEY = 'spark-portal-view';
+export const PORTAL_VIEW: PortalView = (() => {
+  if (!ONBOARDING_BUILD) return 'current';
+  try {
+    return localStorage.getItem(VIEW_KEY) === 'current' ? 'current' : 'onboarding';
+  } catch {
+    return 'onboarding';
+  }
+})();
+export const STORAGE_KEY = ONBOARDING_BUILD && PORTAL_VIEW === 'current' ? 'spark-portal-v10-current' : 'spark-portal-v10';
 /** The one folder the client's team uploads to (feedback 21 Oct). Every other folder is Spark's, view only. */
 export const TEAM_FOLDER = 'f-uploads';
 
@@ -99,7 +113,7 @@ const seedState = (): State => ({
 
 // A build that opens as a new company (VITE_ONBOARDING_ONLY=1, 9 Nov: spark-lead-preview shows the onboarding
 // flow): the seed's people at Spark and Layla, nothing else yet, the tutorial on.
-export const ONBOARDING_ONLY = import.meta.env.VITE_ONBOARDING_ONLY === '1';
+export const ONBOARDING_ONLY = ONBOARDING_BUILD && PORTAL_VIEW === 'onboarding';
 const initial = (): State => {
   const s = seedState();
   if (!ONBOARDING_ONLY) return s;

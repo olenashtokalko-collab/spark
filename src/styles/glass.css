@@ -19842,6 +19842,50 @@ body:has(.og-intro:not(.is-landed)) .dk--corner .dk-fig {
   pointer-events: none;
 }
 
+/* Statuses in neon (10 Nov, review: "brighter, like neon", then twice "too strong": now only a touch brighter than before): fuller colours, the ring bright all round (brightest in
+   the middle), a halo of the same colour round the pill and a light inside the glass, the strip under it stronger.
+   Declined stays a quiet grey: it is out of play. */
+:root[data-theme][data-theme] .rstatus {
+  --c: 40, 80, 255;
+  box-shadow: 0 0 6px -3px rgba(var(--c), 0.25);
+}
+:root[data-theme][data-theme] .rstatus--submitted {
+  --c: 90, 150, 255;
+}
+:root[data-theme][data-theme] .rstatus:is(.rstatus--proposal, .rstatus--you) {
+  --c: 255, 84, 30;
+}
+:root[data-theme][data-theme] .rstatus.rstatus--delivered {
+  --c: 20, 190, 100;
+}
+:root[data-theme][data-theme] .rstatus::before {
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    inset 0 1px 0 #fff;
+}
+:root[data-theme][data-theme] .rstatus::after,
+:root[data-theme][data-theme] .rstatus.rstatus--delivered::after {
+  padding: 1px;
+  background: linear-gradient(90deg, rgba(var(--c), 0.28), rgba(var(--c), 0.7) 50%, rgba(var(--c), 0.28));
+}
+:root[data-theme][data-theme] .rstatus .rstatus__dot {
+  height: 4px;
+  filter: blur(3.5px);
+  background: rgba(var(--c), 0.45);
+}
+:root[data-theme][data-theme] .rstatus:is(.rstatus--declined, .rstatus--superseded) {
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .rstatus:is(.rstatus--declined, .rstatus--superseded)::after {
+  background: linear-gradient(90deg, rgba(var(--c), 0.3), rgba(var(--c), 0.6) 50%, rgba(var(--c), 0.3));
+}
+:root[data-theme][data-theme] .rstatus:is(.rstatus--declined, .rstatus--superseded) .rstatus__dot {
+  background: rgba(var(--c), 0.35);
+}
+:root[data-theme][data-theme] .team .rstatus {
+  box-shadow: none;
+}
+
 /* The folders' "N to review" in the statuses' style (9 Nov, review): the same pill (22px, 8px radius, 11.5px type),
    frosted glass, a faint Ember glow at its foot and the gradient ring in Ember (it waits on the client); the dot stays. */
 :root[data-theme][data-theme] .gfo-badge {
@@ -19926,4 +19970,1178 @@ body:has(.og-intro:not(.is-landed)) .dk--corner .dk-fig {
 }
 .chat-drawer .chat-drawer__drai .msc-clip {
   margin-bottom: -6px;
+}
+
+/* ---- The welcome with Dr.AI in his bubble from the start (#/demo/intro-bubble, 10 Nov) --------------------------
+   The ground alone first; Dr.AI floats up into place already inside the clear bubble, which bobs and breathes while
+   he talks; the words come after him. On the way out the bubble carries him in the same arc to his corner and
+   breaks there: a burst of glass drops and a ring of light, or a clean pop. */
+.og-intro--bubble .og-intro__fig {
+  animation: og-bub-arrive 1s cubic-bezier(0.2, 0.85, 0.3, 1.08) 0.45s both;
+}
+@keyframes og-bub-arrive {
+  from {
+    opacity: 0;
+    transform: translateY(90px) scale(0.55);
+  }
+  40% {
+    opacity: 1;
+  }
+}
+.og-intro--bubble .og-intro__hop {
+  animation: og-bub-bob 3.2s ease-in-out 1.45s infinite;
+}
+@keyframes og-bub-bob {
+  50% {
+    transform: translateY(-10px);
+  }
+}
+.og-intro--bubble .og-intro__bubble,
+.og-intro--bubble.is-out .og-intro__bubble {
+  opacity: 1;
+  scale: 1;
+  transition: none;
+  animation: og-bub-breathe 3.2s ease-in-out 1.45s infinite;
+}
+@keyframes og-bub-breathe {
+  50% {
+    transform: scale(1.025, 0.975);
+  }
+}
+.og-intro--bubble .og-intro__text > * {
+  animation-delay: 1.2s;
+}
+.og-intro--bubble .og-intro__text > :nth-child(2) {
+  animation-delay: 1.35s;
+}
+.og-intro--bubble .og-intro__text > :nth-child(3) {
+  animation-delay: 1.5s;
+}
+.og-intro--only {
+  grid-template-columns: auto;
+}
+.og-intro--only .og-intro__text {
+  display: none;
+}
+/* A clean pop: as today, it swells a touch and is gone. */
+.og-intro--bubble.is-landed .og-intro__bubble {
+  animation: none;
+  opacity: 0;
+  scale: 1.16;
+  transition:
+    opacity 0.28s cubic-bezier(0.3, 0, 0.6, 1),
+    scale 0.28s cubic-bezier(0.3, 0, 0.6, 1);
+}
+/* It breaks: the glass goes at once, drops of it fly off and fall a little, a thin ring of light spreads. */
+.og-intro--burst.is-landed .og-intro__bubble {
+  scale: 1.08;
+  transition:
+    opacity 0.12s ease-out,
+    scale 0.12s ease-out;
+}
+.og-intro__burst {
+  position: absolute;
+  z-index: 3;
+  left: var(--ix, 50%);
+  top: var(--iy, 50%);
+  width: 0;
+  height: 0;
+  pointer-events: none;
+}
+.og-intro__ring {
+  position: absolute;
+  left: calc(var(--br, 90px) * -1);
+  top: calc(var(--br, 90px) * -1);
+  width: calc(var(--br, 90px) * 2);
+  height: calc(var(--br, 90px) * 2);
+  border-radius: 50%;
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.95),
+    0 0 18px rgba(200, 216, 240, 0.7);
+  opacity: 0;
+}
+.og-intro.is-landed .og-intro__ring {
+  animation: og-burst-ring 0.55s cubic-bezier(0.2, 0.7, 0.3, 1) both;
+}
+@keyframes og-burst-ring {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.5);
+  }
+}
+.og-intro__drop {
+  position: absolute;
+  left: calc(-4px * var(--f));
+  top: calc(-4px * var(--f));
+  width: calc(8px * var(--f));
+  height: calc(8px * var(--f));
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, #fff 0 30%, rgba(200, 216, 240, 0.9) 70%);
+  box-shadow:
+    0 0 0 0.5px rgba(30, 59, 214, 0.18),
+    0 0 8px rgba(255, 255, 255, 0.9);
+  opacity: 0;
+}
+.og-intro__drop:nth-child(5n) {
+  background: radial-gradient(circle at 35% 30%, #fff 0 25%, rgba(30, 59, 214, 0.75) 75%);
+}
+.og-intro__drop:nth-child(7n) {
+  background: radial-gradient(circle at 35% 30%, #fff 0 25%, rgba(232, 80, 31, 0.75) 75%);
+}
+.og-intro.is-landed .og-intro__drop {
+  animation:
+    og-burst-out 0.7s cubic-bezier(0.15, 0.75, 0.35, 1) var(--d) both,
+    og-burst-fall 0.7s cubic-bezier(0.5, 0, 0.9, 0.6) var(--d) both;
+}
+@keyframes og-burst-out {
+  0% {
+    opacity: 0;
+    transform: rotate(var(--a)) translateX(calc(var(--br, 90px) * 0.85)) scale(0.6);
+  }
+  15% {
+    opacity: 1;
+  }
+  75% {
+    opacity: 0.9;
+  }
+  100% {
+    opacity: 0;
+    transform: rotate(var(--a)) translateX(calc(var(--br, 90px) * 1.3 + 14px)) scale(0.3);
+  }
+}
+@keyframes og-burst-fall {
+  to {
+    translate: 0 22px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .og-intro--bubble .og-intro__fig,
+  .og-intro--bubble .og-intro__hop,
+  .og-intro--bubble .og-intro__bubble {
+    animation: none;
+  }
+  .og-intro__burst {
+    display: none;
+  }
+}
+
+/* The demo's bar: which opening, how the bubble breaks, play again. Above the welcome. */
+.ibd-bar {
+  position: fixed;
+  z-index: 260;
+  top: 14px;
+  left: 50%;
+  translate: -50% 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.82);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  box-shadow:
+    inset 0 0 0 1px rgba(14, 17, 22, 0.08),
+    0 10px 30px -12px rgba(14, 17, 22, 0.25);
+  font-size: 13px;
+  white-space: nowrap;
+}
+.ibd-bar__label {
+  padding: 0 8px 0 10px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-2);
+}
+.ibd-bar button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 30px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 99px;
+  font: inherit;
+  color: var(--text);
+  background: none;
+  cursor: pointer;
+}
+.ibd-bar button:hover:not(:disabled) {
+  background: rgba(14, 17, 22, 0.05);
+}
+.ibd-bar button.is-on {
+  color: #fff;
+  background: var(--ink, #0e1116);
+}
+.ibd-bar button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.ibd-bar__sep {
+  width: 1px;
+  height: 18px;
+  margin: 0 4px;
+  background: rgba(14, 17, 22, 0.12);
+}
+.ibd-bar .ibd-bar__play {
+  color: #fff;
+  background: var(--cobalt, #1e3bd6);
+}
+.ibd-bar .ibd-bar__play:hover {
+  background: #152ca3;
+}
+/* Sparki keeps out of the bubble welcome: he showed through over the ground beside Dr.AI (10 Nov). */
+body:has(.og-intro--bubble:not(.is-out)) .og-sparki {
+  opacity: 0;
+}
+
+/* ---- Empty-state pictures, the key-visual series (#/demo/empty-art, 10 Nov, brand book p. 36) -------------------
+   Saturated glass lit from inside: Cobalt, violet, magenta and Ember melting into each other, white where the glass
+   catches the light, colour spilling round it instead of a shadow. Each sits centred in the 120 × 72 box. */
+.gk {
+  --k-cobalt: #2448ff;
+  --k-violet: #7a4dff;
+  --k-magenta: #ff3d9a;
+  --k-ember: #ff5a1f;
+  --k-haze: #b9d4f5;
+  display: grid;
+  place-items: center;
+}
+.ga--sm.gk > * {
+  scale: 0.7;
+  transform-origin: center;
+}
+
+/* The Spark icon: a soft squircle of melting colour, a halo of the same colour round it, a white glyph. */
+.gk-icon {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 62px;
+  height: 62px;
+}
+.gk-icon__glow {
+  position: absolute;
+  inset: -6px;
+  border-radius: 26px;
+  background:
+    radial-gradient(60% 60% at 25% 80%, var(--k-cobalt), transparent 70%),
+    radial-gradient(55% 55% at 55% 45%, var(--k-ember), transparent 70%),
+    radial-gradient(50% 50% at 80% 15%, var(--k-haze), transparent 70%);
+  filter: blur(12px);
+  opacity: 0.7;
+}
+.gk-icon__paint {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 20px;
+  background:
+    radial-gradient(70% 70% at 22% 85%, var(--k-cobalt) 10%, transparent 65%),
+    radial-gradient(60% 60% at 55% 42%, var(--k-ember) 15%, transparent 70%),
+    radial-gradient(70% 60% at 88% 8%, #cfe2fb 20%, transparent 70%),
+    radial-gradient(60% 60% at 25% 25%, #ff7a52, transparent 70%),
+    linear-gradient(160deg, #f4c7c0, #6b6cff);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.7),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.35);
+}
+.gk-icon__mark {
+  position: relative;
+  display: grid;
+  place-items: center;
+  color: #fff;
+  filter: drop-shadow(0 0 6px rgba(255, 255, 255, 0.55));
+}
+
+/* The frosted tile: the spectrum glowing behind thick milky glass, a bright rim, a glass glyph on it. */
+.gk-frost {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+}
+.gk-frost__light {
+  position: absolute;
+  inset: 8px;
+  border-radius: 18px;
+  background:
+    radial-gradient(70% 70% at 20% 20%, var(--k-cobalt), transparent 70%),
+    radial-gradient(60% 70% at 45% 60%, var(--k-violet), transparent 70%),
+    radial-gradient(70% 70% at 85% 85%, var(--k-ember), transparent 70%);
+  filter: blur(5px);
+}
+.gk-frost__glass {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 64px;
+  height: 64px;
+  border-radius: 20px;
+  color: rgba(255, 255, 255, 0.92);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.45), rgba(255, 255, 255, 0.18));
+  -webkit-backdrop-filter: blur(7px) saturate(1.3);
+  backdrop-filter: blur(7px) saturate(1.3);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.75),
+    inset 0 3px 3px -1px rgba(255, 255, 255, 0.9),
+    inset 0 -4px 8px -2px rgba(255, 255, 255, 0.6),
+    inset 0 0 0 5px rgba(255, 255, 255, 0.12),
+    0 10px 22px -10px rgba(14, 17, 22, 0.25);
+}
+.gk-frost__glass svg {
+  filter: drop-shadow(0 1px 2px rgba(60, 40, 160, 0.35));
+}
+
+/* The switch: a clear glass track with the spectrum inside, an Ember knob carrying the spark, warm light below. */
+.gk-switch {
+  position: relative;
+  width: 96px;
+  height: 44px;
+}
+.gk-switch__glow {
+  position: absolute;
+  inset: 22px 0 -10px 10px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, rgba(36, 72, 255, 0.45), rgba(255, 61, 154, 0.45) 55%, rgba(255, 90, 31, 0.7));
+  filter: blur(12px);
+}
+.gk-switch__track {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 99px;
+  background: rgba(255, 255, 255, 0.35);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.85),
+    inset 0 2px 2px rgba(255, 255, 255, 0.9),
+    inset 0 0 0 5px rgba(200, 216, 240, 0.25);
+}
+.gk-switch__fill {
+  position: absolute;
+  inset: 7px 20px 7px 7px;
+  border-radius: 99px;
+  background: linear-gradient(90deg, var(--k-cobalt) 10%, var(--k-violet) 45%, var(--k-magenta) 70%, var(--k-ember));
+  filter: blur(2px);
+  box-shadow: inset 0 3px 3px rgba(255, 255, 255, 0.5);
+}
+.gk-switch__fill::after {
+  content: '';
+  position: absolute;
+  left: 10%;
+  right: 30%;
+  bottom: 4px;
+  height: 2px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.85);
+}
+.gk-switch__knob {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  display: grid;
+  place-items: center;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 38% 30%, #ff9a6e, var(--k-ember) 50%, #d4300c);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -4px 6px rgba(140, 20, 0, 0.35),
+    0 4px 10px -2px rgba(255, 90, 31, 0.7);
+}
+
+/* The clear pill: glass with a thick rim, floating on the spectrum's light. */
+.gk-pill {
+  position: relative;
+  width: 104px;
+  height: 40px;
+}
+.gk-pill__glow {
+  position: absolute;
+  inset: 22px 4px -14px;
+  border-radius: 50%;
+  background:
+    radial-gradient(50% 70% at 20% 50%, var(--k-cobalt), transparent 75%),
+    radial-gradient(40% 70% at 50% 50%, var(--k-magenta), transparent 75%),
+    radial-gradient(50% 70% at 80% 50%, var(--k-ember), transparent 75%);
+  filter: blur(9px);
+  opacity: 0.75;
+}
+.gk-pill__glass {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 99px;
+  color: var(--ink, #0e1116);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.85), rgba(255, 255, 255, 0.55));
+  -webkit-backdrop-filter: blur(6px);
+  backdrop-filter: blur(6px);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(255, 255, 255, 0.95),
+    inset 0 0 0 4px rgba(200, 216, 240, 0.35),
+    inset 0 -3px 6px rgba(160, 120, 255, 0.25),
+    0 1px 0 rgba(14, 17, 22, 0.06);
+}
+.gk-pill__glass img {
+  height: 16px;
+  width: auto;
+}
+.gk-pill__line {
+  width: 40px;
+  height: 5px;
+  border-radius: 3px;
+  background: rgba(14, 17, 22, 0.18);
+}
+.gk-pill__dots {
+  display: flex;
+  gap: 5px;
+}
+.gk-pill__dots b {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--ink, #0e1116);
+}
+.gk-pill__dots b:nth-child(2) {
+  opacity: 0.55;
+}
+.gk-pill__dots b:nth-child(3) {
+  opacity: 0.25;
+}
+
+/* The glass stack: overlapping slabs, saturated where they cross, the spark on the front one. */
+.gk-stack {
+  position: relative;
+  width: 84px;
+  height: 72px;
+}
+.gk-stack i {
+  position: absolute;
+  display: grid;
+  place-items: center;
+}
+.gk-stack__red {
+  left: 2px;
+  top: 0;
+  width: 18px;
+  height: 46px;
+  border-radius: 3px 3px 6px 6px;
+  background: linear-gradient(180deg, #ff3b1f, #b51a12);
+}
+.gk-stack__haze {
+  right: 0;
+  top: 8px;
+  width: 30px;
+  height: 36px;
+  border-radius: 5px;
+  background: rgba(200, 216, 240, 0.7);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.8);
+}
+.gk-stack__orange {
+  right: 12px;
+  top: 2px;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background: radial-gradient(circle at 40% 30%, #ff9a6e, var(--k-ember) 70%);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.gk-stack__blue {
+  left: 12px;
+  top: 16px;
+  width: 26px;
+  height: 54px;
+  border-radius: 10px;
+  background: linear-gradient(180deg, rgba(36, 72, 255, 0.85), rgba(30, 50, 200, 0.95));
+  box-shadow:
+    inset 0 0 0 1.5px rgba(200, 216, 255, 0.6),
+    inset 0 2px 2px rgba(255, 255, 255, 0.5);
+}
+.gk-stack__front {
+  left: 30px;
+  top: 22px;
+  width: 42px;
+  height: 46px;
+  border-radius: 11px;
+  background:
+    radial-gradient(60% 60% at 55% 60%, rgba(255, 61, 154, 0.85), transparent 75%),
+    radial-gradient(70% 70% at 15% 20%, rgba(80, 120, 255, 0.8), transparent 75%),
+    radial-gradient(70% 70% at 90% 90%, rgba(255, 120, 60, 0.75), transparent 75%),
+    rgba(200, 216, 255, 0.35);
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+  box-shadow:
+    inset 0 0 0 1.5px rgba(80, 110, 255, 0.85),
+    inset 0 2px 2px rgba(255, 255, 255, 0.75),
+    0 6px 14px -6px rgba(36, 72, 255, 0.5);
+}
+.gk-stack__front svg {
+  filter: drop-shadow(0 0 5px rgba(255, 255, 255, 0.9));
+}
+
+/* Glass cubes: thick clear glass, each with a coloured core and a tinted wall where its side shows. */
+.gk-cubes {
+  display: grid;
+  grid-template-columns: repeat(3, 26px);
+  gap: 6px 7px;
+}
+.gk-cube {
+  --c: 36, 72, 255;
+  width: 26px;
+  height: 26px;
+  border-radius: 8px;
+  background:
+    radial-gradient(55% 55% at 45% 60%, rgba(var(--c), 0.9), transparent 80%),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.5));
+  box-shadow:
+    inset 0 0 0 1.5px rgba(var(--c), 0.45),
+    inset 0 2px 1px rgba(255, 255, 255, 0.95),
+    inset -3px -3px 4px rgba(var(--c), 0.35),
+    2px 3px 0 rgba(var(--c), 0.3),
+    0 6px 10px -4px rgba(var(--c), 0.45);
+}
+.gk-cube--violet {
+  --c: 122, 77, 255;
+}
+.gk-cube--magenta {
+  --c: 190, 70, 230;
+}
+.gk-cube--pink {
+  --c: 255, 61, 154;
+}
+.gk-cube--ember {
+  --c: 255, 90, 31;
+}
+.gk-cube--peach {
+  --c: 255, 150, 110;
+}
+/* The second glyph of a pair (magnifier on the chart, plus on the inbox): a small Ember glass bead at the corner. */
+.gk-badge {
+  position: absolute;
+  right: -7px;
+  bottom: -7px;
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  color: #fff;
+  background: radial-gradient(circle at 38% 30%, #ff9a6e, var(--k-ember) 50%, #d4300c);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.55),
+    inset 0 -3px 5px rgba(140, 20, 0, 0.35),
+    0 0 0 2px rgba(255, 255, 255, 0.85),
+    0 4px 8px -2px rgba(255, 90, 31, 0.7);
+}
+.gk-icon,
+.gk-frost__glass {
+  isolation: isolate;
+}
+.gk-icon__mark,
+.gk-frost__glass {
+  position: relative;
+}
+/* On the Spark icon the bead sits on the tile's corner too, clear of the glyph (the glyph is 26 px in 62). */
+.gk-icon .gk-badge {
+  right: -25px;
+  bottom: -25px;
+}
+
+/* Requests with nothing to list: the empty state inside the table's card, a little less tall than on a bare page. */
+.rq-tbl--empty .empty {
+  padding: 64px 24px 72px;
+}
+
+/* Home's empty cards in the filled cards' glass (10 Nov, review): Reports and Latest from Spark, a report not made
+   yet, no reports, as the same white frosted card as the reports' and the latest's once there is something to show. */
+:root[data-theme][data-theme] section.og-later__card {
+  border: 0;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.62);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), 0 12px 32px -22px rgba(40, 30, 90, 0.18);
+}
+/* The empty states in the company card's glass (10 Nov, review: "as the company card at the top, more see-through"):
+   white at half, the same blur, a white rim with a brighter top line, no shadow under it. Home's empty cards and
+   Requests with nothing to list. */
+:root[data-theme][data-theme] :is(section.og-later__card, .rq-tbl.rq-tbl--empty) {
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), inset 0 1px 0 #fff;
+}
+
+/* Impact labels off Ember (10 Nov, review: Ember is Dr.AI's, as on the Ask Dr.AI pill): High in a solid red, Medium
+   in a light tint of it with the red as text, Low a light grey fill with no stroke, so the three read as one scale. */
+:root[data-theme][data-theme] :is(.hl-impact, .anx-impact).hl-impact--high,
+:root[data-theme][data-theme] .anx-impact--high {
+  color: #fff;
+  background: #d62f3d;
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .hl-impact.hl-impact--medium,
+:root[data-theme][data-theme] .anx-impact--medium {
+  color: #a8212d;
+  background: rgba(214, 47, 61, 0.1);
+  box-shadow: none;
+}
+:root[data-theme][data-theme] .hl-impact.hl-impact--low,
+:root[data-theme][data-theme] .anx-impact--low {
+  color: #4f5257;
+  background: rgba(14, 17, 22, 0.06);
+  box-shadow: none;
+  border-color: transparent;
+}
+:root[data-theme][data-theme] .anx-dot--high {
+  background: #d62f3d;
+}
+:root[data-theme][data-theme] .anx-dot--medium {
+  background: rgba(214, 47, 61, 0.45);
+}
+
+/* Buttons lift on hover as in Dr.AI's corner window (10 Nov, review): 1px up, the same on every pill button
+   across the portal; a short ease so the lift reads as a move, not a jump. Quiet and icon-only buttons stay put. */
+:root[data-theme][data-theme] :is(.btn:not(.btn--ghost, .btn--quiet), .og-step__go, .toast__action, .dk-btn) {
+  transition:
+    background 0.15s,
+    color 0.15s,
+    box-shadow 0.2s,
+    opacity 0.15s,
+    filter 0.15s,
+    transform 0.18s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+:root[data-theme][data-theme] :is(.btn:not(.btn--ghost, .btn--quiet), .og-step__go, .toast__action, .dk-btn):hover:not(:disabled) {
+  transform: translateY(-1px);
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme][data-theme] :is(.btn, .og-step__go, .toast__action, .dk-btn):hover {
+    transform: none;
+  }
+}
+
+/* ---- Dr.AI's motion (#/demo/dock-motion, 10 Nov review: "folding is too abrupt") ------------------------------
+   The looks are picked on the demo and set on <html> (lib/dockMotion): data-dk-fold, data-dk-hover, data-dk-drawer.
+   Durations here are kept in step with MS in lib/dockMotion.ts. */
+
+/* Fold A · into his corner: the window shrinks into the spot where his head waits, he sinks after it. */
+:root[data-dk-fold='a'] .dk--corner.is-folding .dk-card {
+  transform-origin: 100% 100%;
+  animation: dkm-a-out 0.42s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+}
+:root[data-dk-fold='a'] .dk--corner.is-folding .dk-drag {
+  transform-origin: 50% 100%;
+  animation: dkm-sink 0.38s 0.04s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+}
+@keyframes dkm-a-out {
+  to {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translate(70px, 80px) scale(0.18);
+  }
+}
+@keyframes dkm-sink {
+  to {
+    opacity: 0;
+    transform: translateY(40px) scale(0.4);
+  }
+}
+:root[data-dk-fold='a'] .dk--corner.is-opening .dk-card {
+  transform-origin: 100% 100%;
+  animation: dkm-a-in 0.6s cubic-bezier(0.2, 1.25, 0.35, 1) both;
+}
+:root[data-dk-fold='a'] .dk--corner.is-opening .dk-drag {
+  transform-origin: 50% 100%;
+  animation: dkm-rise 0.5s cubic-bezier(0.2, 1.3, 0.4, 1) both;
+}
+@keyframes dkm-a-in {
+  from {
+    opacity: 0;
+    filter: blur(6px);
+    transform: translate(70px, 80px) scale(0.18);
+  }
+  55% {
+    opacity: 1;
+    filter: none;
+  }
+}
+@keyframes dkm-rise {
+  from {
+    opacity: 0;
+    transform: translateY(40px) scale(0.5);
+  }
+}
+/* What's in the window comes in line by line as it opens (A and C). */
+:root:is([data-dk-fold='a'], [data-dk-fold='c']) .dk--corner.is-opening .dk-card > * {
+  animation: dkm-line 0.38s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+:root:is([data-dk-fold='a'], [data-dk-fold='c']) .dk--corner.is-opening .dk-card > :nth-child(1) { animation-delay: 0.16s; }
+:root:is([data-dk-fold='a'], [data-dk-fold='c']) .dk--corner.is-opening .dk-card > :nth-child(2) { animation-delay: 0.22s; }
+:root:is([data-dk-fold='a'], [data-dk-fold='c']) .dk--corner.is-opening .dk-card > :nth-child(3) { animation-delay: 0.28s; }
+:root:is([data-dk-fold='a'], [data-dk-fold='c']) .dk--corner.is-opening .dk-card > :nth-child(4) { animation-delay: 0.34s; }
+:root:is([data-dk-fold='a'], [data-dk-fold='c']) .dk--corner.is-opening .dk-card > :nth-child(n + 5) { animation-delay: 0.4s; }
+@keyframes dkm-line {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+/* His head, folded, pops into the spot the window went to. */
+:root[data-dk-fold='a'] .dk-mini--corner {
+  animation: dkm-pop 0.45s cubic-bezier(0.2, 1.4, 0.4, 1) both;
+}
+@keyframes dkm-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
+/* Fold B · slide down: window and Dr.AI slip down out of sight, his head rises in their place. */
+:root[data-dk-fold='b'] .dk--corner.is-folding .dk-card {
+  animation: dkm-b-out 0.34s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+}
+:root[data-dk-fold='b'] .dk--corner.is-folding .dk-drag {
+  animation: dkm-b-out-fig 0.36s 0.02s cubic-bezier(0.5, 0, 0.75, 0) forwards;
+}
+@keyframes dkm-b-out {
+  to {
+    opacity: 0;
+    transform: translateY(120px);
+  }
+}
+@keyframes dkm-b-out-fig {
+  to {
+    opacity: 0;
+    transform: translateY(220px);
+  }
+}
+:root[data-dk-fold='b'] .dk--corner.is-opening .dk-drag {
+  animation: dkm-b-in-fig 0.5s cubic-bezier(0.2, 1.15, 0.4, 1) both;
+}
+:root[data-dk-fold='b'] .dk--corner.is-opening .dk-card {
+  animation: dkm-b-in 0.48s 0.12s cubic-bezier(0.2, 1.15, 0.4, 1) both;
+}
+@keyframes dkm-b-in-fig {
+  from {
+    opacity: 0;
+    transform: translateY(220px);
+  }
+}
+@keyframes dkm-b-in {
+  from {
+    opacity: 0;
+    transform: translateY(60px);
+  }
+}
+:root[data-dk-fold='b'] .dk-mini--corner {
+  animation: dkm-b-mini 0.45s cubic-bezier(0.2, 1.3, 0.4, 1) both;
+}
+@keyframes dkm-b-mini {
+  from {
+    opacity: 0;
+    transform: translateY(90px);
+  }
+}
+
+/* Fold C · jelly: the window squeezes like soft glass into the corner and springs out with a wobble. */
+:root[data-dk-fold='c'] .dk--corner.is-folding .dk-card {
+  transform-origin: 100% 100%;
+  animation: dkm-c-out 0.52s cubic-bezier(0.45, 0, 0.7, 0.4) forwards;
+}
+:root[data-dk-fold='c'] .dk--corner.is-folding .dk-drag {
+  transform-origin: 50% 100%;
+  animation: dkm-c-out-fig 0.46s 0.06s cubic-bezier(0.45, 0, 0.7, 0.4) forwards;
+}
+@keyframes dkm-c-out {
+  30% {
+    transform: scale(1.04, 0.9);
+  }
+  60% {
+    opacity: 0.85;
+    transform: translate(36px, 44px) scale(0.5, 0.62);
+  }
+  to {
+    opacity: 0;
+    transform: translate(70px, 80px) scale(0.1, 0.14);
+  }
+}
+@keyframes dkm-c-out-fig {
+  30% {
+    transform: scale(1.06, 0.92);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(30px) scale(0.3, 0.36);
+  }
+}
+:root[data-dk-fold='c'] .dk--corner.is-opening .dk-card {
+  transform-origin: 100% 100%;
+  animation: dkm-c-in 0.76s cubic-bezier(0.3, 0.6, 0.4, 1) both;
+}
+:root[data-dk-fold='c'] .dk--corner.is-opening .dk-drag {
+  transform-origin: 50% 100%;
+  animation: dkm-jelly 0.62s cubic-bezier(0.3, 0.6, 0.4, 1) both;
+}
+@keyframes dkm-c-in {
+  from {
+    opacity: 0;
+    transform: translate(70px, 80px) scale(0.1, 0.14);
+  }
+  42% {
+    opacity: 1;
+    transform: scale(1.05, 0.94);
+  }
+  62% {
+    transform: scale(0.97, 1.04);
+  }
+  82% {
+    transform: scale(1.01, 0.99);
+  }
+}
+@keyframes dkm-jelly {
+  from {
+    opacity: 0;
+    transform: scale(0.25);
+  }
+  45% {
+    opacity: 1;
+    transform: scale(1.12, 0.9);
+  }
+  65% {
+    transform: scale(0.94, 1.06);
+  }
+  85% {
+    transform: scale(1.03, 0.98);
+  }
+}
+:root[data-dk-fold='c'] .dk-mini--corner {
+  animation: dkm-jelly 0.6s cubic-bezier(0.3, 0.6, 0.4, 1) both;
+}
+
+/* Hover: he answers the pointer, folded (his head) or standing. On rotate / translate / scale of their own, so
+   nothing fights the moves above. */
+.dk-mini--corner > :is(img, .drai-bubble) {
+  transform-origin: 50% 85%;
+}
+.dk--corner .dk-drag {
+  transform-origin: 50% 100%;
+}
+.dk-mini--corner::after {
+  transition: opacity 0.3s ease;
+}
+/* A · head tilt: one way, the other, settle, as if asking "yes?". */
+:root[data-dk-hover='a'] .dk-mini--corner:hover > :is(img, .drai-bubble) {
+  animation: dkm-tilt 0.8s ease-in-out;
+}
+:root[data-dk-hover='a'] .dk--corner .dk-drag:hover {
+  animation: dkm-tilt-fig 0.9s ease-in-out;
+}
+@keyframes dkm-tilt {
+  25% {
+    rotate: -14deg;
+  }
+  55% {
+    rotate: 10deg;
+  }
+  80% {
+    rotate: -4deg;
+  }
+}
+@keyframes dkm-tilt-fig {
+  25% {
+    rotate: -5deg;
+  }
+  55% {
+    rotate: 4deg;
+  }
+  80% {
+    rotate: -1.5deg;
+  }
+}
+/* B · a little hop, squashing as he lands; the light under him brightens. */
+:root[data-dk-hover='b'] .dk-mini--corner:hover > :is(img, .drai-bubble) {
+  animation: dkm-hop 0.6s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+:root[data-dk-hover='b'] .dk--corner .dk-drag:hover {
+  animation: dkm-hop-fig 0.65s cubic-bezier(0.3, 0.7, 0.4, 1);
+}
+:root[data-dk-hover='b'] .dk-mini--corner:hover::after {
+  opacity: 0.75;
+}
+@keyframes dkm-hop {
+  30% {
+    translate: 0 -9px;
+    scale: 0.95 1.06;
+  }
+  55% {
+    translate: 0 0;
+    scale: 1.1 0.9;
+  }
+  75% {
+    scale: 0.97 1.03;
+  }
+}
+@keyframes dkm-hop-fig {
+  30% {
+    translate: 0 -12px;
+    scale: 0.98 1.03;
+  }
+  55% {
+    translate: 0 0;
+    scale: 1.04 0.96;
+  }
+  75% {
+    scale: 0.99 1.01;
+  }
+}
+/* C · lean in: towards you, a touch bigger, held while the pointer is on him. */
+:root[data-dk-hover='c'] .dk-mini--corner > :is(img, .drai-bubble),
+:root[data-dk-hover='c'] .dk--corner .dk-drag {
+  transition: rotate 0.4s cubic-bezier(0.3, 1.5, 0.5, 1), scale 0.4s cubic-bezier(0.3, 1.5, 0.5, 1);
+}
+:root[data-dk-hover='c'] .dk-mini--corner:hover > :is(img, .drai-bubble) {
+  rotate: -10deg;
+  scale: 1.1;
+}
+:root[data-dk-hover='c'] .dk--corner .dk-drag:hover {
+  rotate: -4deg;
+  scale: 1.03;
+}
+:root[data-dk-hover='c'] .dk-mini--corner:hover::after {
+  opacity: 0.6;
+}
+
+/* The chat panel. A · glide in: from the right edge, settling; what's in it follows line by line. */
+.chat-drawer.is-leaving,
+.chat-drawer__scrim.is-leaving {
+  pointer-events: none;
+}
+:root[data-dk-drawer] .chat-drawer__scrim {
+  animation: dkm-fade 0.3s ease both;
+}
+:root[data-dk-drawer] .chat-drawer__scrim.is-leaving {
+  animation: dkm-fade-out 0.3s ease forwards;
+}
+@keyframes dkm-fade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes dkm-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+:root[data-dk-drawer='a'] .chat-drawer {
+  animation: dkm-glide 0.52s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+:root[data-dk-drawer='a'] .chat-drawer.is-leaving {
+  animation: dkm-glide-out 0.32s cubic-bezier(0.55, 0, 0.75, 0.2) forwards;
+}
+@keyframes dkm-glide {
+  from {
+    transform: translateX(calc(100% + 24px));
+  }
+}
+@keyframes dkm-glide-out {
+  to {
+    transform: translateX(calc(100% + 24px));
+  }
+}
+:root:is([data-dk-drawer='a'], [data-dk-drawer='b'], [data-dk-drawer='c']) .chat-drawer:not(.is-leaving) :is(.chat-drawer__head, .chat-drawer__body > *, .chat-drawer > :last-child) {
+  animation: dkm-line 0.42s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+  animation-delay: 0.2s;
+}
+:root[data-dk-drawer] .chat-drawer:not(.is-leaving) .chat-drawer__body > :nth-child(1) { animation-delay: 0.24s; }
+:root[data-dk-drawer] .chat-drawer:not(.is-leaving) .chat-drawer__body > :nth-child(2) { animation-delay: 0.3s; }
+:root[data-dk-drawer] .chat-drawer:not(.is-leaving) .chat-drawer__body > :nth-child(3) { animation-delay: 0.36s; }
+:root[data-dk-drawer] .chat-drawer:not(.is-leaving) .chat-drawer__body > :nth-child(4) { animation-delay: 0.42s; }
+:root[data-dk-drawer] .chat-drawer:not(.is-leaving) .chat-drawer__body > :nth-child(n + 5) { animation-delay: 0.48s; }
+:root[data-dk-drawer='now'] .chat-drawer :is(.chat-drawer__head, .chat-drawer__body > *, .chat-drawer > :last-child) {
+  animation: none;
+}
+:root[data-dk-drawer='now'] .chat-drawer__scrim {
+  animation: fade-in 0.15s;
+}
+
+/* B · out of Dr.AI: the panel opens out of his corner, as if he unfolds it, and folds back into it. */
+:root[data-dk-drawer='b'] .chat-drawer {
+  transform-origin: 100% 100%;
+  animation: dkm-unfold 0.56s cubic-bezier(0.2, 1, 0.3, 1) both;
+}
+:root[data-dk-drawer='b'] .chat-drawer.is-leaving {
+  animation: dkm-refold 0.38s cubic-bezier(0.55, 0, 0.7, 0.3) forwards;
+}
+@keyframes dkm-unfold {
+  from {
+    opacity: 0.4;
+    clip-path: inset(calc(100% - 72px) 0 0 calc(100% - 72px) round 36px);
+    transform: scale(0.92);
+  }
+  to {
+    opacity: 1;
+    clip-path: inset(0 round 22px);
+    transform: none;
+  }
+}
+@keyframes dkm-refold {
+  from {
+    clip-path: inset(0 round 22px);
+  }
+  to {
+    opacity: 0;
+    clip-path: inset(calc(100% - 72px) 0 0 calc(100% - 72px) round 36px);
+    transform: scale(0.92);
+  }
+}
+
+/* C · frost in: the panel rises out of a blur while the page behind it frosts over; it melts away on closing. */
+:root[data-dk-drawer='c'] .chat-drawer {
+  animation: dkm-frost 0.45s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+:root[data-dk-drawer='c'] .chat-drawer.is-leaving {
+  animation: dkm-melt 0.3s ease-in forwards;
+}
+:root[data-dk-drawer='c'] .chat-drawer__scrim {
+  -webkit-backdrop-filter: blur(5px);
+  backdrop-filter: blur(5px);
+  animation: dkm-frost-scrim 0.4s ease both;
+}
+:root[data-dk-drawer='c'] .chat-drawer__scrim.is-leaving {
+  animation: dkm-frost-scrim-out 0.3s ease forwards;
+}
+@keyframes dkm-frost {
+  from {
+    opacity: 0;
+    filter: blur(10px);
+    transform: translateY(18px) scale(0.97);
+  }
+}
+@keyframes dkm-melt {
+  to {
+    opacity: 0;
+    filter: blur(8px);
+    transform: scale(0.98);
+  }
+}
+@keyframes dkm-frost-scrim {
+  from {
+    opacity: 0;
+    -webkit-backdrop-filter: blur(0);
+    backdrop-filter: blur(0);
+  }
+}
+@keyframes dkm-frost-scrim-out {
+  to {
+    opacity: 0;
+    -webkit-backdrop-filter: blur(0);
+    backdrop-filter: blur(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root[data-dk-fold] :is(.dk--corner .dk-card, .dk--corner .dk-card > *, .dk--corner .dk-drag, .dk-mini--corner),
+  :root[data-dk-hover] :is(.dk-mini--corner > *, .dk--corner .dk-drag),
+  :root[data-dk-drawer] :is(.chat-drawer, .chat-drawer *, .chat-drawer__scrim) {
+    animation: none;
+    transition: none;
+  }
+}
+/* Opened again: the window stays as it is, rather than replaying its first-visit entrance. */
+.dk--corner.is-settled .dk-card:not(.is-cheer) {
+  animation: none;
+}
+
+/* #/demo/dock-motion: the looks for Dr.AI's motion, one card each, room on the right for him. */
+.dmd {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  max-width: 760px;
+  padding-bottom: 260px;
+}
+.dmd-row {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 24px 26px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.5);
+  -webkit-backdrop-filter: blur(22px) saturate(1.25);
+  backdrop-filter: blur(22px) saturate(1.25);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), inset 0 1px 0 #fff;
+}
+.dmd-row header {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.dmd-row header b {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 700;
+}
+.dmd-row header span,
+.dmd-note {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.5;
+  color: var(--text-2);
+}
+.dmd-note {
+  min-height: 42px;
+  color: var(--ink);
+}
+.dmd-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.dmd-chip {
+  height: 34px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-2);
+  background: rgba(255, 255, 255, 0.55);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.1);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, translate 0.18s;
+}
+.dmd-chip:hover {
+  color: var(--ink);
+  background: #fff;
+  translate: 0 -1px;
+}
+.dmd-chip.is-on {
+  color: #fff;
+  background: var(--ink);
+  box-shadow: none;
+}
+.dmd-acts {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+.dmd-hint {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--text-3);
 }

@@ -2,7 +2,7 @@ import { useState, type ReactNode } from 'react';
 import { ArrowLeft, BadgeCheck, Check, CircleDot, ChevronDown, CircleX, Clock, Eye, FileText, Hammer, Lightbulb, MessageSquare, PackageCheck, Paperclip, PenLine, Plus, ScanSearch, Send, TrendingUp, TriangleAlert, Upload } from 'lucide-react';
 import { TEAM_FOLDER, latestProposal, personById, proposalTotal, proposalWeeks, useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
-import { Avatar, Button, EmptyState, Tabs, Textarea, cx } from '../../components/ui/primitives';
+import { Avatar, Button, EmptyState, SlideTabs, Textarea, cx } from '../../components/ui/primitives';
 import { FileIcon, ProposalStatus, RequestStatus, STAGES, STAGE_INFO, stageIndex } from '../../components/domain';
 import { useToast } from '../../components/ui/toast';
 import { aed, daysUntil, dueLabel, fmtDate, fmtRelative, fmtTime } from '../../lib/format';
@@ -98,7 +98,7 @@ export function RequestDetail({ id }: { id: string }) {
             <h1 className="req-head__title">{r.title}</h1>
           </header>
 
-          <Tabs className="tabs--underline" value={tab} onChange={setTab} items={tabs} />
+          <SlideTabs className="req-tabs" label="Request" value={tab} onChange={setTab} items={tabs} />
 
           {tab === 'overview' && (
             <div className="req-tab">

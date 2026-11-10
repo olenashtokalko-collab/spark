@@ -12,6 +12,7 @@ import { TYPES, TYPE_ICON } from './CreateRequestDialog';
 import { ChatDrawer } from '../assistant/ChatDrawer';
 import { AskButton, useDrAi } from '../../components/ui/DrAi';
 import { GlassTabs } from '../../components/ui/GlassTabs';
+import { PageArtView, useArt } from '../onboarding/EmptyArt';
 
 type Filter = 'all' | 'decision' | 'active' | 'closed';
 type Updated = 'any' | 'week' | 'month';
@@ -48,6 +49,7 @@ function RequestRow({ r }: { r: WorkRequest }) {
 
 export function Requests() {
   const { state } = useStore();
+  const art = useArt();
   const { openRequest } = useUI();
   // #/requests?filter=decision opens on "Needs you" (the alert on Home links here).
   const { query } = useRoute();
@@ -148,17 +150,24 @@ export function Requests() {
         </div>
 
         {list.length === 0 ? (
-          <EmptyState
-            title={narrowed ? 'No requests match these filters.' : filter === 'decision' ? 'Nothing needs you.' : 'No requests yet.'}
-            body={narrowed ? 'Try another word or clear the filters.' : 'Start a chat about your brand and turn a useful answer into a request.'}
-            action={
-              !narrowed && (
-                <Button size="sm" onClick={() => openRequest()}>
-                  New request
-                </Button>
-              )
-            }
-          />
+          // In the table's own white frosted card (10 Nov, review): the page keeps its shape when the first request
+          // comes in, and the tabs and filters above still sit on something.
+          <div className="rq-list rq-tbl rq-tbl--empty">
+            <EmptyState
+              // The picture picked on #/demo/empty-art (10 Nov): the magnifier when filters leave nothing, the bell when
+              // nothing needs you, the document with a plus when there are no requests yet.
+              art={<PageArtView v={narrowed ? art.search : filter === 'decision' ? art.notifs : art.requests} />}
+              title={narrowed ? 'No requests match these filters.' : filter === 'decision' ? 'Nothing needs you.' : 'No requests yet.'}
+              body={narrowed ? 'Try another word or clear the filters.' : 'Start a chat about your brand and turn a useful answer into a request.'}
+              action={
+                !narrowed && (
+                  <Button size="sm" onClick={() => openRequest()}>
+                    New request
+                  </Button>
+                )
+              }
+            />
+          </div>
         ) : (
           <div className="rq-list rq-tbl" role="list" aria-label="Requests">
             {/* Column labels in Diatype Mono (p. 32), on the same grid as the rows. */}

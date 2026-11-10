@@ -11,6 +11,7 @@ import { Dialog, Menu } from '../../components/ui/overlay';
 import { useToast } from '../../components/ui/toast';
 import { fmtRelative } from '../../lib/format';
 import type { Conversation } from '../../data/types';
+import { PageArtView, useArt } from '../onboarding/EmptyArt';
 
 function group(list: Conversation[]) {
   const today = new Date();
@@ -31,6 +32,7 @@ function group(list: Conversation[]) {
 export function ChatHistory() {
   const { state, me, actions } = useStore();
   const toast = useToast();
+  const art = useArt();
   const { parts } = useRoute();
   const activeId = parts[0] === 'assistant' ? parts[1] : undefined;
   const [renaming, setRenaming] = useState<string | null>(null);
@@ -52,6 +54,7 @@ export function ChatHistory() {
       <div className="history__list">
         {list.length === 0 && (
           <div className="history__empty">
+            <PageArtView v={art.chats} small />
             No chats yet. Start one above.
           </div>
         )}

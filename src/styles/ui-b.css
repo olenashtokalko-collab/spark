@@ -1,0 +1,683 @@
+/* UI variants b and c (prototype, 9 Nov): the two directions in the "Spark Redesign Directions" design file, on
+   the same pages, structure and words as the glass UI (variant a). Every rule here is scoped to :root[data-ui=…], so
+   variant a stays as it is. Chosen with the switch at the foot of the page or ?ui=b / ?ui=c; see lib/uiVariant.
+   This file: the switch, what both directions share, then Direction A (b). Direction B (c) is in ui-c.css. */
+
+/* ---- The switch itself (every variant) ----------------------------------------------------------------- */
+.ui-switch {
+  position: fixed;
+  left: 50%;
+  bottom: 14px;
+  z-index: 2147483000;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
+  border-radius: 999px;
+  transform: translateX(-50%);
+  font-size: 12px;
+  background: rgba(14, 17, 22, 0.86);
+  box-shadow: 0 6px 18px -8px rgba(14, 17, 22, 0.5);
+}
+.ui-switch__label {
+  padding: 0 8px 0 10px;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: rgba(248, 246, 242, 0.55);
+}
+.ui-switch button {
+  height: 26px;
+  padding: 0 12px;
+  border: 0;
+  border-radius: 999px;
+  font: inherit;
+  font-weight: 500;
+  color: rgba(248, 246, 242, 0.75);
+  background: transparent;
+  cursor: pointer;
+}
+.ui-switch button:hover {
+  color: #fff;
+}
+.ui-switch button.is-on {
+  color: #0e1116;
+  background: #f8f6f2;
+}
+
+/* ==== Both directions: the type system and the page top ===================================================
+   Sand ground; Diatype Extended heavy and tight for titles, Diatype Mono in capitals for labels, Doto for figures;
+   the credits as a figure at the top right of Home. */
+:root:is([data-ui='b'], [data-ui='c'])[data-theme][data-theme] {
+  --d-ink: #0e1116;
+  --d-sand: #f8f6f2;
+  --d-cobalt: #1e3bd6;
+  --d-cobalt-dk: #152ca3;
+  --d-ember: #e8501f;
+  --d-ember-tx: #b5401a;
+  --d-haze: #c8d8f0;
+  --d-line: #e4e0d8;
+  --d-line-2: #e1dcd2;
+  --d-row: #eeeae3;
+  --d-tx-2: #5e6370;
+  --d-tx-3: #3d424c;
+  --d-mono: 'ABC Diatype Mono', ui-monospace, monospace;
+  --d-doto: 'Doto Rounded', ui-monospace, monospace;
+  --ink: var(--d-ink);
+  --cobalt: var(--d-cobalt);
+  --ember: var(--d-ember);
+  --text-2: var(--d-tx-2);
+  --text-3: var(--d-tx-2);
+
+  & body,
+  & .app-bg {
+    background: var(--d-sand);
+  }
+  & .app-bg__light {
+    display: none;
+  }
+
+  /* Titles */
+  & :is(.page-head__title, .rq-head__title, .req-head__title, .proposal__title) {
+    font-size: 36px;
+    line-height: 1.05;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  & :is(.page-head__sub, .rq-head__sub) {
+    margin-top: 8px;
+    font-size: 15px;
+    color: var(--d-tx-2);
+  }
+  & .og-ba-title {
+    font-size: 28px;
+    line-height: 1.1;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+  }
+  /* Section labels in mono capitals */
+  & :is(.og-full__h, .hd-fixes__title, .side-card__title, .brief__title) {
+    font-family: var(--d-mono);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--d-tx-2);
+  }
+  & a {
+    color: var(--d-cobalt);
+  }
+  & a:hover {
+    color: var(--d-cobalt-dk);
+  }
+  & :focus-visible {
+    outline: 2px solid var(--d-cobalt);
+    outline-offset: 2px;
+  }
+
+  /* Home's top: the page's name in mono on the left, the credits as a Doto figure on the right */
+  & .og-top {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+  }
+  & .og-top__eyebrow {
+    font-family: var(--d-mono);
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--d-tx-2);
+  }
+  & .og-top .hld-credits {
+    position: relative;
+  }
+  & .hld-credits__main--top {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    height: auto;
+    padding: 0;
+    border: 0;
+    color: var(--d-ink);
+    background: none;
+    box-shadow: none;
+    cursor: pointer;
+  }
+  & .hld-credits__main--top::before,
+  & .hld-credits__main--top::after {
+    content: none;
+  }
+  & .hld-credits__label {
+    font-family: var(--d-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--d-tx-2);
+  }
+  & .hld-credits__fig {
+    font-family: var(--d-doto);
+    font-size: 40px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+  }
+  & .og-top .hld-credits__card {
+    right: 0;
+    left: auto;
+  }
+
+  /* The report tiles: the figure alone in Doto, on one baseline with its /100, no ring */
+  & .og-score__ring {
+    width: auto;
+    height: auto;
+    display: flex;
+    align-items: baseline;
+  }
+  & .og-score__ring .hv-gauge {
+    display: none;
+  }
+  & .og-score__ring > span {
+    align-items: baseline;
+    gap: 2px;
+  }
+  & .og-score__body {
+    min-height: 0;
+    align-items: flex-end;
+    gap: 20px;
+  }
+  & :is(.og-score__fig, .og-score__ring b) {
+    min-width: 0;
+    font-family: var(--d-doto);
+    font-size: 52px;
+    line-height: 1;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+  }
+  & .og-score__ring i {
+    font-family: var(--d-doto);
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--d-tx-2);
+  }
+  & .og-score__what {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--d-tx-2);
+  }
+  & :is(.og-score__delta, .og-score__bench) {
+    font-family: var(--d-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  & .og-score__delta svg {
+    display: none;
+  }
+  & .og-score__delta.is-up {
+    color: var(--d-cobalt);
+  }
+  & .og-score__delta.is-down {
+    color: var(--d-ember-tx);
+  }
+  & .og-score__line {
+    font-size: 15px;
+    font-weight: 700;
+  }
+  & :is(.og-score, .gfo--tile, .file-card, .hl-latest__row, .hd-issuecard),
+  & :is(.og-score, .gfo--tile, .file-card, .hl-latest__row, .hd-issuecard):hover {
+    color: var(--d-ink);
+  }
+  & .og-score__go {
+    color: var(--d-cobalt);
+  }
+  & .og-chip {
+    height: auto;
+    padding: 0;
+    font-size: 13px;
+    font-weight: 600;
+    background: none;
+  }
+  & .og-chip::before {
+    width: 8px;
+    height: 8px;
+  }
+
+  /* Counts in Doto */
+  & .gtabs__n {
+    font-family: var(--d-doto);
+    font-size: 15px;
+    color: var(--d-ink);
+  }
+  & .gtabs__n.is-you {
+    color: var(--d-ember-tx);
+  }
+
+  /* The requests table: Ink titles */
+  & .rq-tbl a,
+  & .rq-tbl a:hover {
+    color: var(--d-ink);
+  }
+  & .rq-tbl .rq-row3__name {
+    font-size: 15px;
+    font-weight: 600;
+  }
+  & .rq-tbl .rq-row3 {
+    min-height: 58px;
+  }
+
+  /* Statuses: a dot and the word, no pill */
+  & .rstatus {
+    gap: 9px;
+    height: auto;
+    margin: 0;
+    padding: 0;
+    border-radius: 0;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--d-ink);
+    background: none;
+    box-shadow: none;
+  }
+  & .rstatus::before,
+  & .rstatus::after,
+  & .rstatus.rstatus--delivered::after {
+    content: none;
+  }
+  & .rstatus .rstatus__dot {
+    display: inline-block;
+    position: static;
+    width: 10px;
+    height: 10px;
+    flex: none;
+    margin: 0;
+    border-radius: 50%;
+    filter: none;
+    box-sizing: border-box;
+    background: rgb(var(--c));
+    box-shadow: inset 0 0 0 2px rgb(var(--c));
+  }
+  & .rstatus.rstatus--delivered {
+    --c: 14, 17, 22;
+    color: var(--d-ink);
+    background: none;
+  }
+  & .rstatus:is(.rstatus--declined, .rstatus--superseded) {
+    --c: 154, 160, 170;
+  }
+  & .rstatus:is(.rstatus--proposal, .rstatus--you) {
+    --c: 232, 80, 31;
+  }
+
+  /* Ask Dr.AI: the greeting heavy, the first words Cobalt */
+  & .chats-start__greet {
+    max-width: none;
+    font-size: 40px;
+    line-height: 1.04;
+    font-weight: 800;
+    letter-spacing: -0.025em;
+  }
+  & .chats-start__soft {
+    color: var(--d-cobalt);
+    background: none;
+    -webkit-text-fill-color: currentColor;
+  }
+  & :is(.chats-start__halo, .chats-start__light, .msc-beam__glow) {
+    display: none;
+  }
+  & .msc-beam::before,
+  & .msc-beam::after {
+    content: none;
+  }
+  & :is(.chats-start__glass, .chats-start__frame) {
+    padding: 0;
+    background: none;
+    box-shadow: none;
+  }
+  & .chats-start .chats-start__list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px;
+  }
+  & .chats-start__list .chats-start__row {
+    height: auto;
+    min-height: 0;
+    align-items: flex-start;
+    padding: 18px 20px;
+    border-radius: 20px;
+    text-align: left;
+  }
+  & .chats-start__list .chats-start__go {
+    display: none;
+  }
+  & .chats-start__row b {
+    display: block;
+    margin-bottom: 6px;
+    font-family: var(--d-mono);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--d-ember-tx);
+  }
+  & .chats-start__row > span {
+    font-size: 15px;
+    color: var(--d-ink);
+  }
+}
+
+/* ==== Direction A (data-ui='b'): brand-aligned ============================================================
+   Sand + Ink, Cobalt leads, Ember sparks; white cards with a hairline, no glass in the interface (frosted glass
+   lives in the pictures only); an Ink sidebar; pill buttons. */
+:root[data-ui='b'][data-theme][data-theme] {
+  & body *:not(.ui-switch) {
+    -webkit-backdrop-filter: none !important;
+    backdrop-filter: none !important;
+  }
+
+  /* The sidebar: Ink, full height, compact pills */
+  & .shell.shell--rail-open {
+    grid-template-columns: 224px minmax(0, 1fr);
+  }
+  & .rail {
+    top: 0;
+    width: 224px;
+    height: 100vh;
+    margin: 0;
+    padding: 24px 12px 16px;
+    border-radius: 0;
+    color: var(--d-sand);
+    background: var(--d-ink);
+    box-shadow: none;
+  }
+  & :is(.rail__wordmark, .rail__appicon) {
+    filter: invert(1) sepia(0.12);
+  }
+  & .rail__toggle {
+    color: rgba(248, 246, 242, 0.6);
+  }
+  & :is(.rail__btn, .rail__me) {
+    height: 38px;
+    padding: 0 12px;
+    border-radius: 999px;
+    font-size: 14px;
+    color: #e9e6e0;
+    background: transparent;
+    box-shadow: none;
+  }
+  & :is(.rail__btn, .rail__me):hover {
+    color: #fff;
+    background: rgba(248, 246, 242, 0.08);
+    box-shadow: none;
+  }
+  & .rail__btn.is-active,
+  & .rail__btn.is-active:hover {
+    font-weight: 600;
+    color: var(--d-ink);
+    background: var(--d-sand);
+    box-shadow: none;
+  }
+  & .rail__btn--drai {
+    height: 44px;
+    padding-left: 6px;
+    background: rgba(248, 246, 242, 0.06);
+    box-shadow: inset 0 0 0 1px rgba(248, 246, 242, 0.16);
+  }
+  & .rail__btn--drai img.drai-head {
+    width: 30px;
+    height: 30px;
+    border-radius: 9px;
+  }
+  & .rail__rule {
+    background: rgba(248, 246, 242, 0.12);
+  }
+  & :is(.rail__dot, .bell__dot) {
+    background: var(--d-ember);
+  }
+  & .rail__me {
+    height: 48px;
+  }
+  & .rail__me-name {
+    color: var(--d-sand);
+  }
+  & .rail__me-sub {
+    font-family: var(--d-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #a3a8b3;
+  }
+  & .rail__me .avatar {
+    color: var(--d-ink);
+    background: var(--d-haze);
+  }
+
+  /* Cards: white, a hairline, 24px corners */
+  & :is(.hld-card, .hc-card, .anc, .rq-list, .block, .side-card, .scope-tbl, .tm-list, .gfo--tile, .file-card, .dk-card) {
+    background: #fff;
+    border-radius: 24px;
+    box-shadow: inset 0 0 0 1px var(--d-line);
+  }
+  & :is(.hld-card, .hc-card, .anc, .rq-list, .block, .side-card, .scope-tbl, .tm-list, .gfo--tile, .file-card, .dk-card)::before,
+  & :is(.hld-card, .hc-card, .gfo--tile, .dk-card)::after {
+    content: none;
+  }
+  & :is(.hc-card, .og-score, .gfo--tile):hover {
+    transform: none;
+    background: #fff;
+    box-shadow: inset 0 0 0 1px var(--d-ink);
+  }
+  & .hld-card .hld-card,
+  & .hc-latest__list {
+    background: none;
+    box-shadow: none;
+  }
+  & :is(.hl-latest__row, .hd-issuecard) {
+    border-radius: 0;
+    background: none;
+    box-shadow: inset 0 1px 0 var(--d-row);
+  }
+  & :is(.hl-latest__row, .hd-issuecard):hover {
+    background: #fbfaf7;
+  }
+
+  /* Buttons: pills; Cobalt for the main one, an Ink outline for the rest */
+  & :is(.btn, .hc-btn, .dk-btn) {
+    height: 42px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+  }
+  & .btn--sm {
+    height: 38px;
+    padding: 0 16px;
+  }
+  & :is(.btn--primary, .dk-btn--primary, .hc-btn--primary) {
+    color: #fff;
+    background: var(--d-cobalt);
+    box-shadow: none;
+  }
+  & :is(.btn--primary, .dk-btn--primary, .hc-btn--primary):hover:not(:disabled) {
+    color: #fff;
+    background: var(--d-cobalt-dk);
+    box-shadow: none;
+  }
+  & :is(.btn--secondary, .btn--ghost, .hc-btn:not(.hc-btn--primary), .dk-btn--ask) {
+    color: var(--d-ink);
+    background: transparent;
+    box-shadow: inset 0 0 0 1px var(--d-ink);
+  }
+  & :is(.btn--secondary, .btn--ghost, .hc-btn:not(.hc-btn--primary), .dk-btn--ask):hover:not(:disabled) {
+    color: var(--d-ink);
+    background: rgba(14, 17, 22, 0.05);
+    box-shadow: inset 0 0 0 1px var(--d-ink);
+  }
+  & :is(.btn, .hc-btn, .dk-btn)::before,
+  & :is(.btn, .hc-btn, .dk-btn)::after {
+    content: none;
+  }
+
+  /* Tabs: a plain underline, Ink for the picked one */
+  & .hl-tabs {
+    display: flex;
+    width: auto;
+    gap: 24px;
+    padding: 0;
+    border-radius: 0;
+    background: none;
+    box-shadow: inset 0 -1px 0 var(--d-line);
+  }
+  & .hl-tabs button {
+    height: 38px;
+    padding: 0;
+    border-radius: 0;
+    font-size: 14px;
+    color: var(--d-tx-2);
+    background: none;
+    box-shadow: none;
+  }
+  & .hl-tabs button.is-on {
+    font-weight: 600;
+    color: var(--d-ink);
+    background: none;
+    box-shadow: none;
+  }
+  & .og-tabs__bar {
+    height: 2px;
+    border-radius: 0;
+    background: var(--d-ink);
+    box-shadow: none;
+  }
+
+  /* Filter tabs: separate pills, the picked one in Haze */
+  & .gtabs {
+    gap: 8px;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+  }
+  & :is(.gtabs__bubble, .gtabs__trace) {
+    display: none;
+  }
+  & .gtabs button {
+    height: 38px;
+    padding: 0 16px;
+    border-radius: 999px;
+    font-size: 14px;
+    color: var(--d-ink);
+    background: transparent;
+    box-shadow: inset 0 0 0 1px var(--d-line-2);
+  }
+  & .gtabs button.is-on {
+    font-weight: 600;
+    background: #dce6f6;
+    box-shadow: inset 0 0 0 1px var(--d-haze);
+  }
+  & .gtabs button.is-icon {
+    width: 38px;
+    padding: 0;
+  }
+  & :is(.rq-search, .filter-btn) {
+    height: 38px;
+    border-radius: 999px;
+    color: var(--d-ink);
+    background: #fff;
+    box-shadow: inset 0 0 0 1px var(--d-line-2);
+  }
+  & .filter-btn {
+    padding: 0 14px;
+  }
+  & .input {
+    height: 38px;
+    border-radius: 999px;
+    background: #fff;
+    box-shadow: inset 0 0 0 1px var(--d-line-2);
+  }
+  & .rq-tbl .rq-row3 {
+    box-shadow: inset 0 1px 0 var(--d-row);
+  }
+
+  /* Statuses: Approved and Declined as rings */
+  & :is(.rstatus--approved, .rstatus--declined) .rstatus__dot {
+    background: transparent;
+  }
+
+  /* Labels that wait on you: an Ember mono pill */
+  & .gfo-badge {
+    height: auto;
+    padding: 3px 8px;
+    border-radius: 999px;
+    font-family: var(--d-mono);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #a8381a;
+    background: #f6dfd4;
+    box-shadow: inset 0 0 0 1px rgba(232, 80, 31, 0.28);
+  }
+  & .gfo-badge::before,
+  & .gfo-badge::after {
+    content: none;
+  }
+
+  /* The consultation as the Cobalt band */
+  & .og-full > .hcs {
+    color: #fff;
+    background: var(--d-cobalt);
+    border-radius: 28px;
+  }
+  & .og-full > .hcs p {
+    color: rgba(255, 255, 255, 0.82);
+  }
+  & .og-full > .hcs .hcs-art {
+    color: #fff;
+  }
+  & .og-full > .hcs .hcs-go {
+    color: var(--d-ink);
+    background: var(--d-sand);
+    box-shadow: none;
+  }
+  & .og-full > .hcs .hcs-go:hover {
+    background: #fff;
+  }
+
+  /* Ask Dr.AI: a white box with a hairline, Cobalt send, white suggestion cards */
+  & .assistant--chats .chats-start .composer.composer--box,
+  & .assistant--chats .chats-start .composer.composer--box:is(.is-focus, .is-typing, .is-busy),
+  & .chat-drawer .composer {
+    background: #fff;
+    border-radius: 28px;
+    box-shadow: inset 0 0 0 1px #dcd6cb, 0 20px 40px -28px rgba(14, 17, 22, 0.3);
+  }
+  & .assistant--chats .chats-start .composer.composer--box.is-focus {
+    box-shadow: inset 0 0 0 1px var(--d-ink), 0 20px 40px -28px rgba(14, 17, 22, 0.3);
+  }
+  & :is(.composer__send, .composer__go):not(:disabled) {
+    padding: 0;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    color: #fff;
+    background: var(--d-cobalt);
+    box-shadow: none;
+  }
+  & :is(.chats-start__row, .chat-drawer .chats-start__row) {
+    background: #fff;
+    box-shadow: inset 0 0 0 1px var(--d-line);
+  }
+  & :is(.chats-start__row, .chat-drawer .chats-start__row):hover {
+    background: #fff;
+    box-shadow: inset 0 0 0 1px var(--d-ink);
+  }
+
+  /* Dr.AI's window: a white card */
+  & .dk--corner:not(.dl-scene) .dk-card,
+  & .dk--corner:not(.dl-scene) .dk-card.is-over-dark {
+    border-radius: 20px;
+    background: #fff;
+    box-shadow: inset 0 0 0 1px var(--d-line), 0 20px 40px -28px rgba(14, 17, 22, 0.35);
+  }
+}

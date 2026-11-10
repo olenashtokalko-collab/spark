@@ -943,7 +943,7 @@ const GPathsCtx = createContext<GPaths>(DEMO_PATHS);
 /** The credits on Home's head (5 Nov): plain text on one line: a small ring of what's left, the balance,
  *  "credits" and a chevron that turns up while the breakdown (with Top up) is open. No hover; a click opens and
  *  closes it, Escape or a click elsewhere closes it too. */
-export function HomeCredits() {
+export function HomeCredits({ look }: { /** 'top': the page's credits figure (the redesign directions): a mono label over the amount. */ look?: 'top' } = {}) {
   const { state } = useStore();
   const [open, setOpen] = useState(false);
   const [topUp, setTopUp] = useState(false);
@@ -964,12 +964,19 @@ export function HomeCredits() {
   }, [open]);
   return (
     <span ref={box} className={cx('hld-credits', open && 'is-open', left < total * 0.2 && 'is-low')}>
-      <button type="button" className="hld-credits__main" aria-expanded={open} aria-controls="hld-credits-card" onClick={() => setOpen((o) => !o)}>
-        <CreditRing left={left} total={total} size={16} stroke={2.5} />
-        <b>{usd(left)}</b>
-        <span>credits</span>
-        <ChevronDown size={14} strokeWidth={2} className="hld-credits__chev" aria-hidden />
-      </button>
+      {look === 'top' ? (
+        <button type="button" className="hld-credits__main hld-credits__main--top" aria-expanded={open} aria-controls="hld-credits-card" onClick={() => setOpen((o) => !o)}>
+          <span className="hld-credits__label">Credits · USD</span>
+          <b className="hld-credits__fig">{left.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</b>
+        </button>
+      ) : (
+        <button type="button" className="hld-credits__main" aria-expanded={open} aria-controls="hld-credits-card" onClick={() => setOpen((o) => !o)}>
+          <CreditRing left={left} total={total} size={16} stroke={2.5} />
+          <b>{usd(left)}</b>
+          <span>credits</span>
+          <ChevronDown size={14} strokeWidth={2} className="hld-credits__chev" aria-hidden />
+        </button>
+      )}
       {open && (
         <span className="hl-cind__card hld-credits__card" id="hld-credits-card" role="dialog" aria-label="Credits">
           <CreditsCard

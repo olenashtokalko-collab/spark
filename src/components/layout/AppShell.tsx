@@ -26,6 +26,7 @@ import { DrAiNavIcon, useDrAi } from '../ui/DrAi';
 import { DrAiDock } from '../../features/assistant/DrAiDock';
 import { fmtRelative } from '../../lib/format';
 import type { Notification } from '../../data/types';
+import { PageArtView, useArt } from '../../features/onboarding/EmptyArt';
 
 // Home is the start page after sign-in: the company, Spark's analysis and the work (feedback 23 Oct).
 // Chats is its own page, with the history in a column on the left and "New chat" on top of it.
@@ -212,6 +213,7 @@ function Notifications({ labels }: { labels?: boolean }) {
   const { state, actions } = useStore();
   const list = state.notifications.filter((n) => n.audience === 'client').sort((a, b) => b.at.localeCompare(a.at));
   const unread = list.filter((n) => !n.read).length;
+  const art = useArt();
   return (
     <Popover
       width={380}
@@ -240,6 +242,7 @@ function Notifications({ labels }: { labels?: boolean }) {
           </div>
           {list.length === 0 ? (
             <div className="notifs__empty">
+              <PageArtView v={art.notifs} small />
               You're all caught up.
             </div>
           ) : (

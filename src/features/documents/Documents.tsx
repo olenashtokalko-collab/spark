@@ -13,6 +13,7 @@ import { navigate } from '../../lib/router';
 import type { Doc, DocKind, Folder } from '../../data/types';
 import { downloadDoc } from './DocPreview';
 import { GlassTabs } from '../../components/ui/GlassTabs';
+import { PageArtView, useArt } from '../onboarding/EmptyArt';
 
 type KindFilter = 'all' | DocKind;
 type DateFilter = 'any' | 'week' | 'month';
@@ -23,6 +24,7 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
   const { state, actions } = useStore();
   const { openDoc } = useUI();
   const toast = useToast();
+  const art = useArt();
   const [q, setQ] = useState('');
   const [kind, setKind] = useState<KindFilter>('all');
   const [date, setDate] = useState<DateFilter>('any');
@@ -301,6 +303,7 @@ export function Documents({ folderId, docId }: { folderId?: string; docId?: stri
             (folder || searching || filtered) && !(teamRoot && !filtered) ? (
               <EmptyState
                 panel
+                art={<PageArtView v={searching || filtered ? art.search : art.files} />}
                 title={searching || filtered ? 'No files match these filters.' : canUpload ? 'No files added.' : 'No files yet.'}
                 body={
                   searching || filtered

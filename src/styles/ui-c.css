@@ -1,0 +1,403 @@
+/* ==== Direction B (data-ui='c'): glass as interface, after row B of "Spark Redesign Directions" ==============
+   Every control follows one recipe: a frosted pearl body, a thick bright rim, the brand spectrum (Cobalt into Ember)
+   caught in the edge, Ink words on top. Cards are frosted slabs; actions are glass orbs lit from inside; status
+   dots glow. A light sidebar on the Sand ground. The type system (mono labels, Doto figures, heavy titles) and the
+   credits at the top are shared with Direction A (ui-b.css). */
+:root[data-ui='c'][data-theme][data-theme] {
+  /* The pill recipe */
+  --g-body: linear-gradient(180deg, rgba(250, 248, 247, 0.96) 0%, rgba(241, 237, 235, 0.94) 40%, rgba(237, 232, 232, 0.94) 75%, rgba(244, 240, 240, 0.96) 100%);
+  --g-pill:
+    0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 0 0 0 3px rgba(255, 251, 253, 0.98),
+    inset 0 0 0 6px rgba(248, 245, 248, 0.7),
+    inset 0 0 1px 7px rgba(182, 172, 200, 0.36),
+    inset 0 10px 12px -10px #fff,
+    0 6px 14px -10px rgba(80, 60, 120, 0.25);
+  --g-pill-lg:
+    0 0 0 1px rgba(255, 255, 255, 0.95),
+    inset 0 0 0 4px rgba(255, 251, 253, 0.98),
+    inset 0 0 0 9px rgba(248, 245, 248, 0.75),
+    inset 0 0 1px 10px rgba(182, 172, 200, 0.42),
+    inset 0 14px 16px -12px rgba(255, 255, 255, 0.95),
+    0 8px 18px -14px rgba(80, 60, 120, 0.22);
+  --g-rim: radial-gradient(36px 22px at 0% 78%, rgba(120, 135, 235, 0.5), rgba(120, 135, 235, 0) 80%),
+    radial-gradient(36px 22px at 100% 72%, rgba(240, 150, 110, 0.45), rgba(240, 150, 110, 0) 80%),
+    rgba(176, 166, 192, 0.42);
+  /* The slab recipe */
+  --g-slab-body: linear-gradient(180deg, rgba(252, 250, 249, 0.9), rgba(246, 243, 241, 0.85));
+  --g-slab:
+    0 0 0 1px rgba(255, 255, 255, 0.95),
+    0 0 0 2.5px rgba(176, 166, 192, 0.3),
+    inset 0 0 0 4px rgba(255, 255, 255, 0.85),
+    inset 0 0 1px 5px rgba(182, 172, 200, 0.22),
+    inset 0 14px 18px -14px #fff,
+    0 26px 46px -34px rgba(60, 50, 120, 0.3);
+  --g-spectrum: linear-gradient(90deg, #3e5cff, #9a6bff 30%, #f07bd0 58%, #ff7a40 82%, #ffb070);
+
+  /* ---- The sidebar: light, a hairline to the page, the picked item a glass pill ---------------------------- */
+  & .shell.shell--rail-open {
+    grid-template-columns: 228px minmax(0, 1fr);
+  }
+  & .rail {
+    top: 0;
+    width: 228px;
+    height: 100vh;
+    margin: 0;
+    padding: 26px 16px 18px;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: inset -1px 0 0 rgba(14, 17, 22, 0.07);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+  & :is(.rail__btn, .rail__me) {
+    position: relative;
+    height: 40px;
+    padding: 0 14px;
+    border-radius: 999px;
+    font-size: 14px;
+    color: var(--d-ink);
+    background: transparent;
+    box-shadow: none;
+  }
+  & :is(.rail__btn, .rail__me):hover {
+    background: rgba(14, 17, 22, 0.04);
+    box-shadow: none;
+  }
+  & .rail__btn.is-active,
+  & .rail__btn.is-active:hover {
+    font-weight: 700;
+    background: var(--g-body);
+    box-shadow: var(--g-pill);
+  }
+  & .rail__btn--drai {
+    height: 48px;
+    padding-left: 6px;
+  }
+  & .rail__btn--drai img.drai-head {
+    width: 34px;
+    height: 34px;
+    border-radius: 11px;
+  }
+  & .rail__rule {
+    background: rgba(14, 17, 22, 0.07);
+  }
+  & .rail__me-sub {
+    font-family: var(--d-mono);
+    font-size: 10px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--d-tx-2);
+  }
+  & .rail__me .avatar {
+    color: var(--d-ink);
+    background: var(--d-haze);
+  }
+
+  /* ---- Cards: frosted slabs, 30px corners ------------------------------------------------------------------ */
+  & :is(.hld-card, .hc-card, .anc, .rq-list, .block, .side-card, .scope-tbl, .tm-list, .gfo--tile, .file-card, .dk-card) {
+    border-radius: 30px;
+    background: var(--g-slab-body);
+    box-shadow: var(--g-slab);
+  }
+  & :is(.hld-card, .hc-card, .anc, .rq-list, .block, .side-card, .scope-tbl, .tm-list, .gfo--tile, .file-card, .dk-card)::before,
+  & :is(.hld-card, .hc-card, .gfo--tile, .dk-card)::after {
+    content: none;
+  }
+  & :is(.hc-card, .og-score, .gfo--tile):hover {
+    transform: translateY(-2px);
+    background: var(--g-slab-body);
+    box-shadow: var(--g-slab), 0 30px 50px -30px rgba(60, 50, 120, 0.4);
+  }
+  & .hld-card .hld-card,
+  & .hc-latest__list {
+    border-radius: 0;
+    background: none;
+    box-shadow: none;
+  }
+  & :is(.hl-latest__row, .hd-issuecard) {
+    border-radius: 0;
+    background: none;
+    box-shadow: inset 0 1px 0 rgba(14, 17, 22, 0.06);
+  }
+  & :is(.hl-latest__row, .hd-issuecard):hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+
+  /* ---- Controls: one glass pill recipe for every button, tab and field ------------------------------------- */
+  & :is(.btn, .hc-btn, .dk-btn, .filter-btn) {
+    position: relative;
+    height: 42px;
+    padding: 0 20px;
+    border: 0;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--d-ink);
+    background: var(--g-body);
+    box-shadow: var(--g-pill);
+  }
+  & :is(.btn, .hc-btn, .dk-btn, .filter-btn)::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    padding: 2px;
+    border-radius: inherit;
+    background: var(--g-rim);
+    -webkit-mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+    filter: blur(0.35px);
+    pointer-events: none;
+  }
+  & :is(.btn, .hc-btn, .dk-btn, .filter-btn)::after {
+    content: none;
+  }
+  & :is(.btn, .hc-btn, .dk-btn, .filter-btn):hover:not(:disabled) {
+    color: var(--d-ink);
+    background: linear-gradient(180deg, #fff 0%, rgba(246, 243, 241, 0.96) 60%, rgba(250, 247, 246, 0.98) 100%);
+    box-shadow: var(--g-pill), 0 10px 18px -12px rgba(80, 60, 120, 0.35);
+  }
+  /* The main action: the same glass, bolder, the spectrum glowing under it */
+  & :is(.btn--primary, .dk-btn--primary, .hc-btn--primary) {
+    font-weight: 700;
+    box-shadow: var(--g-pill), 0 10px 20px -12px rgba(120, 110, 255, 0.55), 12px 8px 20px -14px rgba(255, 120, 60, 0.45);
+  }
+  & :is(.btn--primary, .dk-btn--primary, .hc-btn--primary):hover:not(:disabled) {
+    box-shadow: var(--g-pill), 0 14px 24px -12px rgba(120, 110, 255, 0.65), 14px 10px 22px -14px rgba(255, 120, 60, 0.55);
+  }
+  & .btn--sm {
+    height: 38px;
+    padding: 0 16px;
+  }
+  & .filter-btn {
+    height: 38px;
+    padding: 0 14px;
+    font-weight: 500;
+  }
+
+  /* Fields: the large glass pill, a pool of the spectrum under it */
+  & :is(.input, .rq-search) {
+    height: 44px;
+    border-radius: 999px;
+    background: var(--g-body);
+    box-shadow: var(--g-pill);
+  }
+  & .rq-search .input,
+  & .rq-search input {
+    background: none;
+    box-shadow: none;
+  }
+
+  /* Tabs: a sunken track, the picked tab a glass pill */
+  & .hl-tabs {
+    display: inline-flex;
+    width: fit-content;
+    gap: 4px;
+    padding: 4px;
+    border-radius: 999px;
+    background: rgba(14, 17, 22, 0.035);
+    box-shadow: inset 0 2px 5px rgba(14, 17, 22, 0.1), inset 0 -1px 0 rgba(255, 255, 255, 0.95), 0 1px 0 rgba(255, 255, 255, 0.9);
+  }
+  & .hl-tabs button {
+    height: 36px;
+    padding: 0 18px;
+    border-radius: 999px;
+    font-size: 14px;
+    color: var(--d-tx-2);
+    background: none;
+    box-shadow: none;
+  }
+  & .hl-tabs button.is-on {
+    font-weight: 700;
+    color: var(--d-ink);
+    background: var(--g-body);
+    box-shadow: var(--g-pill);
+  }
+  & .og-tabs__bar {
+    display: none;
+  }
+
+  /* Filter tabs: plain words, the picked one a glass pill */
+  & .gtabs {
+    gap: 6px;
+    padding: 0;
+    background: none;
+    box-shadow: none;
+  }
+  & :is(.gtabs__bubble, .gtabs__trace) {
+    display: none;
+  }
+  & .gtabs button {
+    height: 40px;
+    padding: 0 18px;
+    border-radius: 999px;
+    font-size: 14px;
+    font-weight: 500;
+    color: var(--d-ink);
+    background: none;
+    box-shadow: none;
+  }
+  & .gtabs button.is-on {
+    font-weight: 700;
+    background: var(--g-body);
+    box-shadow: var(--g-pill);
+  }
+  & .gtabs button.is-icon {
+    width: 40px;
+    padding: 0;
+  }
+  /* "Needs you" count: a small glowing orb */
+  & .gtabs__n.is-you {
+    display: inline-grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-family: var(--d-mono);
+    font-size: 11px;
+    color: #fff;
+    background: radial-gradient(75% 75% at 55% 40%, #e8501f 0%, rgba(232, 80, 31, 0.85) 55%, rgba(30, 59, 214, 0.55) 100%);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.55), 0 0 0 2px rgba(255, 255, 255, 0.55), 0 4px 10px -4px rgba(232, 80, 31, 0.6);
+  }
+
+  /* ---- Orbs: send and the like, a glass sphere lit from inside by Ember and Cobalt -------------------------- */
+  & :is(.composer__send, .composer__go):not(:disabled) {
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    color: #fff;
+    background:
+      radial-gradient(48% 48% at 64% 36%, #e8501f 0%, rgba(232, 80, 31, 0.85) 35%, rgba(232, 80, 31, 0) 75%),
+      radial-gradient(52% 52% at 30% 76%, #1e3bd6 0%, rgba(30, 59, 214, 0.75) 35%, rgba(30, 59, 214, 0) 78%),
+      radial-gradient(60% 60% at 50% 50%, #f0607a 0%, rgba(240, 96, 122, 0) 70%),
+      #dce2f6;
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+      inset 0 1px 2px rgba(255, 255, 255, 0.7),
+      0 0 0 3px rgba(255, 255, 255, 0.55),
+      0 0 0 4px rgba(190, 180, 210, 0.25),
+      6px 10px 20px -8px rgba(232, 80, 31, 0.55),
+      -6px 10px 20px -8px rgba(30, 59, 214, 0.45);
+  }
+
+  /* ---- Statuses: a glowing orb dot and the word ----------------------------------------------------------- */
+  & .rstatus .rstatus__dot {
+    width: 12px;
+    height: 12px;
+    box-shadow: 0 0 0 2px rgba(var(--c), 0.14), 0 0 8px rgba(var(--c), 0.45);
+  }
+  & .rstatus--in_review {
+    --c: 200, 216, 240;
+  }
+  & .rstatus--in_review .rstatus__dot {
+    box-shadow: 0 0 0 1px rgba(14, 17, 22, 0.08);
+  }
+  & .rstatus.rstatus--delivered .rstatus__dot {
+    box-shadow: none;
+  }
+  & .rstatus:is(.rstatus--declined, .rstatus--superseded) .rstatus__dot {
+    background: transparent;
+    box-shadow: inset 0 0 0 2px #b8b3ab;
+  }
+
+  /* Labels that wait on you: a small glass pill with a glowing dot */
+  & .gfo-badge {
+    height: 26px;
+    padding: 0 12px 0 10px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 600;
+    background: var(--g-body);
+    box-shadow: var(--g-pill);
+  }
+  & .gfo-badge::before {
+    box-shadow: 0 0 0 2px rgba(232, 80, 31, 0.14), 0 0 8px rgba(232, 80, 31, 0.45);
+  }
+  & .gfo-badge::after {
+    content: none;
+  }
+
+  /* ---- Home --------------------------------------------------------------------------------------------- */
+  /* The consultation in AI glass: Cobalt-lit, a bright rim, the glow spilling round it */
+  & .og-full > .hcs {
+    border-radius: 30px;
+    color: var(--d-ink);
+    background: linear-gradient(105deg, rgba(150, 178, 255, 0.97) 0%, rgba(204, 208, 255, 0.93) 50%, rgba(208, 184, 255, 0.97) 100%);
+    box-shadow:
+      0 0 0 1px rgba(255, 255, 255, 0.9),
+      inset 0 0 0 4px rgba(255, 255, 255, 0.75),
+      inset 0 0 0 9px rgba(255, 255, 255, 0.22),
+      inset 0 0 1px 10px rgba(130, 120, 230, 0.28),
+      inset 0 14px 16px -12px rgba(255, 255, 255, 0.95),
+      0 0 26px rgba(150, 120, 255, 0.3),
+      0 14px 34px -10px rgba(120, 110, 255, 0.45);
+  }
+  & .og-full > .hcs p {
+    color: var(--d-tx-3);
+  }
+  & .og-full > .hcs .hcs-art {
+    color: var(--d-ink);
+  }
+  & .og-full > .hcs .hcs-go {
+    color: var(--d-ink);
+    background: var(--g-body);
+    box-shadow: var(--g-pill);
+  }
+
+  /* ---- Ask Dr.AI: the box a glass slab with the spectrum pooled under it; the suggestions glass slabs -------- */
+  & .assistant--chats .chats-start .composer.composer--box,
+  & .assistant--chats .chats-start .composer.composer--box:is(.is-focus, .is-typing, .is-busy),
+  & .chat-drawer .composer {
+    border-radius: 30px;
+    background: var(--g-slab-body);
+    box-shadow: var(--g-slab), 0 22px 30px -20px rgba(150, 110, 255, 0.45), 18px 18px 30px -22px rgba(255, 122, 64, 0.45);
+  }
+  & :is(.chats-start__row, .chat-drawer .chats-start__row) {
+    border-radius: 24px;
+    background: var(--g-slab-body);
+    box-shadow: var(--g-slab);
+  }
+  & :is(.chats-start__row, .chat-drawer .chats-start__row):hover {
+    background: #fff;
+    box-shadow: var(--g-slab), 0 14px 26px -16px rgba(120, 110, 255, 0.45);
+  }
+
+  /* Dr.AI's window: a glass slab */
+  & .dk--corner:not(.dl-scene) .dk-card,
+  & .dk--corner:not(.dl-scene) .dk-card.is-over-dark {
+    border-radius: 26px;
+    background: var(--g-slab-body);
+    box-shadow: var(--g-slab);
+  }
+
+  /* Home's tabs (their glass-UI rules are very specific): the track and the picked glass pill */
+  & .og-tabs.og-tabs.og-tabs.og-tabs.og-tabs.og-tabs.og-tabs button {
+    height: 36px;
+    padding: 0 18px;
+    border-radius: 999px;
+  }
+  & .og-tabs.og-tabs.og-tabs.og-tabs.og-tabs.og-tabs.og-tabs button.is-on {
+    background: var(--g-body);
+    box-shadow: var(--g-pill);
+  }
+  & .og-tabs.og-tabs.og-tabs.og-tabs.og-tabs.og-tabs.og-tabs button:not(.is-on):hover {
+    background: rgba(255, 255, 255, 0.5);
+  }
+  & .og-tabs button::after {
+    content: none;
+  }
+  & .rail {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+
+  & :is(.composer__send, .composer__go):not(:disabled)::before {
+    content: none;
+  }
+  & :is(.composer__send, .composer__go):not(:disabled) {
+    padding: 0;
+  }
+}

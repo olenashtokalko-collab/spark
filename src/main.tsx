@@ -10,6 +10,10 @@ import './styles/base.css';
 import './styles/features.css';
 import './styles/brand-a.css';
 import './styles/glass.css';
+// The UI variants' layers (lib/uiVariant): the shared type and Direction A (b), then Direction B (c). Loaded last.
+import './styles/ui-b.css';
+import './styles/ui-c.css';
+import { UiVariantRoot } from './lib/uiVariant';
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
@@ -17,6 +21,7 @@ createRoot(document.getElementById('root')!).render(
       <ToastProvider>
         <UIProvider>
           <App />
+          <UiVariantRoot />
         </UIProvider>
       </ToastProvider>
     </StoreProvider>

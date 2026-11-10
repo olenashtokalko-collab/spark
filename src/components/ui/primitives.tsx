@@ -1,4 +1,4 @@
-import { forwardRef, useId, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react';
+import { forwardRef, useId, useLayoutEffect, useRef, useState, type ButtonHTMLAttributes, type InputHTMLAttributes, type ReactNode, type SelectHTMLAttributes, type TextareaHTMLAttributes } from 'react';
 import type { LucideIcon } from 'lucide-react';
 import { Loader2 } from 'lucide-react';
 import type { Person } from '../../data/types';
@@ -161,6 +161,35 @@ export function Tabs<T extends string>({ value, onChange, items, className }: { 
         </button>
       ))}
     </div>
+  );
+}
+
+// Home's tabs (Brand Analysis), and the request page's since 10 Nov: the words, one Ink underline that slides to the
+// tab you pick, a hairline under the row.
+export function SlideTabs<T extends string>({ value, onChange, items, label, className }: { value: T; onChange: (v: T) => void; items: { value: T; label: string; count?: number }[]; label: string; className?: string }) {
+  const nav = useRef<HTMLElement>(null);
+  const [bar, setBar] = useState<{ left: number; width: number } | null>(null);
+  const shape = items.map((it) => `${it.value}:${it.count ?? ''}`).join();
+  useLayoutEffect(() => {
+    const place = () => {
+      const on = nav.current?.querySelector<HTMLElement>('button.is-on');
+      if (on) setBar({ left: on.offsetLeft, width: on.offsetWidth });
+    };
+    place();
+    document.fonts?.ready.then(place);
+    window.addEventListener('resize', place);
+    return () => window.removeEventListener('resize', place);
+  }, [value, shape]);
+  return (
+    <nav ref={nav} className={cx('hl-tabs og-tabs', className)} aria-label={label}>
+      {bar && <span className="og-tabs__bar" style={{ transform: `translateX(${bar.left}px)`, width: bar.width }} aria-hidden />}
+      {items.map((it) => (
+        <button key={it.value} type="button" className={cx(value === it.value && 'is-on')} aria-current={value === it.value ? 'page' : undefined} onClick={() => onChange(it.value)}>
+          {it.label}
+          {it.count !== undefined && <span className="hl-count">{it.count}</span>}
+        </button>
+      ))}
+    </nav>
   );
 }
 

@@ -10,6 +10,7 @@ import { createPortal } from 'react-dom';
 import { ArrowRight, Maximize2, X } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { navigate } from '../../lib/router';
+import { motionMs } from '../../lib/dockMotion';
 import { Mascot } from '../../components/ui/Mascot';
 import { SparkDisc } from '../../components/ui/BrandSpark';
 import { Composer } from './Composer';
@@ -50,11 +51,32 @@ export function ChatDrawer({ open, onClose, initial, topic, top }: { open: boole
     navigate(`/assistant/${id}`);
   };
 
-  if (!open) return null;
+  // Stays a moment after closing so it can go away as it came (#/demo/dock-motion, 10 Nov), not vanish.
+  const [shown, setShown] = useState(open);
+  const [leaving, setLeaving] = useState(false);
+  if (open && (!shown || leaving)) {
+    setShown(true);
+    setLeaving(false);
+  }
+  if (!open && shown && !leaving) {
+    const ms = motionMs('drawer', 'out');
+    if (ms) setLeaving(true);
+    else setShown(false);
+  }
+  useEffect(() => {
+    if (!leaving) return;
+    const t = setTimeout(() => {
+      setShown(false);
+      setLeaving(false);
+    }, motionMs('drawer', 'out'));
+    return () => clearTimeout(t);
+  }, [leaving]);
+
+  if (!shown) return null;
   return createPortal(
     <>
-      <div className="chat-drawer__scrim" onClick={onClose} />
-      <aside className="chat-drawer" role="dialog" aria-modal="true" aria-label="New chat with Spark">
+      <div className={'chat-drawer__scrim' + (leaving ? ' is-leaving' : '')} onClick={onClose} />
+      <aside className={'chat-drawer' + (leaving ? ' is-leaving' : '')} role="dialog" aria-modal="true" aria-label="New chat with Spark">
         <header className="chat-drawer__head">
           {/* Dr.AI on: the title alone, "Ask Dr.AI"; he stands in the panel below, so no small head here (5 Nov). */}
           {!drai && <SparkDisc size={28} />}

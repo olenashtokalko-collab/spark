@@ -40,8 +40,10 @@ import { HighlightLooksDemo } from './features/demo/HighlightLooksDemo';
 import { SparkiBubbleDemo } from './features/demo/SparkiBubbleDemo';
 import { StatusGlassDemo } from './features/demo/StatusGlassDemo';
 import { IntroExitDemo } from './features/demo/IntroExitDemo';
+import { IntroBubbleDemo } from './features/demo/IntroBubbleDemo';
 import { AskPillDemo } from './features/demo/AskPillDemo';
 import { EmptyArtDemo } from './features/demo/EmptyArtDemo';
+import { DockMotionDemo } from './features/demo/DockMotionDemo';
 import { OnboardingHome } from './features/onboarding/Onboarding';
 import { MascotDemo } from './features/demo/MascotDemo';
 import { SignInDemo } from './features/demo/SignInDemo';
@@ -134,8 +136,10 @@ function Screen() {
       if (a === 'sparki-bubbles') return <SparkiBubbleDemo />;
       if (a === 'status-glass') return <StatusGlassDemo />;
       if (a === 'intro-exit') return <IntroExitDemo />;
+      if (a === 'intro-bubble') return <IntroBubbleDemo />;
       if (a === 'ask-pill') return <AskPillDemo />;
       if (a === 'empty-art') return <EmptyArtDemo />;
+      if (a === 'dock-motion') return <DockMotionDemo />;
       if (a === 'mascot') return <MascotDemo />;
       break;
     case 'reset':

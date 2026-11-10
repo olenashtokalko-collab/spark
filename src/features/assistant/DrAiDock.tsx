@@ -18,6 +18,7 @@ import { DrAiHead } from '../../components/ui/DrAi';
 import { MascotClip } from '../demo/MascotDemo';
 import { useModel } from '../home/HomeLayouts';
 import { ChatDrawer } from './ChatDrawer';
+import { DOCK_CMD, motionMs, type DockCmd } from '../../lib/dockMotion';
 
 export const DOCK_LOOKS = [
   { v: 'corner', label: 'A · Corner', note: 'He stands in the lower right corner of every page; his message sits in a glass card at his side.' },
@@ -229,6 +230,38 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
   const [i, setI] = useState(0);
   const [folded, setFolded] = useState(false);
   const [chat, setChat] = useState(false);
+  // Folding and opening play as a move (#/demo/dock-motion, 10 Nov): the window stays while it folds away, and
+  // opens with a class for the look picked there.
+  // 'settled' after opening keeps the window from replaying its first-visit entrance once the move's class goes.
+  const [move, setMove] = useState<'folding' | 'opening' | 'settled' | null>(null);
+  const doFold = () => {
+    const ms = motionMs('fold', 'out');
+    if (!ms) return setFolded(true);
+    setMove('folding');
+    setTimeout(() => {
+      setFolded(true);
+      setMove(null);
+    }, ms);
+  };
+  const doUnfold = () => {
+    setFolded(false);
+    const ms = motionMs('fold', 'in');
+    if (!ms) return;
+    setMove('opening');
+    setTimeout(() => setMove((m) => (m === 'opening' ? 'settled' : m)), ms);
+  };
+  // The demo's buttons play a move on this window.
+  useEffect(() => {
+    const f = (e: Event) => {
+      const c = (e as CustomEvent<DockCmd>).detail;
+      if (c === 'fold' && !folded && move !== 'folding') doFold();
+      if (c === 'open' && folded) doUnfold();
+      if (c === 'chat') setChat(true);
+      if (c === 'close-chat') setChat(false);
+    };
+    window.addEventListener(DOCK_CMD, f);
+    return () => window.removeEventListener(DOCK_CMD, f);
+  });
   // Drag Dr.AI aside by the mascot, as Sparki (9 Nov, review); the window comes with him. Kept for the visit.
   const [off, setOff] = useState(() => dockOff);
   const grab = useRef<{ x: number; y: number; dx: number; dy: number } | null>(null);
@@ -316,18 +349,30 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
   if (ob.on) {
     const step = STEPS[ob.current];
     const ask = <ChatDrawer open={chat} onClose={() => setChat(false)} />;
-    if (chat) return ask;
+    // The panel keeps its place in every return, so it can close with its move rather than be swapped out.
+    if (chat)
+      return (
+        <>
+          {null}
+          {null}
+          {ask}
+        </>
+      );
     if (folded)
       return (
-        <button type="button" className="dk-mini dk-mini--corner" onClick={() => setFolded(false)} aria-label="Dr.AI: getting started">
-          <DrAiHead size={44} />
-          <b className="dk-mini__n">{STEPS.length - ob.count}</b>
-        </button>
+        <>
+          {null}
+          <button type="button" className="dk-mini dk-mini--corner" onClick={doUnfold} aria-label="Dr.AI: getting started">
+            <DrAiHead size={44} />
+            <b className="dk-mini__n">{STEPS.length - ob.count}</b>
+          </button>
+          {ask}
+        </>
       );
     return (
       <>
         {guide}
-        <div className="dk dk--corner dk--ob" style={dragStyle}>
+        <div className={cx('dk dk--corner dk--ob', move && `is-${move}`)} style={dragStyle}>
           {party && <Confetti />}
           <div className={cx('dk-card', just !== null && 'is-cheer', party && 'is-cheer')}>
             <header className="dk-card__head">
@@ -336,7 +381,7 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
                 {ob.count}/{STEPS.length}
               </span>
               <span className="dk-card__sp" />
-              <button type="button" className="dk-fold" onClick={() => setFolded(true)} aria-label="Fold">
+              <button type="button" className="dk-fold" onClick={doFold} aria-label="Fold">
                 <Minus size={15} />
               </button>
             </header>
@@ -416,7 +461,7 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
   );
   const tag = msg.tag ? <span className={cx('dk-tag', `dk-tag--${msg.tone}`)}>{msg.tag}</span> : null;
   const fold = (
-    <button type="button" className="dk-fold" onClick={() => setFolded(true)} aria-label="Fold">
+    <button type="button" className="dk-fold" onClick={doFold} aria-label="Fold">
       <Minus size={15} />
     </button>
   );
@@ -424,12 +469,18 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
   const drawer = <ChatDrawer open={chat} onClose={() => setChat(false)} />;
 
   // While the panel is open he stands in it, so the dock steps aside.
-  if (chat) return drawer;
+  if (chat)
+    return (
+      <>
+        {null}
+        {drawer}
+      </>
+    );
 
   if (folded)
     return (
       <>
-        <button type="button" className={cx('dk-mini', `dk-mini--${look}`)} onClick={() => setFolded(false)} aria-label={`Dr.AI: ${msgs.length} need you`}>
+        <button type="button" className={cx('dk-mini', `dk-mini--${look}`)} onClick={doUnfold} aria-label={`Dr.AI: ${msgs.length} need you`}>
           <DrAiHead size={look === 'corner' ? 44 : 26} />
           {look !== 'corner' && <span>{msgs.length} things need you</span>}
           <b className="dk-mini__n">{msgs.length}</b>
@@ -443,7 +494,7 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
       <>
         {/* What needs you, in the onboarding window's shape (9 Nov): a title and a count, one segment per thing (the
             one shown lit, a click opens another), then its tag, Dr.AI's line and the way to act on it. */}
-        <div className="dk dk--corner dk--needs" style={dragStyle}>
+        <div className={cx('dk dk--corner dk--needs', move && `is-${move}`)} style={dragStyle}>
           <div className="dk-card">
             {/* The title says what kind of message it is; the count sits between the arrows (9 Nov, review), no
                 stepper: these aren't steps. */}
