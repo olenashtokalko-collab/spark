@@ -16,7 +16,7 @@ import * as sfx from '../demo/welcome/sfx';
 import '../../styles/welcome-liquid.css';
 
 export type Look = 'metal' | 'noor';
-type Step = 'typing' | 'ready' | 'morph' | 'greet' | 'land' | 'corner';
+type Step = 'gate' | 'typing' | 'ready' | 'morph' | 'greet' | 'land' | 'corner';
 
 export const LOOKS: { v: Look; label: string; note: string }[] = [
   { v: 'metal', label: 'A · Liquid metal, Noor', note: 'The reference’s material: liquid metal poured into the card, its light tinted with the spectrum. One family with the metal buttons.' },
@@ -321,9 +321,10 @@ function Welcome({ look, onClose, who = DEMO_WHO, onSeen, back = false }: { look
   const LINES = linesFor(who, back);
   const greet = back ? GREETING_BACK : GREETING;
   const pref = sfx.soundPref();
-  // Sound is on, and the welcome no longer asks (13 Nov, review): it opens straight on the card. Only someone who
-  // turned it off before arrives silent, and the corner's Sound on/off turns it off again.
-  const [step, setStep] = useState<Step>('typing');
+  // Sound is on and the welcome no longer asks (13 Nov, review). It can't simply start, though: a browser plays
+  // nothing until the visitor has clicked or pressed a key on the page, and the question used to be that click.
+  // So the card waits, asking for nothing but a click, and the typing is heard from its first letter.
+  const [step, setStep] = useState<Step>('gate');
   const [surfaceReady, setSurfaceReady] = useState(look === 'noor');
   const [speaking, setSpeaking] = useState(false);
   const [orb, setOrb] = useState<'in' | 'pop' | null>(null);
@@ -355,8 +356,25 @@ function Welcome({ look, onClose, who = DEMO_WHO, onSeen, back = false }: { look
   const [sound, setSoundState] = useState(pref !== false);
 
   useEffect(() => {
-    if (pref !== false) sfx.setSound(true); // on still needs a click to start audio; Start wakes it
+    if (pref !== false) sfx.setSound(true); // on; the click that begins is what lets the browser play it
   }, [pref]);
+
+  /** The first click or key anywhere begins it, and is the gesture the browser wants before any sound. Skip intro
+   *  keeps to itself, so it can leave without starting what it is skipping. */
+  useEffect(() => {
+    if (step !== 'gate') return;
+    const go = (e: Event) => {
+      if ((e.target as HTMLElement | null)?.closest?.('.wl-skip')) return;
+      sfx.setSound(pref !== false);
+      setStep('typing');
+    };
+    window.addEventListener('pointerdown', go);
+    window.addEventListener('keydown', go);
+    return () => {
+      window.removeEventListener('pointerdown', go);
+      window.removeEventListener('keydown', go);
+    };
+  }, [step, pref]);
 
   /** The corner's Sound on/off, for turning it off (and back on) without being asked first. */
   const toggleSound = () => {
@@ -542,6 +560,8 @@ function Welcome({ look, onClose, who = DEMO_WHO, onSeen, back = false }: { look
                     </p>
                   ))}
                 </div>
+                {/* nothing is asked, only a click, which is also what lets the browser play his keys (13 Nov) */}
+                {step === 'gate' && <p className="wl-begin">Click anywhere to begin</p>}
                 <div className={cx('wl-bar', step === 'ready' && 'is-on')}>
                   {/* the brand's line, not an instruction (13 Nov, review: "Every idea starts with a human", Brand book
                       p.4); Return still starts it, as the ⏎ on Start shows, and a screen reader hears so */}

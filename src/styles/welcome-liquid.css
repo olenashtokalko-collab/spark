@@ -186,6 +186,42 @@
   transform: none;
   pointer-events: auto;
 }
+/* what the card asks for before it begins (13 Nov): one quiet line in the terminal's own face, where the bar will
+   be, breathing so it reads as waiting rather than as a label */
+.wl-begin {
+  position: absolute;
+  left: var(--inset);
+  right: var(--inset);
+  bottom: var(--inset);
+  margin: 0;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: rgba(255, 255, 255, 0.82);
+  font-family: var(--font-mono, ui-monospace, monospace);
+  font-size: 13px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  text-shadow: 0 1px 10px rgba(14, 17, 22, 0.25);
+  animation: wl-breathe 2.6s ease-in-out infinite;
+}
+@keyframes wl-breathe {
+  0%,
+  100% {
+    opacity: 0.55;
+  }
+  50% {
+    opacity: 1;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .wl-begin {
+    animation: none;
+    opacity: 0.85;
+  }
+}
+
 /* the brand's line in the bar (13 Nov): a shade firmer than the old hint, so it reads at AA on the light glass */
 .wl-bar__line {
   color: rgba(14, 17, 22, 0.72);
