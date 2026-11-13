@@ -65,17 +65,15 @@ export interface State {
 // The onboarding build (VITE_ONBOARDING_ONLY=1) can also show the portal as it is today, with a company's data
 // (10 Nov: a switch at the foot of spark-lead-preview, Onboarding or Current). The pick lives in this browser; each
 // view keeps its own saved state, so going back and forth doesn't mix them.
-export const ONBOARDING_BUILD = import.meta.env.VITE_ONBOARDING_ONLY === '1';
+// Locally too (12 Nov, review): the same switch on localhost, to work on Home with a company's numbers, reports,
+// requests and chats (Current) beside the onboarding.
+export const ONBOARDING_BUILD = import.meta.env.VITE_ONBOARDING_ONLY === '1' || import.meta.env.DEV;
 export type PortalView = 'onboarding' | 'current';
 export const VIEW_KEY = 'spark-portal-view';
-export const PORTAL_VIEW: PortalView = (() => {
-  if (!ONBOARDING_BUILD) return 'current';
-  try {
-    return localStorage.getItem(VIEW_KEY) === 'current' ? 'current' : 'onboarding';
-  } catch {
-    return 'onboarding';
-  }
-})();
+// Current only (13 Nov, review): the onboarding view is no longer offered (with some sections closed, a client
+// couldn't find its empty states; they're on #/empty-states instead), so every visit, a saved Onboarding too, opens on
+// Current. The onboarding code stays.
+export const PORTAL_VIEW: PortalView = ((): PortalView => 'current')();
 export const STORAGE_KEY = ONBOARDING_BUILD && PORTAL_VIEW === 'current' ? 'spark-portal-v10-current' : 'spark-portal-v10';
 /** The one folder the client's team uploads to (feedback 21 Oct). Every other folder is Spark's, view only. */
 export const TEAM_FOLDER = 'f-uploads';
@@ -92,8 +90,9 @@ const seedState = (): State => ({
   people: seed.people,
   invitations: seed.invitations,
   brand: seed.brand,
-  // Prototype: some of the free 100 already spent on chats, so the indicator has something to show.
-  credits: 64.2,
+  // the full free 100 (13 Nov, review: "when they come in they haven't spent on any report yet; all we show them is
+  // free for now"), the same on every layout
+  credits: 100,
   creditsTotal: 100,
   folders: seed.folders,
   docs: seed.docs,
@@ -180,6 +179,8 @@ function loadSaved(): State {
       if (saved.onboarding) return { ...seed, ...saved, theme: 'sand', brand: seed.brand };
       // Light is the only theme for now (dark is switched off); saved demos open in it too.
       saved.theme = 'sand';
+      // the balance once seeded as 64.20, then 64, is the full 100 now (13 Nov, review: nothing spent yet)
+      if (saved.credits === 64.2 || saved.credits === 64) saved.credits = 100;
       // The company's profile is Spark's and the portal can't edit it, so its copy always comes from the seed.
       return { ...seed, ...saved, brand: seed.brand, ...(folders && { folders }), ...(requests && { requests }), ...(proposals && { proposals }), ...(notifications && { notifications }), ...(docs && { docs }) };
     }
@@ -666,6 +667,8 @@ function useStoreValue() {
   }, [set]);
   const seeDoc = useCallback((id: string) => set((s) => (s.seenDocs.includes(id) ? {} : { seenDocs: [...s.seenDocs, id] })), [set]);
   const topUp = useCallback((usd: number) => set((s) => ({ credits: s.credits + usd, creditsTotal: s.creditsTotal + usd })), [set]);
+  // Credits used on Home (12 Nov): unlocking a report Spark can make next.
+  const spend = useCallback((usd: number) => set((s) => ({ credits: Math.max(0, +(s.credits - usd).toFixed(2)) })), [set]);
   const setTheme = useCallback((theme: Theme) => set(() => ({ theme })), [set]);
   const setWeb = useCallback((web: boolean) => set(() => ({ web })), [set]);
   const setFailNext = useCallback((failNext: boolean) => set(() => ({ failNext })), [set]);
@@ -737,6 +740,7 @@ function useStoreValue() {
       setRequestLayout,
       signIn,
       topUp,
+      spend,
       seeDoc,
       setWeb,
       setFailNext,

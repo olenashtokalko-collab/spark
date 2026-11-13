@@ -1,0 +1,105 @@
+/* A colleague's Home concepts (spark-portal, 12–13 Nov): Console, Glass deck, Studio, each shown full screen on its own
+   page (#/concepts/…). Her shared tokens, as she wrote them, but held to her pages: everything that was on :root and
+   on html, body, button, a and img is scoped to .cpx, the pages' root (the element rules inside :where(), so they
+   weigh no more than her bare `button` and `a` did and her classes still win), so none of it reaches the portal (its own
+   --ink, --cobalt, --line and --text-muted have the same names). Her fonts load under her family names, which the
+   portal doesn't use. */
+/* Spark portal — shared tokens. Source: ../../DESIGN.md (brand book + live sparkstudios.ae CSS). */
+
+@font-face { font-family: "Diatype Extended"; src: url("./assets/fonts/ABCDiatypeExtended-Regular.woff2") format("woff2"); font-weight: 400; font-display: swap; }
+@font-face { font-family: "Diatype Extended"; src: url("./assets/fonts/ABCDiatypeExtended-Bold.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+@font-face { font-family: "Diatype Ultra"; src: url("./assets/fonts/ABCDiatypeExtended-Ultra.woff2") format("woff2"); font-weight: 900; font-display: swap; }
+/* variable Diatype Extended (wght 200–1000, from the designer's installed fonts) — used where a Medium 500 is needed */
+@font-face { font-family: "Diatype Extended Var"; src: url("./assets/fonts/ABCDiatypeExtendedVariable.ttf") format("truetype"); font-weight: 200 1000; font-display: swap; }
+@font-face { font-family: "Diatype Mono"; src: url("./assets/fonts/ABCDiatypeMono-Medium.woff2") format("woff2"); font-weight: 500; font-display: swap; }
+
+.cpx {
+  /* brand colours */
+  --sand: #F8F6F2;
+  --ink: #0E1116;
+  --cobalt: #1E3BD6;
+  --ember: #E8501F;
+  --haze: #C8D8F0;
+  --violet: #7A3CF0;
+  --magenta: #D9358F;
+  --noor: linear-gradient(90deg, #1E3BD6, #7A3CF0, #D9358F, #E8501F);
+
+  /* S-P-A-R-K service colours (keycaps on the live site) */
+  --svc-s: #1E3BD6;
+  --svc-p: #6A4BEE;
+  --svc-a: #C83CBE;
+  --svc-r: #F2457D;
+  --svc-k: #E8501F;
+
+  /* text and lines */
+  --text: #0E1116;
+  --text-muted: #4E535E;
+  --text-dim: #8A8E97;
+  --line: rgba(14, 17, 22, .12);
+
+  /* type */
+  --f-x: "Diatype Extended", "Helvetica Neue", Arial, sans-serif;
+  --f-ultra: "Diatype Ultra", "Diatype Extended", "Helvetica Neue", Arial, sans-serif;
+  --f-mono: "Diatype Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+  --f-num: "Doto", ui-monospace, monospace;
+
+  /* radii */
+  --r-l: 28px;
+  --r-m: 18px;
+  --r-s: 16px;
+  --pill: 999px;
+
+  /* glass (live site) */
+  --g-fill: linear-gradient(160deg, rgba(255,255,255,.5), rgba(255,255,255,.16) 60%, rgba(255,255,255,.26));
+  --g-blur: blur(20px) saturate(1.65);
+  --g-edge: inset 1.5px 1.5px 0 rgba(255,255,255,.95), inset -1px -1px 0 rgba(255,255,255,.35), inset 0 0 0 1px rgba(255,255,255,.55), inset 0 10px 24px -14px rgba(255,255,255,.9);
+  --g-lift: 0 0 0 .5px rgba(14,17,22,.08), 0 18px 40px -16px rgba(30,30,60,.3), 0 2px 6px rgba(30,30,60,.05);
+  --glass-bg: linear-gradient(180deg, rgba(255,255,255,.66), rgba(255,255,255,.32));
+  --glass-blur: blur(18px) saturate(1.8);
+  --glass-edge: inset 0 1px 1px rgba(255,255,255,.95), inset 0 -1px 1px rgba(255,255,255,.4), inset 0 0 0 1px rgba(255,255,255,.5);
+  --glass-drop: 0 18px 40px -12px rgba(30,30,60,.22), 0 2px 6px rgba(30,30,60,.06);
+
+  /* motion */
+  --ease: cubic-bezier(.2, .9, .1, 1);
+  --ease-spring: cubic-bezier(.3, 1.6, .5, 1);
+  --ease-soft: cubic-bezier(.22, .8, .24, 1);
+}
+
+.cpx, :where(.cpx) *, :where(.cpx) *::before, :where(.cpx) *::after { box-sizing: border-box; }
+.cpx {
+  min-height: 100vh;
+  background: var(--sand);
+  color: var(--text);
+  font-family: var(--f-x);
+  font-size: 16px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+:where(.cpx) button { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; }
+:where(.cpx) a { color: inherit; text-decoration: none; }
+:where(.cpx) img, :where(.cpx) video { display: block; max-width: 100%; }
+:where(.cpx) ::selection { background: rgba(30, 59, 214, .2); }
+
+@media (prefers-reduced-motion: reduce) {
+  :where(.cpx) *, :where(.cpx) *::before, :where(.cpx) *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+/* the portal's version switch shows on Console (it is one of the versions) and stays off the other two concepts,
+   which have her own switcher at that corner */
+body:has(.cpx) .ui-switch:not(.ui-switch--home) {
+  display: none;
+}
+/* clear of each concept's own menu: Console's rail is 72 px folded and 232 px open, Studio's is 240 px */
+body:has(.cpx) .ui-switch.ui-switch--home {
+  left: 104px;
+}
+body:has(nav[aria-label='Main'][data-open]) .ui-switch.ui-switch--home,
+body:has(.cpx[data-concept='studio']) .ui-switch.ui-switch--home {
+  left: 268px;
+}
+
+/* the concepts' own switcher steps aside when Console's menu is open beside it (13 Nov) */
+body:has(nav[aria-label='Main'][data-open]) .cpx-switch {
+  left: 264px !important;
+}

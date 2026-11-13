@@ -150,9 +150,7 @@ export function RequestDetail({ id }: { id: string }) {
                   <p className="prop-card__summary">{p.summary}</p>
                   <div className="prop-card__foot">
                     {/* The whole card is the link; this just looks like its button. Once decided, so secondary. */}
-                    <span className={cx('btn btn--md btn--secondary prop-card__cta', metal && metalClass('spark', 'portal'))}>
-                      <MetalInner on={metal}>Open proposal</MetalInner>
-                    </span>
+                    <span className="btn btn--md btn--secondary prop-card__cta">Open proposal</span>
                   </div>
                 </a>
               )}

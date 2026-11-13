@@ -1,0 +1,149 @@
+/* #/empty-states (13 Nov, review): every empty state the client can meet, each on its own stage, with where it appears
+   and when underneath. The states inside are the portal's own, so their look comes from the portal's styles. */
+.es-page {
+  display: flex;
+  flex-direction: column;
+  gap: 44px;
+  padding-bottom: 80px;
+}
+.es-head {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 640px;
+}
+.es-head__eyebrow,
+.es-group__title,
+.es-card__where {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: rgba(14, 17, 22, 0.6);
+}
+.es-head__title {
+  margin: 0;
+  font-size: 40px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: #0e1116;
+}
+.es-head__sub {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: rgba(14, 17, 22, 0.64);
+}
+.es-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.es-group__title {
+  margin: 0;
+}
+.es-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+  gap: 20px;
+}
+.es-card {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 28px;
+  overflow: hidden;
+  background: linear-gradient(rgba(255, 255, 255, 0.66), rgba(255, 255, 255, 0.32));
+  -webkit-backdrop-filter: blur(18px) saturate(1.8);
+  backdrop-filter: blur(18px) saturate(1.8);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+    0 18px 40px -12px rgba(30, 30, 60, 0.16),
+    0 2px 6px rgba(30, 30, 60, 0.05);
+}
+.es-card--wide {
+  grid-column: span 2;
+}
+/* the stage: the page's Sand under the state, so it reads as it does on its page */
+.es-stage {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  min-height: 300px;
+  margin: 10px 10px 0;
+  padding: 20px;
+  border-radius: 20px;
+  background: #f8f6f2;
+}
+.es-stage > .og-later__card {
+  flex: none;
+}
+.es-stage .empty {
+  padding: 40px 16px;
+}
+.es-stage .rq-tbl--empty {
+  border-radius: 16px;
+}
+.es-stage .rq-tbl--empty .empty {
+  padding: 40px 16px 44px;
+}
+/* the sidebar's history and the notifications menu at their own narrow width */
+.es-narrow {
+  align-self: center;
+  width: 280px;
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.08);
+}
+.es-notifs .notifs__empty {
+  padding: 28px 16px;
+  font-size: 14px;
+  color: var(--text-2);
+}
+.es-card__about {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 16px 22px 20px;
+}
+.es-card__when {
+  font-size: 14px;
+  line-height: 1.45;
+  color: rgba(14, 17, 22, 0.72);
+}
+@media (max-width: 760px) {
+  .es-grid {
+    grid-template-columns: 1fr;
+  }
+  .es-card--wide {
+    grid-column: auto;
+  }
+  .es-head__title {
+    font-size: 32px;
+  }
+}
+.es-stage .history.history--sidebar {
+  flex: none;
+  height: auto;
+  min-height: 0;
+}
+
+/* ---- Empty states on its own (13 Nov, review: "when Empty states is picked, no menu and no mascot"): the page is
+   for showing the client the pictures, so the portal's menu, its top strip and Dr.AI step out and it takes the whole
+   window; the version switch stays, at the left edge now that nothing is beside it. ---- */
+.shell:has(.es-page),
+:root[data-ui='a'] .shell.shell--rail-open:has(.es-page) {
+  --rail-w: 0px;
+}
+.shell:has(.es-page) :is(.rail, .topbar, .dk-solo, .dt-say, .dk-card, .dk-mini) {
+  display: none;
+}
+body:has(.es-page) .ui-switch.ui-switch--home,
+body:has(.shell--rail-open):has(.es-page) .ui-switch.ui-switch--home {
+  left: 16px;
+}

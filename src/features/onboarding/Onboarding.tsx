@@ -7,6 +7,7 @@ import { useEffect, useLayoutEffect, useRef, useState, type PointerEvent as RPoi
 import { createPortal } from 'react-dom';
 import { ArrowDown, ArrowRight, ArrowUp } from 'lucide-react';
 import { AnalysisView } from '../home/AnalysisLooks';
+import { HomeBentoC, HomeCompanyCard } from '../demo/HomeBentoDemo';
 import { analyses } from '../../data/mock';
 import { ConsultCard } from '../demo/HomeCardsDemo';
 import { Gauge } from '../demo/HomeVariantsDemo';
@@ -14,6 +15,7 @@ import { useRoute } from '../../lib/router';
 import { useStore, type State } from '../../state/store';
 import { SlideTabs, cx } from '../../components/ui/primitives';
 import { MetalParts, metalClass, useMetalUi } from '../../components/ui/MetalButton';
+import { playWelcome } from './LiquidWelcome';
 import { SparkiStill } from '../../components/ui/DrAi';
 import { FactsCard, HomeCredits, ProfileFull } from '../demo/HomeRethinkDemo';
 import { navigate } from '../../lib/router';
@@ -304,13 +306,12 @@ const HOME_TABS = [
 type HomeTab = (typeof HOME_TABS)[number][0];
 
 /** A report not made yet (a new company): what it will hold, and a way to ask for it. */
-function ReportToCome({ kind }: { kind: 'social' | 'website' }) {
-  const [open, setOpen] = useState(false);
+export function ReportToCome({ kind }: { kind: 'social' | 'website' }) {
   const art = useArt();
   const what =
     kind === 'social'
-      ? { title: 'No social media report yet', body: 'Spark looks at your Instagram, TikTok and LinkedIn: what people engage with, what falls flat, and what to fix first.', ask: 'Social media report' }
-      : { title: 'No website report yet', body: 'Spark checks your site on mobile and desktop: speed, how easy it is to find and buy, and whether it looks like your brand.', ask: 'Website report' };
+      ? { title: 'No social media report yet', body: 'Spark looks at your Instagram, TikTok and LinkedIn: what people engage with, what falls flat, and what to fix first.' }
+      : { title: 'No website report yet', body: 'Spark checks your site on mobile and desktop: speed, how easy it is to find and buy, and whether it looks like your brand.' };
   return (
     <section className="og-later__card og-tocome">
       {/* The reports' picture, as on Home's "No reports yet" (10 Nov, review). */}
@@ -319,8 +320,7 @@ function ReportToCome({ kind }: { kind: 'social' | 'website' }) {
       </span>
       <b>{what.title}</b>
       <span>{what.body}</span>
-      <ReportGo onClick={() => setOpen(true)}>Request this report</ReportGo>
-      <CreateRequestDialog open={open} onClose={() => setOpen(false)} prefill={{ type: 'Research', title: what.ask }} />
+      {/* No button here (11 Nov, review): Request a report sits by Brand Analysis's name, over every tab. */}
     </section>
   );
 }
@@ -522,6 +522,34 @@ function FilledOverview() {
   );
 }
 
+/** Plays the welcome on a new company's first visit to Home (11 Nov, picked on #/demo/welcome-liquid), in its own
+ *  layer over the app; it counts as seen once Dr.AI stands in his corner, or when it is skipped. The earlier
+ *  welcome (WelcomeIntro) stays for its demos. */
+function FirstWelcome() {
+  const { state, me, actions } = useStore();
+  const ob = useOnboarding();
+  // a new company on its first visit; and, since the local View switch (12 Nov), a company past onboarding after it
+  // signs in again (signIn clears onboardingIntro), greeted as one coming back
+  const back = !state.onboarding;
+  const show = (ob.on || back) && !state.onboardingIntro;
+  const seen = useRef(actions.seeIntro);
+  seen.current = actions.seeIntro;
+  const who = {
+    name: me.name.split(' ')[0],
+    company: state.brand.name,
+    city: (state.brand.hq ?? '').split(',').pop()?.trim() || 'Abu Dhabi',
+  };
+  const whoRef = useRef(who);
+  whoRef.current = who;
+  useEffect(() => {
+    if (!show) return;
+    // a tick later, so React's dev double effect starts it once
+    const t = window.setTimeout(() => playWelcome('metal', { who: whoRef.current, onSeen: () => seen.current(), back }), 0);
+    return () => clearTimeout(t);
+  }, [show, back]);
+  return null;
+}
+
 export function OnboardingHome({ noIntro }: { noIntro?: boolean } = {}) {
   const { state } = useStore();
   const art = useArt();
@@ -538,10 +566,20 @@ export function OnboardingHome({ noIntro }: { noIntro?: boolean } = {}) {
     const t = setTimeout(() => document.getElementById('latest')?.scrollIntoView({ behavior: 'smooth', block: 'start' }), 120);
     return () => clearTimeout(t);
   }, [see]);
+  // Home for a company past onboarding, Current UI (12 Nov, review: variant C from #/demo/home-bento): its cards on
+  // the overview, no greeting; the report and profile tabs keep the page below, which they link to.
+  if (filled && tab === 'overview' && ui === 'a')
+    return (
+      <div className="og-home og-home--bento">
+        {!noIntro && <FirstWelcome />}
+        <HomeBentoC />
+      </div>
+    );
   // The underline slides from tab to tab (9 Nov, wave 1 of motion).
   return (
     <div className="og-home">
-      {!noIntro && <WelcomeIntro />}
+      {/* The welcome after sign-in (11 Nov): the liquid card that pours into Dr.AI (LiquidWelcome), once. */}
+      {!noIntro && <FirstWelcome />}
       {/* The redesign directions (UI variants b, c): the page's name in mono and the credits as a figure at the top
           right, as in the design file; the company card keeps the rest. */}
       {ui !== 'a' && (
@@ -552,6 +590,10 @@ export function OnboardingHome({ noIntro }: { noIntro?: boolean } = {}) {
       )}
       {/* The company's card back at the top (9 Nov, the client): the mark, the name, what it does and where it sells,
           the team, the credits. No greeting and no setup steps on Home: Dr.AI in the corner walks through them. */}
+      {/* Current UI: the company card Home has past onboarding (13 Nov, review), its grounds on the HERO switch */}
+      {ui === 'a' ? (
+        <HomeCompanyCard />
+      ) : (
       <header className="hld-card hld-co og-co">
         <div className="hld-co__row">
           <span className="hld-co__mark">{b.name[0]}</span>
@@ -566,16 +608,15 @@ export function OnboardingHome({ noIntro }: { noIntro?: boolean } = {}) {
               <TeamLine />
             </span>
           </span>
-          {ui === 'a' && (
-            <span className="hld-co__acts">
-              <HomeCredits />
-            </span>
-          )}
         </div>
       </header>
+      )}
 
       {/* The section's name over its tabs, as Jean asked (#19): "name it Brand Analysis, the tabs underneath". */}
-      <h2 className="og-ba-title">Brand Analysis</h2>
+      {/* No Request a report by the name any more (12 Nov, review): it lives in Overview's Reports card */}
+      <div className="og-ba-head">
+        <h2 className="og-ba-title">Brand Analysis</h2>
+      </div>
       <SlideTabs
         label="Brand Analysis"
         value={tab}
@@ -605,7 +646,10 @@ export function OnboardingHome({ noIntro }: { noIntro?: boolean } = {}) {
           </span>
           <b>No reports yet</b>
           <span>Ask Spark to look into your website, social media or a competitor.</span>
-          <RequestReport />
+          {/* the way to a first report, in the card again (12 Nov, review); the header keeps it on the other tabs */}
+          <span className="og-later__go">
+            <RequestReport />
+          </span>
         </section>
         <section className="og-later__card">
           <span className="og-eyebrow">Latest from Spark</span>
@@ -670,7 +714,7 @@ function ReportGo({ onClick, children }: { onClick: () => void; children: ReactN
   );
 }
 
-function RequestReport({ prefill = { type: 'Research', title: '' } }: { prefill?: RequestPrefill }) {
+export function RequestReport({ prefill = { type: 'Research', title: '' } }: { prefill?: RequestPrefill }) {
   const [open, setOpen] = useState(false);
   return (
     <>

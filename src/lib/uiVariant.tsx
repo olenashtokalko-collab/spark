@@ -5,7 +5,6 @@
 // ?ui=b in the address; remembered for the browser.
 import { useEffect, useState } from 'react';
 import { cx } from '../components/ui/primitives';
-import { ONBOARDING_BUILD, PORTAL_VIEW, VIEW_KEY, type PortalView } from '../state/store';
 
 // a: the glass UI as committed on 9 Nov (b81dc78). b and c: the two directions in the "Spark Redesign Directions"
 // design file, built on the same pages, structure and content: b is its row A (brand-aligned: Sand and Ink, Cobalt
@@ -82,37 +81,9 @@ const SHOW_SWITCH = import.meta.env.DEV || import.meta.env.VITE_UI_SWITCH === '1
  *  own switch instead, between the onboarding and the portal as it is today. */
 export function UiVariantRoot() {
   useApplyUiVariant();
-  return ONBOARDING_BUILD ? <ViewSwitch /> : <UiVariantSwitch />;
-}
-
-const VIEWS: { v: PortalView; label: string }[] = [
-  { v: 'onboarding', label: 'Onboarding' },
-  { v: 'current', label: 'Current' },
-];
-
-/** Onboarding or Current (10 Nov, spark-lead-preview): a new company's first steps, or the portal with a company's
- *  data. Each keeps its own saved state; a pick opens that view on Home. */
-function ViewSwitch() {
-  const pick = (v: PortalView) => {
-    if (v === PORTAL_VIEW) return;
-    try {
-      localStorage.setItem(VIEW_KEY, v);
-    } catch {
-      return;
-    }
-    window.location.hash = '#/';
-    window.location.reload();
-  };
-  return (
-    <div className="ui-switch" role="radiogroup" aria-label="View">
-      <span className="ui-switch__label">VIEW</span>
-      {VIEWS.map((x) => (
-        <button key={x.v} type="button" role="radio" aria-checked={PORTAL_VIEW === x.v} className={cx(PORTAL_VIEW === x.v && 'is-on')} onClick={() => pick(x.v)}>
-          {x.label}
-        </button>
-      ))}
-    </div>
-  );
+  // No UI switch at all (13 Nov, review: "only the switch between the versions"). The portal is Current only, and the
+  // shared link showed this one beside the version switch; the variants' code stays, picked with ?ui=b / ?ui=c.
+  return null;
 }
 
 /** The variants as a small segmented switch at the foot of the page. */

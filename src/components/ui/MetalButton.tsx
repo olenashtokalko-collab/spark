@@ -12,7 +12,9 @@ export type MetalTone = 'chrome' | 'spark';
 /** 'spark': our tuning (faster lines that speed up on hover, metal only in the rim, clear glass that brightens on
  *  hover). 'reference': adamperlis.com's own values (lines at 1, glass over the whole metal, clearing on hover).
  *  'portal' (the Current UI, 11 Nov): the reference's look with our motion. */
-export type MetalProfile = 'spark' | 'reference' | 'portal';
+export type MetalProfile = 'spark' | 'reference' | 'portal' | 'menu';
+// 'menu' (12 Nov, review): the metal as the portal wore it (the reference's look, our motion, the Noor spectrum),
+// kept only for Ask Dr.AI in the menu; every other portal button is now the flat Cobalt 'portal'.
 
 const PAD = 18; // the ring and halo canvases reach this far past the button, for the glow
 const RING = 2.5; // visible metal between the button's edge and its glass
@@ -201,18 +203,23 @@ const engineFor = (p: MetalProfile) => {
   return (engines[k] ??= k === 'reference' ? createEngine(1, 1) : createEngine(SPEED, SPEED_HOVER));
 };
 /** The classes a metal button wears for a tone and profile. */
-export const metalClass = (tone: MetalTone, profile: MetalProfile) => ['metal', `metal--${tone}`, profile !== 'spark' && 'metal--ref'].filter(Boolean).join(' ');
+// 'portal' (the Current UI, 12 Nov review: "just Cobalt, no animation"): a flat Cobalt pill, no metal, no lines; it
+// keeps the hover lean and lift
+export const metalClass = (tone: MetalTone, profile: MetalProfile) =>
+  ['metal', `metal--${tone}`, profile !== 'spark' && 'metal--ref', profile === 'portal' && 'metal--flat'].filter(Boolean).join(' ');
 
 /** Hover micro-motion, as on adamperlis.com: the button leans toward the pointer and eases back when it leaves
  *  (their GSAP quickTo, 0.5s power3.out; here a frame-rate-independent ease of about the same feel). The lines
  *  speed up while it's hovered. A real pointer only, and nothing with reduced motion. */
-function magnet(el: HTMLElement, engine: Engine) {
+// the flat Cobalt and outlined buttons lean less and ease slower (12 Nov, review: "too strong, a bit smoother")
+const CALM = { pull: 0.07, ease: 0.24 };
+function magnet(el: HTMLElement, engine: Engine | null, { pull, ease }: { pull: number; ease: number } = { pull: MAGNET, ease: 0.11 }) {
   if (!matchMedia('(hover: hover) and (pointer: fine)').matches || matchMedia('(prefers-reduced-motion: reduce)').matches) return () => {};
   let tx = 0, ty = 0, x = 0, y = 0, raf = 0, prev = 0, inside = false;
   const step = (t: number) => {
     const dt = prev ? Math.min((t - prev) / 1000, 0.05) : 0.016;
     prev = t;
-    const k = 1 - Math.exp(-dt / 0.11);
+    const k = 1 - Math.exp(-dt / ease);
     x += (tx - x) * k;
     y += (ty - y) * k;
     el.style.translate = `${x.toFixed(2)}px ${y.toFixed(2)}px`;
@@ -228,15 +235,15 @@ function magnet(el: HTMLElement, engine: Engine) {
     if (ev.pointerType !== 'mouse') return;
     if (!inside) {
       inside = true;
-      engine.hover(true);
+      engine?.hover(true);
     }
     const r = el.getBoundingClientRect();
-    tx = (ev.clientX - r.left - r.width / 2) * MAGNET;
-    ty = (ev.clientY - r.top - r.height / 2) * MAGNET;
+    tx = (ev.clientX - r.left - r.width / 2) * pull;
+    ty = (ev.clientY - r.top - r.height / 2) * pull;
     go();
   };
   const leave = () => {
-    if (inside) engine.hover(false);
+    if (inside) engine?.hover(false);
     inside = false;
     tx = ty = 0;
     go();
@@ -246,20 +253,37 @@ function magnet(el: HTMLElement, engine: Engine) {
   return () => {
     el.removeEventListener('pointermove', move);
     el.removeEventListener('pointerleave', leave);
-    if (inside) engine.hover(false);
+    if (inside) engine?.hover(false);
     cancelAnimationFrame(raf);
     el.style.translate = '';
   };
 }
+
+/** The outlined buttons lean toward the pointer too (12 Nov, review: a micro-motion on both kinds): Later on the
+ *  attention cards and the plain secondary pills, in the Current UI. Bound on the first hover, so nothing to mount. */
+const OUTLINED = '.aa-pill, .btn--secondary:not(.metal):not(.btn--icon)';
+const bound = new WeakSet<Element>();
+if (typeof document !== 'undefined')
+  document.addEventListener('pointerover', (ev) => {
+    if ((document.documentElement.dataset.ui ?? 'a') !== 'a') return;
+    const el = (ev.target as Element | null)?.closest?.(OUTLINED) as HTMLElement | null;
+    if (!el || bound.has(el)) return;
+    bound.add(el);
+    magnet(el, null, CALM);
+    el.dispatchEvent(new PointerEvent('pointermove', ev));
+  });
 
 /** The metal's layers, for any button: put it first inside the button, give the button the `metal metal--<tone>`
  *  classes, and wrap the button's content in `.metal__label`. */
 export function MetalParts({ tone = 'spark', profile = 'spark' }: { tone?: MetalTone; profile?: MetalProfile }) {
   const ring = useRef<HTMLCanvasElement>(null);
   const halo = useRef<HTMLCanvasElement>(null);
+  const glass = useRef<HTMLSpanElement>(null);
   useEffect(() => {
-    const el = ring.current?.parentElement;
-    if (!el || !ring.current || !halo.current) return;
+    const el = (ring.current ?? glass.current)?.parentElement;
+    if (!el) return;
+    if (profile === 'portal') return magnet(el, null, CALM); // flat Cobalt: no metal to draw
+    if (!ring.current || !halo.current) return;
     const engine = engineFor(profile);
     const e: Entry = { el, ring: ring.current, halo: halo.current, tone, rim: profile === 'spark', on: true };
     engine.add(e);
@@ -269,11 +293,12 @@ export function MetalParts({ tone = 'spark', profile = 'spark' }: { tone?: Metal
       engine.remove(e);
     };
   }, [tone, profile]);
+  if (profile === 'portal') return <span ref={glass} className="metal__glass" aria-hidden />;
   return (
     <>
       <canvas ref={halo} className="metal__halo" aria-hidden />
       <canvas ref={ring} className="metal__ring" aria-hidden />
-      <span className="metal__glass" aria-hidden />
+      <span ref={glass} className="metal__glass" aria-hidden />
     </>
   );
 }

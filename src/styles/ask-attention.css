@@ -1095,3 +1095,161 @@
 .aa-stack-wrap--light .aa-rail > button:last-child {
   margin: 0;
 }
+/* no deadline: the title takes the top, no empty row above it */
+.aa-card--light .aa-card__main > .aa-card__title:first-child {
+  margin-top: 0;
+}
+
+/* ---- Light cards, review 7 (11 Nov) ----------------------------------------------------------------------------
+   Nothing due (a company onboarding: suggestions only, no badges): a shorter card, the buttons close under the text.
+   Later in the action button's own type, not mono capitals. */
+.aa-stack-wrap--light.aa-stack-wrap--compact .aa-card.aa-card--light {
+  height: 176px;
+}
+.aa-stack-wrap--light.aa-stack-wrap--compact .aa-stack {
+  height: 276px;
+}
+.aa-stack-wrap--light.aa-stack-wrap--compact .aa-rail {
+  height: 176px;
+}
+.aa-stack-wrap--light.aa-stack-wrap--compact .aa-card.aa-card--light:is(.is-back1, .is-back2, .is-hidden) > * {
+  transform: translateY(92px);
+}
+.aa-card--light .aa-pill {
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 500;
+  letter-spacing: 0;
+  text-transform: none;
+  padding: 0 20px;
+}
+
+/* Review + Later, lighter (12 Nov): smaller text and a smaller pill, so the metal reads calmer */
+.aa-card--light .aa-card__go.metal {
+  height: 36px;
+  padding: 0 16px;
+  font-size: 13px;
+}
+.aa-card--light .aa-card__go .metal__label {
+  gap: 6px;
+}
+.aa-card--light .aa-pill {
+  height: 36px;
+  padding: 0 16px;
+  font-size: 13px;
+}
+.aa-card--light .aa-card__go .metal__halo {
+  opacity: 0.3;
+}
+.aa-card--light .aa-card__go .metal__glass {
+  background: rgba(255, 255, 255, 0.55);
+}
+@media (hover: hover) {
+  .aa-card--light .aa-card__go.metal:hover .metal__halo {
+    opacity: 0.6;
+  }
+}
+
+/* Sparki (12 Nov): floats just off the front card's top right corner, a small glow under him, and hops with a spin
+   each time the card changes */
+.aa-sparki {
+  position: absolute;
+  z-index: 5;
+  top: -30px;
+  right: -12px;
+  width: 46px;
+  height: 46px;
+  pointer-events: none;
+}
+.aa-sparki::before {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(255, 140, 90, 0.45), rgba(120, 110, 255, 0.18) 55%, transparent 72%);
+  filter: blur(8px);
+  animation: aa-sparki-glow 3.2s ease-in-out infinite;
+}
+.aa-sparki__hop,
+.aa-sparki__float {
+  position: relative;
+  display: grid;
+}
+.aa-sparki__float {
+  animation: aa-sparki-float 5.6s ease-in-out infinite;
+}
+.aa-sparki img {
+  filter: drop-shadow(0 4px 10px rgba(255, 120, 70, 0.35));
+}
+.aa-sparki__hop.is-hop {
+  animation: aa-sparki-hop 0.7s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+@keyframes aa-sparki-float {
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+  25% {
+    transform: translate(-5px, -6px) rotate(-6deg);
+  }
+  50% {
+    transform: translate(2px, -10px) rotate(4deg);
+  }
+  75% {
+    transform: translate(5px, -3px) rotate(8deg);
+  }
+}
+@keyframes aa-sparki-hop {
+  0% {
+    transform: translateY(0) rotate(0) scale(1);
+  }
+  40% {
+    transform: translateY(-22px) rotate(200deg) scale(1.12);
+  }
+  100% {
+    transform: translateY(0) rotate(360deg) scale(1);
+  }
+}
+@keyframes aa-sparki-glow {
+  50% {
+    opacity: 0.6;
+    transform: scale(1.15);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aa-sparki::before,
+  .aa-sparki__float,
+  .aa-sparki__hop.is-hop {
+    animation: none;
+  }
+}
+
+/* Sparki's orbit (12 Nov): placed by script from the wrap's top left; the cards sit at z 2, so he passes behind
+   their glass (z 1) at the top of the orbit and in front (z 3) at the bottom */
+.aa-stack-wrap--light .aa-stack {
+  z-index: 2;
+}
+.aa-stack-wrap--light .aa-sparki {
+  top: 0;
+  left: 0;
+  right: auto;
+  opacity: 0;
+  will-change: transform, opacity;
+}
+
+/* the rail's arrows centred on the dots' line (12 Nov, review): the arrow buttons as boxes of the icon's own
+   size, the icons not sitting on a text baseline */
+.aa-rail > button:not(.aa-dot) {
+  display: grid;
+  place-items: center;
+  width: 20px;
+  height: 20px;
+  line-height: 0;
+}
+.aa-rail > button svg {
+  display: block;
+}
+.aa-rail .aa-dot {
+  display: block;
+  flex: none;
+}

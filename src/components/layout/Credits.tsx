@@ -162,15 +162,20 @@ export function CreditsCard({ left, total, onTopUp }: { left: number; total: num
 /** The credits card from the account menu: on hover of its credits row, beside the menu, over the page.
  *  It stays while the pointer moves onto it; Top up hands over to the dialog (kept by the menu, so it
  *  outlives the card). Escape or a click elsewhere closes it. */
-export function CreditsOverlay({ anchor, onClose, onTopUp, onEnter, onLeave }: { anchor: HTMLElement; onClose: () => void; onTopUp: () => void; onEnter: () => void; onLeave: () => void }) {
-  const { state } = useStore();
+// 13 Nov, review: this card is now Home's "Add credits." panel (the amounts on the glass tabs, Add in Cobalt), adding
+// the credits at once as Home's does; the balance breakdown and the Top up dialog it led to are no longer shown here
+// (onTopUp stays in the props for the menu that passes it).
+export function CreditsOverlay({ anchor, onClose, onEnter, onLeave }: { anchor: HTMLElement; onClose: () => void; onTopUp?: () => void; onEnter: () => void; onLeave: () => void }) {
+  const { state, actions } = useStore();
+  const toast = useToast();
+  const [amount, setAmount] = useState(100);
   const [pos, setPos] = useState<{ left: number; bottom: number } | null>(null);
   const card = useRef<HTMLDivElement>(null);
 
   // Beside the account menu, its foot level with the menu's foot (the menu opens upward from the account).
   useLayoutEffect(() => {
     const menu = (anchor.closest('.popover') ?? anchor).getBoundingClientRect();
-    setPos({ left: Math.min(menu.right + 8, window.innerWidth - 316), bottom: Math.max(8, window.innerHeight - menu.bottom) });
+    setPos({ left: Math.min(menu.right + 8, window.innerWidth - 408), bottom: Math.max(8, window.innerHeight - menu.bottom) });
   }, [anchor]);
   useEffect(() => {
     const onDown = (e: MouseEvent) => !card.current?.contains(e.target as Node) && !anchor.contains(e.target as Node) && onClose();
@@ -186,14 +191,38 @@ export function CreditsOverlay({ anchor, onClose, onTopUp, onEnter, onLeave }: {
   return createPortal(
     <div
       ref={card}
-      className="hl-cind__card credits-overlay"
+      className="credits-add"
       role="dialog"
-      aria-label="Credits"
+      aria-labelledby="credits-add-title"
       style={pos ? { left: pos.left, bottom: pos.bottom } : { visibility: 'hidden' }}
       onMouseEnter={onEnter}
       onMouseLeave={onLeave}
     >
-      <CreditsCard left={state.credits} total={state.creditsTotal} onTopUp={onTopUp} />
+      <b className="credits-add__title" id="credits-add-title">
+        Add credits.
+      </b>
+      <span className="credits-add__hint">One balance for reports, consultations and new work. Pick an amount.</span>
+      <span className="credits-add__amounts">
+        <GlassTabs
+          kind="radio"
+          fill
+          label="Amount"
+          value={String(amount)}
+          onChange={(v) => setAmount(Number(v))}
+          items={[50, 100, 250, 500].map((n) => ({ value: String(n), label: `USD ${n}` }))}
+        />
+      </span>
+      <button
+        type="button"
+        className="credits-add__go"
+        onClick={() => {
+          actions.topUp(amount);
+          toast({ title: `${usd(amount)} added to your credits`, body: `Balance: ${usd(state.credits + amount)}` });
+          onClose();
+        }}
+      >
+        Add USD {amount}
+      </button>
     </div>,
     document.body,
   );

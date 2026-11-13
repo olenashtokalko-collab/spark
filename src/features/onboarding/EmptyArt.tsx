@@ -97,6 +97,7 @@ export const PAGE_ARTS = {
     head: 'No requests yet.',
     body: 'Start a chat about your brand and turn a useful answer into a request.',
     list: [
+      { v: 'x-request', label: 'Blender · Plus in a glass circle' },
       { v: 'q-docplus', label: 'Glass · Document + plus' },
       { v: 's-inboxplus', label: 'Soft · Inbox + plus (main)' },
       { v: 's-docplus', label: 'Soft · Document + plus' },
@@ -152,6 +153,7 @@ export const PAGE_ARTS = {
     head: 'No chats yet.',
     body: 'Start one above.',
     list: [
+      { v: 'x-chat', label: 'Blender · Round bubble, typing dots' },
       { v: 'q-chat', label: 'Glass · A conversation' },
       { v: 's-chat-ask', label: 'Soft · Ask Dr.AI (main)' },
       { v: 's-chat-pair', label: 'Soft · A conversation' },
@@ -175,6 +177,7 @@ export const PAGE_ARTS = {
     head: 'You’re all caught up.',
     body: '',
     list: [
+      { v: 'x-bell', label: 'Blender · Bell (as Latest from Spark)' },
       { v: 's-bell', label: 'Soft · Bell' },
       { v: 'q-bell', label: 'Glass · Bell' },
       { v: 'r-switch', label: 'Key · Spark switch' },
@@ -218,10 +221,10 @@ export type PageArt = (typeof PAGE_ARTS)[PageKey]['list'][number]['v'];
 const KEYS = {
   ba: 'spark-art-ba-3', // "-3" (11 Nov): the Blender report sheet became the pick
   latest: 'spark-art-latest-3', // "-3" (11 Nov): the Blender bell became the pick
-  requests: 'spark-art-requests-2',
+  requests: 'spark-art-requests-3', // "-3" (11 Nov): the Blender request sheet became the pick
   files: 'spark-art-files-2',
-  chats: 'spark-art-chats-2',
-  notifs: 'spark-art-notifs-2',
+  chats: 'spark-art-chats-3', // "-3" (12 Nov): the Blender chat bubble became the pick
+  notifs: 'spark-art-notifs-3', // "-3" (12 Nov): Latest from Spark's Blender bell became the pick
   search: 'spark-art-search-2',
 } as const;
 // The portal's pictures (10 Nov, picked by the team on #/demo/empty-art): the soft series (notifications too, the
@@ -229,10 +232,10 @@ const KEYS = {
 const PICKS: Partial<Record<keyof typeof KEYS, string>> = {
   ba: 'x-chart',
   latest: 'x-bell',
-  requests: 's-docplus',
+  requests: 'x-request',
   files: 's-folder',
-  chats: 's-chat-pair',
-  notifs: 's-bell',
+  chats: 'x-chat',
+  notifs: 'x-bell',
   search: 'lens',
 };
 const EVENT = 'spark-art';
@@ -294,9 +297,11 @@ function Defs({ id }: { id: string }) {
 
 /** Blender renders (11 Nov), the Frosted Light icon family: blender/icon_*.py → blender/to_web.py → public/brand/glass. */
 const RENDERS: Record<string, { src: string; w: number; h: number }> = {
-  'x-report': { src: 'brand/glass/reports.webp', w: 442, h: 400 },
-  'x-chart': { src: 'brand/glass/chart.webp', w: 483, h: 400 },
-  'x-bell': { src: 'brand/glass/bell.webp', w: 421, h: 400 },
+  'x-report': { src: 'brand/glass/reports.webp', w: 545, h: 400 },
+  'x-chart': { src: 'brand/glass/chart.webp', w: 613, h: 400 },
+  'x-bell': { src: 'brand/glass/bell.webp', w: 519, h: 400 },
+  'x-chat': { src: 'brand/glass/chat.webp?v=4', w: 587, h: 400 },
+  'x-request': { src: 'brand/glass/request.webp?v=3', w: 694, h: 400 },
 };
 function RenderArt({ v }: { v: string }) {
   const r = RENDERS[v];
@@ -426,6 +431,7 @@ export function LatestArtView({ v, sparki }: { v: LatestArt; sparki?: ReactNode 
 export function PageArtView({ v, small }: { v: PageArt; small?: boolean }) {
   const id = useId().replace(/:/g, '');
   if (v === 'none') return null;
+  if (v.startsWith('x-')) return <RenderArt v={v} />;
   if (v.startsWith('q-')) return <GlassPillArt v={v} small={small} />;
   if (v.startsWith('s-')) return <SoftArt v={v} small={small} />;
   if (v.startsWith('r-')) return <KeyArt v={v} small={small} />;

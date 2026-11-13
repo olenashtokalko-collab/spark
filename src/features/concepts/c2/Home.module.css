@@ -1,0 +1,920 @@
+/* Concept C2 — Console 2: C after the review pass (art director + product designer + UI designer, 12 Nov).
+   Light frosted glass on warm Sand, S·P·A·R·K glass keys, two dot charts. One colour logic:
+     Ink = the reading as a figure · Noor gradient = the reading as dots · Haze = the empty scale · dashed dim = "typical" · solid dim = "Sep"
+     Ember = new for you only (unread "2 new", "2 need you", the bell) · Cobalt = ready (proposal ready) + focus rings
+     request state as progress: empty ring = sent → Ink dot = in discussion → lit Cobalt dot = proposal ready · service colours = only inside the glass keys · Noor = Dr.AI
+   Doto on two figures only (3.4 and 41). Nothing loops at rest except Dr.AI. 4px grid, whole-pixel dots and strokes. */
+
+.page {
+  --dim: #6B7079;                                                 /* dim text that still passes AA (text-dim is 3.2:1 on white) */
+  --ember-text: color-mix(in srgb, var(--ember) 82%, var(--ink)); /* Ember for small text: 4.7:1 on Sand, 5:1 on glass */
+  --hair: rgba(14, 17, 22, .08);
+  min-height: 100vh;
+  background: var(--sand);
+  padding: 16px 32px 168px 120px; /* the bottom clears the Dr.AI companion */
+  color: var(--ink);
+}
+.main { max-width: 1296px; margin: 0 auto; }
+.srOnly { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+
+/* ───────── type ───────── */
+.label, .headDim, .headYou, .label2, .trend, .axis, .btn, .kbd, .svcLabel, .svcItems, .loop, .methodN,
+.rMeta, .reqMore, .briefPrompt, .fixLine, .mrKind, .mrSent, .already {
+  font-family: var(--f-mono);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+.label { color: var(--text-muted); } /* section labels are neutral: Ember is kept for "your move" */
+.headYou { color: var(--ember-text); white-space: nowrap; }
+.headDim, .label2 { color: var(--dim); }
+.small, .smallDim { margin: 0; font-size: 16px; line-height: 24px; color: var(--text-muted); }
+.smallDim { color: var(--dim); }
+.body { margin: 0; font-size: 16px; line-height: 24px; color: var(--text-muted); }
+.numXL, .numL {
+  font-family: var(--f-num);
+  font-weight: 700;
+  font-variation-settings: "ROND" 100;
+  letter-spacing: 0;
+  font-variant-numeric: tabular-nums;
+}
+.numXL { font-size: 80px; line-height: 80px; } /* one Doto size for both report figures */
+.numL { font-size: 80px; line-height: 80px; display: inline-flex; align-items: baseline; gap: 4px; }
+.unitText { font: 400 16px/24px var(--f-x); letter-spacing: 0; color: var(--text-muted); } /* units in Diatype, never Doto */
+.trend { color: var(--text-muted); } /* direction is not good or bad here: no hue */
+
+/* ───────── rail: light frosted glass, lit from under ───────── */
+/* designer, 12 Nov: "too bright, and the colour must not leave the sidebar" — the outside glow is gone;
+   a quiet spectrum now lives inside the rail's own glass (background layer, so it can't spill) */
+/* the rail is clear glass (designer, 12 Nov: she likes the glass effect of the selected icon and none of the colour
+   fills); what changes between the options is the light under the glass, never a paint on it */
+.rail {
+  position: fixed; z-index: 30;
+  inset-block: 16px; inset-inline-start: 16px;
+  width: 72px;
+  border-radius: var(--r-l);
+  --rail-dir: 180deg;
+  --rail-bg: linear-gradient(var(--rail-dir), rgba(255, 255, 255, .44), rgba(255, 255, 255, .24));
+  --rail-blur: blur(12px) saturate(1.5);
+  --rail-shadow: inset 0 1px 0 rgba(255, 255, 255, .8), 0 1px 2px rgba(14, 17, 22, .04), 0 16px 40px -16px rgba(30, 30, 60, .24);
+  --ri: rgba(14, 17, 22, .4);          /* icon, not selected: muted, so the selected one stands out (designer, 12 Nov) */
+  --ri-on: var(--ink);                 /* icon, hovered */
+  --rh: rgba(255, 255, 255, .4);       /* hover fill */
+  /* the selected item: a small pane of glass — bright at the top edge, lit from inside at the bottom, a soft drop */
+  --ra-bg: linear-gradient(180deg, rgba(255, 255, 255, .72), rgba(255, 255, 255, .36));
+  --ra-ink: var(--ink);
+  --ra-shadow: inset 0 1px 0 rgba(255, 255, 255, .95), inset 0 -12px 12px -12px rgba(255, 255, 255, .72), 0 8px 16px -8px rgba(30, 30, 60, .28);
+  /* notification markers (dot, count): the same glass as the selected item, never red (designer, 12 Nov) */
+  --rn-bg: linear-gradient(180deg, #fff, rgba(255, 255, 255, .72));
+  --rn-ink: var(--ink);
+  --rn-shadow: inset 0 1px 0 #fff, 0 2px 6px -2px rgba(30, 30, 60, .44);
+  --rn-blur: none;
+  background: var(--rail-bg);
+  -webkit-backdrop-filter: var(--rail-blur);
+  backdrop-filter: var(--rail-blur);
+  box-shadow: var(--rail-shadow);
+  display: flex; flex-direction: column; align-items: center;
+  padding: 16px 0;
+  gap: 24px;
+}
+
+/* ── sidebar options, round 5 (designer, 12 Nov) ──
+   "Sphere is the best so far, but not it yet: I want either truly delicate pastel glass, or truly bright, active and
+   very alive — maybe like the brand book's Noor light swatch (Not a colour. Glow and glass only, never flat)."
+   So: Sphere (kept) · Pastel · Noor light. The light is always pools that move under the glass, never a flat fill. */
+.railGlow {
+  position: fixed; z-index: 29;
+  inset-block: 16px; inset-inline-start: 16px;
+  width: 72px;
+  border-radius: var(--r-l);
+  overflow: hidden; /* the light never leaves the sidebar */
+  pointer-events: none;
+}
+.railGlow::before { content: ""; position: absolute; inset: 0; background-repeat: no-repeat; }
+.railGlow i { display: none; position: absolute; left: 50%; border-radius: 50%; will-change: transform; }
+
+/* Sphere: one orb of the landing's light behind the logo and the first items; the rest of the glass stays clear */
+.railGlow:has(+ .rail[data-rail="sphere"])::before { background-image: url(../assets/img/glow-sphere.webp); background-size: 264px auto; background-position: -116px 32px; }
+
+/* Pastel: delicate glass — four pale pools (sky, lilac, rose, peach) drifting very slowly under frosted glass */
+.railGlow:has(+ .rail[data-rail="pastel"]) { background: #F8F6FC; }
+.railGlow:has(+ .rail[data-rail="pastel"]) i { display: block; }
+.railGlow:has(+ .rail[data-rail="pastel"]) i:nth-child(1) { top: -6%; width: 240px; height: 280px; margin-left: -140px; background: radial-gradient(closest-side, rgba(186, 204, 255, .95), transparent); animation: poolA 24s ease-in-out infinite alternate; }
+.railGlow:has(+ .rail[data-rail="pastel"]) i:nth-child(2) { top: 24%; width: 240px; height: 300px; margin-left: -96px; background: radial-gradient(closest-side, rgba(222, 202, 255, .95), transparent); animation: poolB 28s ease-in-out infinite alternate; }
+.railGlow:has(+ .rail[data-rail="pastel"]) i:nth-child(3) { top: 52%; width: 240px; height: 280px; margin-left: -144px; background: radial-gradient(closest-side, rgba(255, 206, 224, .95), transparent); animation: poolC 22s ease-in-out infinite alternate; }
+.railGlow:has(+ .rail[data-rail="pastel"]) i:nth-child(4) { top: 76%; width: 240px; height: 280px; margin-left: -100px; background: radial-gradient(closest-side, rgba(255, 224, 202, .95), transparent); animation: poolD 26s ease-in-out infinite alternate; }
+.rail[data-rail="pastel"] {
+  --rail-bg: linear-gradient(var(--rail-dir), rgba(255, 255, 255, .48), rgba(255, 255, 255, .24));
+  --rail-blur: blur(24px) saturate(1.3);
+  --rail-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 1px 2px rgba(14, 17, 22, .03), 0 16px 40px -20px rgba(120, 100, 200, .28);
+}
+
+/* Lavender (designer, 12 Nov: "a variant with this delicate violet-lavender shimmer, in different proportions"):
+   the soft violet of the Sphere's orb, without the orange — as pools that drift slowly under clear glass.
+   Three proportions: S = the top third · M = the top half · L = the whole rail */
+.railGlow:is(:has(+ .rail[data-rail="lavs"]), :has(+ .rail[data-rail="lavm"]), :has(+ .rail[data-rail="lavl"])) i { display: block; }
+.railGlow:has(+ .rail[data-rail="lavl"]) { background: linear-gradient(180deg, #E6DEFF, #EEE6FF 52%, #F4E8FB); }
+/* the pools: violet-lavender, lavender, periwinkle, lilac-rose */
+.railGlow:is(:has(+ .rail[data-rail="lavs"]), :has(+ .rail[data-rail="lavm"]), :has(+ .rail[data-rail="lavl"])) i:nth-child(1) { top: -8%; width: 240px; height: 280px; margin-left: -150px; background: radial-gradient(closest-side, rgba(168, 148, 255, .95), transparent); animation: poolA 22s ease-in-out infinite alternate; }
+.railGlow:is(:has(+ .rail[data-rail="lavs"]), :has(+ .rail[data-rail="lavm"]), :has(+ .rail[data-rail="lavl"])) i:nth-child(2) { top: 6%; width: 220px; height: 260px; margin-left: -80px; background: radial-gradient(closest-side, rgba(206, 190, 255, .95), transparent); animation: poolB 26s ease-in-out infinite alternate; }
+/* S stops here */
+.railGlow:has(+ .rail[data-rail="lavs"]) i:nth-child(n+3) { display: none; }
+.railGlow:is(:has(+ .rail[data-rail="lavm"]), :has(+ .rail[data-rail="lavl"])) i:nth-child(3) { top: 30%; width: 240px; height: 280px; margin-left: -144px; background: radial-gradient(closest-side, rgba(186, 196, 255, .95), transparent); animation: poolC 24s ease-in-out infinite alternate; }
+/* M stops here */
+.railGlow:has(+ .rail[data-rail="lavm"]) i:nth-child(4) { display: none; }
+.railGlow:has(+ .rail[data-rail="lavl"]) i:nth-child(3) { top: 44%; }
+.railGlow:has(+ .rail[data-rail="lavl"]) i:nth-child(4) { top: 72%; width: 240px; height: 280px; margin-left: -96px; background: radial-gradient(closest-side, rgba(232, 204, 255, .95), transparent); animation: poolD 28s ease-in-out infinite alternate; }
+.rail:is([data-rail="lavs"], [data-rail="lavm"], [data-rail="lavl"]) {
+  --rail-bg: linear-gradient(var(--rail-dir), rgba(255, 255, 255, .44), rgba(255, 255, 255, .24));
+  --rail-blur: blur(24px) saturate(1.3);
+  --rail-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 1px 2px rgba(14, 17, 22, .03), 0 16px 40px -20px rgba(120, 100, 220, .32);
+}
+
+/* Noor light: bright and alive, after the brand book's swatch — deep blue-violet at the top, rose in the middle, Ember
+   below, a pale glow at the foot. Built from moving pools over a base, with glass on top: white icons, a glass pill */
+.railGlow:has(+ .rail[data-rail="noor"]) { background: linear-gradient(180deg, #3A34D6 0%, #5B3CE6 20%, #B446CC 42%, #E8508E 58%, #EE6A3C 80%, #F2A27A 100%); }
+.railGlow:has(+ .rail[data-rail="noor"]) i { display: block; }
+.railGlow:has(+ .rail[data-rail="noor"]) i:nth-child(1) { top: 8%; width: 220px; height: 260px; margin-left: -140px; background: radial-gradient(closest-side, rgba(150, 126, 255, .95), transparent); animation: poolA 11s ease-in-out infinite alternate; }
+.railGlow:has(+ .rail[data-rail="noor"]) i:nth-child(2) { top: 34%; width: 240px; height: 280px; margin-left: -90px; background: radial-gradient(closest-side, rgba(255, 86, 152, .95), transparent); animation: poolB 14s ease-in-out infinite alternate; }
+.railGlow:has(+ .rail[data-rail="noor"]) i:nth-child(3) { top: 58%; width: 240px; height: 280px; margin-left: -150px; background: radial-gradient(closest-side, rgba(255, 116, 40, .95), transparent); animation: poolC 12s ease-in-out infinite alternate; }
+.railGlow:has(+ .rail[data-rail="noor"]) i:nth-child(4) { top: 80%; width: 200px; height: 240px; margin-left: -100px; background: radial-gradient(closest-side, rgba(255, 218, 186, .95), transparent); animation: poolD 16s ease-in-out infinite alternate; }
+.rail[data-rail="noor"] {
+  /* glass over the light: a little brighter on the left, a little deeper on the right, like the swatch */
+  --rail-bg: linear-gradient(90deg, rgba(255, 255, 255, .16), rgba(255, 255, 255, 0) 48%, rgba(20, 10, 80, .16));
+  --rail-blur: blur(20px) saturate(1.4);
+  --rail-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 16px 40px -16px rgba(190, 60, 170, .48);
+  --ri: rgba(255, 255, 255, .86); --ri-on: #fff; --rh: rgba(255, 255, 255, .16);
+  --ra-bg: linear-gradient(180deg, rgba(255, 255, 255, .36), rgba(255, 255, 255, .16)); --ra-ink: #fff;
+  --ra-shadow: inset 0 1px 0 rgba(255, 255, 255, .64), inset 0 -12px 12px -12px rgba(255, 255, 255, .4), 0 8px 16px -8px rgba(40, 10, 90, .4);
+  --rn-bg: linear-gradient(180deg, rgba(255, 255, 255, .48), rgba(255, 255, 255, .22)); --rn-ink: #fff;
+  --rn-shadow: inset 0 1px 0 rgba(255, 255, 255, .72), inset 0 -4px 4px -4px rgba(255, 255, 255, .4), 0 4px 8px -4px rgba(40, 10, 90, .4);
+  --rn-blur: blur(8px) saturate(1.6);
+}
+.rail[data-rail="noor"] .avatar { background: #fff; }
+/* Wave: her reference turned vertical — blurred bands that sway; the rail over them adds a light blur (10);
+   a fine grain lies on top of everything */
+.wave { display: none; position: absolute; inset: 0; width: 100%; height: 100%; }
+.railGlow:has(+ .rail[data-rail="wave"]) .wave { display: block; }
+.wave ellipse, .wave path { transform-box: fill-box; transform-origin: center; will-change: transform; }
+/* a little faster (designer, 12 Nov): 8–11s per sway, was 13–18s */
+.wBlue { animation: waveA 10s ease-in-out infinite alternate; }
+.wMagenta { animation: waveB 8s ease-in-out infinite alternate; }
+.wLight { animation: waveC 11s ease-in-out infinite alternate; }
+.wCoral { animation: waveD 9s ease-in-out infinite alternate; }
+.wEmber { animation: waveB 10s ease-in-out -3s infinite alternate; }
+.wLight2 { animation: waveC 9s ease-in-out -4s infinite alternate; }
+/* the grain: fine and soft — a touch more than the first pass (.28), far less than the coarse one she called ugly.
+   It is its own layer above the rail, clipped to the rail's shape */
+.railGrain { display: none; }
+.rail[data-rail="wave"] + .railGrain {
+  display: block;
+  position: fixed; z-index: 31;
+  inset-block: 16px; inset-inline-start: 16px;
+  width: 72px; height: calc(100% - 32px);
+  border-radius: var(--r-l);
+  overflow: hidden;
+  pointer-events: none;
+  opacity: .4;
+  mix-blend-mode: overlay;
+}
+@keyframes waveA { from { transform: translate(0, 0) scale(1); } to { transform: translate(12px, 48px) scale(1.12); } }
+@keyframes waveB { from { transform: translate(0, 0) scale(1.06); } to { transform: translate(-16px, -40px) scale(.94); } }
+@keyframes waveC { from { transform: translate(0, 0) scale(.94); } to { transform: translate(-12px, 56px) scale(1.16); } }
+@keyframes waveD { from { transform: translate(0, -32px) rotate(-4deg); } to { transform: translate(0, 40px) rotate(5deg); } }
+.rail[data-rail="wave"] {
+  /* the layer over the colour (designer, 12 Nov): first blur 100 + white 10%, then turned down to blur 10 and no
+     white fill — the wave keeps its shape and its full colour */
+  --rail-bg: none; --rail-blur: blur(10px);
+  --rail-shadow: inset 0 1px 0 rgba(255, 255, 255, .4), 0 16px 40px -16px rgba(150, 60, 190, .44);
+  --ri: rgba(255, 255, 255, .92); --ri-on: #fff; --rh: rgba(255, 255, 255, .18);
+  --ra-bg: linear-gradient(180deg, rgba(255, 255, 255, .4), rgba(255, 255, 255, .18)); --ra-ink: #fff;
+  --ra-shadow: inset 0 1px 0 rgba(255, 255, 255, .72), inset 0 -12px 12px -12px rgba(255, 255, 255, .4), 0 8px 16px -8px rgba(40, 10, 90, .36);
+  --ra-blur: blur(8px) saturate(1.6);
+  --rn-bg: linear-gradient(180deg, rgba(255, 255, 255, .48), rgba(255, 255, 255, .22)); --rn-ink: #fff;
+  --rn-shadow: inset 0 1px 0 rgba(255, 255, 255, .72), inset 0 -4px 4px -4px rgba(255, 255, 255, .4), 0 4px 8px -4px rgba(40, 10, 90, .4);
+  --rn-blur: blur(8px) saturate(1.6);
+}
+.rail[data-rail="wave"] .avatar { background: #fff; }
+.rail[data-rail="wave"] .railBtn svg { filter: drop-shadow(0 1px 2px rgba(40, 10, 90, .4)); } /* white icons stay readable on the cream band */
+.rail[data-rail="wave"] .railBtn[aria-current="page"] svg { filter: none; }
+
+/* the pools wander: each has its own path and pace, so the pattern never repeats visibly */
+@keyframes poolA { from { transform: translate(0, 0) scale(1); } to { transform: translate(24px, 14vh) scale(1.2); } }
+@keyframes poolB { from { transform: translate(0, 0) scale(1.1); } to { transform: translate(-32px, -12vh) scale(.92); } }
+@keyframes poolC { from { transform: translate(0, 0) scale(.96); } to { transform: translate(36px, -10vh) scale(1.24); } }
+@keyframes poolD { from { transform: translate(0, 0) scale(1.08); } to { transform: translate(-24px, -14vh) scale(.9); } }
+
+.railTop { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+.railLogo { width: 40px; height: 40px; object-fit: contain; flex: none; }
+/* folded, it is one of the rail's own buttons, so it is as easy to see and to hit as the sections (13 Nov, review:
+   "when I fold the menu I can't open it again"); open, it sits small beside the logo */
+.railFold {
+  position: relative;
+  width: 48px; height: 48px; border-radius: var(--r-s);
+  display: grid; place-items: center;
+  color: var(--ri);
+  transition: background .2s, color .2s;
+}
+.railFold:hover { color: var(--ri-on); background: var(--rh); }
+.railFold:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 4px; }
+.railName { display: none; }
+.railGroup { display: flex; flex-direction: column; gap: 8px; flex: 1; }
+.railBtn {
+  position: relative;
+  width: 48px; height: 48px;
+  border-radius: var(--r-s);
+  display: grid; place-items: center;
+  color: var(--ri);
+  transition: background .2s, color .2s, box-shadow .25s;
+}
+.railBtn:hover { color: var(--ri-on); background: var(--rh); }
+.railBtn[aria-current="page"] { color: var(--ra-ink); background: var(--ra-bg); box-shadow: var(--ra-shadow); -webkit-backdrop-filter: var(--ra-blur, none); backdrop-filter: var(--ra-blur, none); }
+.railBtn:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 4px; }
+/* a small glass bead on the icon's corner */
+.railDot {
+  position: absolute; top: 8px; inset-inline-end: 8px; width: 12px; height: 12px; border-radius: 999px;
+  background: var(--rn-bg); box-shadow: var(--rn-shadow);
+  -webkit-backdrop-filter: var(--rn-blur); backdrop-filter: var(--rn-blur);
+}
+.badge {
+  position: absolute; top: 4px; inset-inline-end: 4px;
+  min-width: 20px; height: 20px; padding: 0 4px;
+  border-radius: 999px; background: var(--rn-bg); color: var(--rn-ink);
+  font: 500 12px/20px var(--f-mono); text-align: center;
+  box-shadow: var(--rn-shadow);
+  -webkit-backdrop-filter: var(--rn-blur); backdrop-filter: var(--rn-blur);
+}
+.avatarBtn { width: 48px; height: 48px; }
+.avatarBtn:hover { background: none; }
+.avatar {
+  width: 40px; height: 40px; border-radius: 999px;
+  display: grid; place-items: center;
+  background: rgba(255, 255, 255, .72); color: var(--ink);
+  box-shadow: 0 4px 8px -4px rgba(30, 30, 60, .24); /* no ring */
+  font: 500 12px/16px var(--f-mono); letter-spacing: .1em;
+}
+.tip {
+  position: absolute; inset-inline-start: calc(100% + 16px); top: 50%;
+  transform: translate(-4px, -50%);
+  height: 32px; padding: 0 12px;
+  display: inline-flex; align-items: center; white-space: nowrap;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .86); color: var(--ink);
+  -webkit-backdrop-filter: var(--g-blur);
+  backdrop-filter: var(--g-blur);
+  box-shadow: var(--glass-edge), 0 8px 16px -8px rgba(30, 30, 60, .28);
+  font: 500 12px/16px var(--f-mono); letter-spacing: .1em; text-transform: uppercase;
+  opacity: 0; pointer-events: none;
+  transition: opacity .16s, transform .2s var(--ease);
+}
+.railBtn:hover .tip, .railBtn:focus-visible .tip { opacity: 1; transform: translate(0, -50%); }
+
+/* ───────── greeting: Mono date + the hello, on the page (not in a card) ───────── */
+.hello { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 16px; align-items: end; padding: 8px 0 24px 8px; } /* same two columns as the desk */
+.helloText { display: grid; gap: 8px; min-width: 0; }
+/* company + balance: one compact glass bar, level with the greeting, above the right column */
+.account {
+  display: flex; align-items: center; gap: 16px;
+  height: 64px; padding: 0 12px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, .56);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 1px 2px rgba(14, 17, 22, .03), 0 16px 40px -24px rgba(30, 30, 60, .14);
+}
+.accCo { display: inline-flex; align-items: center; gap: 12px; min-width: 0; }
+.accMark {
+  flex: none; width: 40px; height: 40px; border-radius: 12px;
+  display: grid; place-items: center;
+  background: url(../assets/img/mark.png) center / cover no-repeat;
+  font-weight: 700; font-size: 20px; line-height: 20px; letter-spacing: -.02em; color: #fff;
+}
+.accName { font-weight: 700; font-size: 16px; line-height: 24px; letter-spacing: -.01em; color: var(--ink); white-space: nowrap; }
+.accBal { display: grid; margin-left: auto; padding-left: 16px; border-left: 1px solid var(--line); }
+.accLabel { font: 500 12px/16px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+.accCur { font-weight: 400; color: var(--text-muted); }
+.accTop { height: 40px; padding: 0 16px; }
+.helloDate { margin: 0; font: 500 12px/16px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--dim); }
+.helloTitle { margin: 0; font-weight: 700; font-size: 32px; line-height: 40px; letter-spacing: -.035em; color: var(--ink); }
+
+/* ───────── layout "Desk": the work on the left, the support on a 400px right column ───────── */
+.desk { display: grid; grid-template-columns: minmax(0, 1fr) 400px; gap: 16px; align-items: stretch; }
+.deskCol { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+.deskCol > :last-child { flex: 1; } /* the two columns end on one line */
+.deskSide, .screenSvc { min-width: 0; }
+
+.panel {
+  position: relative;
+  border-radius: var(--r-l);
+  padding: 24px;
+  display: flex; flex-direction: column; gap: 16px;
+  min-width: 0;
+}
+/* the instruments (Requests, keys, website dial): the site's frosted card glass, lifted off the Sand */
+/* designer, 12 Nov: "cards look heavy — remove the stroke; the shadow is too heavy and dirty".
+   No outlines; one clean, airy shadow (neutral, low opacity, wide blur) + a white top highlight. */
+.glass, .sand, .plate {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 1px 2px rgba(14, 17, 22, .03), 0 16px 40px -24px rgba(30, 30, 60, .14);
+}
+.glass { background: linear-gradient(180deg, rgba(255, 255, 255, .78), rgba(255, 255, 255, .56)); }
+.sand { background: rgba(255, 255, 255, .56); }
+.plate { background: rgba(255, 255, 255, .56); }
+.head { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+.head .headDim { white-space: nowrap; }
+.foot { margin-top: auto; display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; }
+.foot .small { max-width: 260px; }
+
+/* ───────── boot sequence ───────── */
+.boot { animation: boot .9s var(--ease) both; animation-delay: var(--d, 0ms); }
+@keyframes boot {
+  from { opacity: 0; transform: translateY(24px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes blink { 50% { opacity: .2; } }
+
+/* ───────── buttons ───────── */
+.btn {
+  height: 44px; padding: 0 20px;
+  display: inline-flex; align-items: center; justify-content: center; gap: 8px;
+  border-radius: 999px; white-space: nowrap; flex: none;
+  transition: transform .12s, background .2s, box-shadow .25s, color .2s;
+}
+.btn:active { transform: scale(.98); }
+.btn:focus-visible, .chip:focus-visible, .kbd:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 4px; }
+/* the live site's three buttons: outline (third level), glass (second), smoke (the one primary) */
+/* secondary: a quieter stroke (13 Nov, review), a touch firmer under the pointer */
+.btnOutline { box-shadow: inset 0 0 0 1px rgba(14, 17, 22, .12); color: var(--ink); }
+.btnOutline:hover { background: rgba(14, 17, 22, .04); box-shadow: inset 0 0 0 1px rgba(14, 17, 22, .18); }
+.btnGlass { color: var(--ink); background: var(--g-fill); box-shadow: var(--g-edge), var(--g-lift); }
+.btnGlass:hover { background: linear-gradient(180deg, rgba(255, 255, 255, .7), rgba(255, 255, 255, .36)); }
+.btnSmoke {
+  position: relative; isolation: isolate; overflow: hidden;
+  color: var(--sand);
+  background: linear-gradient(180deg, rgba(34, 38, 48, .86), rgba(14, 17, 22, .92));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .16), inset 0 1px 0 rgba(255, 255, 255, .3), 0 12px 32px -12px rgba(14, 17, 22, .5);
+}
+.btnSmoke::after {
+  content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none; border-radius: inherit;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, .22) 48%, rgba(255, 255, 255, .04) 56%, transparent 70%);
+  transform: translateX(-110%);
+  transition: transform .9s var(--ease);
+}
+.btnSmoke:hover::after, .btnSmoke:focus-visible::after { transform: translateX(110%); }
+.btnSmoke:hover { box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .22), inset 0 1px 0 rgba(255, 255, 255, .38), 0 16px 32px -12px rgba(14, 17, 22, .56); }
+/* one primary per view: while a Send to Spark is open it is the primary, so Read the proposal steps down to glass */
+/* (only a Send that is actually on screen counts: the open brief, or the open Dr.AI chat) */
+.page:has(.keys .btnSend, .aiPop[data-open] .btnSend) .btnRead { color: var(--ink); background: var(--g-fill); box-shadow: var(--g-edge), var(--g-lift); }
+.page:has(.keys .btnSend, .aiPop[data-open] .btnSend) .btnRead::after { display: none; }
+.btnSend { padding-inline: 20px 12px; } /* no LED inside the primary: it looked like a status */
+.kbdIn {
+  font: inherit; height: 24px; padding: 0 8px; margin-inline-start: 4px;
+  display: inline-grid; place-items: center;
+  border-radius: 999px; background: rgba(248, 246, 242, .12); color: rgba(248, 246, 242, .72);
+}
+
+/* ───────── status LEDs: one spec, used in rows, links and "sent" lines ───────── */
+.led { width: 8px; height: 8px; border-radius: 999px; flex: none; }
+/* a request's state reads as progress, not as an alarm (designer, 12 Nov: "why is Proposal ready orange?"):
+   sent = an empty ring → in discussion = a filled Ink dot → proposal ready = a lit Cobalt dot ("ready", as on report cards) */
+.ledSent { box-shadow: inset 0 0 0 1px var(--dim); }
+.ledTalk { background: var(--ink); }
+.ledYou { background: var(--cobalt); box-shadow: 0 0 0 4px rgba(30, 59, 214, .16); }
+
+/* ───────── Requests: whose move is it ───────── */
+.req { scroll-margin-top: 16px; }
+/* rows like "More reports" (designer, 12 Nov): no card inside the card — the content sits on the panel's own
+   padding, rows are separated by hairlines; left and right edges line up with the header */
+.reqList { list-style: none; margin: 0; padding: 0; display: grid; }
+.row { display: grid; grid-template-rows: 1fr; }
+.row + .row { border-top: 1px solid var(--line); }
+.rowClip { min-height: 0; }
+.rowIn {
+  position: relative;
+  display: grid; grid-template-columns: minmax(0, 1fr) max-content; align-items: center; gap: 16px;
+  min-height: 72px;
+  padding: 12px 0;
+}
+/* proposal ready: told by the lit Cobalt dot and the one smoke button, not by a box */
+.rMain { display: grid; gap: 4px; min-width: 0; }
+/* one line each, never a wrap (designer, 12 Nov): the title truncates; in the meta line only the origin gives way */
+.rTitle { display: block; font-size: 16px; line-height: 24px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.rMeta { display: flex; flex-wrap: nowrap; align-items: center; min-width: 0; overflow: hidden; padding: 4px; margin: -4px; color: var(--dim); } /* the 4px keeps the LED's halo from being clipped */
+.rMeta > span { flex: none; display: inline-flex; align-items: center; white-space: nowrap; }
+.rMeta > .rFrom { flex: 0 1 auto; min-width: 0; }
+.rFromText { min-width: 0; overflow: hidden; text-overflow: ellipsis; }
+/* the separator trails its item, so a wrapped line never starts with a dot */
+.rMeta > span:not(:last-child)::after { content: "·"; margin: 0 8px; color: var(--dim); }
+.rState { gap: 8px; color: var(--ink); }
+.rMeta > .rState:not(:last-child)::after { margin-left: 0; } /* its flex gap already spaces the dot */
+.rNew { color: var(--ember-text); }
+.rGo {
+  width: 44px; height: 44px; border-radius: 999px;
+  display: grid; place-items: center end; /* the arrow sits on the panel's right edge */
+  color: var(--text-muted);
+  transition: color .2s, transform .2s var(--ease);
+}
+.rowIn:hover .rGo { color: var(--ink); transform: translateX(4px); }
+.rGo:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 0; }
+.reqMore { align-self: flex-end; display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); }
+.reqMore:hover { color: var(--ink); }
+
+/* boot: rows come up one by one */
+.rowBoot { animation: rowBoot .6s var(--ease) both; animation-delay: var(--rd); }
+@keyframes rowBoot { from { opacity: 0; transform: translateY(8px); } }
+/* a new request lands: the row opens, one white light sweeps it, its LED pulses once */
+.rowNew { animation: rowOpen .6s var(--ease) both; animation-delay: var(--rd); }
+.rowNew > .rowClip, .rowNew .rowIn { overflow: hidden; }
+@keyframes rowOpen { from { grid-template-rows: 0fr; opacity: 0; } to { grid-template-rows: 1fr; opacity: 1; } }
+.rowNew .rowIn::after {
+  content: ""; position: absolute; inset: 0; pointer-events: none;
+  background: linear-gradient(100deg, transparent 28%, rgba(255, 255, 255, .8) 50%, transparent 72%);
+  transform: translateX(-100%);
+  animation: sweep .9s var(--ease-soft) both;
+  animation-delay: calc(var(--rd) + 350ms);
+}
+@keyframes sweep { to { transform: translateX(100%); } }
+.rowNew .led { animation: ledPulse .6s var(--ease) calc(var(--rd) + 500ms) both; }
+@keyframes ledPulse { 0% { transform: scale(.4); opacity: 0; } 60% { transform: scale(1.6); opacity: 1; } 100% { transform: scale(1); } }
+
+/* ───────── 02 Dr.AI module ───────── */
+.bar {
+  position: relative;
+  height: 56px;
+  border-radius: 999px;
+  background: rgba(14, 17, 22, .04);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, .1), inset 0 2px 4px rgba(14, 17, 22, .06), 0 1px 0 #fff;
+  display: flex; align-items: center; gap: 12px;
+  padding: 0 8px 0 24px;
+  transition: box-shadow .25s var(--ease), background .25s;
+}
+.barFocus { background: #fff; box-shadow: inset 0 0 0 2px var(--cobalt), 0 0 0 4px rgba(30, 59, 214, .16); }
+.input {
+  flex: 1; min-width: 0; height: 56px;
+  border: 0; outline: 0; background: transparent;
+  font: 400 16px/24px var(--f-x); color: var(--ink);
+}
+.input::placeholder { color: var(--text-muted); }
+.kbd {
+  height: 40px; padding: 0 16px;
+  display: inline-flex; align-items: center; gap: 8px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .8);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, .08), 0 1px 2px rgba(14, 17, 22, .08);
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+button.kbd { color: var(--ink); }
+.busy { width: 8px; height: 8px; border-radius: 999px; background: var(--noor); animation: blink .8s ease-in-out infinite; } /* Dr.AI = Noor, only while he thinks */
+
+.speech { min-width: 0; }
+.answerText { margin: 0; font-size: 16px; line-height: 24px; color: var(--ink); }
+.dim { color: var(--dim); }
+.caret { display: inline-block; width: 8px; height: 16px; margin-inline-start: 4px; vertical-align: -4px; border-radius: 4px; background: rgba(14, 17, 22, .72); animation: blink .6s steps(2) infinite; }
+.aiFoot { margin-top: auto; min-height: 88px; display: flex; flex-direction: column; justify-content: flex-end; }
+.chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.chip {
+  height: 40px; padding: 0 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .6);
+  box-shadow: inset 0 0 0 1px var(--line);
+  font-size: 16px; line-height: 24px; color: var(--ink);
+  transition: background .2s, transform .2s var(--ease), box-shadow .2s;
+}
+.chip:hover { background: #fff; transform: translateY(-4px); box-shadow: inset 0 0 0 1px var(--line), 0 8px 16px -8px rgba(14, 17, 22, .2); }
+.chip:active { transform: scale(.98); }
+.sendBlock { display: grid; gap: 12px; animation: screenIn .45s var(--ease) both; }
+.sendRow { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; }
+.sentLine { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-size: 16px; line-height: 24px; color: var(--ink); animation: screenIn .45s var(--ease) both; }
+.already { display: flex; align-items: flex-start; gap: 8px; margin: 0; color: var(--text-muted); }
+.already .led { margin-top: 4px; }
+.hint { margin: 0; font-size: 16px; line-height: 24px; color: var(--text-muted); max-width: 440px; }
+
+/* ───────── 03 keyboard = request launcher ───────── */
+.keyRow { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; padding: 8px 0 12px; }
+/* S·P·A·R·K keys as on the live site: light frosted glass at rest; pressed, the key fills with its service colour,
+   rises and throws a soft shadow in that colour (the site's keycap renders are translucent coloured glass) */
+.key {
+  /* designer, 12 Nov: "steal the landing's letters — glass, glowing", then "remove the grey background".
+     The renders' grey ground is keyed out (public/vc/key-*.png have alpha), so the keys float on the panel. */
+  --c: var(--svc-s);
+  position: relative;
+  height: 160px;
+  border-radius: 20px;
+  padding: 12px 12px 16px;
+  display: flex; flex-direction: column; justify-content: space-between; align-items: center;
+  text-align: center;
+  color: var(--ink);
+  background: transparent;
+  transform: translateY(0);
+  transition: transform .22s var(--ease-spring), box-shadow .3s var(--ease), background .25s;
+  animation: keyIn .6s var(--ease-spring) both;
+  animation-delay: var(--kd, 0ms);
+}
+@keyframes keyIn { from { transform: translateY(8px); opacity: 0; } }
+.keyCap {
+  display: block;
+  width: 96px;
+  height: 108px;
+  object-fit: contain;
+  pointer-events: none;
+  user-select: none;
+  transition: transform .3s var(--ease-spring), filter .3s var(--ease);
+}
+.key:hover .keyCap { transform: translateY(-4px); }
+.keyLabel { font: 500 12px/16px var(--f-mono); letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); transition: color .2s; }
+/* selected: a light glass tile appears behind it, the key rises and its glass glows harder */
+.keyOn, .keyOn:hover {
+  transform: translateY(-8px);
+  background: rgba(255, 255, 255, .72);
+  box-shadow: inset 0 1px 0 #fff, 0 20px 32px -16px color-mix(in srgb, var(--c) 48%, transparent);
+}
+.keyOn .keyCap { transform: translateY(-4px) scale(1.06); filter: saturate(1.15) brightness(1.04) drop-shadow(0 8px 12px color-mix(in srgb, var(--c) 40%, transparent)); }
+.keyOn .keyLabel { color: color-mix(in srgb, var(--c) 82%, var(--ink)); }
+.keyDown, .key:active {
+  transform: translateY(4px);
+  transition-duration: .08s;
+}
+
+/* the screen under the keys: a light inset glass well (the brief opens inside it) */
+.screen {
+  border-radius: 20px;
+  padding: 12px 12px 12px 24px;
+  background: rgba(14, 17, 22, .03);
+  box-shadow: none; /* no stroke, no inner shadow (lighter) */
+  display: flex;
+  transition: box-shadow .3s var(--ease);
+}
+.screenLit { padding: 24px; background: color-mix(in srgb, var(--c) 5%, rgba(255, 255, 255, .5)); }
+.screenIn { flex: 1; display: grid; grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr); gap: 20px 32px; animation: screenIn .45s var(--ease) both; }
+@keyframes screenIn { from { opacity: 0; transform: translateY(8px); } }
+.svcMain { display: flex; flex-direction: column; gap: 12px; align-items: flex-start; }
+.svcLabel { color: color-mix(in srgb, var(--c) 76%, var(--ink)); }
+.svcLine { margin: 0; font-size: 16px; line-height: 24px; color: var(--ink); max-width: 440px; }
+.svcItems { list-style: none; margin: 0; padding: 0; display: grid; gap: 0; align-content: start; color: var(--text-muted); }
+.svcItems button {
+  display: flex; align-items: center; gap: 12px;
+  width: 100%; min-height: 28px; padding: 4px 8px; margin-inline-start: -8px;
+  border-radius: 999px; text-align: start;
+  font: inherit; letter-spacing: inherit; text-transform: inherit; color: inherit;
+  transition: color .2s, background .2s;
+}
+.svcItems button:hover { color: var(--ink); background: rgba(255, 255, 255, .8); }
+.svcItems button:focus-visible { outline: 2px solid var(--cobalt); outline-offset: 0; }
+.svcItems i { width: 8px; height: 8px; border-radius: 999px; background: rgba(14, 17, 22, .24); flex: none; }
+
+.brief { grid-column: 1 / -1; display: grid; gap: 12px; padding-top: 16px; border-top: 1px solid var(--line); }
+.briefPrompt { display: inline-flex; align-items: center; gap: 8px; color: var(--text-muted); }
+.briefSent { color: var(--ink); animation: screenIn .45s var(--ease) both; }
+.briefRow { display: flex; align-items: center; gap: 8px; }
+.briefInput {
+  flex: 1; min-width: 0; height: 44px;
+  border: 0; outline: 0; border-radius: 999px;
+  padding: 0 20px;
+  background: rgba(255, 255, 255, .8);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, .1), 0 1px 2px rgba(14, 17, 22, .04);
+  font: 400 16px/24px var(--f-x); color: var(--ink);
+  transition: box-shadow .2s, background .2s;
+}
+.briefInput::placeholder { color: var(--dim); }
+.briefInput:focus { background: #fff; box-shadow: inset 0 0 0 1px var(--cobalt), 0 0 0 4px rgba(30, 59, 214, .16); } /* focus is always Cobalt */
+
+/* idle: one quiet strip — the loop as three words, and "Ask Dr.AI" for those who can't pick a service yet */
+.screenIdle { grid-template-columns: minmax(0, 1fr) auto; align-items: center; gap: 16px; }
+.loop { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; align-items: center; gap: 8px 0; color: var(--text-muted); }
+.loop li { display: inline-flex; align-items: center; gap: 8px; }
+.loop li + li::before { content: ""; width: 24px; height: 1px; margin: 0 12px; background: rgba(14, 17, 22, .16); }
+.methodN { color: var(--dim); }
+
+/* ───────── website dial: drawn 1:1, every dot 4px; one dot = one point ─────────
+   gradient dots = the score now, Haze = the rest of the scale; the solid "Sep" and dashed "Typical" markers sit in the gaps */
+.dialWrap { position: relative; width: 320px; max-width: 100%; aspect-ratio: 1; margin: 0 auto -24px; }
+.dial { width: 100%; height: 100%; display: block; overflow: visible; }
+/* lit dots take the brand gradient per dot (Panels.tsx noorAt) */
+.dotOff { fill: rgba(200, 216, 240, .72); }
+.typLine { stroke: var(--dim); stroke-width: 1; stroke-dasharray: 4 4; } /* dashed = typical, nowhere else */
+.sepLine { stroke: rgba(14, 17, 22, .4); stroke-width: 1; }
+.svgDim { font: 500 12px var(--f-mono); letter-spacing: .1em; fill: var(--dim); }
+.dialCenter { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; }
+.legend { position: absolute; inset-inline: 0; bottom: 40px; display: flex; justify-content: center; }
+.web .foot { margin-top: 0; align-items: center; }
+.fixLine { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--text-muted); transition: color .2s; }
+.fixLine:hover { color: var(--ink); }
+
+/* ───────── instagram dot scale: 40 columns = 0 to 4.0%, one column = 0.1 pt; same marks as the dial ───────── */
+.ig { container: ig / inline-size; }
+.igBody { flex: 1; display: grid; grid-template-columns: auto 320px minmax(0, 1fr); align-items: end; gap: 40px; }
+.igRead { display: grid; gap: 12px; }
+.igChart { display: grid; gap: 8px; }
+.band { display: block; max-width: 100%; height: auto; }
+.axis { display: flex; justify-content: space-between; color: var(--dim); }
+.igFoot { display: flex; flex-direction: column; align-items: flex-start; gap: 16px; }
+/* the layout follows the card, not the window: when the card is too narrow for a third column,
+   the note and the button drop to their own row under the figure and the chart (never a squeezed column) */
+@container ig (width < 720px) {
+  .igBody { grid-template-columns: auto minmax(0, 1fr); gap: 24px 32px; }
+  .igChart { min-width: 0; justify-self: end; }
+  .igFoot { grid-column: 1 / -1; flex-direction: row; align-items: center; justify-content: space-between; }
+}
+
+/* ───────── more reports: the three the Spark team prepares on request, as compact rows ───────── */
+.more { min-width: 0; }
+.mrList { flex: 1; list-style: none; margin: 0; padding: 0; display: grid; grid-auto-rows: minmax(64px, 1fr); } /* rows share the panel's height */
+.mr { display: grid; grid-template-columns: 112px minmax(0, 1fr) max-content; align-items: center; gap: 16px; min-height: 64px; padding: 8px 0; }
+.mr + .mr { border-top: 1px solid var(--line); }
+.mrKind { color: var(--dim); }
+.mrTitle { font-size: 16px; line-height: 24px; color: var(--ink); }
+.mrSent { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--text-muted); }
+
+/* ───────── 07 strategist call ───────── */
+.callBody { flex: 1; display: flex; flex-direction: column; gap: 20px; }
+/* the landing's portrait, cropped to the face and the halo; a glass chip carries the length */
+.callPic {
+  position: relative;
+  margin: 0;
+  height: 264px;
+  border-radius: 20px;
+  overflow: hidden;
+  background: #F1EEE8;
+  box-shadow: 0 16px 32px -24px rgba(30, 30, 60, .32);
+}
+.callPic img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: 50% 28%;
+  transition: transform 1.2s var(--ease);
+}
+.call:hover .callPic img { transform: scale(1.04); }
+.callChip {
+  position: absolute;
+  left: 12px;
+  bottom: 12px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .64);
+  -webkit-backdrop-filter: blur(16px) saturate(1.6);
+  backdrop-filter: blur(16px) saturate(1.6);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .8), 0 8px 16px -8px rgba(30, 30, 60, .24);
+  font: 500 12px/16px var(--f-mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+.callText { display: flex; flex-direction: column; align-items: flex-start; gap: 12px; }
+.rule { margin: 0; font-weight: 700; font-size: 20px; line-height: 24px; letter-spacing: -.02em; color: var(--ink); } /* the card's headline */
+.callText .body { margin-top: -4px; }
+.callText .btn { margin-top: 4px; }
+
+/* ───────── profile: name, team, one line (no chips, no dashed rule: dashed means "typical") ───────── */
+.plateId { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.plateName { margin: 0; font-size: 20px; line-height: 24px; font-weight: 700; letter-spacing: -.02em; }
+.team { display: flex; align-items: center; gap: 12px; }
+.avatars { display: inline-flex; gap: 4px; }
+.avatars b {
+  position: relative;
+  width: 32px; height: 32px; border-radius: 999px;
+  display: grid; place-items: center;
+  font: 500 12px/16px var(--f-mono); letter-spacing: .04em;
+  background: var(--sand); color: var(--ink);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.avatars b:first-child { background: #fff; box-shadow: inset 0 0 0 1px var(--ink); } /* you */
+
+/* ───────── tablet ───────── */
+@media (max-width: 1180px) {
+  .desk { grid-template-columns: minmax(0, 1fr); }
+  .hello { grid-template-columns: minmax(0, 1fr); align-items: start; padding-right: 0; }
+}
+
+/* ───────── mobile ───────── */
+@media (max-width: 760px) {
+  .page { padding: 16px 16px 112px; }
+  .railGlow, .rail[data-rail="wave"] + .railGrain { display: none; } /* the light strip is only for the vertical rail */
+  .rail[data-rail="pastel"] { --rail-bg: linear-gradient(90deg, #DCE4FF, #EADDFF 36%, #FFDCE6 68%, #FFE6D6); }
+  .rail:is([data-rail="lavs"], [data-rail="lavm"], [data-rail="lavl"]) { --rail-bg: linear-gradient(90deg, #DCD2FF, #EAE2FF 56%, #F4E8FB); }
+  .rail[data-rail="noor"] { --rail-bg: linear-gradient(90deg, #3A34D6, #B446CC 40%, #E8508E 64%, #EE6A3C); }
+  .rail[data-rail="wave"] { --rail-bg: linear-gradient(90deg, #3B46E2, #D845B6 32%, #F6EEE8 52%, #EE5E72 72%, #F07E3A); }
+  .rail {
+    --rail-dir: 90deg;
+    inset: auto 12px 12px 12px;
+    width: auto; height: 64px;
+    flex-direction: row; justify-content: space-between;
+    padding: 0 8px; gap: 8px;
+    border-radius: var(--r-l);
+  }
+  .railLogo { width: 32px; height: 32px; margin-inline-start: 8px; }
+  .railGroup { flex-direction: row; justify-content: center; }
+  .tip { display: none; }
+  .panel { padding: 20px; }
+  .hello { padding: 8px 4px 16px; }
+  .helloTitle { font-size: 28px; line-height: 32px; }
+
+  /* requests */
+  .rowIn { grid-template-columns: minmax(0, 1fr) max-content; gap: 12px; align-items: start; }
+  .rowLit .rowIn { grid-template-columns: minmax(0, 1fr); }
+  .rowLit .rowIn > .btn { grid-column: 1 / -1; justify-self: stretch; }
+
+  .bar { padding-inline-start: 20px; }
+  .bar .kbd:not(button) { display: none; }
+  .aiFoot { min-height: 0; }
+  .chips { flex-wrap: nowrap; overflow-x: auto; margin: 0 -20px; padding: 0 20px 4px; scrollbar-width: none; }
+  .chips::-webkit-scrollbar { display: none; }
+  .chip { flex: none; }
+  .kbdIn { display: none; }
+
+  /* keys */
+  .keyRow { gap: 8px; }
+  .key { height: 72px; padding: 4px; justify-content: center; }
+  .keyCap { width: 56px; height: 64px; }
+  .keyLabel { display: none; }
+  .keyOn, .keyOn:hover { transform: translateY(-4px); }
+  .screen { padding: 20px; min-height: 0; }
+  .screenIn { grid-template-columns: minmax(0, 1fr); gap: 20px; }
+  .screen:has(.brief) { padding: 16px; }
+  .briefRow { flex-wrap: wrap; }
+  .briefInput { flex-basis: 100%; }
+  .briefRow .btn { flex: 1 1 auto; padding-inline: 16px; }
+  .btnSend svg { display: none; }
+  .screenIdle { grid-template-columns: minmax(0, 1fr); }
+
+  /* reports */
+  .numXL, .numL { font-size: 72px; line-height: 72px; }
+  .foot { flex-direction: column; align-items: flex-start; }
+  .mr { grid-template-columns: minmax(0, 1fr); gap: 8px; padding: 16px 0; }
+  .igBody { grid-template-columns: minmax(0, 1fr); }
+  .igFoot { flex-direction: column; align-items: flex-start; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .boot, .key, .screenIn, .rowBoot, .rowNew, .sendBlock, .sentLine, .briefSent { animation: none; }
+  .rowNew .rowIn::after, .btnSmoke::after { display: none; }
+  .busy, .caret, .rowNew .led { animation: none !important; }
+  .railGlow i, .wave ellipse, .wave path { animation: none !important; }
+}
+
+/* ───────── Dr.AI companion: the mascot bottom-right, the chat opens above him (designer, 12 Nov) ───────── */
+.aiDock {
+  position: fixed;
+  right: 32px; /* the chat card lines up with the 400px right column */
+  bottom: 24px;
+  z-index: 40;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+  pointer-events: none;
+}
+.aiPop {
+  pointer-events: auto;
+  width: 400px;
+  max-height: calc(100dvh - 200px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  scrollbar-width: thin;
+  gap: 16px;
+  background: rgba(255, 255, 255, .88);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  backdrop-filter: blur(24px) saturate(1.6);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 1px 2px rgba(14, 17, 22, .04), 0 24px 64px -24px rgba(30, 30, 60, .28);
+  transform-origin: 85% 100%;
+  transition: opacity .35s var(--ease), transform .45s var(--ease-spring), visibility 0s;
+}
+.aiPop:not([data-open]) {
+  opacity: 0;
+  transform: translateY(16px) scale(.96);
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity .25s var(--ease), transform .3s var(--ease), visibility 0s .3s;
+}
+.aiPop .aiFoot { min-height: 0; margin-top: 0; }
+.aiClose {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  margin: -8px -8px -8px 0;
+  border-radius: 999px;
+  color: var(--text-muted);
+  transition: background .25s var(--ease), color .25s var(--ease);
+}
+.aiClose:hover { background: rgba(14, 17, 22, .06); color: var(--ink); }
+.aiClose:focus-visible { outline: 0; box-shadow: 0 0 0 4px rgba(30, 59, 214, .24); }
+
+.aiLauncher {
+  pointer-events: auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  border-radius: 24px;
+  animation: aiIn .6s .4s var(--ease-spring) both;
+  transition: transform .3s var(--ease);
+}
+.aiLauncher:hover { transform: translateY(-4px); }
+.aiLauncher:focus-visible { outline: 0; box-shadow: 0 0 0 4px rgba(30, 59, 214, .32); }
+.aiFig { display: block; width: 112px; aspect-ratio: 1; margin-bottom: -16px; }
+.aiPill {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 16px;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .88);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  backdrop-filter: blur(24px) saturate(1.6);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .9), 0 12px 24px -12px rgba(30, 30, 60, .24);
+  font: 500 12px/16px var(--f-mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: var(--ink);
+  transition: opacity .25s var(--ease), transform .3s var(--ease);
+}
+.aiPill[data-hide] { opacity: 0; transform: translateY(4px); }
+.aiDot { width: 8px; height: 8px; border-radius: 50%; background: var(--noor); } /* Dr.AI = Noor */
+@keyframes aiIn { from { opacity: 0; transform: translateY(16px) scale(.92); } }
+
+@media (max-width: 760px) {
+  .aiDock { right: 16px; bottom: 88px; } /* above the bottom rail */
+  .aiPop { width: calc(100vw - 32px); max-height: calc(100dvh - 176px); }
+  .aiFig { width: 88px; margin-bottom: -12px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .aiLauncher { animation: none; }
+  .aiPop, .aiPop:not([data-open]) { transition: none; }
+}
+
+/* ───────── the menu open: its words beside the icons (13 Nov, review) ─────────
+   Folded, the rail is the 72 px strip of icons it has always been, with the names on hover. Open, it is 232 px: the
+   logo and the fold button on one line, each item its icon and its name, the dot and the count at the end of the row,
+   and the person with their company at the foot. The page's left padding follows it. */
+.page { transition: padding .35s var(--ease); }
+.page[data-rail-open] { padding-left: 280px; }
+.rail { transition: width .35s var(--ease); }
+.rail[data-open] {
+  width: 232px;
+  align-items: stretch;
+  padding: 16px 12px;
+}
+.rail[data-open] .railTop { flex-direction: row; justify-content: space-between; padding-inline-start: 4px; }
+.rail[data-open] .railFold { width: 36px; height: 36px; border-radius: 12px; }
+.rail[data-open] .railGroup { gap: 4px; }
+.rail[data-open] .railBtn {
+  width: 100%; height: 44px;
+  grid-template-columns: 24px minmax(0, 1fr) auto;
+  /* the items line up from the left, not centred in their cells (13 Nov, review); the folded rail still centres its
+     icons, where place-items: center belongs */
+  display: grid; place-items: center start; gap: 12px;
+  padding: 0 12px;
+  border-radius: 14px;
+}
+.rail[data-open] .railBtn > svg { justify-self: center; }
+.rail[data-open] .railName {
+  display: block;
+  min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+  font: 400 15px/20px var(--f-x); color: var(--ink); text-align: start;
+}
+.rail[data-open] .railBtn:not([aria-current="page"]) .railName { color: var(--text-muted); }
+.rail[data-open] .railBtn:hover .railName { color: var(--ink); }
+/* the dot and the count come out of the icon's corner and sit at the end of the row */
+.rail[data-open] :is(.railDot, .badge) { position: static; }
+.rail[data-open] .railDot { width: 8px; height: 8px; justify-self: end; }
+/* the person at the foot: the avatar, their name, their company */
+.rail[data-open] .avatarBtn {
+  width: 100%; height: auto;
+  grid-template-columns: 40px minmax(0, 1fr);
+  place-items: center start;
+  padding: 8px 10px;
+}
+.rail[data-open] .avatarBtn:hover { background: var(--rh); }
+.rail[data-open] .railWho { display: grid; gap: 2px; }
+.rail[data-open] .railWho b { font: 500 15px/20px var(--f-x); color: var(--ink); }
+.rail[data-open] .railWho > span { font: 400 13px/16px var(--f-x); color: var(--text-muted); }
+/* the names are in the rail now, so no hover labels */
+.rail[data-open] .railBtn .tip, .rail[data-open] .avatarBtn .tip { display: none; }
+/* the light under the glass follows the open rail's width */
+.railGlow:has(+ .rail[data-open]) { width: 232px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .page, .rail { transition: none; }
+}
+/* on a phone the rail is the bar at the foot, as it was: no words, no fold */
+@media (max-width: 760px) {
+  .page[data-rail-open] { padding-left: 16px; }
+  .rail[data-open] {
+    width: auto;
+    padding: 0 8px;
+    align-items: center;
+  }
+  .rail[data-open] .railBtn { width: 48px; height: 48px; display: grid; grid-template-columns: none; place-items: center; padding: 0; }
+  .rail[data-open] .railName { display: none; }
+  .rail[data-open] .avatarBtn { width: 48px; padding: 0; grid-template-columns: none; }
+  .rail[data-open] :is(.railDot, .badge) { position: absolute; }
+  .railFold { display: none; }
+}

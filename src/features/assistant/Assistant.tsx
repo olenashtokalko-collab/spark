@@ -6,7 +6,7 @@ import { navigate } from '../../lib/router';
 import { Button, EmptyState, cx } from '../../components/ui/primitives';
 import { Composer } from './Composer';
 import { MessageView } from './MessageView';
-import { ChatStart } from './ChatStart';
+import { AttentionStart } from './AttentionStart';
 import { ChatHistory } from './ChatHistory';
 import type { Attachment } from '../../data/types';
 
@@ -73,7 +73,8 @@ export function Assistant({ convId }: { convId?: string }) {
             action={<Button onClick={() => navigate('/assistant')}>New chat</Button>}
           />
         ) : !conv ? (
-          <ChatStart onAsk={send} />
+          // Ask Dr.AI's start (11 Nov, picked on #/demo/ask-attention): what needs you as cards, the chat box below
+          <AttentionStart onAsk={send} />
         ) : (
           <div className="thread" ref={threadRef}>
             {readOnly && (

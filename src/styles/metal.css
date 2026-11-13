@@ -28,6 +28,9 @@
 .toast__action.metal {
   --metal-radius: 999px;
   border: 0;
+}
+/* (12 Nov) the flat Cobalt ones keep their own fill and shadow, set below */
+:is(.btn, .og-step__go, .dk-btn, .toast__action).metal:not(.metal--flat) {
   background: none !important;
   box-shadow: none !important;
   filter: none !important;
@@ -35,6 +38,13 @@
   backdrop-filter: none !important;
   animation: none !important;
   color: var(--ink, #0e1116) !important;
+}
+:is(.btn, .og-step__go, .dk-btn, .toast__action).metal.metal--flat {
+  filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  animation: none !important;
+  color: #fff !important;
 }
 .btn.metal .metal__label,
 .og-step__go.metal .metal__label,
@@ -279,4 +289,918 @@
   height: 30px;
   border-radius: 50%;
   overflow: hidden;
+}
+
+/* Dr.AI in the corner in the Current UI (11 Nov, review): the mascot alone, where the welcome leaves him; a click
+   opens the chat. The solo crop keeps Sparki out (his bobbing glow cut away at the top right). */
+.dk-solo {
+  position: fixed;
+  right: 26px;
+  bottom: 22px;
+  z-index: 60;
+  width: 92px;
+  height: 151px;
+  padding: 0;
+  border: 0;
+  background: none;
+  cursor: pointer;
+  transition: translate 0.25s cubic-bezier(0.25, 1, 0.5, 1);
+}
+.dk-solo:hover {
+  translate: 0 -3px;
+}
+.dk-solo:focus-visible {
+  outline: 2px solid #1e3bd6;
+  outline-offset: 4px;
+  border-radius: 16px;
+}
+.dk-solo .msc-clip.msc-clip--solo {
+  overflow: hidden;
+  clip-path: polygon(0 0, 94% 0, 94% 54%, 100% 54%, 100% 100%, 0 100%);
+}
+:root[data-welcome-mascot] .dk-solo,
+:root[data-no-dock] .dk-solo {
+  visibility: hidden;
+}
+
+/* a Blender render as a page's empty-state picture (11 Nov): sized like the drawings it replaces, its glow around it */
+.rq-tbl--empty .ea-render,
+.empty .ea-render,
+.empty-state .ea-render {
+  /* 72px as on Home (12 Nov, review) */
+  height: 72px;
+  width: auto;
+}
+
+/* Outlined secondary (12 Nov, review): ink on hover, white text, and both kinds of button move a little on hover:
+   they lean toward the pointer (magnet, MetalButton) and lift a touch */
+:root[data-theme][data-theme][data-ui='a'] :is(.aa-pill, .btn.btn--secondary:not(.metal):not(.btn--icon)) {
+  transition:
+    background-color 0.22s cubic-bezier(0.25, 1, 0.5, 1),
+    border-color 0.22s cubic-bezier(0.25, 1, 0.5, 1),
+    color 0.22s cubic-bezier(0.25, 1, 0.5, 1),
+    scale 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@media (hover: hover) {
+  :root[data-theme][data-theme][data-ui='a'] :is(.aa-pill, .btn.btn--secondary:not(.metal):not(.btn--icon)):hover:not(:disabled) {
+    /* !important: older glass rules repeat .btn--secondary eight times to win (glass.css) */
+    background: #0e1116 !important;
+    border-color: #0e1116 !important;
+    box-shadow: none !important;
+    color: #fff !important;
+    scale: 1.015;
+  }
+  :root[data-theme][data-theme][data-ui='a'] .btn.btn--secondary:not(.metal):not(.btn--icon):hover:not(:disabled) svg {
+    color: #fff !important;
+  }
+  :root[data-ui='a'] .metal:not(:disabled) {
+    transition: scale 0.3s cubic-bezier(0.25, 1, 0.5, 1);
+  }
+  :root[data-ui='a'] .metal:hover:not(:disabled) {
+    scale: 1.04;
+  }
+  :root[data-ui='a'] .metal.metal--flat:hover:not(:disabled) {
+    scale: 1.015;
+  }
+}
+:root[data-ui='a'] :is(.metal, .aa-pill, .btn--secondary):active:not(:disabled) {
+  scale: 0.97;
+}
+
+/* Ask Dr.AI in the menu (12 Nov, review): the metal pill, no head; a round one with a spark when the menu is narrow */
+.rail__drai-metal.metal {
+  --metal-radius: 999px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  align-self: stretch;
+  width: auto;
+  height: 32px;
+  margin: 10px 0 0;
+  padding: 0 14px;
+  border-radius: 999px;
+  color: var(--ink, #0e1116);
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+}
+.rail__drai-metal.metal.is-active .metal__glass {
+  background: rgba(255, 255, 255, 0.7);
+}
+.shell:not(.shell--rail-open) .rail__drai-metal.metal {
+  align-self: center;
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  margin: 10px auto 0;
+}
+
+/* The portal's buttons, flat Cobalt (12 Nov, review: "just Cobalt, no animation"): no metal and no moving lines,
+   white text; they keep the hover lean (magnet) and lift. Only Ask Dr.AI in the menu still wears the metal. */
+:root[data-ui][data-ui][data-ui] .metal.metal--flat.metal--flat {
+  background: #1e3bd6;
+  color: #fff;
+  border: 0;
+  box-shadow: 0 1px 2px rgba(14, 17, 22, 0.12), 0 6px 16px -8px rgba(30, 59, 214, 0.55);
+  transition:
+    background-color 0.22s cubic-bezier(0.25, 1, 0.5, 1),
+    box-shadow 0.4s cubic-bezier(0.22, 1, 0.36, 1),
+    scale 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+}
+:root[data-ui][data-ui][data-ui] .metal.metal--flat.metal--flat :is(.metal__label, svg) {
+  color: #fff;
+}
+:root[data-ui][data-ui][data-ui] .metal.metal--flat.metal--flat .metal__glass {
+  display: none;
+}
+@media (hover: hover) {
+  :root[data-ui][data-ui][data-ui] .metal.metal--flat.metal--flat:hover:not(:disabled) {
+    background: #2a48ec;
+    box-shadow: 0 1px 2px rgba(14, 17, 22, 0.12), 0 10px 22px -8px rgba(30, 59, 214, 0.6);
+  }
+}
+
+/* Requests' empty state (12 Nov, review): its text as Home's "No reports yet": a 16px semibold ink title, the body
+   14px in the second text colour */
+:root[data-theme][data-theme] .rq-tbl--empty .empty__title {
+  margin-top: 4px;
+  font-size: 16px;
+  font-weight: 600;
+  line-height: 24px;
+  color: var(--ink, #0e1116);
+}
+:root[data-theme][data-theme] .rq-tbl--empty .empty__body {
+  margin-top: 6px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.45;
+  color: var(--text-2);
+}
+
+/* A narrower menu (12 Nov, review): 260 → 224px open; Ask Dr.AI a little bigger in it */
+@media (min-width: 901px) {
+  :root[data-ui='a'] .shell.shell--rail-open {
+    --rail-w: 224px;
+  }
+}
+.shell--rail-open .rail__drai-metal.metal {
+  height: 38px;
+  font-size: 14px;
+}
+/* lower, and more room at its sides (12 Nov, review); then a little wider again (13 Nov, review): 164 to 180 px, 4 px
+   in from the tabs' edges */
+.shell--rail-open .rail__drai-metal.metal {
+  margin: 22px 4px 0;
+}
+
+/* the Blender bell in the notifications' empty state (12 Nov): 72px as on Home */
+.notifs__empty .ea-render {
+  height: 72px;
+  width: auto;
+}
+
+/* the Blender chat bubble in Chat history's empty state (12 Nov): 72px as on Home */
+.history__empty .ea-render {
+  height: 72px;
+  width: auto;
+}
+
+/* Request a report in Home's Reports card (12 Nov, review) */
+.og-later__go {
+  display: flex;
+  margin-top: 18px;
+}
+
+/* Dr.AI's advice from his corner (12 Nov, CornerTips): his words beside him over a soft wash of Sand, no box, as his
+   welcome's "I'm here if you need me"; the card's action and Later under them, and Skip after a few times */
+.dt-say {
+  position: fixed;
+  z-index: 60;
+  right: calc(26px + 92px + 4px);
+  bottom: 64px;
+  width: max-content;
+  max-width: 300px;
+  padding: 18px 22px;
+  margin: -18px -22px;
+  border-radius: 44px;
+  /* a soft-edged wash of Sand, dense enough that the page under it doesn't read through the words */
+  background: rgba(248, 246, 242, 0.94);
+  box-shadow: 0 0 28px 22px rgba(248, 246, 242, 0.94);
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  color: var(--ink, #0e1116);
+  opacity: 0;
+  translate: 8px 4px;
+  transition:
+    opacity 0.32s ease-out,
+    translate 0.5s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+.dt-say.is-on {
+  opacity: 1;
+  translate: 0 0;
+  pointer-events: auto;
+}
+.dt-say p {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.45;
+}
+.dt-say__b {
+  color: rgba(14, 17, 22, 0.5);
+}
+.dt-say__acts {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+.dt-say__skip {
+  padding: 0 4px;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: 12px;
+  color: rgba(14, 17, 22, 0.45);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+.dt-say__skip:hover {
+  color: var(--ink, #0e1116);
+}
+:root[data-welcome-mascot] .dt-say,
+:root[data-no-dock] .dt-say {
+  display: none;
+}
+@media (prefers-reduced-motion: reduce) {
+  .dt-say {
+    translate: 0 0;
+    transition: opacity 0.2s;
+  }
+}
+
+/* the advice: smaller buttons, and a small close at its top right (12 Nov, review) */
+.dt-say {
+  padding-right: 34px;
+}
+.dt-say__x {
+  position: absolute;
+  top: 12px;
+  right: 10px;
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  color: rgba(14, 17, 22, 0.4);
+  cursor: pointer;
+  transition: background-color 0.2s, color 0.2s;
+}
+.dt-say__x:hover {
+  background: rgba(14, 17, 22, 0.06);
+  color: var(--ink, #0e1116);
+}
+/* !important: the portal's button sizes are set by much heavier selectors (glass.css) */
+.dt-say__acts .btn.btn--sm {
+  height: 28px !important;
+  min-height: 0 !important;
+  padding: 0 12px !important;
+  font-size: 12.5px !important;
+  gap: 5px !important;
+}
+.dt-say {
+  max-width: 340px;
+}
+
+/* the advice types itself out (12 Nov, review), the untyped rest held invisible so nothing moves; the buttons ease
+   in once he's done */
+.dt-say__rest {
+  visibility: hidden;
+}
+.dt-say__acts {
+  opacity: 0;
+  translate: 0 6px;
+  pointer-events: none;
+  transition:
+    opacity 0.45s ease-out,
+    translate 0.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.dt-say__acts.is-on {
+  opacity: 1;
+  translate: 0 0;
+  pointer-events: auto;
+}
+.dt-say__x {
+  opacity: 0;
+  transition: opacity 0.45s ease-out, background-color 0.2s, color 0.2s;
+}
+.dt-say.is-on .dt-say__x {
+  opacity: 1;
+}
+
+/* the whole advice readable at once in soft grey; each letter darkens as he says it (12 Nov, review) */
+.dt-say__ch {
+  color: rgba(14, 17, 22, 0.26);
+  transition: color 0.35s ease-out;
+}
+/* one colour for both lines: grey unsaid, ink once said (12 Nov, review). No ligatures: a letter per span split
+   "fi" and lost its i */
+.dt-say p {
+  font-variant-ligatures: none;
+}
+.dt-say .dt-say__ch.is-said {
+  color: var(--ink, #0e1116);
+}
+
+/* the collapsed menu: Dr.AI's head in the metal circle instead of the sparkles (12 Nov, review) */
+.rail__drai-metal .rail__drai-head {
+  display: block;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+/* ---- what sits under Dr.AI's tip, to compare (12 Nov, review; picked on #/demo/home-bento) ----
+   wash: the soft Sand wash above. The others are objects of their own, lit rather than flat, a tail to him where it
+   helps: frost (frosted glass, Noor glowing under it), halo (white, the spectrum's light round its edge), bubble (a
+   soft 3D speech bubble), ink (dark, Cobalt and Ember light in its corners). */
+.dt-say--frost,
+.dt-say--halo,
+.dt-say--bubble,
+.dt-say--ink {
+  margin: 0;
+  padding: 18px 40px 18px 22px;
+  border-radius: 26px;
+  isolation: isolate;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+/* the tail, toward him at the right */
+.dt-say--frost::after,
+.dt-say--bubble::after,
+.dt-say--ink::after {
+  content: '';
+  position: absolute;
+  right: -7px;
+  bottom: 30px;
+  width: 16px;
+  height: 16px;
+  border-radius: 0 4px 0 0;
+  rotate: 45deg;
+  z-index: -1;
+}
+
+/* frost */
+.dt-say--frost {
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.62));
+  -webkit-backdrop-filter: blur(22px) saturate(1.5);
+  backdrop-filter: blur(22px) saturate(1.5);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    inset 0 -14px 26px -10px rgba(200, 216, 240, 0.55),
+    0 26px 50px -24px rgba(30, 59, 214, 0.5),
+    0 14px 34px -20px rgba(232, 80, 31, 0.45);
+}
+.dt-say--frost::after {
+  background: rgba(255, 255, 255, 0.72);
+  border-top: 1px solid rgba(255, 255, 255, 0.9);
+  border-right: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+/* halo */
+.dt-say--halo {
+  background: #fff;
+  box-shadow:
+    0 1px 0 rgba(14, 17, 22, 0.04),
+    0 20px 40px -24px rgba(14, 17, 22, 0.3);
+}
+.dt-say--halo::before {
+  content: '';
+  position: absolute;
+  inset: -1.5px;
+  padding: 1.5px;
+  border-radius: 27.5px;
+  background: linear-gradient(120deg, #1e3bd6, #5a36d4 35%, #a33abf 65%, #e8501f);
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#000 0 0) content-box exclude, linear-gradient(#000 0 0);
+  pointer-events: none;
+}
+.dt-say--halo::after {
+  content: '';
+  position: absolute;
+  inset: 6px;
+  z-index: -1;
+  border-radius: 26px;
+  background: linear-gradient(120deg, #1e3bd6, #5a36d4 35%, #a33abf 65%, #e8501f);
+  filter: blur(22px);
+  opacity: 0.45;
+}
+
+/* bubble */
+.dt-say--bubble {
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 26px 26px 10px 26px;
+  background: radial-gradient(130% 150% at 25% 0%, #fff 0%, #f7f6ff 55%, #eceaff 100%);
+  box-shadow:
+    inset 0 2px 0 #fff,
+    inset 0 -8px 16px -6px rgba(90, 54, 212, 0.16),
+    0 18px 40px -18px rgba(14, 17, 22, 0.32),
+    0 2px 6px rgba(14, 17, 22, 0.06);
+}
+.dt-say--bubble::after {
+  right: -6px;
+  bottom: 12px;
+  width: 18px;
+  height: 18px;
+  border-radius: 2px 6px 2px 2px;
+  background: #eceaff;
+  border-top: 1px solid rgba(255, 255, 255, 0.95);
+  border-right: 1px solid rgba(255, 255, 255, 0.95);
+}
+
+/* ink */
+.dt-say--ink {
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    radial-gradient(180px 120px at 0% 0%, rgba(30, 59, 214, 0.5), transparent 70%),
+    radial-gradient(160px 110px at 100% 100%, rgba(232, 80, 31, 0.4), transparent 70%),
+    #0e1116;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 26px 50px -22px rgba(14, 17, 22, 0.6);
+  color: #f8f6f2;
+}
+.dt-say--ink::after {
+  background: #1b1418;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
+}
+.dt-say--ink .dt-say__ch {
+  color: rgba(248, 246, 242, 0.3);
+}
+.dt-say--ink .dt-say__ch.is-said {
+  color: #f8f6f2;
+}
+.dt-say--ink .dt-say__x {
+  color: rgba(248, 246, 242, 0.55);
+}
+.dt-say--ink .dt-say__x:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+.dt-say--ink .dt-say__skip {
+  color: rgba(248, 246, 242, 0.55);
+}
+
+/* ---- the Ink tip, refined (12 Nov, review) ----
+   No square tail: the corner nearest Dr.AI tucks in and carries the Ember light, a soft point toward him. The
+   deadline lights up in the spectrum as he says it. A little wider, so the message takes a line less. */
+.dt-say--ink {
+  border-radius: 26px 26px 8px 26px;
+  max-width: 380px;
+}
+.dt-say--ink::after {
+  display: none;
+}
+.dt-say--ink {
+  background:
+    radial-gradient(180px 120px at 0% 0%, rgba(30, 59, 214, 0.5), transparent 70%),
+    radial-gradient(150px 110px at 100% 100%, rgba(232, 80, 31, 0.5), transparent 72%),
+    #0e1116;
+}
+/* the deadline reads like the rest while he speaks; once he has said it all, its letters turn to the spectrum */
+.dt-say__due.is-lit {
+  background: linear-gradient(100deg, #1e3bd6, #5a36d4 30%, #a33abf 62%, #e8501f);
+  -webkit-background-clip: text;
+  background-clip: text;
+}
+.dt-say--ink .dt-say__due.is-lit {
+  background-image: linear-gradient(100deg, #8a9bff, #b28cff 35%, #ff7ad0 65%, #ff8a4a);
+}
+.dt-say .dt-say__due.is-lit .dt-say__ch {
+  color: transparent;
+  transition: color 0.8s ease-out;
+}
+/* more compact (13 Nov, review): his words in the cards' description size, Home's "He knows your reports…" (13.5 px,
+   1.4), and the Ink tip narrower to match, 380 to 316 px, a little less padding round it */
+.dt-say p {
+  font-size: 13.5px;
+  line-height: 1.4;
+}
+.dt-say--ink {
+  max-width: 316px;
+  padding: 16px 36px 16px 20px;
+}
+.dt-say--ink .dt-say__x {
+  top: 10px;
+  right: 8px;
+}
+
+/* ---- the secondary button by its ground (12 Nov, review) ----
+   On a light surface (cards, modals, the page) it is clear with a light Ink stroke, so it reads on white too; ink
+   on hover as before. On a coloured or dark surface it is clear with a white stroke (Home's bento.css). */
+:root[data-theme][data-theme][data-ui='a'] .btn.btn--secondary:not(.metal):not(.btn--icon) {
+  background: transparent !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  border-color: transparent !important;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.16) !important;
+  color: var(--ink, #0e1116);
+}
+
+/* proposed (13 Nov, review): after 10 s on screen the tip folds into Dr.AI, toward him at the bottom right; a small
+   Ember dot on his shoulder says he still has it, a click on it brings it back */
+.dt-say {
+  transform-origin: 100% 100%;
+}
+.dt-say.is-folded {
+  opacity: 0;
+  scale: 0.25;
+  translate: 60px 30px;
+  pointer-events: none;
+  transition:
+    opacity 0.3s ease-in,
+    scale 0.35s cubic-bezier(0.5, 0, 0.75, 0),
+    translate 0.35s cubic-bezier(0.5, 0, 0.75, 0);
+}
+.dt-say-dot {
+  position: fixed;
+  z-index: 61;
+  right: calc(26px + 92px - 26px);
+  bottom: calc(22px + 151px - 30px);
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: none;
+  cursor: pointer;
+  animation: dt-dot-in 0.4s 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+.dt-say-dot span {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #e8501f;
+  box-shadow:
+    0 0 0 3px #f8f6f2,
+    0 0 0 0 rgba(232, 80, 31, 0.5);
+  animation: dt-dot-pulse 2.4s 0.8s ease-out infinite;
+}
+.dt-say-dot:hover span {
+  scale: 1.15;
+}
+.dt-say-dot:focus-visible {
+  outline: 2px solid #1e3bd6;
+  outline-offset: 2px;
+}
+@keyframes dt-dot-in {
+  from {
+    opacity: 0;
+    scale: 0.3;
+  }
+}
+@keyframes dt-dot-pulse {
+  0% {
+    box-shadow: 0 0 0 3px #f8f6f2, 0 0 0 3px rgba(232, 80, 31, 0.45);
+  }
+  70%,
+  100% {
+    box-shadow: 0 0 0 3px #f8f6f2, 0 0 0 12px rgba(232, 80, 31, 0);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .dt-say.is-folded {
+    scale: 1;
+    translate: 0 0;
+    transition: opacity 0.2s;
+  }
+  .dt-say-dot,
+  .dt-say-dot span {
+    animation: none;
+  }
+}
+:root[data-welcome-mascot] .dt-say-dot,
+:root[data-no-dock] .dt-say-dot {
+  display: none;
+}
+
+/* the TIP review switch at the top, clear of the tip itself and of HOME and VIEW at the foot */
+.ui-switch.ui-switch--tip {
+  top: 14px;
+  bottom: auto;
+}
+.ui-switch .ui-switch__go {
+  margin-left: 4px;
+  color: #f8f6f2;
+  background: #1e3bd6;
+}
+.ui-switch .ui-switch__go:hover {
+  background: #2f49e6;
+}
+
+/* ---- the page's ground as on sparkstudios.ae (13 Nov, review): plain Saadiyat Sand, #F8F6F2, with no grain and no
+   cluster of light over it (the grain multiplied the Sand toward grey; the site's ground is flat) ---- */
+:root[data-theme][data-theme][data-theme] .app-bg {
+  background: var(--sand, #f8f6f2);
+}
+:root[data-theme][data-theme][data-theme] .app-bg__grain,
+:root[data-theme][data-theme][data-theme] .topbar::before {
+  display: none;
+}
+
+/* ---- the sidebar's sections as sparkstudios.ae's nav, upright (13 Nov, review) ---------------------------------
+   One frosted glass pill holds them (white 84% to 66%, a bright inner edge, the site's soft shadow); the page you're
+   on sits pressed into it (a faint Ink wash, a soft inner shadow, a white rim), as the site's own; hovering another
+   lifts a ghost of glass under it. Words in sentence case, as they were. */
+:root[data-ui='a'] .rail__nav {
+  display: flex;
+  flex-direction: column;
+  align-self: stretch;
+  gap: 2px;
+  padding: 5px;
+  border-radius: 22px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.66) 60%, rgba(255, 255, 255, 0.76));
+  -webkit-backdrop-filter: blur(20px) saturate(1.65);
+  backdrop-filter: blur(20px) saturate(1.65);
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 0 0 0.5px rgba(14, 17, 22, 0.08),
+    0 18px 40px -16px rgba(30, 30, 60, 0.3),
+    0 2px 6px rgba(30, 30, 60, 0.05);
+}
+:root[data-theme][data-theme][data-theme][data-ui='a'] .rail__nav .rail__btn {
+  margin: 0;
+  border-radius: 17px;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #4e535e;
+  transition:
+    background 0.25s ease-out,
+    box-shadow 0.25s ease-out,
+    color 0.2s ease-out;
+}
+:root[data-theme][data-theme][data-theme][data-ui='a'] .rail__nav .rail__btn:hover:not(.is-active) {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.34)) !important;
+  box-shadow:
+    inset 1px 1px 0 #fff,
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    0 4px 12px -4px rgba(30, 30, 60, 0.18) !important;
+  color: #0e1116;
+}
+:root[data-theme][data-theme][data-theme][data-ui='a'] .rail__nav .rail__btn.is-active {
+  background: linear-gradient(180deg, rgba(14, 17, 22, 0.08), rgba(14, 17, 22, 0.035)) !important;
+  box-shadow:
+    inset 0 1px 3px rgba(14, 17, 22, 0.16),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.65),
+    0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  color: #0e1116;
+}
+/* folded to icons: the pill hugs the icons instead of the folded rail's narrow column */
+:root[data-ui='a'] .shell:not(.shell--rail-open) .rail__nav {
+  align-self: center;
+  width: max-content;
+  padding: 4px;
+  border-radius: 20px;
+}
+
+/* ---- the sidebar itself as the site's nav (13 Nov, review: not a white pill set into the panel, the panel IS the
+   white glass): the nav's frosted white, bright inner edge and shadow on the whole panel; the sections are plain tabs
+   in it (the page you're on pressed in, a glass ghost on hover); Ask Dr.AI and the rest sit on the same white. ---- */
+:root[data-theme][data-theme][data-theme][data-ui='a'] .rail {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.66) 60%, rgba(255, 255, 255, 0.76));
+  -webkit-backdrop-filter: blur(20px) saturate(1.65);
+  backdrop-filter: blur(20px) saturate(1.65);
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 0 0 0.5px rgba(14, 17, 22, 0.08),
+    0 18px 40px -16px rgba(30, 30, 60, 0.3),
+    0 2px 6px rgba(30, 30, 60, 0.05);
+}
+:root[data-ui='a'] .rail__nav,
+:root[data-ui='a'] .shell:not(.shell--rail-open) .rail__nav {
+  padding: 0;
+  border-radius: 0;
+  background: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  box-shadow: none;
+}
+/* Notifications, and anything else in the sidebar's foot, as the sections' tabs (13 Nov, review): the glass ghost
+   under the pointer, pressed in while its panel is open */
+:root[data-theme][data-theme][data-theme][data-ui='a'] .rail__end .rail__btn {
+  border-radius: 17px;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #4e535e;
+  transition:
+    background 0.25s ease-out,
+    box-shadow 0.25s ease-out,
+    color 0.2s ease-out;
+}
+:root[data-theme][data-theme][data-theme][data-ui='a'] .rail__end .rail__btn:hover:not(.is-active) {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.34)) !important;
+  box-shadow:
+    inset 1px 1px 0 #fff,
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    0 4px 12px -4px rgba(30, 30, 60, 0.18) !important;
+  color: #0e1116;
+}
+:root[data-theme][data-theme][data-theme][data-ui='a'] .rail__end .rail__btn.is-active {
+  background: linear-gradient(180deg, rgba(14, 17, 22, 0.08), rgba(14, 17, 22, 0.035)) !important;
+  box-shadow:
+    inset 0 1px 3px rgba(14, 17, 22, 0.16),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.65),
+    0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  color: #0e1116;
+}
+/* the hover a touch clearer on the white panel (13 Nov, review): a faint Ink wash under the glass ghost, for the
+   sections and the foot alike */
+:root[data-theme][data-theme][data-theme][data-ui='a'] :is(.rail__nav, .rail__end) .rail__btn:hover:not(.is-active) {
+  background:
+    linear-gradient(160deg, rgba(255, 255, 255, 0.6), rgba(255, 255, 255, 0.2)),
+    rgba(14, 17, 22, 0.045) !important;
+  box-shadow:
+    inset 1px 1px 0 #fff,
+    inset 0 0 0 1px rgba(255, 255, 255, 0.7),
+    0 0 0 0.5px rgba(14, 17, 22, 0.06),
+    0 4px 12px -4px rgba(30, 30, 60, 0.18) !important;
+  color: #0e1116;
+}
+
+/* Requests and Documents not open yet (13 Nov, review): no pointer; the tabs' own hover kept, and "Coming soon" in the
+   rail's tip beside the tab */
+.rail__btn.rail__btn--off {
+  cursor: default;
+}
+.rail__btn.rail__btn--off {
+  position: relative;
+}
+/* the rail over the page, so the tips beside its tabs ("Coming soon") aren't drawn under the page's cards */
+.shell > .rail {
+  z-index: 5;
+}
+
+/* the profile menu's Manage my team and Company profile not open yet (13 Nov, review): no pointer, the items' own
+   hover kept, "Coming soon" in a tip, as Requests and Documents in the sidebar */
+.acct__item.acct__item--off {
+  position: relative;
+  cursor: default;
+}
+/* the tip at the item's right end, clear of its name (the menu clips anything past its edge) */
+.acct__item.acct__item--off[data-tip]::after {
+  bottom: auto;
+  top: 50%;
+  left: auto;
+  right: 2px;
+  transform: translate(3px, -50%);
+}
+.acct__item.acct__item--off[data-tip]:is(:hover, :focus-visible)::after {
+  transform: translate(0, -50%);
+}
+
+/* the account menu's credits card as Home's "Add credits." panel (13 Nov, review): white, 26 px corners, a hairline
+   edge, the title, the line, the amounts on the glass tabs, Add in Cobalt (Home's values, set here since this card
+   sits outside Home's page) */
+.credits-add {
+  position: fixed;
+  z-index: 130;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  width: 400px;
+  padding: 22px;
+  border: 1px solid rgba(14, 17, 22, 0.08);
+  border-radius: 26px;
+  background: #fff;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.9),
+    0 30px 70px -30px rgba(0, 0, 0, 0.6);
+  color: #0e1116;
+  animation: credits-add-in 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes credits-add-in {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+}
+.credits-add__title {
+  font-family: var(--font-display, 'ABC Diatype Extended'), sans-serif;
+  font-size: 22px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+}
+.credits-add__hint {
+  margin-top: -2px;
+  font-size: 13px;
+  line-height: 1.45;
+  color: rgba(14, 17, 22, 0.62);
+}
+.credits-add__amounts {
+  margin-top: 6px;
+}
+.credits-add__go {
+  height: 40px;
+  margin-top: 6px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--cobalt, #1e3bd6);
+  color: #fff;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.credits-add__go:hover {
+  background: #2f49e6;
+}
+.credits-add__go:focus-visible {
+  outline: 2px solid var(--cobalt, #1e3bd6);
+  outline-offset: 3px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .credits-add {
+    animation: none;
+  }
+}
+
+/* the code box being filled in Cobalt (13 Nov, review), the selected state; an error keeps its red ring */
+:root[data-theme][data-theme][data-theme] .otp .otp__box:focus {
+  box-shadow: 0 0 0 1.5px var(--cobalt, #1e3bd6);
+}
+:root[data-theme][data-theme][data-theme] .otp.otp--error .otp__box {
+  box-shadow: 0 0 0 1.5px var(--danger);
+}
+
+/* ---- The menu's rim as a line of light (13 Nov, review: "the menu looks grey; maybe a linear white stroke, with
+   some transparency"). The grey hairline round the panel goes (0 0 0 .5px of Ink at 8% was what greyed its edge), and
+   in its place a white rim drawn as a gradient: bright where the light falls at the top, fading down the panel, a
+   little brighter again at the foot. The drop shadow warms to the sand's own brown, as the cards' did. ---- */
+:root[data-theme][data-theme][data-theme][data-ui='a'] .rail {
+  position: relative;
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.35),
+    0 1px 2px rgba(92, 72, 40, 0.05),
+    0 18px 38px -20px rgba(92, 72, 40, 0.22);
+}
+:root[data-theme][data-theme][data-theme][data-ui='a'] .rail::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  padding: 1px;
+  background: linear-gradient(170deg, rgba(255, 255, 255, 0.98), rgba(255, 255, 255, 0.6) 26%, rgba(255, 255, 255, 0.24) 62%, rgba(255, 255, 255, 0.72));
+  -webkit-mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask:
+    linear-gradient(#000 0 0) content-box,
+    linear-gradient(#000 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* ---- The sign-in button in the dark of sparkstudios.ae's "Let's talk" (13 Nov, review: "the login button dark, in
+   the style we made for Book consultation"): the same smoke gradient, the same faint white ring inside, the white
+   line along its top and the Ink shadow under it; Sand-white words. ---- */
+:root[data-ui][data-ui][data-ui] .signin-page .btn--primary.metal.metal--flat.metal--flat {
+  background: linear-gradient(rgba(34, 38, 48, 0.86), rgba(14, 17, 22, 0.92));
+  color: #f8f6f2 !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 14px 30px -12px rgba(14, 17, 22, 0.5);
+}
+:root[data-ui][data-ui][data-ui] .signin-page .btn--primary.metal.metal--flat.metal--flat :is(.metal__label, svg) {
+  color: #f8f6f2;
+}
+@media (hover: hover) {
+  :root[data-ui][data-ui][data-ui] .signin-page .btn--primary.metal.metal--flat.metal--flat:hover:not(:disabled) {
+    background: linear-gradient(rgba(44, 49, 60, 0.9), rgba(20, 24, 31, 0.95));
+    box-shadow:
+      inset 0 0 0 1px rgba(255, 255, 255, 0.22),
+      inset 0 1px 0 rgba(255, 255, 255, 0.38),
+      0 18px 36px -12px rgba(14, 17, 22, 0.56);
+  }
 }

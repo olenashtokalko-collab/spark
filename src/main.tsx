@@ -1,3 +1,5 @@
+// first, before anything reads what an earlier build saved: a new build opens as a first visit
+import './lib/build';
 import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import App from './App';

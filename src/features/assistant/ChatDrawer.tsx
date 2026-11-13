@@ -8,14 +8,11 @@ import { useDrAi } from '../../components/ui/DrAi';
 import { MascotClip } from '../demo/MascotDemo';
 import { createPortal } from 'react-dom';
 import { ArrowRight, Maximize2, X } from 'lucide-react';
-import { useStore } from '../../state/store';
-import { navigate } from '../../lib/router';
 import { motionMs } from '../../lib/dockMotion';
 import { Mascot } from '../../components/ui/Mascot';
 import { SparkDisc } from '../../components/ui/BrandSpark';
 import { Composer } from './Composer';
 import { suggestedPrompts } from '../../data/assistant';
-import type { Attachment } from '../../data/types';
 
 export { Mascot };
 
@@ -31,7 +28,6 @@ export interface DrawerTopic {
 /** `initial` opens it with a question already written (e.g. Ask Spark to fix on Home), to edit and send.
  *  `topic` swaps the general suggestions for questions about what the page is about. */
 export function ChatDrawer({ open, onClose, initial, topic, top }: { open: boolean; onClose: () => void; initial?: string; topic?: DrawerTopic; /** Above the greeting: what needs the client now (Dr.AI's dock, 6 Nov). */ top?: ReactNode }) {
-  const { actions } = useStore();
   const drai = useDrAi();
   const [typing, setTyping] = useState(false);
   const [voice, setVoice] = useState(false);
@@ -43,13 +39,10 @@ export function ChatDrawer({ open, onClose, initial, topic, top }: { open: boole
     return () => window.removeEventListener('keydown', onKey);
   }, [open, onClose]);
 
-  // Sending (or a way to start) begins the chat and opens it on the Chats page.
-  const start = (text: string, attachments: Attachment[] = []) => {
-    const about = topic?.about;
-    const id = actions.ask(null, about && !text.includes(about) ? text + about : text, { attachments });
-    onClose();
-    navigate(`/assistant/${id}`);
-  };
+  // The chat itself isn't built yet (13 Nov, review: "no redirect when I pick a prompt or type"; and then: "that
+  // text confuses, better show nothing"): a way to start and a sent question lead nowhere for now, and say nothing.
+  // Put the two lines back (ask + navigate) and the chat opens again.
+  const start = (_text: string) => {};
 
   // Stays a moment after closing so it can go away as it came (#/demo/dock-motion, 10 Nov), not vanish.
   const [shown, setShown] = useState(open);
@@ -81,7 +74,7 @@ export function ChatDrawer({ open, onClose, initial, topic, top }: { open: boole
           {/* Dr.AI on: the title alone, "Ask Dr.AI"; he stands in the panel below, so no small head here (5 Nov). */}
           {!drai && <SparkDisc size={28} />}
           <h2>{drai ? 'Ask Dr.AI' : 'Ask Spark'}</h2>
-          <button type="button" className="chat-drawer__btn" onClick={() => (onClose(), navigate('/assistant'))} aria-label="Open in Chats" data-tip="Open in Chats">
+          <button type="button" className="chat-drawer__btn" onClick={onClose} aria-label="Open in Chats" data-tip="Open in Chats">
             <Maximize2 size={17} strokeWidth={1.8} />
           </button>
           <button type="button" className="chat-drawer__btn" onClick={onClose} aria-label="Close">
@@ -127,7 +120,7 @@ export function ChatDrawer({ open, onClose, initial, topic, top }: { open: boole
               placeholder={drai ? 'Ask Dr.AI' : 'Ask Spark'}
               onTyping={setTyping}
               onVoice={setVoice}
-              onSubmit={(text, attachments) => start(text, attachments)}
+              onSubmit={(text) => start(text)}
             />
           </BeamEdge>
           <p className="chat-drawer__note">{drai ? 'Dr.AI' : 'Spark AI'} can make mistakes. Check important info.</p>

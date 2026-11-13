@@ -20,11 +20,12 @@ for (r, g, b) in im.getdata():
     out.append((round(c[0] * 255), round(c[1] * 255), round(c[2] * 255), round(min(a, 1.0) * 255)))
 res = Image.new("RGBA", im.size); res.putdata(out)
 # crop to where the alpha says something is drawn, keeping a little air
-x0, y0, x1, y1 = res.getchannel("A").filter(ImageFilter.MinFilter(7)).point(lambda v: 255 if v > 34 else 0).getbbox()  # lone noisy pixels don't count
+x0, y0, x1, y1 = res.getchannel("A").filter(ImageFilter.MinFilter(7)).point(lambda v: 255 if v > 8 else 0).getbbox()  # lone noisy pixels don't count; the faint glow does
 pad = 24; box = (max(x0 - pad, 0), max(y0 - pad, 0), min(x1 + pad, res.width), min(y1 + pad, res.height))
 res = res.crop(box); res = res.resize((round(res.width * height / res.height), height), Image.LANCZOS)
-# fade the glow out toward the edges so the crop never shows as a line
-w, h = res.size; f = 0.12; A = res.getchannel('A'); ad = list(A.getdata())
+# fade the faint glow out toward the edges (the crop takes it all in, so it reaches nothing at the border and no
+# straight line shows on a light page; the object itself sits well inside)
+w, h = res.size; f = 0.16; A = res.getchannel('A'); ad = list(A.getdata())
 for y in range(h):
     for x in range(w):
         k = min(x / (w * f), (w - 1 - x) / (w * f), y / (h * f), (h - 1 - y) / (h * f), 1.0)

@@ -154,18 +154,12 @@ export function Requests() {
           // comes in, and the tabs and filters above still sit on something.
           <div className="rq-list rq-tbl rq-tbl--empty">
             <EmptyState
-              // The picture picked on #/demo/empty-art (10 Nov): the magnifier when filters leave nothing, the bell when
-              // nothing needs you, the document with a plus when there are no requests yet.
-              art={<PageArtView v={narrowed ? art.search : filter === 'decision' ? art.notifs : art.requests} />}
+              // The picture picked on #/demo/empty-art (10 Nov): the magnifier when filters leave nothing, the glass plus when
+              // nothing needs you or there are no requests yet (12 Nov, review: no bell on Needs you).
+              art={<PageArtView v={narrowed ? art.search : art.requests} />}
               title={narrowed ? 'No requests match these filters.' : filter === 'decision' ? 'Nothing needs you.' : 'No requests yet.'}
               body={narrowed ? 'Try another word or clear the filters.' : 'Start a chat about your brand and turn a useful answer into a request.'}
-              action={
-                !narrowed && (
-                  <Button size="sm" onClick={() => openRequest()}>
-                    New request
-                  </Button>
-                )
-              }
+              // no button here (11 Nov, review): New request sits at the page's top
             />
           </div>
         ) : (

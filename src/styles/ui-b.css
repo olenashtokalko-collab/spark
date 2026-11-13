@@ -681,3 +681,78 @@
     box-shadow: inset 0 0 0 1px var(--d-line), 0 20px 40px -28px rgba(14, 17, 22, 0.35);
   }
 }
+
+
+/* ---- The one version switch (13 Nov, review: "no show/hide, always there, at the side, like the example"):
+   after the concepts' own switcher — a small pane of light glass at the bottom left, the versions in Diatype Mono
+   capitals, dim until the pointer is on it, the open one pressed into a white pill. ---- */
+.ui-switch.ui-switch--home {
+  /* clear of the portal's own menu, open or folded */
+  left: 88px;
+  right: auto;
+  bottom: 16px;
+  transform: none;
+  display: flex;
+  gap: 4px;
+  padding: 4px;
+  border-radius: 999px;
+  /* the pane itself stays solid enough to read over a card; the quiet comes from the words' colour, as in the
+     example, not from fading the whole switch */
+  background: rgba(255, 255, 255, 0.78);
+  -webkit-backdrop-filter: blur(16px) saturate(1.4);
+  backdrop-filter: blur(16px) saturate(1.4);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.9),
+    0 8px 24px -12px rgba(30, 30, 60, 0.24);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: background 0.25s;
+}
+.ui-switch.ui-switch--home:hover,
+.ui-switch.ui-switch--home:focus-within {
+  background: rgba(255, 255, 255, 0.92);
+}
+.ui-switch.ui-switch--home .ui-switch__label {
+  padding: 0 4px 0 10px;
+  font-family: inherit;
+  font-size: 12px;
+  letter-spacing: inherit;
+  color: rgba(14, 17, 22, 0.4);
+}
+.ui-switch.ui-switch--home button {
+  height: 28px;
+  padding: 0 12px;
+  border-radius: 999px;
+  font: inherit;
+  letter-spacing: inherit;
+  text-transform: inherit;
+  color: rgba(14, 17, 22, 0.48);
+  background: transparent;
+  transition: background 0.25s, color 0.25s;
+}
+.ui-switch.ui-switch--home button:hover {
+  color: #0e1116;
+}
+.ui-switch.ui-switch--home button.is-on {
+  color: #0e1116;
+  background: rgba(255, 255, 255, 0.88);
+}
+body:has(.shell--rail-open) .ui-switch.ui-switch--home {
+  left: 240px;
+}
+@media (max-width: 900px) {
+  .ui-switch.ui-switch--home,
+  body:has(.shell--rail-open) .ui-switch.ui-switch--home {
+    left: 16px;
+    bottom: 88px; /* over the menu bar at the foot */
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ui-switch.ui-switch--home,
+  .ui-switch.ui-switch--home button {
+    transition: none;
+  }
+}

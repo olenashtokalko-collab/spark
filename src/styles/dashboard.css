@@ -1,0 +1,557 @@
+/* ---- Layout 7 · Dashboard, third pass (13 Nov, review: "the cards and the transparency, yes; the content is the
+   brand: how Spark analysed it, what it found, the free reports, what to look at") -------------------------------
+   Five cards in three rows, never crowded: clear glass over a soft field of the brand's spectrum, Ink words, Diatype
+   for words, Diatype Mono for labels, Doto for the figures. The gauges run Cobalt into violet; Ember only marks what
+   weighs most. */
+/* the palette on the page, and on a report card wherever it stands (Layout 9 has them too) */
+.db,
+.db-rep {
+  --ink: #0e1116;
+  --muted: rgba(14, 17, 22, 0.6);
+  --faint: rgba(14, 17, 22, 0.07);
+  --cobalt: #1e3bd6;
+  --violet: #7a5cff;
+  --ember: #e8501f;
+}
+.db {
+  --ink: #0e1116;
+  --muted: rgba(14, 17, 22, 0.6);
+  --faint: rgba(14, 17, 22, 0.07);
+  --cobalt: #1e3bd6;
+  --violet: #7a5cff;
+  --ember: #e8501f;
+  --grad: linear-gradient(90deg, #1e3bd6, #7a5cff 70%, #b04ad8);
+  position: relative;
+  isolation: isolate;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-bottom: 60px;
+  color: var(--ink);
+}
+.db-field {
+  position: absolute;
+  inset: -40px -40px 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(40% 30% at 10% 6%, rgba(30, 59, 214, 0.1), transparent 70%),
+    radial-gradient(36% 30% at 90% 24%, rgba(122, 92, 255, 0.12), transparent 70%),
+    radial-gradient(40% 28% at 70% 96%, rgba(232, 80, 31, 0.07), transparent 70%);
+  filter: blur(10px);
+}
+
+/* the glass card */
+.db-card {
+  position: relative;
+  min-width: 0;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 28px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.52) 60%, rgba(255, 255, 255, 0.64));
+  -webkit-backdrop-filter: blur(22px) saturate(1.5);
+  backdrop-filter: blur(22px) saturate(1.5);
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+    0 0 0 0.5px rgba(14, 17, 22, 0.05),
+    0 24px 48px -32px rgba(30, 30, 60, 0.28);
+}
+.db-card__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+.db-card__head h2 {
+  margin: 0;
+  font: 700 22px/1.15 var(--ext);
+  letter-spacing: -0.025em;
+}
+.db-card__sub {
+  display: block;
+  margin-top: 6px;
+  font-size: 14px;
+  color: var(--muted);
+}
+.db-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto;
+  font: 600 14px/1 var(--ext);
+  color: var(--ink);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.db-link:hover {
+  color: var(--cobalt);
+}
+
+/* figures in Doto, their marks and units in the classic faces */
+.bx .db-fig {
+  display: inline-flex;
+  align-items: baseline;
+  font: 900 44px/1 'Doto Rounded', ui-monospace, monospace;
+  letter-spacing: 0;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+.bx .db-fig--xl {
+  font-size: 88px;
+}
+.bx .db-fig--lg {
+  font-size: 54px;
+}
+.db-fig i {
+  margin-left: 10px;
+  font: 400 14px var(--font-mono);
+  font-style: normal;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+
+/* the head */
+.db-head {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 6px 2px 4px;
+}
+.db-head__who {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+.db-head__mark {
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  /* clearer glass (13 Nov, review: "the avatar more transparent"): the page shows through, a white rim */
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  background: linear-gradient(150deg, rgba(255, 255, 255, 0.42), rgba(222, 228, 252, 0.16));
+  -webkit-backdrop-filter: blur(10px) saturate(1.4);
+  backdrop-filter: blur(10px) saturate(1.4);
+  box-shadow:
+    inset 1px 1px 0 rgba(255, 255, 255, 0.9),
+    0 0 0 0.5px rgba(14, 17, 22, 0.06),
+    0 8px 18px -14px rgba(30, 59, 214, 0.3);
+  font: 700 19px/1 var(--ext);
+}
+.db-head__eyebrow {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.db-head__title {
+  margin: 0;
+  font: 700 30px/1.05 var(--ext);
+  letter-spacing: -0.03em;
+}
+.db-head__tools {
+  display: flex;
+  gap: 8px;
+  margin-left: auto;
+}
+.db-pill,
+.db-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 40px;
+  padding: 0 18px;
+  border-radius: 999px;
+  font: 500 14px/1 var(--ext);
+}
+.db-pill {
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow:
+    inset 1px 1px 0 #fff,
+    0 0 0 1px rgba(14, 17, 22, 0.08);
+}
+.db-btn {
+  border: 0;
+  cursor: pointer;
+}
+.db-btn--ink {
+  background: var(--ink);
+  color: #fff;
+  font-weight: 600;
+}
+.db-btn--ink:hover {
+  background: #23262f;
+}
+
+
+/* one set of faces (13 Nov, review: "align the fonts everywhere"): labels in Diatype Mono capitals, titles and words
+   in Diatype Extended, figures in Doto with their marks and units in Diatype Extended at a fixed share of the figure */
+.db-label {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  font-weight: 400;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.db-text {
+  margin: 0;
+  font: 400 15px/1.5 var(--ext);
+  color: var(--muted);
+}
+.bx :is(.db, .db-rep) .db-fig .dp:not(.dp--point) {
+  margin-left: -0.04em;
+  font: 600 0.45em/1 var(--ext);
+  letter-spacing: 0;
+  color: var(--muted);
+}
+.bx :is(.db, .db-rep) .db-fig i {
+  margin-left: 8px;
+  font: 400 14px/1 var(--font-mono);
+  font-style: normal;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+}
+.bx :is(.db, .db-rep) .db-fig .dp--point {
+  background: var(--ink);
+  color: transparent;
+}
+
+/* the rows */
+.db-row {
+  display: grid;
+  gap: 18px;
+}
+.db-row--top {
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+}
+.db-row--twin {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+/* the company profile's analysis: one sentence, what Spark read to get there, parted by dividers */
+.db-brand {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 30px 32px 28px;
+  overflow: hidden;
+}
+.db-brand::before {
+  content: '';
+  position: absolute;
+  inset: -40% 40% -40% -20%;
+  z-index: -1;
+  background: radial-gradient(closest-side, rgba(30, 59, 214, 0.1), transparent);
+  pointer-events: none;
+}
+.db-brand__title {
+  max-width: 26ch;
+  margin: 0;
+  font: 700 30px/1.15 var(--ext);
+  letter-spacing: -0.03em;
+}
+.db-brand__title span {
+  color: var(--cobalt);
+}
+.db-brand__read {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 8px 0 0;
+  padding: 18px 0;
+  border-top: 1px solid var(--faint);
+  border-bottom: 1px solid var(--faint);
+}
+.db-brand__read div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 20px;
+}
+.db-brand__read div:first-child {
+  padding-left: 0;
+}
+.db-brand__read div + div {
+  border-left: 1px solid rgba(14, 17, 22, 0.1);
+}
+.bx .db-brand__read dd {
+  margin: 0;
+  /* clearer (13 Nov, review): larger, so Doto's dots read as figures, in full Ink */
+  font-size: 46px;
+  color: var(--ink);
+}
+.db-brand__read dt {
+  font: 400 14.5px/1.3 var(--ext);
+  color: rgba(14, 17, 22, 0.72);
+}
+.db-brand__go {
+  margin: 2px 0 0;
+  align-self: flex-start;
+}
+
+/* the consultation: a label, the title, a line, the strategist, Layout 6's glass button standing in the card */
+.db-consult {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 30px 28px 28px;
+  overflow: hidden;
+}
+.db-consult::before {
+  content: '';
+  position: absolute;
+  inset: 30% -30% -40% 10%;
+  z-index: -1;
+  background:
+    radial-gradient(closest-side, rgba(122, 92, 255, 0.14), transparent),
+    radial-gradient(40% 40% at 80% 80%, rgba(232, 80, 31, 0.08), transparent);
+  pointer-events: none;
+}
+.db-consult__title {
+  margin: 0;
+  font: 700 22px/1.2 var(--ext);
+  letter-spacing: -0.025em;
+}
+.db-consult__who {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 2px;
+}
+.db-consult__who b {
+  display: block;
+  font: 600 14px/1.25 var(--ext);
+}
+.db-consult__who span span {
+  display: block;
+  font: 400 13px/1.3 var(--ext);
+  color: var(--muted);
+}
+.db-book {
+  align-self: flex-start;
+  margin-top: auto;
+  height: 52px;
+  padding: 0 28px;
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  border-radius: 999px;
+  background:
+    radial-gradient(60% 120% at 20% 100%, rgba(30, 59, 214, 0.1), transparent 70%),
+    radial-gradient(60% 120% at 85% 0%, rgba(232, 80, 31, 0.07), transparent 70%),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.55), rgba(240, 242, 248, 0.32));
+  -webkit-backdrop-filter: blur(18px) saturate(1.5);
+  backdrop-filter: blur(18px) saturate(1.5);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    inset 0 -6px 14px -8px rgba(255, 255, 255, 0.8),
+    0 14px 32px -12px rgba(30, 30, 60, 0.28),
+    0 2px 6px rgba(30, 30, 60, 0.06);
+  font: 500 16px/1 var(--ext);
+  letter-spacing: -0.01em;
+  color: rgba(14, 17, 22, 0.7);
+  cursor: pointer;
+  transition:
+    color 0.25s,
+    box-shadow 0.25s;
+}
+.db-book:hover {
+  color: var(--ink);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.9),
+    inset 0 -6px 14px -8px rgba(255, 255, 255, 0.8),
+    0 18px 38px -12px rgba(30, 30, 60, 0.34),
+    0 2px 6px rgba(30, 30, 60, 0.08);
+}
+.db-book:focus-visible {
+  outline: 2px solid var(--cobalt);
+  outline-offset: 2px;
+}
+
+/* the reports, twins: the score on a gauge with the typical's tick, a short summary, what it's based on */
+.db-rep {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 24px 28px 26px;
+  color: inherit;
+  text-decoration: none;
+  transition:
+    box-shadow 0.3s,
+    translate 0.3s;
+}
+.db-rep:hover {
+  translate: 0 -2px;
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+    0 0 0 0.5px rgba(14, 17, 22, 0.06),
+    0 30px 56px -30px rgba(30, 30, 60, 0.34);
+}
+.db-rep:focus-visible {
+  outline: 2px solid var(--cobalt);
+  outline-offset: 3px;
+}
+.db-rep__title {
+  margin: 0;
+  font: 700 22px/1.2 var(--ext);
+  letter-spacing: -0.025em;
+}
+.db-rep__body {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  align-items: center;
+  gap: 28px;
+  margin-top: 8px;
+}
+.db-gauge {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.db-gauge__svg {
+  width: 240px;
+  height: auto;
+  overflow: visible;
+}
+.db-gauge__track,
+.db-gauge__val {
+  fill: none;
+  stroke-width: 14;
+  stroke-linecap: round;
+}
+.db-gauge__track {
+  stroke: rgba(14, 17, 22, 0.07);
+}
+.db-gauge__tick {
+  stroke: var(--ink);
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+.bx .db-gauge__fig {
+  position: absolute;
+  top: 54px;
+  font-size: 64px;
+  color: var(--ink);
+}
+.db-rep__what {
+  font: 600 17px/1.25 var(--ext);
+  letter-spacing: -0.01em;
+}
+.db-rep__text {
+  margin: 6px 0 0;
+  font: 400 15.5px/1.5 var(--ext);
+  color: rgba(14, 17, 22, 0.78);
+}
+.db-gauge__typical {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 400 13px/1.3 var(--ext);
+  color: var(--muted);
+}
+.db-gauge__typical i {
+  width: 2px;
+  height: 12px;
+  border-radius: 1px;
+  background: var(--ink);
+}
+.db-rep__side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+.db-rep__side .db-label {
+  margin-top: 8px;
+}
+.db-rep__basis {
+  font: 400 14px/1.45 var(--ext);
+  color: var(--ink);
+}
+
+@container (max-width: 1100px) {
+  .db-row--top,
+  .db-row--twin {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .db-rep,
+  .db-book {
+    transition: none;
+  }
+}
+
+/* a card's head: its label, and across from it the link that shows on hover (13 Nov, review) */
+.db-cardhead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 20px;
+}
+.db-hoverlink {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: 600 14px/1 var(--ext);
+  color: var(--cobalt);
+  white-space: nowrap;
+  opacity: 0;
+  translate: -4px 0;
+  transition:
+    opacity 0.25s,
+    translate 0.25s;
+}
+:is(.db-brand, .db-rep):hover .db-hoverlink,
+:is(.db-brand, .db-rep):focus-visible .db-hoverlink {
+  opacity: 1;
+  translate: 0 0;
+}
+a.db-brand {
+  color: inherit;
+  text-decoration: none;
+  transition:
+    box-shadow 0.3s,
+    translate 0.3s;
+}
+a.db-brand:hover {
+  translate: 0 -2px;
+}
+a.db-brand:focus-visible {
+  outline: 2px solid var(--cobalt);
+  outline-offset: 3px;
+}
+/* without the summary the words beside the gauge sit a little apart */
+.db-rep__side {
+  gap: 10px;
+}
+.db-rep__side .db-label {
+  margin-top: 14px;
+}
+@media (prefers-reduced-motion: reduce) {
+  .db-hoverlink,
+  a.db-brand {
+    transition: none;
+  }
+}
+
+/* the head with the company's description under its name (13 Nov, review: "the company's avatar and its
+   description"); the glass avatar a size up, to stand by two lines */
+.db-head__who {
+  gap: 18px;
+}
+.db-head__who .db-head__mark {
+  flex: none;
+  width: 60px;
+  height: 60px;
+  border-radius: 18px;
+  font-size: 24px;
+}
+.db-head__sub {
+  margin: 6px 0 0;
+  font: 400 15px/1.45 var(--ext);
+  color: var(--muted);
+}

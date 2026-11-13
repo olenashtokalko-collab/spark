@@ -1,0 +1,1521 @@
+/* ---- Layout 9 · Health (13 Nov, review, after me.thebluejackgroup.com's Summary and Email Health) ---------------
+   Spark's sand, the client's clear glass cards, Spark's colours: Ink words, Cobalt for what's good and the figures
+   picked out, Ember for the marks and what's short of its aim. Diatype Extended for words, Diatype Mono for labels,
+   Doto for the figures. The sections sit on the page's twelve columns (.br is display: contents). */
+.hh {
+  --ink: #0e1116;
+  --muted: rgba(14, 17, 22, 0.62);
+  --faint: rgba(14, 17, 22, 0.09);
+  --cobalt: #1e3bd6;
+  --violet: #7a5cff;
+  --ember: #e8501f;
+  --ember-ink: #c2410c;
+}
+.hh-label {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* the head: the name, a line under it, the credits at the right; a hairline below */
+.hh-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 6px 2px 24px;
+  border-bottom: 1px solid var(--faint);
+}
+.hh-head__title {
+  margin: 0;
+  font: 700 40px/1.05 var(--ext);
+  letter-spacing: -0.035em;
+  color: var(--ink);
+}
+.hh-head__sub {
+  margin: 10px 0 0;
+  font: 400 16px/1.4 var(--ext);
+  color: var(--muted);
+}
+
+/* Summary: two sentences, large, the figures picked out in Cobalt */
+.hh-sum {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 18px 2px 30px;
+  border-bottom: 1px solid var(--faint);
+}
+.hh-sum__text {
+  max-width: 60ch;
+  margin: 0;
+  font: 400 24px/1.5 var(--ext);
+  letter-spacing: -0.015em;
+  color: var(--ink);
+}
+.hh-sum__text b {
+  font-weight: 600;
+  color: var(--cobalt);
+}
+
+/* the clear glass card */
+.hh-card {
+  position: relative;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 28px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.72), rgba(255, 255, 255, 0.42) 60%, rgba(255, 255, 255, 0.56));
+  -webkit-backdrop-filter: blur(22px) saturate(1.5);
+  backdrop-filter: blur(22px) saturate(1.5);
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+    0 0 0 0.5px rgba(14, 17, 22, 0.05),
+    0 24px 48px -32px rgba(30, 30, 60, 0.28);
+}
+
+/* Brand health: the ring, then what it means */
+.hh-health {
+  display: grid;
+  grid-template-columns: 220px minmax(0, 1fr);
+  align-items: center;
+  gap: 40px;
+  margin-top: 22px;
+  padding: 30px 36px 30px 30px;
+  overflow: hidden;
+}
+.hh-health::before {
+  content: '';
+  position: absolute;
+  inset: -40% 55% -40% -20%;
+  z-index: -1;
+  background: radial-gradient(closest-side, rgba(122, 92, 255, 0.14), transparent);
+  pointer-events: none;
+}
+.hh-ring {
+  position: relative;
+  display: block;
+  width: 220px;
+  height: 220px;
+}
+.hh-ring svg {
+  width: 100%;
+  height: 100%;
+}
+.hh-ring__tick {
+  stroke: rgba(14, 17, 22, 0.1);
+  stroke-width: 4.5;
+  stroke-linecap: round;
+  transition: stroke 0.35s ease;
+}
+/* the lit ticks fill one by one, clockwise from the top (each one's delay set inline) */
+.hh-ring.is-on .hh-ring__tick.is-lit {
+  stroke: var(--c);
+}
+.hh-ring__in {
+  position: absolute;
+  inset: 42px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  border-radius: 50%;
+  background: radial-gradient(circle at 35% 30%, rgba(255, 255, 255, 0.85), rgba(234, 236, 252, 0.55));
+  box-shadow:
+    inset 1px 1px 0 #fff,
+    0 0 0 0.5px rgba(14, 17, 22, 0.05),
+    0 10px 24px -16px rgba(30, 59, 214, 0.35);
+}
+.bx .hh-ring__fig {
+  font: 900 56px/1 'Doto Rounded', ui-monospace, monospace;
+  letter-spacing: 0;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+.hh-ring__label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+.hh-health__text {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  min-width: 0;
+}
+.hh-health__title {
+  margin: 0;
+  font: 700 30px/1.15 var(--ext);
+  letter-spacing: -0.03em;
+  color: var(--ink);
+}
+.hh-health__body {
+  max-width: 62ch;
+  margin: 0;
+  font: 400 17px/1.55 var(--ext);
+  color: rgba(14, 17, 22, 0.76);
+}
+/* the figures Spark read, picked out in Cobalt (after the reference's Summary) */
+.hh-health__body b {
+  font-weight: 600;
+  color: var(--cobalt);
+}
+.hh-health__foot {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+  margin-top: 12px;
+  padding-top: 16px;
+  border-top: 1px solid var(--faint);
+}
+
+/* a figure's mark against its aim: Cobalt when it's good, Ember when it falls short; the arrow says which way */
+.hh-mark {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  font: 600 14.5px/1.35 var(--ext);
+}
+.hh-mark b {
+  font-weight: 700;
+}
+.hh-mark.is-up {
+  color: var(--cobalt);
+}
+.hh-mark.is-down {
+  color: var(--ember-ink);
+}
+.hh-mark__arrow {
+  font-size: 11px;
+}
+
+/* four figures in one card, parted by dividers */
+.hh-figs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin-top: 6px;
+}
+.hh-fig {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 28px 30px 30px;
+  color: inherit;
+  text-decoration: none;
+  transition: background 0.3s;
+}
+.hh-fig + .hh-fig {
+  border-left: 1px solid var(--faint);
+}
+.hh-fig:first-child {
+  border-radius: 28px 0 0 28px;
+}
+.hh-fig:last-child {
+  border-radius: 0 28px 28px 0;
+}
+.hh-fig:hover {
+  background: rgba(255, 255, 255, 0.45);
+}
+.hh-fig:focus-visible {
+  outline: 2px solid var(--cobalt);
+  outline-offset: -4px;
+}
+.bx .hh-fig__n {
+  display: flex;
+  align-items: baseline;
+  margin-top: 6px;
+  font: 900 64px/1 'Doto Rounded', ui-monospace, monospace;
+  letter-spacing: 0;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+/* the unit in colour, as the reference's % (13 Nov, review): Ember, Diatype Extended */
+.hh-fig__n i {
+  margin-left: 4px;
+  font: 700 0.46em/1 var(--ext);
+  font-style: normal;
+  letter-spacing: -0.02em;
+  color: var(--ember);
+}
+.bx .hh-fig__n .dp--point {
+  display: inline-block;
+  width: 0.083em;
+  height: 0.083em;
+  margin: 0 0.03em 0 0.01em;
+  overflow: hidden;
+  border-radius: 50%;
+  background: var(--ink);
+  font-size: inherit;
+  text-indent: 1em;
+  color: transparent;
+}
+.hh-fig__line {
+  font: 400 14.5px/1.45 var(--ext);
+  color: var(--muted);
+}
+
+/* the reports' head */
+.hh-sechead {
+  margin-top: 26px;
+  padding-bottom: 4px;
+}
+.hh-sechead h2 {
+  margin: 0;
+  font: 700 26px/1.1 var(--ext);
+  letter-spacing: -0.025em;
+  color: var(--ink);
+}
+
+@container (max-width: 1000px) {
+  .hh-health {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+  }
+  .hh-figs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .hh-fig:nth-child(3) {
+    border-left: 0;
+  }
+  .hh-fig:nth-child(n + 3) {
+    border-top: 1px solid var(--faint);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hh-ring__tick {
+    transition: none !important;
+  }
+  .hh-fig {
+    transition: none;
+  }
+}
+/* the page's cards are flex columns by default; these two lay out as grids */
+
+/* the reports as Layout 7's cards (13 Nov, review), two side by side on the page's twelve columns */
+.bx .bx-grid--health .db-rep.hh-rep {
+  grid-column: span 6;
+}
+/* the head's avatar beside the name and the description (13 Nov, review) */
+.hh-head .db-head__who {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.hh-head .db-head__mark {
+  width: 72px;
+  height: 72px;
+  border-radius: 22px;
+  font: 700 28px/1 var(--ext);
+}
+.hh-head__sub {
+  margin-top: 8px;
+}
+
+/* ---- the top cards in the report cards' style (13 Nov, review): the same clear glass, padding and type as
+   Layout 7's report cards (.db-card, .db-label, .db-rep__title, .db-rep__what, .db-gauge__typical, .db-rep__basis) */
+.bx .bx-grid--health .db-card.hh-health {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  text-align: left;
+  gap: 10px;
+  margin-top: 22px;
+  padding: 24px 28px 26px;
+  overflow: visible;
+  --ink: #0e1116;
+  --muted: rgba(14, 17, 22, 0.6);
+  --faint: rgba(14, 17, 22, 0.07);
+  --cobalt: #1e3bd6;
+}
+.hh-health::before {
+  display: none;
+}
+.hh-health__body {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  align-items: center;
+  gap: 28px;
+  margin-top: 8px;
+}
+.hh-health__body .hh-ring {
+  justify-self: center;
+  width: 200px;
+  height: 200px;
+}
+.hh-health__body .hh-ring__in {
+  inset: 38px;
+}
+.hh-health__side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+}
+.hh-health__side .db-label {
+  margin-top: 14px;
+}
+.hh-health__text {
+  max-width: 64ch;
+  margin: 4px 0 0;
+  font: 400 15.5px/1.5 var(--ext);
+  color: rgba(14, 17, 22, 0.78);
+}
+/* the four figures: four cards, as the reports' two, with the page's gap between them */
+.bx .bx-grid--health .hh-figs {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 18px;
+  margin-top: 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+}
+.bx .bx-grid--health .db-card.hh-fig {
+  gap: 12px;
+  padding: 24px 28px 26px;
+  border-left: 1px solid rgba(255, 255, 255, 0.9);
+  border-radius: 28px;
+  transition:
+    box-shadow 0.3s,
+    translate 0.3s;
+}
+.bx .bx-grid--health .db-card.hh-fig:hover {
+  translate: 0 -2px;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.52) 60%, rgba(255, 255, 255, 0.64));
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+    0 0 0 0.5px rgba(14, 17, 22, 0.06),
+    0 30px 56px -30px rgba(30, 30, 60, 0.34);
+}
+.bx .bx-grid--health .hh-fig .hh-fig__n {
+  margin-top: 8px;
+}
+@container (max-width: 1000px) {
+  .bx .bx-grid--health .hh-figs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .hh-health__body {
+    grid-template-columns: minmax(0, 1fr);
+    justify-items: start;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bx .bx-grid--health .db-card.hh-fig {
+    transition: none;
+  }
+}
+
+/* no grey border (13 Nov, review): the page's cards draw a grey inset line; these take the report cards' glass instead,
+   the white rim and the soft lift, nothing grey round them */
+.bx .bx-grid--health .db-card.hh-health,
+.bx .bx-grid--health .db-card.hh-fig {
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.52) 60%, rgba(255, 255, 255, 0.64));
+  -webkit-backdrop-filter: blur(22px) saturate(1.5);
+  backdrop-filter: blur(22px) saturate(1.5);
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+    0 24px 48px -32px rgba(30, 30, 60, 0.28);
+}
+
+/* ---- Brand health after the reference (13 Nov, review: "a divider before Based on, as there; say whether the score is
+   good, green if it is; the ring blue, no shadow inside, the figure clearer") ---- */
+.bx .bx-grid--health .hh-health__foot {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  margin: 14px 0 0;
+  padding: 16px 0 0;
+  border-top: 1px solid rgba(14, 17, 22, 0.08);
+}
+.hh-health__foot div {
+  display: grid;
+  grid-template-columns: 110px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 16px;
+}
+.hh-health__foot dd {
+  margin: 0;
+}
+.hh-health__side .hh-health__foot .db-label {
+  margin-top: 0;
+}
+/* the verdict: green when the score is healthy, Ember when it isn't; the scale after it in grey */
+.hh-verdict {
+  font: 600 15px/1.3 var(--ext);
+}
+.hh-verdict.is-good {
+  color: #13804f;
+}
+.hh-verdict.is-weak {
+  color: #c2410c;
+}
+.hh-verdict span {
+  margin-left: 6px;
+  font-weight: 400;
+  color: rgba(14, 17, 22, 0.6);
+}
+/* the ring: a flat pale blue centre, no shadow; the figure in Diatype Extended, bold, Ink */
+.bx .bx-grid--health .hh-ring__in {
+  background: rgba(30, 59, 214, 0.06);
+  box-shadow: none;
+}
+.bx .bx-grid--health .hh-ring__fig {
+  font: 700 52px/1 var(--ext);
+  letter-spacing: -0.04em;
+  color: #0e1116;
+}
+.hh-ring__label {
+  letter-spacing: 0.18em;
+}
+.bx .bx-grid--health .hh-ring__tick {
+  stroke: rgba(14, 17, 22, 0.08);
+  stroke-width: 5;
+}
+.bx .bx-grid--health .hh-ring.is-on .hh-ring__tick.is-lit {
+  stroke: var(--c);
+}
+.bx .bx-grid--health .hh-health__foot :is(dt, dd) {
+  text-align: left;
+  justify-self: start;
+}
+.bx .bx-grid--health .hh-health__foot {
+  align-items: stretch;
+}
+/* the figure in the client's own face (13 Nov, review: "the figure in their style"): Doto, full Ink, a size up so its
+   dots read clearly */
+.bx .bx-grid--health .hh-ring__fig {
+  font: 900 60px/1 'Doto Rounded', ui-monospace, monospace;
+  letter-spacing: 0;
+  color: #0e1116;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ---- the four figure cards, combined (13 Nov, review: Layout 6's bar and aim tick, in Spark's Cobalt not Ember;
+   these cards' arrow and what it means; a word that says whether it's good; the Ember unit a little smaller) ---- */
+.hh-fig__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+.bx .bx-grid--health .hh-fig .hh-fig__n {
+  margin-top: 4px;
+  font-size: 56px;
+}
+.bx .bx-grid--health .hh-fig__n i {
+  margin-left: 6px;
+  font: 700 22px/1 var(--ext);
+  color: var(--ember);
+}
+.hh-fig__title {
+  margin-top: 4px;
+  font: 600 17px/1.3 var(--ext);
+  letter-spacing: -0.01em;
+  color: var(--ink);
+}
+/* the bar: the track, how far it got in Cobalt into violet, the aim a short Ink tick */
+.hh-bar {
+  position: relative;
+  display: block;
+  height: 4px;
+  margin: 6px 0 2px;
+  border-radius: 4px;
+  background: rgba(14, 17, 22, 0.08);
+}
+.hh-bar span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #1e3bd6, #7a5cff);
+}
+.hh-bar i {
+  position: absolute;
+  top: -5px;
+  width: 2px;
+  height: 14px;
+  margin-left: -1px;
+  border-radius: 1px;
+  background: var(--ink);
+}
+/* the word: green when it's on track, Ember when it needs work, Cobalt when it's one to watch */
+.hh-status {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 10px;
+  border-radius: 999px;
+  font: 600 12.5px/1 var(--ext);
+  white-space: nowrap;
+}
+.hh-status.is-good {
+  background: rgba(19, 128, 79, 0.1);
+  color: #13804f;
+}
+.hh-status.is-work {
+  background: rgba(232, 80, 31, 0.1);
+  color: #c2410c;
+}
+.hh-status.is-watch {
+  background: rgba(30, 59, 214, 0.08);
+  color: #1e3bd6;
+}
+/* the arrow in the status's colour, the words in Ink */
+.hh-vs {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  font: 400 14.5px/1.4 var(--ext);
+  color: rgba(14, 17, 22, 0.72);
+}
+.hh-vs b {
+  font-weight: 600;
+  color: var(--ink);
+}
+.hh-vs__arrow {
+  font-size: 10px;
+}
+.hh-vs.is-good .hh-vs__arrow {
+  color: #13804f;
+}
+.hh-vs.is-work .hh-vs__arrow {
+  color: #c2410c;
+}
+.hh-vs.is-watch .hh-vs__arrow {
+  color: #1e3bd6;
+}
+
+/* ---- the head without the logo, the team beside the name (13 Nov, review) ---- */
+.hh-head__row {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  flex-wrap: wrap;
+}
+.hh-team {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font: 400 14px/1 var(--ext);
+  color: var(--muted);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.hh-team:hover {
+  color: var(--cobalt);
+}
+.hh-team .bx-co__invite {
+  width: 26px;
+  height: 26px;
+  font-size: 13px;
+}
+
+/* ---- one locked report, as a report card (13 Nov, review): full width, the gauge's place a soft arc with the glass
+   lock, what it would tell, Unlock as the consultation's glass button ---- */
+.bx .bx-grid--health .db-card.hh-lock {
+  grid-column: 1 / -1;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 10px;
+  padding: 24px 28px 26px;
+  text-align: left;
+  --ink: #0e1116;
+  --muted: rgba(14, 17, 22, 0.6);
+  --cobalt: #1e3bd6;
+}
+.hh-lock__body {
+  display: grid;
+  grid-template-columns: 240px minmax(0, 1fr);
+  align-items: center;
+  gap: 28px;
+  margin-top: 8px;
+}
+.hh-lock__vis {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 130px;
+}
+/* the gauge's half ring, empty and soft, the lock where its figure would be */
+.hh-lock__arc {
+  position: absolute;
+  left: 20px;
+  right: 20px;
+  top: 10px;
+  height: 200px;
+  border: 14px solid rgba(14, 17, 22, 0.06);
+  border-bottom-color: transparent;
+  border-left-color: rgba(14, 17, 22, 0.06);
+  border-radius: 50%;
+  clip-path: inset(0 0 50% 0);
+}
+.hh-lock__vis img {
+  position: relative;
+  margin-top: 36px;
+}
+.hh-lock__side {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 16px;
+}
+.hh-lock__side .db-book {
+  margin-top: 0;
+}
+.hh-lock__side .db-book:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.hh-lock__confirm {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 14px;
+  font: 400 14.5px/1.3 var(--ext);
+  color: var(--muted);
+}
+.hh-lock__cancel {
+  border: 0;
+  background: none;
+  font: 500 14.5px/1 var(--ext);
+  color: var(--muted);
+  cursor: pointer;
+}
+.hh-lock__cancel:hover {
+  color: var(--ink);
+}
+
+/* Book consultation by Dr.AI (13 Nov, review): moved right, just left of him in the window's corner */
+.bx .bx-grid--health .br-float {
+  margin-right: 90px;
+}
+/* the verdict heading the words beside the ring (13 Nov, review) */
+.hh-health__side > .hh-verdict {
+  font-size: 17px;
+}
+.hh-health__side > .hh-verdict span {
+  font-size: 15px;
+}
+/* one line each, no wrapping (13 Nov, review) */
+.hh-fig__title,
+.hh-vs {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.hh-fig__title {
+  font-size: 16px;
+}
+.hh-vs {
+  font-size: 14px;
+}
+
+/* the card's head: its label, and at the right when it was measured (13 Nov, review) */
+.hh-health__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+.hh-measured {
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.08em;
+  color: rgba(14, 17, 22, 0.6);
+  white-space: nowrap;
+}
+
+/* ---- the locked report as a report card exactly (13 Nov, review: "the same colour, the same hover, the same size"):
+   half the row, beside nothing, the reports' glass and lift ---- */
+.bx .bx-grid--health .db-card.hh-lock {
+  grid-column: span 6;
+  transition:
+    box-shadow 0.3s,
+    translate 0.3s;
+}
+.bx .bx-grid--health .db-card.hh-lock:hover {
+  translate: 0 -2px;
+}
+.hh-lock__body {
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 24px;
+}
+.hh-lock__vis {
+  height: 110px;
+}
+.hh-lock__arc {
+  left: 10px;
+  right: 10px;
+  height: 180px;
+}
+
+/* ---- no grey border on any card on the page (13 Nov, review): the white rim and the soft lift only ---- */
+.bx .bx-grid--health :is(.db-card, .hh-card) {
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0.52) 60%, rgba(255, 255, 255, 0.64));
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+    0 24px 48px -32px rgba(30, 30, 60, 0.28);
+}
+.bx .bx-grid--health :is(.db-card, .hh-card):hover {
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+    0 30px 56px -30px rgba(30, 30, 60, 0.34);
+}
+.bx .bx-grid--health .db-card.hh-health:hover {
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.5),
+    0 24px 48px -32px rgba(30, 30, 60, 0.28);
+}
+@media (prefers-reduced-motion: reduce) {
+  .bx .bx-grid--health .db-card.hh-lock {
+    transition: none;
+  }
+}
+
+/* ---- 13 Nov, review: the dates in plain small words; the reading wider (two lines); Based on close to its values, in
+   the verdict's grey; the ring a size down; the tabs in the sidebar's face, a little smaller ---- */
+.hh-measured {
+  font: 400 13px/1 var(--ext);
+  letter-spacing: 0;
+}
+.bx .bx-grid--health .hh-health__text {
+  max-width: none;
+}
+.hh-based {
+  width: 100%;
+  margin: 14px 0 0;
+  padding-top: 14px;
+  border-top: 1px solid rgba(14, 17, 22, 0.08);
+  font: 400 15px/1.45 var(--ext);
+  color: rgba(14, 17, 22, 0.6);
+}
+.bx .bx-grid--health .hh-health__body {
+  grid-template-columns: 200px minmax(0, 1fr);
+  gap: 36px;
+}
+.bx .bx-grid--health .hh-health__body .hh-ring {
+  width: 172px;
+  height: 172px;
+}
+.bx .bx-grid--health .hh-health__body .hh-ring__in {
+  inset: 33px;
+  gap: 4px;
+}
+.bx .bx-grid--health .hh-ring__fig {
+  font-size: 50px;
+}
+.bx .bx-grid--health .hx-tab {
+  font-family: var(--ext);
+  font-size: 13.5px;
+  font-weight: 400;
+  letter-spacing: 0;
+  text-transform: none;
+}
+.bx .bx-grid--health .hx-tab.is-active {
+  font-weight: 500;
+}
+.bx .bx-grid--health .hh-health__body {
+  width: 100%;
+  max-width: none;
+}
+.bx .bx-grid--health .hh-health__side {
+  max-width: none;
+}
+
+/* the team's faces aligned (13 Nov, review): each face and the + a circle of one size, a sand ring between them so the
+   overlap reads as faces side by side; the + a white circle with its sign centred */
+.hh-team .bx-co__faces {
+  display: inline-flex;
+  align-items: center;
+}
+.hh-team .bx-co__faces > * {
+  flex: none;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px #f6f4f0;
+}
+.hh-team .bx-co__faces > * + * {
+  margin-left: -4px; /* a little overlap, every face's initials whole */
+}
+.hh-team .bx-co__faces .avatar {
+  font-size: 10.5px;
+  letter-spacing: 0;
+}
+.hh-team .bx-co__invite {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  background: #fff;
+  font: 500 15px/1 var(--ext);
+  color: rgba(14, 17, 22, 0.7);
+  box-shadow:
+    0 0 0 2px #f6f4f0,
+    inset 0 0 0 1px rgba(14, 17, 22, 0.1);
+}
+.hh-team:hover .bx-co__invite {
+  color: #1e3bd6;
+}
+
+/* =====================================================================================================================
+   Layout 9 · one system (13 Nov, review, after the audit): one radius, one figure size, units grey, good green and bad
+   red everywhere, the aim marked on the ring too, one grey, one type scale, one chart gradient, labels on every card,
+   one gap between everything, the credits lighter, the 72 raised
+   ===================================================================================================================== */
+.bx .bx-grid--health {
+  --g: rgba(14, 17, 22, 0.64); /* the one grey: 5.4:1 on the cards */
+  --good: #13804f;
+  --bad: #b42318;
+  row-gap: 24px;
+  column-gap: 24px;
+}
+/* one gap: every block's own margins off, the grid's 24 px between them */
+.bx .bx-grid--health .br > :not(.br-float) {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+.bx .bx-grid--health .hh-figs {
+  gap: 24px;
+}
+
+/* one radius */
+.bx .bx-grid--health :is(.db-card, .hh-card) {
+  border-radius: 28px;
+}
+
+/* one figure size, Doto 56 px, and the units in one grey style */
+.bx .bx-grid--health :is(.hh-ring__fig, .hh-fig__n, .db-gauge__fig) {
+  font-size: 56px !important;
+}
+.bx .bx-grid--health :is(.hh-fig__n, .db-gauge__fig) :is(i, .dp--pct) {
+  margin-left: 6px;
+  font: 600 20px/1 var(--ext) !important;
+  font-style: normal;
+  letter-spacing: 0;
+  color: var(--g) !important;
+  -webkit-text-fill-color: var(--g);
+}
+.bx .bx-grid--health .db-gauge__fig {
+  top: 60px;
+}
+
+/* the aim on the ring: an Ink tick across it, as on the bars and the gauges */
+.hh-ring__aim {
+  stroke: #0e1116;
+  stroke-width: 2.5;
+  stroke-linecap: round;
+}
+/* the 72 a little higher in its circle */
+.bx .bx-grid--health .hh-health__body .hh-ring__in {
+  justify-content: center;
+  padding-bottom: 10px;
+  gap: 2px;
+}
+
+/* good green, bad red, to watch Cobalt: the chips, the verdict, the arrows */
+.bx .bx-grid--health .hh-status {
+  height: 26px;
+  font: 600 13px/1 var(--ext);
+}
+.bx .bx-grid--health .hh-status.is-good {
+  background: rgba(19, 128, 79, 0.1);
+  color: var(--good);
+}
+.bx .bx-grid--health .hh-status.is-work {
+  background: rgba(180, 35, 24, 0.08);
+  color: var(--bad);
+}
+.bx .bx-grid--health .hh-verdict.is-good {
+  color: var(--good);
+}
+.bx .bx-grid--health .hh-verdict.is-weak {
+  color: var(--bad);
+}
+.bx .bx-grid--health .hh-vs.is-work .hh-vs__arrow {
+  color: var(--bad);
+}
+.bx .bx-grid--health .hh-vs.is-good .hh-vs__arrow {
+  color: var(--good);
+}
+.db-rep__whatrow {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+/* the labels' row on the figure cards: the report, the status across from it */
+.bx .bx-grid--health .hh-fig__top {
+  align-items: center;
+}
+
+/* one grey for every secondary word */
+.bx .bx-grid--health :is(.db-label, .hh-measured, .hh-head__sub, .hh-team, .hh-verdict span, .hh-health__text, .hh-based, .db-gauge__typical, .hh-vs, .hh-ring__label, .db-rep__basis, .db-book, .bx-co__invite) {
+  color: var(--g);
+}
+.bx .bx-grid--health .hx-tab:not(.is-active) {
+  color: var(--g);
+}
+.bx .bx-grid--health .br-float {
+  color: var(--g);
+}
+.bx .bx-grid--health :is(.hh-vs, .hh-based) b {
+  color: #0e1116;
+}
+
+/* one type scale: 40 the name · 22 card titles · 17 what a figure is · 15 reading · 14 small words · 13 chips and
+   dates · 11.5 mono labels */
+.bx .bx-grid--health .hh-head__sub {
+  font-size: 15px;
+}
+.bx .bx-grid--health :is(.db-rep__what, .hh-fig__title, .hh-health__side > .hh-verdict) {
+  font: 600 17px/1.3 var(--ext);
+  letter-spacing: -0.01em;
+}
+.bx .bx-grid--health .hh-health__side > .hh-verdict span {
+  font: 400 15px/1.3 var(--ext);
+  letter-spacing: 0;
+}
+.bx .bx-grid--health :is(.hh-health__text, .hh-based) {
+  font: 400 15px/1.5 var(--ext);
+}
+.bx .bx-grid--health :is(.hh-vs, .db-rep__basis, .hh-team, .db-gauge__typical) {
+  font-size: 14px;
+  line-height: 1.45;
+}
+.bx .bx-grid--health :is(.hh-measured, .hx-tab) {
+  font-size: 13px;
+}
+.bx .bx-grid--health .db-label {
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+}
+
+/* the credits lighter, 600 */
+.bx .bx-grid--health .bal-pill--inline .bal-pill__val {
+  font-weight: 600;
+}
+/* the report card's verdict across from its label; the link takes its place on hover */
+.db-cardhead .db-rep__verdict {
+  margin-left: auto;
+}
+.db-cardhead:has(.db-rep__verdict) .db-hoverlink {
+  display: none;
+}
+.db-rep:hover .db-cardhead:has(.db-rep__verdict) .db-hoverlink,
+.db-rep:focus-visible .db-cardhead:has(.db-rep__verdict) .db-hoverlink {
+  display: inline-flex;
+}
+.db-rep:is(:hover, :focus-visible) .db-rep__verdict {
+  display: none;
+}
+/* the locked card as tall as the report cards above it */
+.bx .bx-grid--health .db-card.hh-lock {
+  min-height: 277px;
+}
+.bx .bx-grid--health .hh-fig__top .db-label {
+  white-space: nowrap;
+}
+
+/* the statuses quieter (13 Nov, review: "too much accent; a dot before Needs work, in Ember, no fill; To watch the
+   same"): a dot and the words, no pill. Ember for what needs work (and what's below typical), Cobalt to watch, green
+   when it's good; the arrows in the same colours */
+.bx .bx-grid--health .hh-status {
+  gap: 7px;
+  height: auto;
+  padding: 0;
+  background: none !important;
+  font: 500 13px/1.2 var(--ext);
+}
+.bx .bx-grid--health .hh-status::before {
+  content: '';
+  flex: none;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: currentColor;
+}
+.bx .bx-grid--health .hh-status.is-work {
+  color: #c2410c;
+}
+.bx .bx-grid--health .hh-status.is-work::before {
+  background: #e8501f;
+}
+.bx .bx-grid--health .hh-status.is-watch {
+  color: #1e3bd6;
+}
+.bx .bx-grid--health .hh-status.is-good {
+  color: #13804f;
+}
+.bx .bx-grid--health .hh-vs.is-work .hh-vs__arrow {
+  color: #e8501f;
+}
+/* the team under the description (13 Nov, review); the faces side by side, not over each other, so every initial is
+   whole */
+.bx .bx-grid--health .hh-team {
+  margin-top: 14px;
+}
+.hh-team .bx-co__faces > * + * {
+  margin-left: 4px;
+}
+.bx .bx-grid--health .hh-team .bx-co__faces > * + * {
+  margin-left: 4px;
+}
+
+/* the ring's centre (13 Nov, review: "not Health but Good health; the 72 aligned, clearer"): a larger flat circle, the
+   figure and its words centred together as one group, the figure in full Ink on near-white so the dots read sharply;
+   the words in the verdict's green */
+.bx .bx-grid--health .hh-health__body .hh-ring__in {
+  inset: 28px;
+  padding: 0;
+  gap: 6px;
+  background: rgba(30, 59, 214, 0.045);
+}
+.bx .bx-grid--health .hh-ring__fig {
+  display: block;
+  line-height: 0.82;
+  /* Doto's figures carry a wide right bearing; nudge back so the 72 sits on the circle's centre */
+  margin-right: -0.06em;
+  color: #0e1116;
+}
+.bx .bx-grid--health .hh-ring__label {
+  font: 600 11px/1 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.bx .bx-grid--health .hh-ring__label.is-good {
+  color: #13804f;
+}
+.bx .bx-grid--health .hh-ring__label.is-weak {
+  color: #c2410c;
+}
+/* the 72 alone, in the circle's centre */
+.bx .bx-grid--health .hh-health__body .hh-ring__in {
+  gap: 0;
+}
+.bx .bx-grid--health .hh-ring__fig {
+  line-height: 0.74;
+}
+
+/* =====================================================================================================================
+   Layout 9 · the cards' surface (13 Nov, review: "the shadows too grey; improve the card"). The card whiter, so it
+   stands off the sand on its own; the shadow warm (the sand's own brown, not a cold blue-grey) and in two layers: a
+   faint contact shadow that gives the edge, and a wide soft one that lifts it; behind the cards a quiet glow of the
+   brand's colours, so the glass has something to show through. The ticks and tracks stay as they are.
+   ===================================================================================================================== */
+.bx .bx-grid--health {
+  position: relative;
+  isolation: isolate;
+  --card: linear-gradient(165deg, rgba(255, 255, 255, 0.93), rgba(255, 255, 255, 0.8) 55%, rgba(255, 255, 255, 0.88));
+  --lift:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 1px 2px rgba(92, 72, 40, 0.06),
+    0 16px 36px -20px rgba(92, 72, 40, 0.2);
+  --lift-hover:
+    inset 0 1px 0 rgba(255, 255, 255, 1),
+    0 1px 2px rgba(92, 72, 40, 0.07),
+    0 24px 46px -22px rgba(92, 72, 40, 0.26);
+}
+.bx .bx-grid--health::before {
+  content: '';
+  position: absolute;
+  z-index: -1;
+  inset: 90px 0 auto; /* inside the column: no sideways scroll */
+  height: 720px;
+  pointer-events: none;
+  background:
+    radial-gradient(34% 40% at 14% 30%, rgba(30, 59, 214, 0.09), transparent 70%),
+    radial-gradient(30% 36% at 88% 22%, rgba(122, 92, 255, 0.1), transparent 70%),
+    radial-gradient(30% 30% at 60% 88%, rgba(232, 80, 31, 0.05), transparent 70%);
+  filter: blur(14px);
+}
+.bx .bx-grid--health :is(.db-card, .hh-card),
+.bx .bx-grid--health .db-card.hh-health,
+.bx .bx-grid--health .db-card.hh-fig {
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  background: var(--card);
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  backdrop-filter: blur(24px) saturate(1.6);
+  box-shadow: var(--lift);
+}
+.bx .bx-grid--health :is(.db-card, .hh-card):is(a, article):hover,
+.bx .bx-grid--health .db-card.hh-fig:hover {
+  background: var(--card);
+  box-shadow: var(--lift-hover);
+}
+/* Brand health isn't a link: no lift on hover */
+.bx .bx-grid--health .db-card.hh-health:hover {
+  box-shadow: var(--lift);
+}
+
+/* Book consultation right beside Dr.AI (13 Nov, review: "closer to the mascot"): held to the window as he is (he
+   stands 26 px from the right, 22 px from the foot, 92 px wide), 12 px to his left, level with his middle */
+.bx .bx-grid--health .br-float {
+  position: fixed;
+  right: 130px;
+  bottom: 76px;
+  margin: 0;
+}
+
+/* ---- arrival, as the health ring's (13 Nov, review: "the same micro-animation for the charts and lines in the
+   cards"): the bars fill from the left one card after another, the report gauges draw their arc clockwise, and the aim
+   ticks settle in once the fill has passed them ---- */
+@keyframes hh-fill {
+  from {
+    transform: scaleX(0);
+  }
+}
+@keyframes hh-draw {
+  0% {
+    stroke-dashoffset: 1;
+    opacity: 0;
+  }
+  8% {
+    opacity: 1;
+  }
+  100% {
+    stroke-dashoffset: 0;
+  }
+}
+@keyframes hh-tick {
+  from {
+    opacity: 0;
+    transform: scaleY(0.2);
+  }
+}
+.bx .bx-grid--health .hh-bar span {
+  transform-origin: left center;
+  animation: hh-fill 1s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.35s;
+}
+.bx .bx-grid--health .hh-fig:nth-child(2) .hh-bar span {
+  animation-delay: 0.45s;
+}
+.bx .bx-grid--health .hh-fig:nth-child(3) .hh-bar span {
+  animation-delay: 0.55s;
+}
+.bx .bx-grid--health .hh-fig:nth-child(4) .hh-bar span {
+  animation-delay: 0.65s;
+}
+.bx .bx-grid--health .hh-bar i {
+  animation: hh-tick 0.4s ease-out both;
+  animation-delay: 1s;
+}
+.bx .bx-grid--health .db-gauge__val {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 0;
+  animation: hh-draw 1.3s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.3s;
+}
+.bx .bx-grid--health .hh-rep + .hh-rep .db-gauge__val {
+  animation-delay: 0.45s;
+}
+.bx .bx-grid--health .db-gauge__tick {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: hh-tick 0.4s ease-out both;
+  animation-delay: 1.1s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bx .bx-grid--health :is(.hh-bar span, .hh-bar i, .db-gauge__val, .db-gauge__tick) {
+    animation: none;
+  }
+}
+
+/* Book consultation's shadow warm, as the cards' (13 Nov, review: "the button's shadow is greyish") */
+.bx .bx-grid--health .br-float {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    inset 0 -6px 14px -8px rgba(255, 255, 255, 0.8),
+    0 1px 2px rgba(92, 72, 40, 0.07),
+    0 14px 30px -14px rgba(92, 72, 40, 0.24);
+}
+.bx .bx-grid--health .br-float:hover {
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.95),
+    inset 0 -6px 14px -8px rgba(255, 255, 255, 0.8),
+    0 1px 2px rgba(92, 72, 40, 0.08),
+    0 20px 38px -16px rgba(92, 72, 40, 0.3);
+}
+/* the statuses a step down, level with the mono labels beside them (13 Nov, review: "isn't the text too big?") */
+.bx .bx-grid--health .hh-status {
+  gap: 6px;
+  font: 500 12px/1.2 var(--ext);
+}
+.bx .bx-grid--health .hh-status::before {
+  width: 6px;
+  height: 6px;
+}
+
+/* what a figure is, 15 px everywhere, as Layout 6's (13 Nov, review: "smaller, the same everywhere"): the figure
+   cards' titles, the report cards' "Mobile speed", the "Good health" verdict */
+.bx .bx-grid--health :is(.db-rep__what, .hh-fig__title, .hh-health__side > .hh-verdict) {
+  font: 600 15px/1.3 var(--ext);
+  letter-spacing: 0;
+}
+
+/* the report cards' "Based on" written as Brand health's (13 Nov, review): one grey sentence in Diatype, "Based on"
+   leading it, under the same hairline; no mono label */
+.bx .bx-grid--health .hh-rep .db-rep__side > .db-label {
+  display: none;
+}
+.bx .bx-grid--health .hh-rep .db-rep__basis {
+  width: 100%;
+  margin-top: 10px;
+  padding-top: 12px;
+  border-top: 1px solid rgba(14, 17, 22, 0.08);
+  font: 400 15px/1.45 var(--ext);
+  color: var(--g);
+}
+.bx .bx-grid--health .hh-rep .db-rep__basis::before {
+  content: 'Based on ';
+}
+.bx .bx-grid--health .hh-rep .db-rep__basis {
+  line-height: 1.5;
+}
+
+/* "Based on" a step smaller, in Brand health and the report cards alike (13 Nov, review): 14 px, the page's small words */
+.bx .bx-grid--health .hh-based,
+.bx .bx-grid--health .hh-rep .db-rep__basis {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* the faces overlapping again (13 Nov, review), a size up so each one's initials still clear the next: 30 px circles,
+   7 px over each other, the sand ring between them */
+.bx .bx-grid--health .hh-team .bx-co__faces > * {
+  width: 30px;
+  height: 30px;
+}
+.bx .bx-grid--health .hh-team .bx-co__faces > * + * {
+  margin-left: -7px;
+}
+/* overlap just short of the initials: 5 px, the initials at 10 px */
+.bx .bx-grid--health .hh-team .bx-co__faces > * + * {
+  margin-left: -5px;
+}
+.bx .bx-grid--health .hh-team .bx-co__faces .avatar {
+  font-size: 10px;
+}
+
+/* ---- Book consultation with its icon (13 Nov, review): a video camera in a Cobalt circle, a soft ring going out
+   from it every few seconds, a small ring-ring of the camera on hover; still for reduced motion ---- */
+.bx .bx-grid--health .br-float.hh-book {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 26px 0 10px;
+}
+.hh-book__icon {
+  position: relative;
+  flex: none;
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: linear-gradient(140deg, #3550e6, #1e3bd6 60%, #5a3fe0);
+  box-shadow:
+    inset 0 1px 1px rgba(255, 255, 255, 0.45),
+    0 4px 10px -4px rgba(30, 59, 214, 0.55);
+  color: #fff;
+}
+/* the ring: out from the circle and fading, once every 4 s */
+.hh-book__icon::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 50%;
+  border: 2px solid rgba(30, 59, 214, 0.45);
+  animation: hh-ping 4s cubic-bezier(0.2, 0.7, 0.3, 1) infinite;
+  animation-delay: 1.6s;
+  pointer-events: none;
+}
+@keyframes hh-ping {
+  0% {
+    transform: scale(1);
+    opacity: 0.9;
+  }
+  35%,
+  100% {
+    transform: scale(1.75);
+    opacity: 0;
+  }
+}
+/* on hover the camera rings: a short wiggle */
+.hh-book__icon svg {
+  transform-origin: 50% 60%;
+}
+.br-float.hh-book:hover .hh-book__icon svg {
+  animation: hh-ring 0.7s ease-in-out;
+}
+@keyframes hh-ring {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  20% {
+    transform: rotate(-14deg);
+  }
+  40% {
+    transform: rotate(12deg);
+  }
+  60% {
+    transform: rotate(-8deg);
+  }
+  80% {
+    transform: rotate(5deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .hh-book__icon::after,
+  .br-float.hh-book:hover .hh-book__icon svg {
+    animation: none;
+  }
+  .hh-book__icon::after {
+    display: none;
+  }
+}
+
+/* ---- each card's charts wait until the card is in view (.is-in), then play (13 Nov, review: "add a micro-animation"
+   to the report gauges): the arc draws clockwise, the figure rises in, the typical's tick settles once the arc has
+   passed it; the figure cards' bars the same way ---- */
+@keyframes hh-rise {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+}
+.bx .bx-grid--health :is(.hh-fig, .hh-rep) :is(.hh-bar span, .hh-bar i, .db-gauge__val, .db-gauge__tick, .db-gauge__fig, .hh-fig__n) {
+  animation-play-state: paused;
+}
+.bx .bx-grid--health :is(.hh-fig, .hh-rep).is-in :is(.hh-bar span, .hh-bar i, .db-gauge__val, .db-gauge__tick, .db-gauge__fig, .hh-fig__n) {
+  animation-play-state: running;
+}
+.bx .bx-grid--health .hh-rep .db-gauge__val {
+  animation-delay: 0.15s;
+}
+.bx .bx-grid--health .hh-rep + .hh-rep .db-gauge__val {
+  animation-delay: 0.3s;
+}
+.bx .bx-grid--health .hh-rep .db-gauge__fig {
+  animation: hh-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.35s;
+}
+.bx .bx-grid--health .hh-rep + .hh-rep .db-gauge__fig {
+  animation-delay: 0.5s;
+}
+.bx .bx-grid--health .hh-rep .db-gauge__tick {
+  animation-delay: 0.9s;
+}
+.bx .bx-grid--health .hh-fig .hh-fig__n {
+  animation: hh-rise 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.2s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bx .bx-grid--health :is(.db-gauge__fig, .hh-fig__n) {
+    animation: none;
+  }
+}
+/* (the play state last, after every animation shorthand above, which would reset it) */
+.bx .bx-grid--health.bx-grid :is(.hh-fig, .hh-rep) :is(.hh-bar span, .hh-bar i, .db-gauge__val, .db-gauge__tick, .db-gauge__fig, .hh-fig__n) {
+  animation-play-state: paused;
+}
+.bx .bx-grid--health.bx-grid :is(.hh-fig, .hh-rep).is-in :is(.hh-bar span, .hh-bar i, .db-gauge__val, .db-gauge__tick, .db-gauge__fig, .hh-fig__n) {
+  animation-play-state: running;
+}
+/* rising over Dr.AI's tip and settling back, smoothly */
+.bx .bx-grid--health .br-float.hh-book {
+  transition:
+    bottom 0.45s cubic-bezier(0.22, 1, 0.36, 1),
+    color 0.25s,
+    box-shadow 0.25s;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bx .bx-grid--health .br-float.hh-book {
+    transition: none;
+  }
+}
+
+/* ---- the darks of sparkstudios.ae's "Let's talk" (btn--smoke: a gradient of rgba(34, 38, 48, .86) into
+   rgba(14, 17, 22, .92), #F8F6F2 on it, a faint white ring inside, a white line along its top, an Ink shadow under);
+   13 Nov, review: "Read the report dark; Book consultation's circle dark, the colour of Let's talk" ---- */
+.bx .bx-grid--health .hh-rep .db-hoverlink {
+  color: #222630;
+}
+.bx .bx-grid--health .hh-rep .db-hoverlink:hover {
+  color: #0e1116;
+}
+.bx .bx-grid--health .hh-book__icon {
+  background: linear-gradient(rgba(34, 38, 48, 0.86), rgba(14, 17, 22, 0.92));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 8px 18px -8px rgba(14, 17, 22, 0.5);
+  color: #f8f6f2;
+}
+.bx .bx-grid--health .hh-book__icon::after {
+  border-color: rgba(34, 38, 48, 0.4);
+}
+
+/* tighter (13 Nov, review: "can we make the gaps between the cards smaller?"): 16 px everywhere instead of 24 */
+.bx .bx-grid--health {
+  row-gap: 16px;
+  column-gap: 16px;
+}
+.bx .bx-grid--health .hh-figs {
+  gap: 16px;
+}
+/* the rise over Dr.AI's tip, slower and softer: a long ease out (13 Nov, review: "smoother") */
+.bx .bx-grid--health .br-float.hh-book {
+  transition:
+    bottom 0.75s cubic-bezier(0.25, 1, 0.5, 1),
+    color 0.25s,
+    box-shadow 0.25s;
+}
+/* Layout 4 on the site's plain Sand too: no glow of the brand's colours behind the cards (13 Nov, review) */
+.bx .bx-grid--health::before {
+  display: none;
+}
+
+/* the company profile's three cards in the same glass as the cards above them (13 Nov, review) */
+.bx .bx-grid--health .hx-prof {
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 28px;
+  background: var(--card, linear-gradient(165deg, rgba(255, 255, 255, 0.93), rgba(255, 255, 255, 0.8) 55%, rgba(255, 255, 255, 0.88)));
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  backdrop-filter: blur(24px) saturate(1.6);
+  box-shadow: var(--lift);
+}
+/* the team link's arrow: Ink, as its words, and it steps forward under the pointer (13 Nov, review) */
+.bx .bx-grid--health .hh-team__go {
+  flex: none;
+  margin-inline-start: 2px;
+  color: #0e1116;
+  transition: translate 0.25s;
+}
+.bx .bx-grid--health .hh-team:hover .hh-team__go {
+  translate: 3px 0;
+}
+@media (prefers-reduced-motion: reduce) {
+  .bx .bx-grid--health .hh-team__go {
+    transition: none;
+  }
+}

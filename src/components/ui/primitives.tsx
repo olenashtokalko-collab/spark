@@ -31,7 +31,7 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   // look with our motion (profile "portal")
   // Every filled pill wears it (11 Nov): primary, secondary and ai, with a label. Ghost and quiet stay text-like,
   // danger keeps its red, icon-only buttons stay small and plain.
-  const metal = useMetalUi() && !plain && (variant === 'primary' || variant === 'secondary' || variant === 'ai') && !!children;
+  const metal = useMetalUi() && !plain && (variant === 'primary' || variant === 'ai') && !!children; // secondary stays outlined (12 Nov)
   const inner = (
     <>
       {loading ? <Loader2 className="spin" size={15} /> : Icon ? <Icon size={size === 'sm' ? 14 : 16} strokeWidth={1.8} /> : lead}

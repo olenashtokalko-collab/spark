@@ -15,6 +15,7 @@ import { analyses } from '../../data/mock';
 import { fmtDate } from '../../lib/format';
 import { cx } from '../../components/ui/primitives';
 import { MetalInner, metalClass, useMetalUi } from '../../components/ui/MetalButton';
+import { CornerTip } from './CornerTips';
 import { DrAiHead } from '../../components/ui/DrAi';
 import { MascotClip } from '../demo/MascotDemo';
 import { useModel } from '../home/HomeLayouts';
@@ -332,6 +333,12 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
   const guide = ob.on && place === 'fixed' && (
     <SparkiGuide point={shown ? shown.point : undefined} id={shown ? shown.id : undefined} active={guiding && !folded && !chat && !!shown} />
   );
+  // Current UI (11 Nov, review): after the new welcome Dr.AI stands alone in the bottom-right corner, as the welcome
+  // leaves him: no window, no Sparki guide. A click opens the chat. Not on Ask Dr.AI itself, where he already is.
+  if (metal) {
+    if (place !== 'fixed' || path.startsWith('/assistant') || NO_DOCK) return null;
+    return <SoloDock chat={chat} setChat={setChat} />;
+  }
   // Not on the chat itself, where he already is; Sparki still points the way there.
   if (!mine || path.startsWith('/assistant')) return guide || null;
   // A build without the corner Dr.AI (VITE_NO_DOCK=1, 9 Nov: spark-glass-share keeps him out for now); onboarding's
@@ -597,5 +604,25 @@ function Confetti() {
         </svg>
       ))}
     </span>
+  );
+}
+
+/** Dr.AI alone in his corner (Current UI): a click opens the chat; now and then he gives a piece of advice from the
+ *  attention cards, and talks while he does (CornerTips, 12 Nov). */
+function SoloDock({ chat, setChat }: { chat: boolean; setChat: (v: boolean) => void }) {
+  const [talk, setTalk] = useState(false);
+  return (
+    <>
+      {!chat && (
+        <>
+          <CornerTip paused={chat} onTalk={setTalk} />
+          {/* no TIP switch (13 Nov, review: only the switch between the versions); his tips come on their own */}
+          <button type="button" className="dk-solo" onClick={() => setChat(true)} aria-label="Ask Dr.AI">
+            <MascotClip state={talk ? 'speaking' : 'idle'} crop="solo" width={92} />
+          </button>
+        </>
+      )}
+      <ChatDrawer open={chat} onClose={() => setChat(false)} />
+    </>
   );
 }

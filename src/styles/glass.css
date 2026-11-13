@@ -21151,3 +21151,20 @@ body:has(.og-intro--bubble:not(.is-out)) .og-sparki {
   font-size: 13px;
   color: var(--text-3);
 }
+
+/* Brand Analysis's name with Request a report at its right, level with it (11 Nov, review); the row keeps the title's
+   own spacing to the tabs. */
+.og-home > .og-ba-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  margin: 20px 0 -16px;
+}
+.og-home > .og-ba-head .og-ba-title {
+  margin: 0;
+}
+.og-ba-head .og-report__go.og-report__go {
+  align-self: center;
+  margin: 0;
+}

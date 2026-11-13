@@ -14,6 +14,8 @@ dist/
 
 # Licensed brand fonts (ABC Diatype etc.): kept local, not in the public repo
 public/fonts/
+# the same fonts in the colleague's concepts folder (13 Nov), which her CSS loads from there
+src/features/concepts/assets/fonts/
 # Local review screenshots
 screenshots/
 

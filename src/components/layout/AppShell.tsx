@@ -21,8 +21,9 @@ import { useStore } from '../../state/store';
 import { navigate, useRoute } from '../../lib/router';
 import { Avatar, cx } from '../ui/primitives';
 import { Popover } from '../ui/overlay';
-import { CreditRing, CreditsOverlay, TopUpDialog } from './Credits';
+import { CreditsOverlay, TopUpDialog } from './Credits';
 import { DrAiNavIcon, useDrAi } from '../ui/DrAi';
+import { MetalParts, metalClass, useMetalUi } from '../ui/MetalButton';
 import { DrAiDock } from '../../features/assistant/DrAiDock';
 import { fmtRelative } from '../../lib/format';
 import type { Notification } from '../../data/types';
@@ -100,6 +101,7 @@ export function AppShell({ children }: { children: ReactNode }) {
     });
   const tip = (label: string) => (railOpen ? undefined : label);
   const drai = useDrAi();
+  const metalUi = useMetalUi();
 
   // The sidebar holds everything around the work: logo, sections, notifications, and the person with
   // their company at the foot (feedback 21 Oct). The page sits beside it on its own rounded panel.
@@ -127,12 +129,31 @@ export function AppShell({ children }: { children: ReactNode }) {
             {railOpen ? <PanelLeftClose size={18} strokeWidth={1.7} /> : <PanelLeftOpen size={18} strokeWidth={1.7} />}
           </button>
         </div>
+        {/* the sections in one glass pill, as the nav on sparkstudios.ae (13 Nov, review), stood upright */}
+        <nav className="rail__nav" aria-label="Sections">
         {navFor(route.path, route.query)
           // Dr.AI on (#/demo/mascot): Chats leaves the list and comes back under a line as Ask Dr.AI.
           .filter((n) => !(drai && n.path.startsWith('/assistant')))
           .map((n) => {
           const active = n.match(route.path);
           const count = n.path === '/requests' ? counts.requests : n.path === '/documents' ? counts.documents : 0;
+          // Requests and Documents shown but not open while the client approves the look (13 Nov, review); a tip
+          // beside one says they're coming, the name itself unchanged
+          if (n.path === '/requests' || n.path === '/documents')
+            return (
+              <span
+                key={n.path}
+                className="rail__btn rail__btn--off"
+                tabIndex={0}
+                aria-disabled="true"
+                aria-label={`${n.label}, coming soon`}
+                data-tip={railOpen ? 'Coming soon' : `${n.label} · coming soon`}
+              >
+                <n.icon size={18} strokeWidth={1.7} />
+                <span className="rail__label">{n.label}</span>
+                {count > 0 && <span className="rail__dot" aria-hidden />}
+              </span>
+            );
           return (
             <a
               key={n.path}
@@ -148,11 +169,24 @@ export function AppShell({ children }: { children: ReactNode }) {
             </a>
           );
         })}
+        </nav>
         {/* Dr.AI on: Spark's assistant apart from the sections, under a fine line, his head for its icon (after
             the Clara AI reference, 5 Nov). */}
         {drai && (
           <>
-            <span className="rail__rule" aria-hidden />
+            {!metalUi && <span className="rail__rule" aria-hidden />}
+            {metalUi ? (
+              <a
+                href="#/assistant"
+                className={cx('rail__drai-metal', metalClass('spark', 'menu'), route.path.startsWith('/assistant') && 'is-active')}
+                aria-current={route.path.startsWith('/assistant') ? 'page' : undefined}
+                aria-label="Ask Dr.AI"
+                data-tip={tip('Ask Dr.AI')}
+              >
+                <MetalParts tone="spark" profile="menu" />
+                <span className="metal__label">{railOpen ? 'Ask Dr.AI' : <img className="rail__drai-head" src="brand/drai-head.png" alt="" width={28} height={28} />}</span>
+              </a>
+            ) : (
             <a
               href="#/assistant"
               className={cx('rail__btn rail__btn--drai', route.path.startsWith('/assistant') && 'is-active')}
@@ -162,6 +196,7 @@ export function AppShell({ children }: { children: ReactNode }) {
               <DrAiNavIcon size={24} />
               <span className="rail__label">Ask Dr.AI</span>
             </a>
+            )}
           </>
         )}
         {/* Notifications and the account sit at the foot, away from the daily sections. */}
@@ -350,25 +385,34 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
               onFocus={(e) => showCredits(e.currentTarget)}
               onClick={(e) => showCredits(e.currentTarget)}
             >
-              <CreditRing left={state.credits} total={state.creditsTotal} size={18} />
+              {/* no ring before the amount (13 Nov, review) */}
               <span className="acct__credits-amount">
                 USD{' '}
                 {state.credits.toLocaleString('en-US', {
-                  minimumFractionDigits: 2,
+                  minimumFractionDigits: Number.isInteger(state.credits) ? 0 : 2,
                   maximumFractionDigits: 2,
                 })}
               </span>
               <span className="acct__credits-word">{left < 0.2 ? 'left · running low' : 'credits'}</span>
             </button>
-            <button className="acct__item" onClick={() => go(close, '/team')}>
-              <UserPlus size={18} strokeWidth={1.6} />
-              <span>Manage my team</span>
-            </button>
-            {/* The company's basics and Spark's analysis, on Home. */}
-            <button className="acct__item" onClick={() => go(close, '/?show=company')}>
-              <Building2 size={18} strokeWidth={1.6} />
-              <span>Company profile</span>
-            </button>
+            {/* the team and the company's profile shown but not open while the client approves the look (13 Nov,
+                review), as Requests and Documents in the sidebar: a tip beside them on hover, the names unchanged */}
+            {[
+              { label: 'Manage my team', Icon: UserPlus },
+              { label: 'Company profile', Icon: Building2 },
+            ].map(({ label, Icon }) => (
+              <span
+                key={label}
+                className="acct__item acct__item--off"
+                tabIndex={0}
+                aria-disabled="true"
+                aria-label={`${label}, coming soon`}
+                data-tip="Coming soon"
+              >
+                <Icon size={18} strokeWidth={1.6} />
+                <span>{label}</span>
+              </span>
+            ))}
             <div className="acct__divider" />
             <button className="acct__item" onClick={() => go(close, '/settings')}>
               <Settings size={18} strokeWidth={1.6} />

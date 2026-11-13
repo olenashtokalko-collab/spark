@@ -1,0 +1,127 @@
+/* A2 charts. Sizes are whole pixels on a 4px step; coordinates inside the SVGs follow the data. */
+
+.stopA { stop-color: var(--c1, var(--cobalt)); }
+.stopB { stop-color: var(--c2, var(--ember)); }
+
+/* ============================== Gauge ============================== */
+.gauge { position: relative; flex: none; display: block; width: 144px; height: 144px; }
+.gauge svg { display: block; width: 100%; height: 100%; overflow: visible; }
+.gTrack { fill: none; stroke-width: 12; stroke-linecap: round; opacity: .16; }
+.gValue {
+  fill: none;
+  stroke-width: 12;
+  stroke-linecap: round;
+  opacity: 0;
+  filter: drop-shadow(0 4px 8px color-mix(in srgb, var(--c2, var(--violet)) 40%, transparent));
+  transition: stroke-dasharray 1.6s var(--ease), opacity .3s var(--ease);
+}
+.gauge[data-seen] .gValue { opacity: 1; }
+.gMark { stroke: var(--ink); stroke-width: 2; stroke-linecap: round; }
+.gSpark { fill: #fff; opacity: 0; filter: drop-shadow(0 0 4px #fff); transition: opacity .4s 1.2s var(--ease); }
+.gauge[data-seen] .gSpark { opacity: 1; }
+.gCenter { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; }
+
+/* ============================== Chart ============================== */
+.chart { position: relative; width: 100%; touch-action: pan-y; cursor: crosshair; }
+.plot { display: block; overflow: visible; }
+.grid { stroke: rgba(14, 17, 22, .06); stroke-width: 1; }
+.base { stroke: rgba(14, 17, 22, .12); stroke-width: 1; }
+.typ { stroke: rgba(14, 17, 22, .4); stroke-width: 1; stroke-dasharray: 4 4; }
+.guide { stroke: rgba(14, 17, 22, .32); stroke-width: 1; }
+
+.typLabel {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: var(--f-mono);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+.typLabel i { width: 16px; height: 0; border-top: 1px dashed rgba(14, 17, 22, .48); }
+
+.area { opacity: 0; transition: opacity 1.2s .4s var(--ease); }
+.line {
+  fill: none;
+  stroke-width: 4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  filter: drop-shadow(0 8px 8px color-mix(in srgb, var(--c2, var(--violet)) 36%, transparent));
+  transition: stroke-dashoffset 1.6s var(--ease);
+}
+.chart[data-seen] .area { opacity: 1; }
+.chart[data-seen] .line { stroke-dashoffset: 0; }
+
+.end { opacity: 0; transition: opacity .4s 1.4s var(--ease); }
+.chart[data-seen] .end { opacity: 1; }
+.endHalo { fill: var(--c2, var(--violet)); opacity: .2; transform-box: fill-box; transform-origin: center; animation: halo 2.4s ease-in-out infinite; }
+.endDot { fill: #fff; stroke: var(--c2, var(--violet)); stroke-width: 3; }
+.pt { fill: #fff; stroke: var(--ink); stroke-width: 2; }
+
+/* dot matrix: every month is a block of dots; the lit ones run --c1 (bottom) → --c2 (top) */
+.dotOff { fill: rgba(14, 17, 22, .07); }
+.dotOn { opacity: 0; transition: opacity .5s var(--ease); }
+.chart[data-seen] .dotOn { opacity: var(--o, 1); }
+.dotCol { transition: opacity .25s var(--ease); }
+.chart[data-hover] .dotCol:not([data-on]) { opacity: .4; }
+
+.tip {
+  position: absolute;
+  z-index: 2;
+  translate: -50% 0;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 0 12px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, .92);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  box-shadow: inset 0 0 0 1px #fff, 0 1px 2px rgba(14, 17, 22, .06), 0 12px 24px -8px rgba(30, 30, 60, .28);
+  white-space: nowrap;
+  pointer-events: none;
+}
+.tipLabel { font-family: var(--f-mono); font-weight: 500; font-size: 12px; line-height: 16px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); }
+.tipVal { font-weight: 700; font-size: 16px; line-height: 20px; letter-spacing: -.02em; color: var(--ink); }
+
+.months { position: relative; height: 16px; margin-top: 8px; }
+.months span {
+  position: absolute;
+  top: 0;
+  translate: -50% 0;
+  font-family: var(--f-mono);
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--text-dim);
+  transition: color .2s var(--ease);
+}
+.months span[data-on] { color: var(--ink); }
+
+/* ============================== Dial ============================== */
+.dial { position: relative; flex: none; display: block; width: 176px; height: 176px; }
+.dial svg { display: block; width: 100%; height: 100%; }
+.tick, .tickOn { stroke-width: 3; stroke-linecap: round; }
+.tick { stroke: rgba(14, 17, 22, .1); }
+.tickOn { opacity: .12; transition: opacity .5s var(--ease); }
+.dial[data-seen] .tickOn { opacity: 1; }
+.dialCenter { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; }
+
+@keyframes halo { 50% { transform: scale(1.4); opacity: .08; } }
+
+@media (prefers-reduced-motion: reduce) {
+  .gValue, .line, .area, .end, .gSpark, .dotOn, .tickOn { transition: none; }
+  .endHalo { animation: none; }
+}

@@ -91,9 +91,9 @@ export const analyses: CompanyAnalysis[] = [
     title: 'Social media analysis',
     headline: 'Instagram works, TikTok doesn’t yet',
     summary: 'Instagram does the work: strong saves on product stories. TikTok is posted to, but not made for.',
-    score: { label: 'Engagement, Instagram', value: '3.4%' },
+    score: { label: 'Engagement, Instagram', value: '4%' },
     findings: [
-      { title: 'Instagram works', good: true, body: '38K followers, engagement of 3.4%, above the 1.9% typical for retail in the UAE. Behind-the-design stories are saved most.' },
+      { title: 'Instagram works', good: true, body: '38K followers, engagement of 4%, above the 1.9% typical for retail in the UAE. Behind-the-design stories are saved most.' },
       { title: 'TikTok is reposted Reels', issue: true, impact: 'High', body: 'Videos are cut for Instagram and reposted. Views stay under 2K; the native creator-led posts of competitors reach 20–60K.', fix: 'Make TikTok its own: short, vertical, creator-led videos, three a week.', asks: ['Which creators would fit us?', 'Can we keep reusing some Reels?', 'What would three videos a week cost?', 'Which competitor does TikTok best?'] },
       { title: 'Replies are slow', impact: 'Medium', body: 'Comments asking about stock wait 26 hours for an answer on average.', fix: 'Answer stock questions within 2 hours with saved replies, and post stock updates weekly.', asks: ['Who should answer: us or Spark?', 'Can we draft the saved replies?', 'Which questions come up most?'] },
     ],
@@ -221,7 +221,7 @@ export const docs: Doc[] = [
   },
   {
     id: 'd-rep-social', name: 'Social media report — Oct 2026.pdf', kind: 'pdf', folderId: 'f-research', sizeKb: 1800, uploadedBy: 's-mira', uploadedAt: '2026-10-20T10:00:00',
-    summary: 'Engagement 3.4% on Instagram: Instagram works, TikTok doesn’t yet. Two issues to fix.',
+    summary: 'Engagement 4% on Instagram: Instagram works, TikTok doesn’t yet. Two issues to fix.',
     preview: pages(
       ['Social media report · October 2026', 'Spark Studios · Social & Insights'],
       ['In one line', 'Instagram carries the brand; TikTok is reposted Reels with under 2K views.'],

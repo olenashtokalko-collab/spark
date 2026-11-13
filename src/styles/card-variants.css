@@ -1,0 +1,1783 @@
+/* Layout 5's cards, four more ways (13 Nov, review): see features/demo/HomeCardVariants.tsx. Our colours (Ink, the
+   site's greys, Cobalt, a little violet and Ember), our corners (28 px cards) and type (Diatype Extended, Diatype Mono,
+   Doto for figures). */
+.cvx {
+  --ink: #0e1116;
+  --g1: #4e535e;
+  --g2: #8a8e97;
+  --cobalt: #1e3bd6;
+  --violet: #6a4bee;
+  --ember: #e8501f;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding-bottom: 24px;
+}
+.cvx__row {
+  display: grid;
+  gap: 20px;
+}
+.cvx__row--3 {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+.cvx__row--2 {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.cvx__row--scenes {
+  grid-template-columns: minmax(0, 1.75fr) minmax(0, 1fr);
+}
+@media (max-width: 1000px) {
+  .cvx__row--3,
+  .cvx__row--2,
+  .cvx__row--scenes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* ---- 1 · results: a pale tinted head with one of our glass icons, pills, the finding, a results strip ---------- */
+.cv1 {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.95);
+  border-radius: 28px;
+  background: linear-gradient(rgba(255, 255, 255, 0.86), rgba(255, 255, 255, 0.66));
+  box-shadow:
+    inset 0 1px 1px #fff,
+    0 24px 50px -28px rgba(18, 22, 74, 0.28),
+    0 2px 6px rgba(18, 22, 74, 0.05);
+}
+.cv1__head {
+  display: grid;
+  place-items: center;
+  height: 104px;
+  background: linear-gradient(115deg, rgba(106, 75, 238, 0.2), rgba(30, 59, 214, 0.14) 55%, rgba(170, 200, 255, 0.24));
+}
+.cvx__row > .cv1:nth-child(2) .cv1__head {
+  background: linear-gradient(115deg, rgba(30, 59, 214, 0.16), rgba(140, 190, 255, 0.26));
+}
+.cvx__row > .cv1:nth-child(3) .cv1__head {
+  background: linear-gradient(115deg, rgba(140, 190, 255, 0.24), rgba(106, 75, 238, 0.2));
+}
+.cv1__head img {
+  width: 72px;
+  height: 72px;
+  object-fit: contain;
+  filter: drop-shadow(0 10px 14px rgba(30, 59, 214, 0.2));
+}
+.cv1__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 12px;
+  padding: 22px 26px 26px;
+}
+.cv1__pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.cv1__pill {
+  padding: 6px 13px;
+  border: 1px solid rgba(30, 59, 214, 0.22);
+  border-radius: 99px;
+  background: rgba(30, 59, 214, 0.06);
+  font: 500 11.5px/1.2 var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--cobalt);
+}
+.cv1__pill--v {
+  border-color: rgba(106, 75, 238, 0.26);
+  background: rgba(106, 75, 238, 0.07);
+  color: var(--violet);
+}
+.cv1__pill--b {
+  border-color: rgba(14, 17, 22, 0.12);
+  background: rgba(14, 17, 22, 0.03);
+  color: var(--g1);
+}
+.cv1__title {
+  margin: 6px 0 0;
+  font: 700 20px/1.25 var(--ext);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.cv1__text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.6;
+  color: var(--g1);
+}
+.cv1__results {
+  position: relative;
+  display: block;
+  margin-top: auto;
+  padding: 14px 40px 14px 18px;
+  border: 0;
+  border-left: 3px solid var(--cobalt);
+  border-radius: 4px 16px 16px 4px;
+  background: rgba(30, 59, 214, 0.07);
+  font: 700 14.5px/1.55 var(--ext);
+  color: var(--cobalt);
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition: background 0.25s;
+}
+.cv1__results i {
+  margin: 0 8px;
+  font-style: normal;
+  opacity: 0.6;
+}
+.cv1__results:hover {
+  background: rgba(30, 59, 214, 0.12);
+}
+.cv1__go {
+  position: absolute;
+  right: 14px;
+  top: 50%;
+  translate: 0 -50%;
+  transition: translate 0.25s ease-out;
+}
+.cv1__results:hover .cv1__go {
+  translate: 3px -50%;
+}
+
+/* ---- 2 · tiles, second pass: the site's jelly keys as each card's picture, a figure or icon on the key's face, no
+   grid; the field a pale wash of the key's colour with its light pooled under the key ---------------------------- */
+.cv2 {
+  --pc: 30 59 214;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 8px 8px 24px;
+  border: 0;
+  border-radius: 28px;
+  background: #fff;
+  box-shadow:
+    0 28px 60px -34px rgba(18, 22, 74, 0.32),
+    0 2px 6px rgba(18, 22, 74, 0.05);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transition:
+    translate 0.35s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.35s;
+}
+.cv2--s { --pc: 30 59 214; }
+.cv2--p { --pc: 106 75 238; }
+.cv2--a { --pc: 200 60 190; }
+.cv2--r { --pc: 242 69 125; }
+.cv2--k { --pc: 232 80 31; }
+.cv2:hover {
+  translate: 0 -3px;
+  box-shadow:
+    0 36px 70px -34px rgb(var(--pc) / 0.38),
+    0 2px 6px rgba(18, 22, 74, 0.05);
+}
+.cv2:focus-visible {
+  outline: 2px solid rgb(var(--pc));
+  outline-offset: 3px;
+}
+.cv2__field {
+  position: relative;
+  display: grid;
+  place-items: center;
+  height: 240px;
+  margin-bottom: 10px;
+  border-radius: 21px;
+  background:
+    radial-gradient(48% 40% at 50% 80%, rgb(var(--pc) / 0.22), transparent 75%),
+    linear-gradient(180deg, #fbfaf8, rgb(var(--pc) / 0.07));
+}
+.cv2__n {
+  position: absolute;
+  top: 16px;
+  left: 18px;
+  font: 500 12px var(--font-mono);
+  color: rgb(var(--pc));
+}
+.cv2__plate {
+  position: relative;
+  width: 200px;
+}
+/* the key and what's on it rise together on hover; each moves itself, so the key's white still multiplies away into
+   the field (moving the wrapper isolated it and showed the white box, 13 Nov, review) */
+.cv2__plate img,
+.cv2__face {
+  transition: translate 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.cv2__plate img {
+  display: block;
+  width: 100%;
+  mix-blend-mode: multiply;
+}
+.cv2:hover .cv2__plate img {
+  translate: 0 -6px;
+}
+.cv2:hover .cv2__face {
+  translate: -50% calc(-50% - 6px);
+}
+/* the key's face: the upper part of the render */
+.cv2__face {
+  position: absolute;
+  left: 50%;
+  top: 43%;
+  translate: -50% -50%;
+  display: grid;
+  place-items: center;
+  color: #fff;
+}
+.cv2__fig {
+  display: inline-flex;
+  align-items: baseline;
+  white-space: nowrap;
+}
+/* the figure set on the key as sparkstudios.ae sets its letters: solid white, heavy, a little raised (13 Nov, review:
+   the dotted face blurred on the glass) */
+.cv2__fig b {
+  font: 800 50px/1 var(--ext);
+  letter-spacing: -0.04em;
+}
+.cv2__fig i {
+  margin-left: 2px;
+  font: 700 17px var(--ext);
+  font-style: normal;
+  letter-spacing: -0.02em;
+}
+.cv2__fig,
+.cv2__face svg {
+  text-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.6),
+    0 2px 2px rgba(0, 0, 0, 0.16),
+    0 6px 14px rgba(0, 0, 0, 0.12);
+  filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.14));
+}
+.cv2__fig {
+  filter: none;
+}
+.cv2__title,
+.cv2__text,
+.cv2__tags,
+.cv2__foot,
+.cv2__chart,
+.cv2__meter {
+  margin-inline: 22px;
+}
+.cv2__title {
+  font: 400 26px/1.15 var(--ext);
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+.cv2__text {
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--g1);
+}
+.cv2__chart {
+  position: relative;
+  display: block;
+  margin-top: 2px;
+}
+.cv2__chart svg {
+  display: block;
+  width: 100%;
+  height: 64px;
+  overflow: visible;
+}
+.cv2__typ {
+  stroke: rgba(14, 17, 22, 0.3);
+  stroke-width: 1.2;
+  stroke-dasharray: 2 4;
+  vector-effect: non-scaling-stroke;
+}
+.cv2__path {
+  fill: none;
+  stroke: rgb(var(--pc));
+  stroke-width: 2.4;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.cv2__months {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 4px;
+  font: 500 11px var(--font-mono);
+  color: var(--g2);
+}
+.cv2__meter {
+  position: relative;
+  display: block;
+  height: 8px;
+  border-radius: 99px;
+  background: rgba(14, 17, 22, 0.08);
+  overflow: hidden;
+}
+.cv2__meter > span {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: rgb(var(--pc));
+}
+.cv2__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 4px;
+}
+.cv2__tags span {
+  padding: 6px 9px;
+  border-radius: 6px;
+  background: rgb(var(--pc) / 0.08);
+  font: 500 11px/1 var(--font-mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgb(var(--pc));
+}
+.cv2__foot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 16px;
+  border-top: 1px solid rgba(14, 17, 22, 0.1);
+  font: 500 15px var(--ext);
+}
+.cv2__foot svg {
+  color: rgb(var(--pc));
+  transition: translate 0.25s ease-out;
+}
+.cv2:hover .cv2__foot svg {
+  translate: 3px 0;
+}
+
+/* ---- 3 · slabs: Cobalt glass slabs floating over a floor of crosses, tilted, their thickness showing ------------ */
+.cvx--floor {
+  position: relative;
+  padding: 24px 6px 40px;
+  perspective: 1400px;
+}
+.cvx--floor::before {
+  content: '';
+  position: absolute;
+  inset: 0 -20px -10px;
+  z-index: -1;
+  border-radius: 34px;
+  background:
+    linear-gradient(rgba(14, 17, 22, 0.06) 1px, transparent 1px) 0 0 / 56px 56px,
+    linear-gradient(90deg, rgba(14, 17, 22, 0.06) 1px, transparent 1px) 0 0 / 56px 56px;
+  -webkit-mask: radial-gradient(90% 80% at 50% 60%, #000, transparent 85%);
+  mask: radial-gradient(90% 80% at 50% 60%, #000, transparent 85%);
+}
+.cv3__float {
+  display: flex;
+  animation: cv3-float 7s ease-in-out infinite alternate;
+  animation-delay: var(--d, 0s);
+}
+@keyframes cv3-float {
+  from {
+    translate: 0 -5px;
+  }
+  to {
+    translate: 0 7px;
+  }
+}
+.cv3 {
+  position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 10px;
+  padding: 24px 26px 24px;
+  border: 0;
+  border-radius: 22px;
+  background: linear-gradient(150deg, rgba(122, 152, 255, 0.94), rgba(48, 86, 240, 0.94) 55%, rgba(30, 59, 214, 0.95));
+  -webkit-backdrop-filter: blur(10px);
+  backdrop-filter: blur(10px);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.6),
+    inset 1px 0 0 rgba(255, 255, 255, 0.25),
+    0 8px 0 -1px #1a34b8,
+    0 9px 0 -1px rgba(10, 20, 90, 0.35),
+    0 40px 50px -20px rgba(30, 59, 214, 0.45);
+  color: #fff;
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  transform: rotateX(14deg) rotateY(var(--tilt, -7deg));
+  transform-style: preserve-3d;
+  transition:
+    transform 0.6s cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 0.6s;
+}
+.cv3::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  background: linear-gradient(115deg, rgba(255, 255, 255, 0.28), transparent 38%);
+  pointer-events: none;
+}
+.cv3:hover,
+.cv3:focus-visible {
+  transform: rotateX(0deg) rotateY(0deg) translateZ(20px);
+  box-shadow:
+    inset 0 1.5px 0 rgba(255, 255, 255, 0.6),
+    inset 1px 0 0 rgba(255, 255, 255, 0.25),
+    0 8px 0 -1px #1a34b8,
+    0 9px 0 -1px rgba(10, 20, 90, 0.35),
+    0 50px 60px -18px rgba(30, 59, 214, 0.55);
+  outline: none;
+}
+.cv3__top {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.cv3__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.18);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+.cv3__kind {
+  font: 500 11.5px var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.82);
+}
+.cv3__fig {
+  margin-top: 8px;
+  font: 900 52px/0.95 'Doto Rounded', ui-monospace, monospace;
+  letter-spacing: -0.02em;
+}
+.cv3__fig i {
+  margin-left: 6px;
+  font: 500 12px var(--font-mono);
+  font-style: normal;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+}
+.cv3__title {
+  font: 700 19px/1.25 var(--ext);
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+.cv3__text {
+  font-size: 14px;
+  line-height: 1.5;
+  color: rgba(255, 255, 255, 0.82);
+}
+.cv3__foot {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: auto;
+  padding-top: 10px;
+  font: 600 14px var(--ext);
+}
+@media (prefers-reduced-motion: reduce) {
+  .cv3__float {
+    animation: none;
+  }
+}
+
+/* ---- 4 · scenes, second pass (13 Nov, review): a bento after mbidirectmail.com. The hex field only where a scene or
+   chart is, faint, faded away under the words; a boxed label in one corner, the title large and light in the other;
+   figures big in Doto; each report with its chart. */
+.cvx--scenes {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+.cv5 {
+  --hexmask: radial-gradient(70% 70% at 30% 100%, #000 10%, transparent 75%);
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+  min-height: 440px;
+  padding: 30px 32px 30px;
+  overflow: hidden;
+  border: 0;
+  border-radius: 28px;
+  background: #fcfdff;
+  box-shadow:
+    0 1px 3px rgba(20, 30, 70, 0.07),
+    0 4px 16px rgba(20, 30, 70, 0.05),
+    0 30px 60px -36px rgba(18, 22, 74, 0.28);
+  color: var(--ink);
+  font: inherit;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+  isolation: isolate;
+}
+/* the hex field: faint, and only where the picture is */
+.cv5::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath d='M28 0 L56 16.2 V48.5 L28 64.7 L0 48.5 V16.2 Z M28 64.7 V97' fill='none' stroke='%23aab4d0' stroke-opacity='0.32' stroke-width='1'/%3E%3C/svg%3E") 0 0 / 56px 97px;
+  -webkit-mask: var(--hexmask);
+  mask: var(--hexmask);
+}
+.cv5--hex-mid {
+  --hexmask: radial-gradient(80% 45% at 50% 52%, #000 10%, transparent 80%);
+}
+.cv5--scene {
+  --hexmask: radial-gradient(60% 75% at 26% 70%, #000 10%, transparent 78%);
+}
+.cv5--wide {
+  grid-column: span 2;
+}
+.cv5--full {
+  grid-column: 1 / -1;
+  min-height: 360px;
+}
+.cv5:focus-visible {
+  outline: 2px solid var(--cobalt);
+  outline-offset: 3px;
+}
+.cv5-label {
+  position: relative;
+  z-index: 1;
+  align-self: flex-start;
+  padding: 7px 14px;
+  border: 1px solid rgba(0, 0, 0, 0.09);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.94);
+  box-shadow: 0 1px 6px rgba(0, 0, 0, 0.07);
+  font: 600 10px/1.2 var(--font-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: rgba(14, 17, 22, 0.65);
+}
+.cv5-title {
+  font: 400 34px/1.12 var(--ext);
+  letter-spacing: -0.035em;
+  color: var(--ink);
+  text-wrap: balance;
+}
+.cv5-title--md {
+  font-size: 26px;
+}
+.cv5-text {
+  max-width: 40ch;
+  font-size: 15px;
+  line-height: 1.55;
+  color: var(--g1);
+}
+.cv5-fig {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 10px;
+  white-space: nowrap;
+}
+.cv5-fig b {
+  font: 900 76px/0.9 'Doto Rounded', ui-monospace, monospace;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.cv5-fig i {
+  font: 500 11.5px var(--font-mono);
+  font-style: normal;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--g2);
+}
+.cv5-delta {
+  font: 500 12px var(--font-mono);
+  color: var(--cobalt);
+}
+.cv5-go {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font: 600 14px var(--ext);
+  color: var(--cobalt);
+}
+.cv5-go svg {
+  transition: translate 0.25s ease-out;
+}
+.cv5:hover .cv5-go svg {
+  translate: 3px 0;
+}
+/* the wide report: figure top left, title top right, the chart and its figures across the foot */
+.cv5--wide:not(.cv5--scene) {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  grid-template-rows: auto 1fr;
+  column-gap: 40px;
+}
+.cv5-corner {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+.cv5-head {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.cv5-head--right {
+  align-items: flex-end;
+  text-align: right;
+}
+.cv5-head--right .cv5-text {
+  max-width: 34ch;
+}
+.cv5-foot {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: minmax(0, 1.7fr) minmax(0, 1fr);
+  align-items: end;
+  gap: 36px;
+  margin-top: 18px;
+}
+.cv5-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-left: 28px;
+  border-left: 1px solid rgba(14, 17, 22, 0.1);
+}
+.cv5-stats > span:not(.cv5-go) {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.cv5-stats b {
+  font: 900 34px/1 'Doto Rounded', ui-monospace, monospace;
+}
+.cv5-stats i {
+  font: 500 11px var(--font-mono);
+  font-style: normal;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--g2);
+}
+/* the line */
+.cv5-line {
+  position: relative;
+  margin: 0;
+  padding-bottom: 22px;
+}
+.cv5-line svg {
+  display: block;
+  width: 100%;
+  height: 150px;
+  overflow: visible;
+}
+.cv5-line__grid {
+  stroke: rgba(14, 17, 22, 0.06);
+  stroke-width: 1;
+  vector-effect: non-scaling-stroke;
+}
+.cv5-line__typ {
+  stroke: rgba(14, 17, 22, 0.35);
+  stroke-width: 1.2;
+  stroke-dasharray: 2 4;
+  vector-effect: non-scaling-stroke;
+}
+.cv5-line__path {
+  fill: none;
+  stroke: var(--cobalt);
+  stroke-width: 2.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  vector-effect: non-scaling-stroke;
+}
+.cv5-line__dot {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  translate: -50% -50%;
+  border: 2px solid var(--cobalt);
+  border-radius: 50%;
+  background: #fff;
+}
+.cv5-line__dot.is-now {
+  width: 12px;
+  height: 12px;
+  border: 0;
+  background: var(--ember);
+  box-shadow: 0 0 0 5px rgba(232, 80, 31, 0.16);
+}
+.cv5-line__tlabel {
+  position: absolute;
+  right: 0;
+  translate: 0 -140%;
+  font: 500 11px var(--font-mono);
+  color: var(--g2);
+}
+.cv5-line__months {
+  position: absolute;
+  inset: auto 0 0;
+  display: flex;
+  justify-content: space-between;
+  font: 500 11px var(--font-mono);
+  color: var(--g2);
+}
+/* bars */
+.cv5-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  margin: 8px 0;
+}
+.cv5-bars__row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.cv5-bars__label {
+  font: 500 10.5px var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--g2);
+}
+.cv5-bars__bar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  height: 18px;
+}
+.cv5-bars__bar i {
+  height: 100%;
+  min-width: 8px;
+  border-radius: 99px;
+}
+.cv5-bars__bar.is-ours i {
+  background: var(--cobalt);
+}
+.cv5-bars__bar.is-ref i {
+  background: rgba(14, 17, 22, 0.12);
+}
+.cv5-bars__bar b {
+  font: 600 13px var(--ext);
+  white-space: nowrap;
+}
+.cv5-bars__bar.is-ref b {
+  font-weight: 500;
+  color: var(--g1);
+}
+/* a hundred dots */
+.cv5-share {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.cv5-dots {
+  display: grid;
+  grid-template-columns: repeat(20, 1fr);
+  gap: 5px;
+  max-width: 260px;
+}
+.cv5-dots i {
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: rgba(14, 17, 22, 0.12);
+}
+.cv5-dots i.is-on {
+  background: var(--ember);
+  box-shadow: 0 0 0 3px rgba(232, 80, 31, 0.15);
+}
+.cv5-bottom {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: auto;
+}
+/* the scene cards */
+.cv5--scene .cv4__canvas {
+  z-index: -1;
+}
+.cv5--scene.cv5--wide .cv5-head {
+  position: absolute;
+  top: 30px;
+  right: 32px;
+  max-width: 420px;
+}
+.cv5--scene.cv5--wide .cv5-title {
+  font-size: 40px;
+}
+.cv5-go--corner {
+  position: absolute;
+  right: 32px;
+  bottom: 30px;
+}
+.cv5--cal {
+  flex-direction: row;
+  align-items: stretch;
+  --hexmask: radial-gradient(45% 90% at 78% 55%, #000 10%, transparent 80%);
+}
+.cv5-calwords {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 14px;
+  max-width: 520px;
+}
+.cv5-calwords .cv5-title {
+  margin-top: auto;
+  font-size: 40px;
+}
+.cv5-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 48px;
+  margin-top: 6px;
+  padding: 0 24px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff;
+  font: 500 12.5px/1 var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  transition: background 0.25s;
+}
+.cv5:hover .cv5-btn {
+  background: var(--cobalt);
+}
+.cv5--cal .cv4__cal {
+  inset: 0 0 0 48%;
+}
+@media (max-width: 1000px) {
+  .cvx--scenes {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .cv5--wide,
+  .cv5--full {
+    grid-column: auto;
+  }
+  .cv5--wide:not(.cv5--scene),
+  .cv5-foot {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+/* the calendar: a month of glass tiles in isometric, laid down one by one, then one day rises in Ember */
+.cv4__cal {
+  position: absolute;
+  inset: 56px 0 190px;
+  display: grid;
+  place-items: center;
+  pointer-events: none;
+}
+.cv4__iso {
+  display: grid;
+  grid-template-columns: repeat(5, 44px);
+  gap: 8px;
+  transform: rotateX(58deg) rotateZ(-40deg);
+  transform-style: preserve-3d;
+}
+.cv4__day {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 9px;
+  background: linear-gradient(145deg, #ffffff, #e6ebfb);
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 4px 0 #c9d2ee,
+    0 10px 16px -6px rgba(30, 59, 214, 0.25);
+  opacity: 0;
+  animation: cv4-day 6s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  animation-delay: calc(var(--i) * 0.07s);
+}
+@keyframes cv4-day {
+  0% {
+    opacity: 0;
+    transform: translateZ(40px);
+  }
+  12%,
+  88% {
+    opacity: 1;
+    transform: translateZ(0);
+  }
+  100% {
+    opacity: 0;
+    transform: translateZ(0);
+  }
+}
+.cv4__day.is-booked {
+  background: linear-gradient(145deg, #ff8a5c, #e8501f);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.6),
+    0 4px 0 #b83a12,
+    0 16px 24px -6px rgba(232, 80, 31, 0.55);
+  animation-name: cv4-booked;
+}
+.cv4__day.is-booked b {
+  font: 900 16px/1 'Doto Rounded', ui-monospace, monospace;
+  color: #fff;
+  transform: rotateZ(40deg) rotateX(-58deg);
+}
+@keyframes cv4-booked {
+  0% {
+    opacity: 0;
+    transform: translateZ(40px);
+  }
+  12%,
+  38% {
+    opacity: 1;
+    transform: translateZ(0);
+  }
+  50%,
+  88% {
+    opacity: 1;
+    transform: translateZ(22px);
+  }
+  100% {
+    opacity: 0;
+    transform: translateZ(22px);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .cv4__day,
+  .cv4__day.is-booked {
+    animation: none;
+    opacity: 1;
+  }
+}
+
+/* ---- Scenes' open page top (13 Nov, review), after mbidirectmail.com's "37 YEARS — WHY MBI": no dark band, a fine
+   rule, the year big, a light title, the company in a few words, hairlines between; the figures in a row under it; the
+   glass shapes in the top right corner over a pool of the brand's light (the loop rendered on white, multiplied onto
+   the page, so the light shows through where the render is white). */
+.oh {
+  position: relative;
+  margin: 4px 0 34px;
+  padding-top: 34px;
+  border-top: 1px solid rgba(14, 17, 22, 0.12);
+  color: #0e1116;
+}
+.oh__light {
+  --mc: rgb(106 75 238);
+  position: absolute;
+  top: -86px;
+  right: 0;
+  width: 340px;
+  height: 340px;
+  pointer-events: none;
+}
+.oh__light::before {
+  content: '';
+  position: absolute;
+  inset: -18%;
+  border-radius: 50%;
+  background:
+    radial-gradient(closest-side, color-mix(in srgb, var(--mc) 34%, transparent), transparent 72%),
+    conic-gradient(from 200deg, rgba(30, 59, 214, 0.2), rgba(106, 75, 238, 0.18), rgba(233, 88, 142, 0.16), rgba(232, 80, 31, 0.14), rgba(30, 59, 214, 0.2));
+  -webkit-mask: radial-gradient(closest-side, #000 30%, transparent 100%);
+  mask: radial-gradient(closest-side, #000 30%, transparent 100%);
+  filter: blur(24px);
+}
+.oh__shape {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  mix-blend-mode: multiply;
+}
+.oh__top {
+  display: grid;
+  grid-template-columns: minmax(0, 0.75fr) minmax(0, 1.35fr) minmax(0, 1.2fr) 240px;
+  align-items: start;
+}
+.oh__top > div {
+  min-height: 170px;
+  padding: 0 36px;
+  border-left: 1px solid rgba(14, 17, 22, 0.12);
+}
+.oh__top > div:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+.oh__year {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.oh__year b {
+  font: 900 74px/0.9 'Doto Rounded', ui-monospace, monospace;
+  letter-spacing: -0.02em;
+}
+.oh__cap,
+.oh__dash,
+.oh__cat {
+  font: 500 11px/1.4 var(--font-mono);
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: #8a8e97;
+}
+.oh__dash {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+}
+.oh__dash::before {
+  content: '';
+  width: 22px;
+  height: 1px;
+  background: currentColor;
+}
+.oh__name h1 {
+  margin: 0 0 14px;
+  font: 300 52px/1 var(--ext);
+  white-space: nowrap;
+  letter-spacing: -0.04em;
+}
+.oh__about p {
+  margin: 0 0 22px;
+  font-size: 17px;
+  line-height: 1.6;
+  color: #4e535e;
+}
+.oh__team {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font: 600 14px var(--ext);
+  color: #0e1116;
+  text-decoration: none;
+}
+.oh__team svg {
+  color: #1e3bd6;
+  transition: translate 0.25s ease-out;
+}
+.oh__team:hover svg {
+  translate: 3px 0;
+}
+.oh__faces {
+  display: inline-flex;
+}
+.oh__faces .avatar + .avatar {
+  margin-left: -8px;
+}
+.oh__facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  margin: 30px 0 0;
+  padding-top: 24px;
+  border-top: 1px solid rgba(14, 17, 22, 0.12);
+}
+.oh__facts > div {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 0 28px;
+  border-left: 1px solid rgba(14, 17, 22, 0.12);
+}
+.oh__facts > div:first-child {
+  padding-left: 0;
+  border-left: 0;
+}
+.oh__facts dd {
+  margin: 0;
+  font: 900 40px/1 'Doto Rounded', ui-monospace, monospace;
+}
+.oh__facts dt {
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: #8a8e97;
+}
+@media (max-width: 1100px) {
+  .oh__top {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 24px;
+  }
+  .oh__top > div {
+    min-height: 0;
+    padding: 0;
+    border: 0;
+  }
+  .oh__light {
+    position: relative;
+    top: 0;
+    right: 0;
+    margin: 0 auto -40px;
+  }
+  .oh__facts {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    row-gap: 20px;
+  }
+}
+
+/* a narrow card's unit under its figure, so it never runs out of the card */
+.cv5:not(.cv5--wide) .cv5-fig {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+/* the scene's canvas fills its card, behind the words */
+.cv4__canvas {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  width: 100%;
+  height: 100%;
+}
+/* the corner light may spill past the column, never past the page */
+.oh {
+  overflow-x: clip;
+  overflow-clip-margin: 0;
+}
+
+/* ---- Scenes, third pass (13 Nov, review) ------------------------------------------------------------------------ */
+/* the page top: the company's name large in our title face, what it is and its team beside it, the right corner kept
+   for the glass; its figures under it as large as the cards' figures */
+.oh__top {
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr) 330px;
+  align-items: end;
+}
+.oh__top > div {
+  min-height: 0;
+}
+.oh__name {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+.oh__name h1 {
+  margin: 0;
+  font: 600 84px/0.95 var(--ext);
+  letter-spacing: -0.05em;
+  white-space: nowrap;
+}
+.oh__about p {
+  margin-bottom: 18px;
+}
+.oh__light {
+  top: -70px;
+  width: 380px;
+  height: 380px;
+}
+.oh__facts dd {
+  font-size: 76px;
+  line-height: 0.9;
+}
+.oh__facts {
+  margin-top: 36px;
+  padding-top: 30px;
+}
+/* the website report, top to bottom */
+.cv5--report {
+  --hexmask: radial-gradient(70% 45% at 50% 72%, #000 10%, transparent 78%);
+  gap: 18px;
+}
+.cv5-rhead {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  gap: 32px;
+}
+.cv5-rhead__words {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cv5-rhead__fig {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 10px;
+}
+.cv5-delta {
+  font: 600 13px var(--ext);
+}
+.cv5-chartbox {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 18px 20px 14px;
+  border: 1px solid rgba(14, 17, 22, 0.08);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.75);
+}
+.cv5-charthead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.cv5-charthead b {
+  font: 600 14px var(--ext);
+}
+.cv5-charthead > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 500 12.5px var(--ext);
+  color: var(--g1);
+}
+.cv5-key {
+  display: inline-block;
+  width: 18px;
+  height: 0;
+  margin-left: 8px;
+  border-top: 2.6px solid var(--cobalt);
+  border-radius: 2px;
+}
+.cv5-key--typ {
+  border-top: 1.4px dashed rgba(14, 17, 22, 0.45);
+}
+.cv5-line svg {
+  height: 120px;
+}
+.cv5-details {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px 32px;
+  font-size: 14px;
+  color: var(--g1);
+}
+.cv5-details b {
+  margin-right: 4px;
+  font: 600 22px var(--ext);
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.cv5-details .cv5-go {
+  margin-left: auto;
+}
+/* Dr.AI: no picture, the questions people ask */
+.cv5--plain::before {
+  display: none;
+}
+.cv5-asks {
+  display: flex;
+  flex-direction: column;
+  margin-top: 6px;
+}
+.cv5-asks > span {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 0;
+  border-top: 1px solid rgba(14, 17, 22, 0.08);
+  font-size: 14.5px;
+  line-height: 1.4;
+  color: var(--ink);
+}
+.cv5-asks svg {
+  flex: none;
+  margin-top: 2px;
+  color: var(--cobalt);
+}
+/* the consultation, narrow: the calendar at the top, the words and button at the foot */
+.cv5--cal {
+  flex-direction: column;
+  align-items: stretch;
+  --hexmask: radial-gradient(70% 45% at 50% 32%, #000 10%, transparent 78%);
+}
+.cv5--cal .cv4__cal {
+  inset: 70px 0 230px;
+}
+.cv5--cal .cv5-title {
+  font-size: 26px;
+}
+.cv5--cal .cv5-btn {
+  align-self: flex-start;
+}
+@media (max-width: 1100px) {
+  .oh__top {
+    grid-template-columns: minmax(0, 1fr);
+  }
+  .oh__name h1 {
+    font-size: 60px;
+  }
+  .oh__facts dd {
+    font-size: 52px;
+  }
+}
+.cv5--wide.cv5--report {
+  display: flex;
+}
+
+/* Grid tiles · the gauge of Layout 3 made in glass (13 Nov, review): a ring open at its foot, the share in jelly glass
+   of the card's colour, the rest a pale glossy track (blender/glass_charts.py); the figure in its middle in Doto, Ink
+   on the light field. The social card's two glass bars carry their values under them. */
+.cv2__plate--chart {
+  width: 178px;
+}
+.cv2__plate--chart .cv2__face {
+  top: 50%;
+  color: var(--ink);
+}
+.cv2__dfig {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+}
+.cv2__dfig b {
+  font: 900 42px/0.9 'Doto Rounded', ui-monospace, monospace;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+}
+.cv2__plate--gauge_credits .cv2__dfig b {
+  font-size: 30px;
+}
+.cv2__dfig i {
+  font: 500 11px var(--font-mono);
+  font-style: normal;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--g2);
+}
+.cv2:hover .cv2__plate--chart .cv2__face {
+  translate: -50% calc(-50% - 6px);
+}
+/* the bars' values, under each bar */
+.cv2__plate--bars_social .cv2__face {
+  top: auto;
+  bottom: -14px;
+  left: 0;
+  right: 0;
+  translate: none;
+}
+.cv2:hover .cv2__plate--bars_social .cv2__face {
+  translate: 0 -6px;
+}
+.cv2__barlabels {
+  position: absolute;
+  left: 50%;
+  bottom: 18px;
+  translate: -50% 0;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  column-gap: 64px;
+  width: 300px;
+}
+/* each value beside its bar: ours to the left of the pink, the typical to the right of the grey */
+.cv2__barlabels > span:first-child {
+  align-items: flex-end;
+  text-align: right;
+}
+.cv2__barlabels > span:last-child {
+  align-items: flex-start;
+}
+.cv2__barlabels > span {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font: 500 10.5px var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--g2);
+}
+.cv2__barlabels b {
+  font: 900 22px/1 'Doto Rounded', ui-monospace, monospace;
+  letter-spacing: 0;
+  color: var(--ink);
+}
+
+/* Layout 3's consultation card with the calendar laying itself down (13 Nov, review), as clear as on Scenes' card: the
+   same white ground with a faint hex field behind the calendar only, the same tiles, the boxed label in the corner;
+   taller, so the whole calendar fits */
+.qo-card.qo-card--cal,
+.qo-card.qo-card--cal:hover {
+  justify-content: flex-end;
+  min-height: 340px;
+  overflow: hidden;
+  border-color: rgba(255, 255, 255, 0.95);
+  background:
+    linear-gradient(180deg, rgba(252, 253, 255, 0) 0%, rgba(252, 253, 255, 0) 40%, #fcfdff 66%),
+    radial-gradient(70% 50% at 50% 34%, rgba(252, 253, 255, 0) 30%, #fcfdff 85%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='56' height='97' viewBox='0 0 56 97'%3E%3Cpath d='M28 0 L56 16.2 V48.5 L28 64.7 L0 48.5 V16.2 Z M28 64.7 V97' fill='none' stroke='%23aab4d0' stroke-opacity='0.32' stroke-width='1'/%3E%3C/svg%3E") 0 0 / 56px 97px,
+    #fcfdff;
+}
+.qo-card--cal .cv5-label {
+  position: absolute;
+  top: 22px;
+  left: 22px;
+}
+.qo-card--cal .cv4__cal {
+  position: absolute;
+  inset: 40px 0 130px;
+}
+.qo-card--cal .cv4__iso {
+  grid-template-columns: repeat(5, 36px);
+  gap: 7px;
+}
+.qo-card--cal .cv4__day {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+}
+.qo-card--cal .cv4__day.is-booked b {
+  font-size: 13px;
+}
+.qo-card--cal > .qo-title,
+.qo-card--cal > .qo-line {
+  position: relative;
+}
+
+/* the balance (13 Nov, review): everything on the tinted field, the glass bar under the figure, only Top up on the
+   white below; the field grows so the card stands as tall as its row */
+.cv2__field--words {
+  flex: 1;
+  height: auto;
+  min-height: 240px;
+  place-items: end start;
+  padding: 52px 24px 24px;
+}
+.cv2__fwords {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 100%;
+}
+.cv2__flabel {
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgb(var(--pc));
+}
+.cv2__ffig {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+.cv2__ffig b {
+  font: 900 56px/0.9 'Doto Rounded', ui-monospace, monospace;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.cv2__ffig i {
+  font: 500 11px var(--font-mono);
+  font-style: normal;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--g2);
+}
+.cv2__fbar {
+  display: block;
+  width: calc(100% + 24px);
+  margin: -6px -12px -10px;
+  mix-blend-mode: multiply;
+}
+.cv2__ftext {
+  font-size: 14.5px;
+  line-height: 1.5;
+  color: var(--g1);
+}
+/* the question mark and the calendar sit as the keys do */
+.cv2__plate--question_ai,
+.cv2__plate--calendar_consult {
+  width: 196px;
+}
+
+/* ---- Grid tiles, third pass (13 Nov, review): flat charts on the tinted field, the figure large, the trend as on
+   Layout 3; on the white, what to fix and the way in; every arrow Cobalt ------------------------------------------ */
+.cvx--tiles .cv2__foot svg {
+  color: var(--cobalt);
+}
+.cv2__field--flat {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: stretch;
+  place-items: initial;
+  height: 260px;
+  padding: 18px 20px 22px;
+}
+.cv2f__top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
+.cv2f__kind {
+  font: 500 11px var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--g1);
+}
+.cv2__n2 {
+  margin-right: 6px;
+  color: rgb(var(--pc));
+}
+.cv2t {
+  font: 500 12.5px/1 var(--font-mono);
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+}
+.cv2t.is-up {
+  color: #138a5a;
+}
+.cv2t.is-down {
+  color: #b42347;
+}
+.cv2t.is-plain {
+  color: rgb(var(--pc));
+}
+/* the flat gauge */
+.cv2g {
+  position: relative;
+  align-self: center;
+  width: 176px;
+  height: 176px;
+  margin: 0 0 -24px;
+}
+.cv2g svg {
+  width: 100%;
+  height: 100%;
+}
+.cv2g circle {
+  fill: none;
+  stroke-width: 13;
+  stroke-linecap: round;
+}
+.cv2g__track {
+  stroke: rgba(14, 17, 22, 0.08);
+}
+.cv2g__val {
+  stroke: rgb(var(--pc));
+}
+.cv2g__fig {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+}
+.cv2g__fig b {
+  font: 900 58px/0.9 'Doto Rounded', ui-monospace, monospace;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+}
+.cv2g__fig i {
+  font: 500 12px var(--font-mono);
+  font-style: normal;
+  color: var(--g2);
+}
+/* the large figure and its bars */
+.cv2f__big {
+  display: flex;
+  flex-direction: column;
+  gap: 22px;
+}
+.cv2f__fig {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.cv2f__fig b {
+  font: 900 66px/0.9 'Doto Rounded', ui-monospace, monospace;
+  letter-spacing: -0.02em;
+  color: var(--ink);
+  white-space: nowrap;
+}
+.cv2f__fig i {
+  font: 500 11px var(--font-mono);
+  font-style: normal;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--g2);
+}
+.cv2b {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.cv2b__row {
+  display: grid;
+  grid-template-columns: 64px minmax(0, 1fr) 46px;
+  align-items: center;
+  gap: 10px;
+}
+.cv2b__label {
+  font: 500 10.5px var(--font-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--g2);
+}
+.cv2b__track {
+  position: relative;
+  height: 10px;
+  border-radius: 99px;
+  background: rgba(14, 17, 22, 0.07);
+  overflow: hidden;
+}
+.cv2b__track i {
+  position: absolute;
+  inset: 0 auto 0 0;
+  border-radius: inherit;
+  background: rgba(14, 17, 22, 0.22);
+}
+.cv2b__row.is-ours .cv2b__track i {
+  background: rgb(var(--pc));
+}
+.cv2b__row b {
+  font: 600 13px var(--ext);
+  text-align: right;
+}
+.cv2__fixlabel {
+  margin: -4px 22px 0;
+  font: 500 10.5px var(--font-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgb(var(--pc));
+}
+/* the consultation: the questions one could bring, on its field */
+.cv2__field--asks {
+  height: auto;
+  min-height: 240px;
+  justify-content: flex-start;
+  gap: 18px;
+}
+.cv2q {
+  display: flex;
+  flex-direction: column;
+}
+.cv2q > span {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 13px 0;
+  border-top: 1px solid rgba(14, 17, 22, 0.08);
+  font: 400 16px/1.4 var(--ext);
+  color: var(--ink);
+}
+.cv2q > span:first-child {
+  border-top: 0;
+}
+.cv2q svg {
+  flex: none;
+  margin-top: 3px;
+  color: var(--cobalt);
+}
+/* one Grid tiles card set among other cards (Layout 5 · Grid tiles' Dr.AI): the wrapper only lends its colours */
+.cvx.cvx--one {
+  display: contents;
+}
+.cvx--one > .cv2 {
+  min-width: 0;
+}
+.cv2f__qimg {
+  display: block;
+  align-self: center;
+  width: 150px;
+  margin: -6px 0 -14px;
+  mix-blend-mode: multiply;
+}
+/* Dr.AI beside the consultation: a smaller question mark, centred in its field */
+.cv2f__qimg.cv2f__qimg--sm {
+  width: 112px;
+  margin: auto;
+}
+.cvx--one .cv2__field--flat {
+  height: 220px;
+  justify-content: center;
+}
+/* Dr.AI beside the consultation, compact (13 Nov, review: "the Ask Dr.AI card is very big"): as tall as Layout 2's
+   consultation, a low field with a small question mark, tighter words */
+.cvx--one > .cv2 {
+  gap: 8px;
+  padding-bottom: 18px;
+}
+.cvx--one .cv2__field--flat {
+  height: 112px;
+  margin-bottom: 4px;
+  padding: 0;
+}
+.cv2f__qimg.cv2f__qimg--sm {
+  width: 70px;
+}
+.cvx--one .cv2__title {
+  font-size: 21px;
+}
+.cvx--one .cv2__text {
+  font-size: 14px;
+  line-height: 1.45;
+}
+.cvx--one .cv2__foot {
+  padding-top: 12px;
+}
+
+/* the tile cards beside Layout 2's: a secondary button across the foot, as their "Open report" */
+.cvx--one .cv2__foot {
+  justify-content: center;
+  height: 44px;
+  margin: auto 22px 0;
+  padding: 0;
+  border: 1px solid rgba(14, 17, 22, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.55);
+  transition:
+    border-color 0.25s,
+    background 0.25s;
+}
+.cvx--one .cv2__foot svg {
+  display: none;
+}
+.cvx--one .cv2:hover .cv2__foot {
+  border-color: rgba(30, 59, 214, 0.45);
+  background: #fff;
+}
+.cv2f__qimg.cv2f__qimg--grid {
+  width: 84px;
+}
+/* Layout 2 · Dr.AI in the reports' row (13 Nov, review): the description in the reports' face and colour, the card
+   as tall as they are (the row stretches it; its field is kept low so nothing grows the row) */
+.cvx--row1 .cv2__field--flat {
+  height: 92px;
+}
+.cvx--row1 .cv2f__qimg.cv2f__qimg--sm {
+  width: 60px;
+}
+.cvx--row1 .cv2__title {
+  white-space: nowrap;
+}
+.bx-grid--l2 .bx-row2.bx-row2--two {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+.bx-grid--l2 .bx-row2.bx-row2--two > * {
+  grid-column: auto !important;
+  min-width: 0;
+}
+.cvx--row1 .cv2__text {
+  color: rgba(14, 17, 22, 0.62);
+}
+.cvx--row1 > .cv2 {
+  padding-bottom: 26px;
+}
+.cvx--row1 .cv2__field--flat {
+  height: 84px;
+}
+/* Layout 5 · Glass slabs, the figures (13 Nov, review: "the figures read badly"): Doto's dots fuller, as on the other
+   layouts, and the marks (% . , /) in the classic face, white like the digits */
+.cv3__fig {
+  -webkit-text-stroke: 0.022em currentColor;
+  paint-order: stroke fill;
+}
+.cv3__fig .dp {
+  color: #fff;
+}
+.cv3__fig i {
+  -webkit-text-stroke: 0;
+}

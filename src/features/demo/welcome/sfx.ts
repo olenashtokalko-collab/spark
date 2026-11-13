@@ -28,7 +28,13 @@ export function setSound(v: boolean) {
   } catch {
     /* this visit only */
   }
-  if (!v) return;
+  if (v) wake();
+}
+
+/** Sound on for this page without remembering a choice (12 Nov: Dr.AI's advice talks unless sound was turned off).
+ *  Browsers keep it silent until the visitor has clicked or typed somewhere on the page. */
+export function wake() {
+  on = true;
   const AC = window.AudioContext ?? (window as unknown as { webkitAudioContext?: typeof AudioContext }).webkitAudioContext;
   if (!AC) return;
   ctx ??= new AC();

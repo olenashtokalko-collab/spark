@@ -43,8 +43,10 @@ import { IntroExitDemo } from './features/demo/IntroExitDemo';
 import { IntroBubbleDemo } from './features/demo/IntroBubbleDemo';
 import { AskPillDemo } from './features/demo/AskPillDemo';
 import { EmptyArtDemo } from './features/demo/EmptyArtDemo';
+import { HomeBentoDemo } from './features/demo/HomeBentoDemo';
 import { DockMotionDemo } from './features/demo/DockMotionDemo';
 import { OnboardingHome } from './features/onboarding/Onboarding';
+import { EmptyStatesPage } from './features/demo/EmptyStatesPage';
 import { MascotDemo } from './features/demo/MascotDemo';
 import { SignInDemo } from './features/demo/SignInDemo';
 import { Suspense, lazy, useEffect } from 'react';
@@ -96,6 +98,9 @@ function Screen() {
       return <Requests />;
     case 'documents':
       return <Documents folderId={a} docId={query.get('doc')} />;
+    // every empty state the client can meet, on one page (13 Nov, review)
+    case 'empty-states':
+      return <EmptyStatesPage />;
     case 'demo':
       if (a === 'composer-color') return <ComposerColorDemo />;
       if (a === 'note-strip') return <NoteStripDemo />;
@@ -145,6 +150,7 @@ function Screen() {
       if (a === 'intro-bubble') return <IntroBubbleDemo />;
       if (a === 'ask-pill') return <AskPillDemo />;
       if (a === 'empty-art') return <EmptyArtDemo />;
+      if (a === 'home-bento') return <HomeBentoDemo />;
       if (a === 'dock-motion') return <DockMotionDemo />;
       if (a === 'mascot') return <MascotDemo />;
       if (a === 'glass-3d')
@@ -210,6 +216,8 @@ function Redirect({ to }: { to: string }) {
 
 const INVITE_ONLY = import.meta.env.VITE_INVITE_ONLY === '1';
 
+const ConceptsPage = lazy(() => import('./features/concepts/ConceptsPage').then((m) => ({ default: m.ConceptsPage })));
+
 export default function App() {
   const { path } = useRoute();
   const { state } = useStore();
@@ -234,6 +242,13 @@ export default function App() {
   if (INVITE_ONLY) return <Invite standalone />;
   // The sign-in looks with Dr.AI: the page in full, signed in or out.
   if (path.startsWith('/demo/signin')) return <SignInDemo />;
+  // A colleague's Home concepts, each full screen on its own page, without the portal's shell (13 Nov)
+  if (path.startsWith('/concepts'))
+    return (
+      <Suspense fallback={null}>
+        <ConceptsPage />
+      </Suspense>
+    );
   // Signed out: the sign-in page, except for the sign-in options demo, which is about that page.
   if (!state.signedIn)
     return path.startsWith('/demo/intro') ? (
