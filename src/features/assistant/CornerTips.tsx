@@ -239,7 +239,13 @@ export function CornerTip({ paused, onTalk }: { paused: boolean; onTalk: (on: bo
       if (live.current.paused) return 'the chat is open';
       if (live.current.tip) return 'a tip is up';
       if (document.hidden) return 'the tab is hidden';
-      if (document.documentElement.dataset.welcomeMascot) return 'the welcome is still talking';
+      // The page the welcome played on says nothing more after it (13 Nov, review): he lands in his corner with the
+      // page's own clock already run down, so his words came up at once and stood under the Book consultation button
+      // beside him. Marking the page as said holds them until the client opens another page.
+      if (document.documentElement.dataset.welcomeMascot) {
+        saidHere.current = true;
+        return 'the welcome is still talking';
+      }
       if (document.querySelector('[role="dialog"], [aria-modal="true"]')) return 'a dialog is open';
       const el = document.activeElement;
       if (el && (el.tagName === 'INPUT' || el.tagName === 'TEXTAREA' || (el as HTMLElement).isContentEditable)) return 'a field has focus';

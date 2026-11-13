@@ -1235,12 +1235,12 @@ const HOME_LOOK_KEY = 'spark-home-look';
 // On the switch (13 Nov, review: "take Layouts 2, 5, 6, 7 and 8 off, to an archive"): Layouts 1, 3, 4 and 9, under
 // their numbers as reviewed. The archived ones (current, tabs, brief, dash, greet) keep their code and names here;
 // to bring one back, add it to this list. A browser that last had an archived one opens on Layout 4.
-// named and ordered for showing the client (13 Nov, review): Health, Console, Overview, Studio, Glass (Keys archived
-// the same day). Health opens the round, because it is the one we recommend and because the welcome's mascot flies
-// into its right corner; after it ours and the colleague's alternate. HOME_ON_SWITCH is the looks among
+// named and ordered for showing the client (13 Nov, review): Health, Console, Overview, Studio (Keys and then Glass
+// archived the same day). Health opens the round, because it is the one we recommend and because the welcome's
+// mascot flies into its right corner; after it ours and the colleague's alternate. HOME_ON_SWITCH is the looks among
 // them (what a saved look is checked against, and the one a visit opens on); SWITCH_ORDER is the switch as it reads,
 // with the colleague's two concepts and the page of empty states in their places.
-const HOME_ON_SWITCH: HomeLook[] = ['health', 'qo2', 'brandTiles'];
+const HOME_ON_SWITCH: HomeLook[] = ['health', 'qo2'];
 /** The switch in the order it is shown: a look of the portal, or a page of its own. */
 type SwitchItem = HomeLook | { id: 'console' | 'studio' | 'empty'; name: string; to: string };
 const SWITCH_ORDER: SwitchItem[] = [
@@ -1251,18 +1251,18 @@ const SWITCH_ORDER: SwitchItem[] = [
   { id: 'console', name: 'Console', to: '/concepts/console' },
   'qo2',
   { id: 'studio', name: 'Studio', to: '/concepts/studio' },
-  'brandTiles',
   { id: 'empty', name: 'Empty states', to: '/empty-states' },
 ];
 // renumbered 1–4 once the rest were archived (13 Nov, review): the old Layouts 1, 3, 4 and 9. The archived ones keep
 // the names they had when reviewed, with "(archived)", should they come back
 const HOME_LOOK_NAMES: Record<HomeLook, string> = {
   // named by what each one is (13 Nov, review: the plain words, not the metaphors — Focus, Daylight and Prism were
-  // tried and dropped): the brand's health; the overview at a glance; the clear glass. The colleague's two keep her
-  // names, Console and Studio. Were Classic, Quick overview and Glassy
+  // tried and dropped): the brand's health; the overview at a glance. The colleague's two keep her names, Console
+  // and Studio. Were Classic and Quick overview
   qo2: 'Overview',
   health: 'Health',
-  brandTiles: 'Glass',
+  // Glass archived (13 Nov, review: "take the Glass version off, put it in the archive"), its code kept
+  brandTiles: 'Glass (archived)',
   // Keys archived (13 Nov, review: "delete the Keys variant, or put it in the archive of the ones we made before")
   brandKeys: 'Keys (archived)',
   current: 'Layout 2 (archived)',

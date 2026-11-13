@@ -16,7 +16,7 @@ import * as sfx from '../demo/welcome/sfx';
 import '../../styles/welcome-liquid.css';
 
 export type Look = 'metal' | 'noor';
-type Step = 'sound' | 'typing' | 'ready' | 'morph' | 'greet' | 'land' | 'corner';
+type Step = 'typing' | 'ready' | 'morph' | 'greet' | 'land' | 'corner';
 
 export const LOOKS: { v: Look; label: string; note: string }[] = [
   { v: 'metal', label: 'A · Liquid metal, Noor', note: 'The reference’s material: liquid metal poured into the card, its light tinted with the spectrum. One family with the metal buttons.' },
@@ -39,7 +39,6 @@ const GREETING_BACK = ['Good to see you again.', 'I’m in my corner if you need
 const FIG_H = 341; // Dr.AI's figure, the solo crop (786 × 1290 of the 1440 frame: no Sparki beside him)
 const FIG_W = Math.round((FIG_H * 786) / 1290);
 const CORNER_W = 92; // his width in the corner, the mascot alone
-const CORNER_SAY = ['I’m here if you need me.', 'Click me anytime.'];
 const still = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
 
 /** An image, loaded (img.decode() can hang while the page is in the background). */
@@ -322,7 +321,9 @@ function Welcome({ look, onClose, who = DEMO_WHO, onSeen, back = false }: { look
   const LINES = linesFor(who, back);
   const greet = back ? GREETING_BACK : GREETING;
   const pref = sfx.soundPref();
-  const [step, setStep] = useState<Step>(pref === null ? 'sound' : 'typing');
+  // Sound is on, and the welcome no longer asks (13 Nov, review): it opens straight on the card. Only someone who
+  // turned it off before arrives silent, and the corner's Sound on/off turns it off again.
+  const [step, setStep] = useState<Step>('typing');
   const [surfaceReady, setSurfaceReady] = useState(look === 'noor');
   const [speaking, setSpeaking] = useState(false);
   const [orb, setOrb] = useState<'in' | 'pop' | null>(null);
@@ -351,17 +352,18 @@ function Welcome({ look, onClose, who = DEMO_WHO, onSeen, back = false }: { look
   useEffect(() => {
     if (step === 'corner') markSeen();
   });
-  const [sound, setSoundState] = useState(pref === true);
+  const [sound, setSoundState] = useState(pref !== false);
 
   useEffect(() => {
-    if (pref === true) sfx.setSound(true); // a remembered "on" still needs a click to start audio; Start wakes it
+    if (pref !== false) sfx.setSound(true); // on still needs a click to start audio; Start wakes it
   }, [pref]);
 
-  const pickSound = (v: boolean) => {
+  /** The corner's Sound on/off, for turning it off (and back on) without being asked first. */
+  const toggleSound = () => {
+    const v = !sound;
     sfx.setSound(v);
     setSoundState(v);
     if (v) sfx.soundOn();
-    setStep('typing');
   };
 
   /** Start: the card melts and pours itself into Dr.AI. The card and his metal figure share a gooey filter, so as
@@ -463,20 +465,23 @@ function Welcome({ look, onClose, who = DEMO_WHO, onSeen, back = false }: { look
   }, []);
   const greeted = useCallback(() => window.setTimeout(land, 650), [land]);
   const hello = useGreeting(step === 'greet', greeted, greet);
-  const [saying, setSaying] = useState(false);
-  // His corner words said, the portal's own Dr.AI takes over in the same place (12 Nov): until then the portal's
+  // Once he is in his corner the portal's own Dr.AI takes over in the same place (12 Nov): until then the portal's
   // mascot, and with it his advice (CornerTips), waited behind this one for as long as the visit lasted.
   const handOver = useRef(onClose);
   handOver.current = onClose;
   const saidDone = useCallback(() => {
-    setSaying(false);
     window.setTimeout(() => {
       delete document.documentElement.dataset.welcomeMascot;
       handOver.current();
     }, 2600);
   }, []);
-  const said = useGreeting(step === 'corner', saidDone, CORNER_SAY);
-  useEffect(() => setSaying(step === 'corner'), [step]);
+  // He lands without a word (13 Nov, review): what he used to say there, beside him, came up under the Book
+  // consultation button standing in the same corner. A short beat on landing, then the hand-over as before.
+  useEffect(() => {
+    if (step !== 'corner') return;
+    const t = window.setTimeout(saidDone, 900);
+    return () => clearTimeout(t);
+  }, [step, saidDone]);
 
   // In his corner, a click on him opens the chat (and this welcome is done).
   // ...now his chat (11 Nov): the portal's own Dr.AI takes his place in the corner and opens it
@@ -549,19 +554,6 @@ function Welcome({ look, onClose, who = DEMO_WHO, onSeen, back = false }: { look
                   </MetalButton>
                 </div>
               </div>
-              {step === 'sound' && (
-                <div className="wl-sound">
-                  <span className="wl-sound__label">
-                    <Volume2 size={15} /> Best with sound
-                  </span>
-                  <button type="button" className="wl-sound__on" onClick={() => pickSound(true)}>
-                    On
-                  </button>
-                  <button type="button" onClick={() => pickSound(false)}>
-                    Off
-                  </button>
-                </div>
-              )}
             </div>
             {/* Dr.AI as liquid metal in his own shape, poured in from the card; ready before Start is pressed */}
             {(step === 'ready' || after) && (
@@ -573,28 +565,21 @@ function Welcome({ look, onClose, who = DEMO_WHO, onSeen, back = false }: { look
           <button type="button" className="wl-skip" onClick={skip}>
             Skip intro
           </button>
-          {step !== 'sound' && (
-            <span className="wl-sound-state" aria-live="polite">
-              {sound ? <Volume2 size={14} /> : <VolumeX size={14} />} {sound ? 'Sound on' : 'Sound off'}
-            </span>
-          )}
+          {/* no longer only what the sound is: it turns it off and on, since nothing asks any more (13 Nov, review) */}
+          <button type="button" className="wl-sound-state" onClick={toggleSound} aria-live="polite" aria-pressed={sound}>
+            {sound ? <Volume2 size={14} /> : <VolumeX size={14} />} {sound ? 'Sound on' : 'Sound off'}
+          </button>
         </div>
       )}
       {/* Dr.AI himself, above the scene so he stays while it floods away, and walks to his corner */}
       {(step === 'ready' || after) && (
         <div className={cx('wl-hello', step === 'corner' && 'is-corner')}>
           <div ref={realFig} className="wl-fig wl-fig--real" style={{ width: FIG_W, height: FIG_H }}>
-            <MascotClip state={speaking || saying ? 'speaking' : 'idle'} crop="solo" width={FIG_W} />
+            <MascotClip state={speaking ? 'speaking' : 'idle'} crop="solo" width={FIG_W} />
             {/* the bubble he travels in, in the card's light; it breaks when he lands */}
             {orb && <span className={cx('wl-orb', orb === 'pop' && 'is-popping')} aria-hidden />}
             {step === 'corner' && <button type="button" className="wl-fig__open" onClick={openWindow} aria-label="Dr.AI: open his window" />}
           </div>
-          {/* in his corner, a few words beside him, as the reference's buddy does */}
-          {step === 'corner' && (
-            <div className={cx('wl-say', said.length > 0 && 'is-on')} aria-live="polite">
-              <span>{said[0] ?? ''}</span> <span className="wl-say__more">{said[1] ?? ''}</span>
-            </div>
-          )}
           {/* his words on the ground itself, no bubble (11 Nov, review) */}
           <div ref={words} className={cx('wl-words', step === 'greet' && 'is-on')}>
             {greet.map((g, i) => (
