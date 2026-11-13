@@ -1991,7 +1991,8 @@ function QuickOverview2({ webScore, social, band, keys, l2Cards, cards, hold }: 
           time.
         </span>
       </div>
-      {/* `hold`: Glassy doesn't open the consultation yet (13 Nov, review: the page isn't ready) */}
+      {/* `hold`: the consultation isn't booked from here yet (13 Nov, review: Glass first, then Overview too — the
+          page isn't ready, and the window that opened on the card had nowhere to go) */}
       <button type="button" className="qo-card qo-card--accent qk--s" onClick={hold ? undefined : () => openRequest({ type: 'Strategy', title: 'Consultation on the brand analysis' })}>
         {keys ? <KeyHead tone="s" icon={CalendarClock} label="Strategy" /> : <img className="qo-icon" src="brand/glass/glass-grid.webp" alt="" />}
         <span className="qo-title">Book a consultation</span>
@@ -2393,7 +2394,8 @@ export function HomeSwitch({ current, onPick }: { current: HomeLook | 'empty' | 
   );
 }
 
-/** Health and Glass (Classic and Glassy as reviewed) don't leave Home yet (13 Nov, review: "no redirects to other pages, they aren't ready"): a
+/** No version leaves Home yet (13 Nov, review: "no redirects to other pages, they aren't ready" — Health and Glass
+ *  first, then Overview's consultation and its team row): a
  *  card still answers the pointer and still opens what lives on the page (the top-up, the consultation, the tabs),
  *  but a link to another page is held. Take this off and the links work again. */
 function holdLinks(e: React.MouseEvent) {
@@ -2488,7 +2490,7 @@ export function HomeBentoC() {
     <div
       className={cx(homeRootClass(look), (l2Tiles || (look !== 'qo2' && !isBand(look))) && `bx--hero-${heroLook}`, isBand(look) && 'bx--brandband', l2Tiles && 'bx--glassbook')}
       ref={tiltRoot}
-      onClickCapture={look === 'health' || look === 'brandTiles' ? holdLinks : undefined}
+      onClickCapture={holdLinks}
     >
       {(look === 'boldGlass' || l2Tiles) && <CardTilt root={tiltRoot} />}
       {(look === 'qo2' || isBand(look)) && <CardTilt root={tiltRoot} sel=".qo-card:not(.qo-card--feature)" />}
@@ -2500,7 +2502,7 @@ export function HomeBentoC() {
       {SHOW_HOME_SWITCH && <HomeSwitch current={look} onPick={pickLook} />}
       {look === 'qo2' || isBand(look) ? (
         <QuickOverview2
-          hold={look === 'brandTiles'}
+          hold
           webScore={webScore}
           social={social?.score?.value ?? '4%'}
           band={isBand(look)}
