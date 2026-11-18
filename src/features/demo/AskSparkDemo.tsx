@@ -56,7 +56,7 @@ export function AskSparkDemo() {
             <div className="ask-stage ask-stage--home">
               <div className="ask-cover" aria-hidden />
               <div className="ask-head">
-                <b>Qindeel</b>
+                <b>Brand Co.</b>
                 <span className="ask-head__acts">
                   <span className="ask-credits">USD 64.20 credits</span>
                   <AskButton mark={mark} motion={motion} />

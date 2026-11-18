@@ -124,7 +124,7 @@ function Rail({ tone, open, onFold }: { tone: RailTone; open: boolean; onFold: (
 const answers = [
   'Your website scores 41 of 100. Typical is 58. Mobile speed on 4G holds it back. It is up 6 since September.',
   'Mobile speed on 4G: it keeps the site 17 points under typical. Instagram can wait: 3.4% is still above 1.9%. Your strategist can say what the fix is worth.',
-  'Like Qindeel: an Abu Dhabi group and a government partner, in Arabic and English. Engagement is 3.4%, down 0.4 pt since September. I can draft one. You decide.',
+  'Like Brand Co.: an Abu Dhabi group and a government partner, in Arabic and English. Engagement is 3.4%, down 0.4 pt since September. I can draft one. You decide.',
 ]
 const asks: { title: string; service: ServiceKey }[] = [
   { title: 'Website score: from 41 toward the 58 typical', service: 'a' },

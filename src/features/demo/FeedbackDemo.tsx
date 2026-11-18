@@ -107,9 +107,9 @@ function SignInNow() {
       <div className="fbd-signin__card">
         <FluidOrb size={40} />
         <b>Sign in</b>
-        <span className="faint">to the Qindeel workspace by Spark</span>
+        <span className="faint">to the Brand Co. workspace by Spark</span>
         <div className="fbd-input">
-          <Mail size={14} /> layla@qindeel.ae
+          <Mail size={14} /> layla@brandco.ae
         </div>
         <div className="fbd-btn">Continue</div>
       </div>
@@ -157,7 +157,7 @@ function TopBarNow() {
   return (
     <div className="fbd-top">
       <span className="fbd-top__team">
-        Qindeel · My team <ChevronDown size={12} />
+        Brand Co. · My team <ChevronDown size={12} />
       </span>
       <span className="fbd-av">LH</span>
     </div>
@@ -172,7 +172,7 @@ function TopBarNext({ c }: { c: Credit }) {
           <Coins size={13} /> {x.amount}
         </span>
         <span className="fbd-top__team">
-          Qindeel · My team <ChevronDown size={12} />
+          Brand Co. · My team <ChevronDown size={12} />
         </span>
         <span className="fbd-av">LH</span>
       </div>
@@ -261,10 +261,10 @@ function CompanyNext() {
         </span>
       </div>
       <div className="fbd-company__row">
-        <Globe size={14} /> qindeel.ae <ExternalLink size={11} className="faint" />
+        <Globe size={14} /> brandco.ae <ExternalLink size={11} className="faint" />
       </div>
       <div className="fbd-company__row">
-        <Instagram size={14} /> @qindeel · <Linkedin size={14} /> Qindeel
+        <Instagram size={14} /> @brandco · <Linkedin size={14} /> Brand Co.
       </div>
       <div className="fbd-company__label">Competitors</div>
       <div className="fbd-chips">
@@ -323,7 +323,7 @@ export function FeedbackDemo() {
           </>
         }
         notes={[
-          'The balance sits left of “Qindeel · My team”; it turns amber when low and red when used up.',
+          'The balance sits left of “Brand Co. · My team”; it turns amber when low and red when used up.',
           '“Request more credits” sends a request to Spark (a short form: how much, a note); email works too.',
           'Later, not for launch: credit packages and paying online.',
           'To agree: what counts as “low”, and whether chats stop at zero or only warn.',

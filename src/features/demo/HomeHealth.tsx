@@ -2,7 +2,7 @@
 // one number for how healthy the company is; the percent in colour; arrows up and down; the credits as a name with a
 // caret, no avatar; the Summary, a short paragraph of what was found with figures picked out; the ring whose lines
 // fill clockwise from grey as you arrive"). On Spark's sand, with the client's clear glass cards and Spark's colours:
-//   · the head: Qindeel, a line under it, the credits at the right
+//   · the head: Brand Co., a line under it, the credits at the right
 //   · Brand health: the ring (its ticks fill Cobalt into violet on arrival), what Spark found as its reading (once a
 //     Summary of its own above it, merged in: they told the same story), what it's measured against
 //   · four figures from the reports the report cards don't show, each against its aim, the arrow saying which way
@@ -129,7 +129,7 @@ const FIGS: Fig[] = [
 ];
 
 // Each brand's own page (17 Nov, review: "the data should change when I pick a brand"): its health, what it means,
-// its three analysis figures and its latest requests. Qindeel's are the portal's own; the group's other brands and
+// its three analysis figures and its latest requests. Brand Co.'s are the portal's own; the group's other brands and
 // Spark's other clients are a prototype's figures, so switching shows the page change.
 type Latest = Pick<WorkRequest, 'id' | 'title' | 'status' | 'updatedAt' | 'type'> & Partial<Pick<WorkRequest, 'excerpt' | 'nextStep'>>;
 type BrandPage = { score: number; title: string; text: string; based: string; figs: Fig[]; latest?: Latest[] };
@@ -148,10 +148,10 @@ const fig = (look: Fig['look'], from: string, title: string, mine: number, unit:
   href,
 });
 const PAGES: Record<string, BrandPage> = {
-  'b-qindeel': {
+  'b-brandco': {
     score: HEALTH,
     title: 'Strong in your stores, held back online.',
-    text: 'People’s love for Qindeel in its stores lifts the score. A slow site that looks like any global chain, and a name few know in Riyadh, keep it from the top.',
+    text: 'People’s love for Brand Co. in its stores lifts the score. A slow site that looks like any global chain, and a name few know in Riyadh, keep it from the top.',
     based: 'We read 1,200 reviews and posts, 23 pages of your site and 412 social posts, and asked 300 shoppers.',
     figs: FIGS,
   },
@@ -204,7 +204,7 @@ const PAGES: Record<string, BrandPage> = {
 };
 // Spark's other clients borrow a group brand's figures, so every client in the list opens a full page
 const PAGE_ALIAS: Record<string, string> = { 'b-dune': 'b-home', 'b-noor': 'b-kids', 'b-aster': 'b-saffron' };
-const pageOf = (id: string) => PAGES[id] ?? PAGES[PAGE_ALIAS[id] ?? 'b-qindeel'];
+const pageOf = (id: string) => PAGES[id] ?? PAGES[PAGE_ALIAS[id] ?? 'b-brandco'];
 
 /** A report Spark can make next, as a card of the reports' own (13 Nov, review: "one locked report, in the style of
  *  the report cards, with Unlock"): its name, its headline, the gauge's place held by a pane of clear glass with the
@@ -293,11 +293,11 @@ export function HomeHealth({ balance, profile, sidebar = false, bar = false }: {
   // the four requests changed last, newest first
   const latest = [...state.requests].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 4);
   const b = state.brand;
-  // the brand open now (17 Nov): Qindeel carries the data; another brand's name and line show in the head
+  // the brand open now (17 Nov): Brand Co. carries the data; another brand's name and line show in the head
   const mode = useMode();
   // a new company (onboarding, 17 Nov): Home in Health's look with nothing measured yet, one brand of its own
   const fresh = !!state.onboarding;
-  const brands = brandsFor(mode).filter((x) => !fresh || x.id === 'b-qindeel').map((x) => (x.id === 'b-qindeel' ? { ...x, name: b.name, line: `${b.positioning} ${b.reach.replace(/ across .*$/, (m) => ' ' + m.trim().replace(/ /g, '\u00a0'))}` } : x));
+  const brands = brandsFor(mode).filter((x) => !fresh || x.id === 'b-brandco').map((x) => (x.id === 'b-brandco' ? { ...x, name: b.name, line: `${b.positioning} ${b.reach.replace(/ across .*$/, (m) => ' ' + m.trim().replace(/ /g, '\u00a0'))}` } : x));
   // the brand open now lives in a shared store (17 Nov, review): the head's list or the sidebar's account menu sets it
   const [brandId] = useActiveBrand();
   useEffect(() => {

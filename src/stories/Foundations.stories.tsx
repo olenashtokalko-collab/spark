@@ -63,7 +63,7 @@ const TYPE: [string, React.CSSProperties, string, string][] = [
   ['modal title', { font: "700 28px/32px 'ABC Diatype Extended'", letterSpacing: '-0.03em' }, '700 28', 'New request.'],
   ['section title', { font: "700 22px/26px 'ABC Diatype Extended'", letterSpacing: '-0.02em' }, '700 22', 'Strong in your stores, held back online.'],
   ['item title', { font: "500 15px/20px 'ABC Diatype Extended'" }, '500 15', 'Riyadh launch campaign'],
-  ['body', { font: "400 15px/22px 'ABC Diatype Extended'" }, '400 15 · 14', 'People’s love for Qindeel in its stores lifts the score.'],
+  ['body', { font: "400 15px/22px 'ABC Diatype Extended'" }, '400 15 · 14', 'People’s love for Brand Co. in its stores lifts the score.'],
   ['small', { font: "400 13px/18px 'ABC Diatype Extended'", color: 'rgba(14,17,22,.5)' }, '400 13 · 12', 'Charged to the card on file. Receipts go to Documents.'],
   ['label', { font: "500 11.5px/16px 'ABC Diatype Mono'", letterSpacing: '0.12em', textTransform: 'uppercase', color: 'rgba(14,17,22,.72)' }, 'mono 500 11.5 · 0.12em', 'Brand health · what we found'],
   ['tag', { font: "500 10px/1 'ABC Diatype Mono'", letterSpacing: '0.1em', textTransform: 'uppercase', color: '#1e3bd6' }, 'mono 500 10 · 0.10em', 'Admin'],

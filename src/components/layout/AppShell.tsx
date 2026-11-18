@@ -121,7 +121,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   return (
     <>
     {/* Brand bar (concept 3): the strip of brands across the top, its grid button in the corner, on every page */}
-    {barMode && <BrandStrip names={{ 'b-qindeel': state.brand.name }} />}
+    {barMode && <BrandStrip names={{ 'b-brandco': state.brand.name }} />}
     <div className={cx('shell', railOpen && 'shell--rail-open')}>
       {/* Spotlight background behind every page (light from above, grain). */}
       <div className="app-bg" aria-hidden>
@@ -344,7 +344,7 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
   // open now, and the menu lists the brands first, as Claude lists its workspaces
   const [, brandsHere] = useActiveBrand();
   const brandName = useActiveBrandName(state.brand.name);
-  // Home in Health's look, either version (18 Nov, review): the brand before your role ("Qindeel · Head of Brand"),
+  // Home in Health's look, either version (18 Nov, review): the brand before your role ("Brand Co. · Head of Brand"),
   // and no credits in this menu (they're on Home)
   const health = (() => {
     try {
@@ -419,7 +419,7 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
                   </>
                 )}
                 {/* Brand bar: the brands are in the strip at the top, not here (18 Nov, review) */}
-                {!barHere && <SidebarBrands onPicked={close} names={{ 'b-qindeel': state.brand.name }} />}
+                {!barHere && <SidebarBrands onPicked={close} names={{ 'b-brandco': state.brand.name }} />}
                 <div className="acct__divider" />
               </>
             )}

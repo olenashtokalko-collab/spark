@@ -1792,7 +1792,7 @@ function QuickOverview2({ webScore, social, band, keys, l2Cards, cards, hold }: 
     ) : band ? (
       // Layout 4 (13 Nov, review): the brand as a dark band across the top of the page, comets flying over it the
       // whole width, the company's data on the left, the glass shape on the right; the dashboard's cards under it
-      // Grid tiles (13 Nov, review: "the Qindeel section light too, with the glass shapes turning into one another"):
+      // Grid tiles (13 Nov, review: "the Brand Co. section light too, with the glass shapes turning into one another"):
       // the same band in light, the loop rendered on white multiplied onto it
       <header className={cx('qb', lightBand && 'qb--light')}>
         {/* not comets (13 Nov, review: "we have no comets in the product, we have light"): the brand's light as on

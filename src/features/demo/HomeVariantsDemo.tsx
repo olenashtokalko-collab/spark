@@ -301,7 +301,7 @@ function VariantB({ m, onAsk }: { m: Model; onAsk: () => void }) {
           <span className="hv-b-tile__label">
             {social.score?.label} <Delta a={social} />
           </span>
-          <span className="hv-bars" aria-label="3.4% for Qindeel against 1.9% typical for UAE retail">
+          <span className="hv-bars" aria-label="3.4% for Brand Co. against 1.9% typical for UAE retail">
             <span>
               <i style={{ width: '100%' }} />
               You

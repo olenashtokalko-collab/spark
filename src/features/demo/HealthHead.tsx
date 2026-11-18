@@ -26,9 +26,9 @@ export interface BrandItem {
   role?: 'admin' | 'user';
 }
 
-// a group's brands, as its lead sees them (Qindeel is the one with data)
+// a group's brands, as its lead sees them (Brand Co. is the one with data)
 const GROUP: BrandItem[] = [
-  { id: 'b-qindeel', name: 'Qindeel', line: '', kind: 'Everyday products', updated: '2026-11-17', hue: 228 },
+  { id: 'b-brandco', name: 'Brand Co.', line: '', kind: 'Everyday products', updated: '2026-11-17', hue: 228 },
   { id: 'b-home', name: 'Bayt & Co.', line: 'Bayt & Co. makes furniture and homeware for Gulf homes.', kind: 'Homeware', updated: '2026-11-12', hue: 262 },
   { id: 'b-kids', name: 'Little Ghaf', line: 'Little Ghaf makes clothes and toys for children up to 10.', kind: 'Kidswear', updated: '2026-11-04', hue: 16, role: 'user' },
   { id: 'b-saffron', name: 'Saffron & Salt', line: 'Saffron & Salt runs six cafés across Dubai and Abu Dhabi.', kind: 'Cafés', updated: '2026-10-28', hue: 38, role: 'user' },
@@ -90,7 +90,7 @@ export function BrandMark({ b, size = 28, glass }: { b: BrandItem; size?: number
   if (glass)
     return (
       <span className="hb-mark hb-mark--glass" style={{ width: size, height: size, fontSize: size * 0.42 }} aria-hidden>
-        <span className="hb-mark__bg" style={{ backgroundImage: `url(${markImg})`, filter: b.id === 'b-qindeel' ? undefined : `hue-rotate(${b.hue - 10}deg)` }} />
+        <span className="hb-mark__bg" style={{ backgroundImage: `url(${markImg})`, filter: b.id === 'b-brandco' ? undefined : `hue-rotate(${b.hue - 10}deg)` }} />
         <b>{b.name[0]}</b>
       </span>
     );
@@ -249,7 +249,7 @@ export function ProfileDrawer({ open, onClose, tab, onTab, children }: { open: b
 /* ---- the brand open now, shared (17 Nov, review: "a version with the switcher in the left panel, as Claude Code
    does"): Home reads it and the sidebar's account menu can set it, so a brand picked in either place changes the page.
    `inSidebar` is on while the Sidebar version of Health is open; the account menu shows the brands only then. ---- */
-let activeBrand = 'b-qindeel';
+let activeBrand = 'b-brandco';
 let inSidebar = false;
 // Brand bar (concept 3): whether Home shows that version, and whether its strip is open
 let inBar = false;
@@ -336,7 +336,7 @@ export function useActiveBrandName(fallback: string) {
   const mode = useMode();
   const [id] = useActiveBrand();
   const b = brandsFor(mode).find((x) => x.id === id);
-  return b && b.id !== 'b-qindeel' ? b.name : fallback;
+  return b && b.id !== 'b-brandco' ? b.name : fallback;
 }
 
 /** Your role in the brand open now (17 Nov, review: what each role can do on Home): 'admin' tops up credits, invites
@@ -404,7 +404,7 @@ export function BrandStrip({ names }: { names?: Record<string, string> }) {
                 aria-current={b.id === cur ? 'true' : undefined}
                 onClick={() => brandStore.set(b.id)}
               >
-                <BrandMark b={b} size={26} glass />
+                <BrandMark b={b} size={18} glass />
                 <span>{names?.[b.id] ?? b.name}</span>
               </button>
             ))}
@@ -437,5 +437,5 @@ export function useActiveBrandRow(fallbackName: string) {
   const [id] = useActiveBrand();
   const b = brandsFor(mode).find((x) => x.id === id) ?? brandsFor(mode)[0];
   const role = roleOf(mode, b);
-  return { b, name: b.id === 'b-qindeel' ? fallbackName : b.name, role: ROLE[role].name === 'Spark team' ? 'Spark' : ROLE[role].name };
+  return { b, name: b.id === 'b-brandco' ? fallbackName : b.name, role: ROLE[role].name === 'Spark team' ? 'Spark' : ROLE[role].name };
 }
