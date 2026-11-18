@@ -256,22 +256,38 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
   // Drag Dr.AI aside by the mascot, as Sparki (9 Nov, review); the window comes with him. Kept for the visit.
   const [off, setOff] = useState(() => dockOff);
   const grab = useRef<{ x: number; y: number; dx: number; dy: number } | null>(null);
+  // Dr.AI himself is the way to the chat (18 Nov, review: "take Ask me off; a click on the mascot opens the
+  // drawer"): a click (no drag) opens Ask Dr.AI's drawer; a drag still moves him aside.
+  const moved = useRef(false);
   const dragProps = {
-    className: 'dk-drag',
-    title: 'Drag me aside',
+    className: 'dk-drag dk-ask-fig',
+    title: 'Ask me · drag to move',
+    role: 'button',
+    tabIndex: 0,
+    'aria-label': 'Ask Dr.AI',
+    onKeyDown: (e: React.KeyboardEvent<HTMLElement>) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        setChat(true);
+      }
+    },
     onPointerDown: (e: React.PointerEvent<HTMLElement>) => {
       e.currentTarget.setPointerCapture(e.pointerId);
       grab.current = { x: e.clientX, y: e.clientY, dx: off.dx, dy: off.dy };
+      moved.current = false;
     },
     onPointerMove: (e: React.PointerEvent<HTMLElement>) => {
       const g = grab.current;
       if (g) {
+        if (Math.hypot(e.clientX - g.x, e.clientY - g.y) > 4) moved.current = true;
+        if (!moved.current) return;
         const next = { dx: g.dx + e.clientX - g.x, dy: g.dy + e.clientY - g.y };
         dockOff = next;
         setOff(next);
       }
     },
     onPointerUp: () => {
+      if (grab.current && !moved.current) setChat(true);
       grab.current = null;
     },
     onPointerCancel: () => {
@@ -285,6 +301,23 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
     return first;
   });
   const ob = useOnboarding();
+  // "Ask me" by Dr.AI, once, for a few seconds after the first step is done, so people learn he opens the chat
+  const [askHint, setAskHint] = useState(false);
+  useEffect(() => {
+    if (!ob.on || ob.count < 1) return;
+    try {
+      if (localStorage.getItem('spark-ask-hint')) return;
+      localStorage.setItem('spark-ask-hint', '1');
+    } catch {
+      return;
+    }
+    const t0 = setTimeout(() => setAskHint(true), 1200);
+    const t1 = setTimeout(() => setAskHint(false), 5200);
+    return () => {
+      clearTimeout(t0);
+      clearTimeout(t1);
+    };
+  }, [ob.on, ob.count]);
   // Well done only for what was really done, not for a step put off (that would thank you for files you didn't send).
   const just = useJustDone(ob.done.map((d, k) => d && !ob.skipped[k]));
   // The finale (9 Nov): the first time every step is done or put off, glass sparks burst from the window.
@@ -407,10 +440,7 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
                   <MetalInner on={metal}>Show me</MetalInner>
                 </button>
               )}
-              {/* Ask me stays on every step, so the chat is always one click away (6 Nov). */}
-              <button type="button" className={dk('ask')} onClick={() => setChat(true)}>
-                <MetalInner on={metal}>Ask me</MetalInner>
-              </button>
+              {/* no Ask me here any more (18 Nov, review): Dr.AI beside the card opens the chat on a click */}
               {step?.optional && !ob.all && (
                 // Optional steps: a quiet link at the right; Dr.AI reminds you afterwards.
                 <button type="button" className="dk-skip" onClick={() => actions.skipStep(step.key)}>
@@ -421,6 +451,10 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
           </div>
           <span key="fig" {...dragProps}>
             <MascotClip state={typed.n > 0 && !typed.done ? 'speaking' : 'idle'} width={150} intro={intro} className="dk-fig" />
+            {/* "Ask me" beside him on hover; once, after the first step is done, it shows by itself for a moment */}
+            <span className={cx('dk-fig-tip', askHint && 'is-on')} aria-hidden>
+              Ask me
+            </span>
           </span>
         </div>
         {ask}

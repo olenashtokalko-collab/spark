@@ -996,3 +996,76 @@
 :root[data-theme][data-theme][data-ui] body .hl-tabs.og-tabs .og-tabs__bar {
   top: 5px !important;
 }
+
+/* ---- Request sent: the modal's own 32 px all round, no extra inset at the sides (18 Nov, review: "the spacing is too
+   big, at the sides"); its title as the modals' ---- */
+:root[data-theme][data-theme][data-ui] body .dlg-spark .req-done {
+  padding: 8px 0 0 !important;
+}
+:root[data-theme][data-theme][data-ui] body .dlg-spark .req-done__title {
+  margin-top: 0 !important;
+  font: 700 28px/32px var(--hs-ext) !important;
+  letter-spacing: -0.03em !important;
+}
+:root[data-theme][data-theme][data-ui] body .dlg-spark .req-done__actions {
+  margin-top: 24px !important;
+}
+
+/* ---- Dr.AI opens the chat himself (18 Nov, review): the onboarding card's one action, Show me, the small white
+   pill; Dr.AI beside it a pointer, a little hop on hover and "Ask me" by him ---- */
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-card .dk-btn.dk-btn--primary {
+  height: 32px !important;
+  min-height: 0 !important;
+  padding: 0 14px !important;
+  font: 500 12px/16px var(--hs-mono) !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+}
+:root[data-theme][data-theme][data-ui] body .dk-ask-fig {
+  position: relative;
+  cursor: pointer;
+  outline: none;
+}
+:root[data-theme][data-theme][data-ui] body .dk-ask-fig .dk-fig {
+  transition: translate 0.45s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+:root[data-theme][data-theme][data-ui] body .dk-ask-fig:is(:hover, :focus-visible) .dk-fig {
+  translate: 0 -6px;
+}
+:root[data-theme][data-theme][data-ui] body .dk-fig-tip {
+  position: absolute;
+  top: 6px;
+  left: 50%;
+  translate: -50% 4px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #0e1116;
+  font: 500 12px/1 var(--hs-mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  color: #f8f6f2;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.25s ease, translate 0.35s cubic-bezier(0.22, 1, 0.36, 1);
+}
+:root[data-theme][data-theme][data-ui] body :is(.dk-ask-fig:hover, .dk-ask-fig:focus-visible) .dk-fig-tip,
+:root[data-theme][data-theme][data-ui] body .dk-fig-tip.is-on {
+  opacity: 1;
+  translate: -50% 0;
+}
+:root[data-theme][data-theme][data-ui] body .dk-ask-fig:focus-visible .dk-fig {
+  outline: 2px solid rgba(14, 17, 22, 0.4);
+  outline-offset: 4px;
+  border-radius: 24px;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme][data-theme][data-ui] body .dk-ask-fig:hover .dk-fig {
+    translate: none;
+  }
+}
+/* Documents' file tiles and the drop zone at the cards' 32 px, as the folders beside them and Home's cards
+   (18 Nov, review: "are the corners right on these cards?"; they were 16, the folders 32) */
+:root[data-theme][data-theme][data-ui] body :is(.file-card__thumb, .drop-card) {
+  border-radius: var(--hs-r-xl) !important;
+}
