@@ -408,9 +408,11 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
           {party && <Confetti />}
           <div className={cx('dk-card', just !== null && 'is-cheer', party && 'is-cheer')}>
             <header className="dk-card__head">
-              <b>{ob.all ? 'All set' : step?.optional ? 'Optional step' : 'Getting started'}</b>
+              {/* the title stays "Getting started" on every step (18 Nov, review); the count is the step you're on, so
+                  it matches the segment filling on the line under it (it said 2/4 while the third one filled) */}
+              <b>{ob.all ? 'All set' : 'Getting started'}</b>
               <span className="dk-card__n">
-                {ob.count}/{STEPS.length}
+                {ob.all ? STEPS.length : ob.current + 1}/{STEPS.length}
               </span>
               <span className="dk-card__sp" />
               <button type="button" className="dk-fold" onClick={doFold} aria-label="Fold">

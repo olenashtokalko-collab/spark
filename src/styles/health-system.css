@@ -1082,3 +1082,295 @@
 :root[data-theme][data-theme][data-ui] body .gfo-count.gfo-count {
   color: var(--hs-ink-2) !important;
 }
+/* the stage you're at, read on the white card (18 Nov, review: "the white doesn't read; option 1, no shadow, just
+   grey"): a plain grey fill, as the pressed tab's ground without its inner shadow */
+:root[data-theme][data-theme][data-ui] body .stg__item.is-current {
+  background: rgba(14, 17, 22, 0.05) !important;
+  box-shadow: none !important;
+  border: 0 !important;
+}
+/* a request's Activity (18 Nov, review: "the date is too far; put it close to the text, beside it or above"): the
+   day sits above its entries, left-aligned with the words, as a label; the time follows the sentence on its line */
+:root[data-theme][data-theme][data-ui] body .axb__daylabel > span {
+  text-align: left !important;
+  font: 500 11.5px/16px var(--hs-mono) !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  color: var(--hs-ink-3) !important;
+}
+:root[data-theme][data-theme][data-ui] body .axb__daylabel {
+  padding: 16px 0 10px !important;
+}
+:root[data-theme][data-theme][data-ui] body .axb__sentence {
+  flex: 0 1 auto !important;
+}
+:root[data-theme][data-theme][data-ui] body .axb__when {
+  font-size: 12px !important;
+  color: var(--hs-ink-3) !important;
+}
+/* the day and time under the words (18 Nov, review): each entry's sentence, then a meta line, "Sat 10 Oct · 12:00" */
+:root[data-theme][data-theme][data-ui] body .axb__line {
+  flex-direction: column !important;
+  align-items: flex-start !important;
+  gap: 0 !important;
+}
+:root[data-theme][data-theme][data-ui] body .axb__sentence {
+  min-height: 32px;
+}
+:root[data-theme][data-theme][data-ui] body .axb__when {
+  margin-top: -6px;
+  line-height: 18px !important;
+}
+:root[data-theme][data-theme][data-ui] body .axb__item {
+  padding-bottom: 20px !important;
+}
+:root[data-theme][data-theme][data-ui] body .axb__item:last-child {
+  padding-bottom: 0 !important;
+}
+
+/* ===================================================================================================================
+   Link (18 Nov, review: "do we have this style?"; there wasn't one). Two kinds:
+   · in text: a word in a sentence that leads somewhere ("See proposal", "Clear"): Ink at 500 with a fine underline
+     always there, 25 % strong, 3 px under the words; full Ink under the pointer. On a dark ground, the same in Sand.
+   · navigation: a way to another page ("← Requests", "You and 2 colleagues →"): secondary grey words with an arrow,
+     no underline; under the pointer the words darken to Ink and the arrow steps 2 px its way.
+   =================================================================================================================== */
+:root[data-theme][data-theme][data-ui] body :is(.link-btn, .hs-link) {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: auto !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  font: inherit;
+  font-weight: 500 !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: var(--hs-ink) !important;
+  text-decoration: underline !important;
+  text-decoration-thickness: 1px !important;
+  text-underline-offset: 3px !important;
+  text-decoration-color: rgba(14, 17, 22, 0.25) !important;
+  cursor: pointer;
+  transition: text-decoration-color 0.2s ease, color 0.2s ease !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.link-btn, .hs-link):is(:hover, :focus-visible) {
+  text-decoration-color: var(--hs-ink) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.link-btn, .hs-link):focus-visible {
+  outline: 2px solid rgba(14, 17, 22, 0.4);
+  outline-offset: 2px;
+  border-radius: 4px !important;
+}
+/* on a dark ground (Dr.AI's Ink tip) */
+:root[data-theme][data-theme][data-ui] body :is(.dt-say--ink .dt-say__skip, .hs-link--on-dark) {
+  padding: 0 !important;
+  background: none !important;
+  font-weight: 500 !important;
+  color: rgba(248, 246, 242, 0.78) !important;
+  text-decoration: underline !important;
+  text-decoration-thickness: 1px !important;
+  text-underline-offset: 3px !important;
+  text-decoration-color: rgba(248, 246, 242, 0.3) !important;
+  transition: text-decoration-color 0.2s ease, color 0.2s ease !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.dt-say--ink .dt-say__skip, .hs-link--on-dark):is(:hover, :focus-visible) {
+  color: #fff !important;
+  text-decoration-color: #fff !important;
+}
+
+/* navigation links */
+:root[data-theme][data-theme][data-ui] body :is(.hs-link--nav, a.back) {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 400 !important;
+  color: var(--hs-ink-2) !important;
+  text-decoration: none !important;
+  transition: color 0.2s ease !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.hs-link--nav, a.back) svg {
+  transition: translate 0.42s cubic-bezier(0.22, 1, 0.36, 1);
+}
+:root[data-theme][data-theme][data-ui] body :is(.hs-link--nav, a.back):is(:hover, :focus-visible) {
+  color: var(--hs-ink) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.hs-link--nav, .hh-team):is(:hover, :focus-visible) svg:last-child {
+  translate: 2px 0;
+}
+:root[data-theme][data-theme][data-ui] body a.back:is(:hover, :focus-visible) svg:first-child,
+:root[data-theme][data-theme][data-ui] body .hs-link--back:is(:hover, :focus-visible) svg:first-child {
+  translate: -2px 0;
+}
+/* Dr.AI's tip as one paragraph (18 Nov, review: "don't break the deadline onto its own line; write it all in one
+   paragraph"): its two sentences run on, the deadline's words still lit */
+:root[data-theme][data-theme][data-ui] body .dt-say :is(.dt-say__a, .dt-say__b) {
+  display: inline !important;
+  margin: 0 !important;
+}
+:root[data-theme][data-theme][data-ui] body .dt-say .dt-say__b::before {
+  content: ' ';
+}
+
+/* ---- the sign-in code's boxes as the system's fields (18 Nov, review: "update the input"): filled, no outline,
+   16 px corners; white with the fine Ink ring in focus; a pale Ember ring on a wrong code ---- */
+:root[data-theme][data-theme][data-ui] body .otp .otp__box {
+  border: 0 !important;
+  border-radius: var(--hs-r-m) !important;
+  background: rgba(14, 17, 22, 0.04) !important;
+  box-shadow: none !important;
+  outline: none !important;
+  font: 500 24px/1 var(--hs-ext) !important;
+  color: var(--hs-ink) !important;
+  caret-color: var(--hs-ink);
+  transition: background 0.2s, box-shadow 0.2s !important;
+}
+:root[data-theme][data-theme][data-ui] body .otp .otp__box:hover {
+  background: rgba(14, 17, 22, 0.065) !important;
+}
+:root[data-theme][data-theme][data-ui] body .otp .otp__box:focus {
+  background: #fff !important;
+  box-shadow: 0 0 0 1.5px rgba(14, 17, 22, 0.5) !important;
+}
+:root[data-theme][data-theme][data-ui] body .otp.otp--error .otp__box {
+  background: #fff !important;
+  box-shadow: 0 0 0 1.5px rgba(232, 80, 31, 0.6) !important;
+}
+/* the sign-in and invite forms' fields as the system's form fields (48 px, 16 px corners, filled; white with the
+   fine Ink ring in focus) and their labels as New request's (sentence case, 500 13, Ink); a locked field reads as
+   given, its words in meta grey */
+:root[data-theme][data-theme][data-ui] body :is(.inv, .signin-page) .input {
+  height: 48px !important;
+  padding: 0 16px !important;
+  border: 0 !important;
+  border-radius: var(--hs-r-m) !important;
+  background: rgba(14, 17, 22, 0.04) !important;
+  box-shadow: none !important;
+  outline: none !important;
+  font: 400 15px/22px var(--hs-ext) !important;
+  color: var(--hs-ink) !important;
+  transition: background 0.2s, box-shadow 0.2s !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.inv, .signin-page) .input:hover {
+  background: rgba(14, 17, 22, 0.065) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.inv, .signin-page) .input:focus {
+  background: #fff !important;
+  box-shadow: 0 0 0 1.5px rgba(14, 17, 22, 0.5) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.inv, .signin-page) .input::placeholder {
+  color: var(--hs-ink-4) !important;
+}
+:root[data-theme][data-theme][data-ui] body .inv .input.inv__locked {
+  color: var(--hs-ink-3) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.inv, .signin-page) .field__label {
+  font: 500 13px/18px var(--hs-ext) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+  color: var(--hs-ink) !important;
+}
+
+/* ===================================================================================================================
+   Team on the system (18 Nov, review: "make Manage my team clickable; update the designs to the tokens and the
+   Storybook"): the list in card glass as Requests', its heads as labels, a person's name as an item title, email and
+   title as meta, the role and status in secondary grey, "…" the glass icon button; its dialogs in Health's dress.
+   =================================================================================================================== */
+:root[data-theme][data-theme][data-ui] body .tm-list {
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  border-radius: var(--hs-r-m) !important;
+  background: var(--hs-glass-card) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  backdrop-filter: blur(24px) saturate(1.6);
+  box-shadow: inset 0 1px 0 #fff, var(--hs-sh-card) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.tm-row--head > span, .tm-row__n, .team .tm-group__label, .team [class*='__label']) {
+  font: 500 11.5px/16px var(--hs-mono) !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  color: var(--hs-ink-3) !important;
+}
+:root[data-theme][data-theme][data-ui] body .tm-who__name {
+  font: 500 15px/1.35 var(--hs-ext) !important;
+  color: var(--hs-ink) !important;
+}
+:root[data-theme][data-theme][data-ui] body .tm-who__name .faint {
+  font-weight: 400;
+  color: var(--hs-ink-3) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.tm-who__sub, .tm-row__email) {
+  font-size: 13px !important;
+  color: var(--hs-ink-3) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.tm-role, .tm-role select, .team .rstatus) {
+  font: 400 13px/18px var(--hs-ext) !important;
+  color: var(--hs-ink-2) !important;
+}
+:root[data-theme][data-theme][data-ui] body .team .rq-icon-btn {
+  display: inline-grid !important;
+  place-items: center;
+  width: 28px !important;
+  height: 28px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.22) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.45), 0 0 0 0.5px rgba(14, 17, 22, 0.08) !important;
+  color: var(--hs-ink) !important;
+}
+:root[data-theme][data-theme][data-ui] body .team .rq-icon-btn:is(:hover, :focus-visible) {
+  background: rgba(255, 255, 255, 0.7) !important;
+  box-shadow: inset 0 1px 0 #fff, inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 4px 12px -6px rgba(30, 30, 60, 0.25) !important;
+}
+
+/* the invite's email field as a form field: filled, 48 px, 16 px corners; white with the fine Ink ring in focus */
+:root[data-theme][data-theme][data-ui] body .dlg-spark .token-input {
+  min-height: 48px !important;
+  padding: 8px 12px !important;
+  border: 0 !important;
+  border-radius: var(--hs-r-m) !important;
+  background: rgba(14, 17, 22, 0.04) !important;
+  box-shadow: none !important;
+  transition: background 0.2s, box-shadow 0.2s !important;
+}
+:root[data-theme][data-theme][data-ui] body .dlg-spark .token-input:focus-within {
+  background: #fff !important;
+  box-shadow: 0 0 0 1.5px rgba(14, 17, 22, 0.5) !important;
+}
+:root[data-theme][data-theme][data-ui] body .dlg-spark .token-input input {
+  font: 400 15px/22px var(--hs-ext) !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+:root[data-theme][data-theme][data-ui] body .dlg-spark .token {
+  border-radius: 999px !important;
+  background: #fff !important;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.1) !important;
+  font-size: 13px !important;
+}
+
+/* a destructive action (Remove): the primary's shape in Ember's text shade */
+:root[data-theme][data-theme][data-ui] body .btn.btn--danger:not(.btn--icon) {
+  height: 36px;
+  padding: 0 18px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: var(--hs-ember-text) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 12px 26px -12px rgba(194, 65, 12, 0.5) !important;
+  font: 500 13px/16px var(--hs-mono) !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  color: #fff !important;
+}
+:root[data-theme][data-theme][data-ui] body .dlg-spark .dialog__foot .btn.btn--danger {
+  flex: 1;
+  height: 48px !important;
+  font-size: 14px !important;
+}
+:root[data-theme][data-theme][data-ui] body .btn.btn--danger:not(.btn--icon):is(:hover, :focus-visible) {
+  background: #a8380a !important;
+}

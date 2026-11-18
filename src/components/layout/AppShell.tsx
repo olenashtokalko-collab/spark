@@ -413,10 +413,12 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
             )}
             {/* the team and the company's profile shown but not open while the client approves the look (13 Nov,
                 review), as Requests and Documents in the sidebar: a tip beside them on hover, the names unchanged */}
-            {[
-              { label: 'Manage my team', Icon: UserPlus },
-              ...(brandsHere ? [] : [{ label: 'Company profile', Icon: Building2 }]),
-            ].map(({ label, Icon }) => (
+            {/* the team opens (18 Nov, review: "make Manage my team clickable") */}
+            <button className="acct__item" onClick={() => go(close, '/team')}>
+              <UserPlus size={18} strokeWidth={1.6} />
+              <span>Manage my team</span>
+            </button>
+            {[...(brandsHere ? [] : [{ label: 'Company profile', Icon: Building2 }])].map(({ label, Icon }) => (
               <span
                 key={label}
                 className="acct__item acct__item--off"

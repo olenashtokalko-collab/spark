@@ -559,12 +559,9 @@ export function ActivityLog({ items, requestId, onMessage }: { items: Activity[]
       {/* One list for the whole history: a single line joins every step, and each day is a
           centred label on a rule, so the line runs on through the days. */}
       <ol className="axb__list">
-        {byDay(shown).flatMap((g) => [
-          <li key={g.key} className="axb__daylabel" role="separator">
-            <span>{g.label}</span>
-          </li>,
-          ...g.items.map((a) => <LogItem key={a.id} a={a} requestId={requestId} onMessage={onMessage} />),
-        ])}
+        {/* the day and the time under each entry's words (18 Nov, review: "what if the date sits under the text?"),
+            no day labels between them */}
+        {byDay(shown).flatMap((g) => g.items.map((a) => <LogItem key={a.id} a={a} day={g.label} requestId={requestId} onMessage={onMessage} />))}
       </ol>
       {hidden > 0 && (
         <button className="steps-toggle axb__fold" onClick={() => setOpen((o) => !o)} aria-expanded={open}>
@@ -586,7 +583,7 @@ function markIcon(a: Activity, declined: boolean) {
   return Paperclip;
 }
 
-function LogItem({ a, requestId, onMessage }: { a: Activity; requestId: string; onMessage?: () => void }) {
+function LogItem({ a, day, requestId, onMessage }: { a: Activity; day?: string; requestId: string; onMessage?: () => void }) {
   const { state } = useStore();
   const { openDoc } = useUI();
   const p = personById(state, a.by);
@@ -657,7 +654,7 @@ function LogItem({ a, requestId, onMessage }: { a: Activity; requestId: string; 
               </button>
             )}
           </div>
-          <span className="axb__when">{whenLine(a)}</span>
+          <span className="axb__when">{day ? `${day} · ${whenLine(a)}` : whenLine(a)}</span>
         </div>
         {/* A comment's words live in Messages; here only that it was left. */}
         {!comment && quote && <div className="axb__msg">{quote}</div>}

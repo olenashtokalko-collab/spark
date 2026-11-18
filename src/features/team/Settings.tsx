@@ -9,7 +9,8 @@ import { fmtRelative } from '../../lib/format';
 import type { ClientRole, Person } from '../../data/types';
 
 export const ROLE_INFO: Record<ClientRole, { label: string; desc: string }> = {
-  owner: { label: 'Owner', desc: 'Approves proposals and manages the team.' },
+  // "Admin", as the role tag beside the brand's name says it (18 Nov, the system)
+  owner: { label: 'Admin', desc: 'Approves proposals, tops up credits and manages the team.' },
   member: { label: 'Member', desc: 'Chats, creates requests, comments and uploads.' },
   viewer: { label: 'Viewer', desc: 'Reads everything and comments. No requests or approvals.' },
 };
@@ -230,8 +231,7 @@ function Team() {
         open={!!removing}
         onClose={() => setRemoving(null)}
         size="sm"
-        icon={UserMinus}
-        tone="danger"
+        className="dlg-spark"
         title={`Remove ${removing?.name}?`}
         description="They lose access straight away. Their comments and requests stay."
         footer={
@@ -241,7 +241,6 @@ function Team() {
             </Button>
             <Button
               variant="danger"
-              icon={Trash2}
               onClick={() => {
                 actions.removeMember(removing!.id);
                 toast({ title: `${removing!.name} removed` });
@@ -328,8 +327,8 @@ function InviteDialog({ open, onClose }: { open: boolean; onClose: () => void })
     <Dialog
       open={open}
       onClose={onClose}
-      icon={UserPlus}
-      title="Invite your team"
+      className="dlg-spark"
+      title="Invite your team."
       description="They'll see this workspace: requests, proposals and documents. Chats stay private."
       footer={
         <>

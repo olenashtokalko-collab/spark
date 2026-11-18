@@ -102,8 +102,11 @@ function lines(m: Msg): [string, string] {
   if (m.key === 'files') return ['I still don’t have your brand files.', 'Share them, and your first proposal fits you better.'];
   if (m.key === 'team') return ['Your team can’t see requests yet.', 'Invite them when you’re ready.'];
   if (m.key === 'web-speed') return ['Your website is slow on mobile: 6.8 s on 4G.', 'It’s costing you sales. Want the fix?'];
-  const first = plain(m.text);
-  const second = m.tag?.startsWith('Due') ? `It’s ${m.tag.charAt(0).toLowerCase()}${m.tag.slice(1)}.` : 'Have a look when you can.';
+  const due = m.tag?.startsWith('Due');
+  // the deadline said once, in the second sentence where it's lit (18 Nov, review: one paragraph; it read "is due
+  // 14 Oct. It's due 14 Oct.")
+  const first = due ? plain(m.text).replace(/^Don’t forget: (.*) is due [^.]*\.$/, 'Don’t forget $1.') : plain(m.text);
+  const second = due ? `It’s ${m.tag!.charAt(0).toLowerCase()}${m.tag!.slice(1)}.` : 'Have a look when you can.';
   return [first, second];
 }
 

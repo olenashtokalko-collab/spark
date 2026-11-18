@@ -1252,8 +1252,9 @@ const HOME_LOOK_KEY = 'spark-home-look';
 const HOME_ON_SWITCH: HomeLook[] = ['health', 'healthSide'];
 /** The switch in the order it is shown: a look of the portal, or a page of its own. */
 type SwitchItem = HomeLook | { id: 'console' | 'studio' | 'empty' | 'onboarding'; name: string; to: string };
+// Health is the default (18 Nov, review: "Health is the default, so the switch keeps Sidebar brands and Onboarding"):
+// the switch shows the two departures from it, each a toggle; pressing the one that's on comes back to Health
 const SWITCH_ORDER: SwitchItem[] = [
-  'health',
   'healthSide',
   // the portal as a new company finds it: the welcome, then Dr.AI's four first steps in his corner (shown once)
   { id: 'onboarding', name: 'Onboarding', to: '/' },
@@ -1266,7 +1267,7 @@ const HOME_LOOK_NAMES: Record<HomeLook, string> = {
   // and Studio. Were Classic and Quick overview
   qo2: 'Overview',
   health: 'Health',
-  healthSide: 'Health · Sidebar',
+  healthSide: 'Sidebar brands',
   // Glass archived (13 Nov, review: "take the Glass version off, put it in the archive"), its code kept
   brandTiles: 'Glass (archived)',
   // Keys archived (13 Nov, review: "delete the Keys variant, or put it in the archive of the ones we made before")
@@ -2442,21 +2443,22 @@ export function HomeSwitch({ current, onPick }: { current: HomeLook | 'empty' | 
     navigate('/');
   };
   return (
-    <div className="ui-switch ui-switch--home" role="radiogroup" aria-label="Home look">
+    <div className="ui-switch ui-switch--home" role="group" aria-label="Home look">
       <span className="ui-switch__label">HOME</span>
       {SWITCH_ORDER.map((v) =>
         typeof v === 'string' ? (
-          <button key={v} type="button" role="radio" aria-checked={on === v} className={cx(on === v && 'is-on')} onClick={() => pick(v)}>
+          <button key={v} type="button" aria-pressed={on === v} className={cx(on === v && 'is-on')} onClick={() => pick(on === v ? 'health' : v)}>
             {HOME_LOOK_NAMES[v]}
           </button>
         ) : (
           <button
             key={v.id}
             type="button"
-            role="radio"
-            aria-checked={on === v.id}
+            aria-pressed={on === v.id}
             className={cx(on === v.id && 'is-on')}
             onClick={() => {
+              // pressed again, Onboarding gives the full demo back on Health
+              if (v.id === 'onboarding' && on === 'onboarding') return pick('health');
               if (v.id === 'onboarding') {
                 if (!state.onboarding) actions.startOnboarding();
                 navigate('/');
