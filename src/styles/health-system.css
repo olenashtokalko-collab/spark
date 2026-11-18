@@ -806,3 +806,193 @@
   content: none !important;
   display: none !important;
 }
+
+/* ===================================================================================================================
+   Second consistency pass (18 Nov, review: "check that sections, type, titles, buttons, spacing and shadows are
+   consistent"), from measuring every Health screen again.
+   =================================================================================================================== */
+
+/* ---- greys left over: stage notes and profile terms as secondary text, stages still to come as disabled, the
+   message's meta as meta ---- */
+:root[data-theme][data-theme][data-ui] body :is(.stg__item:not(.is-todo) .stg__info, .hp-drawer dd) {
+  color: var(--hs-ink-2) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.stg__item.is-todo .stg__label, .stg__item.is-todo .stg__info) {
+  color: var(--hs-ink-4) !important;
+}
+:root[data-theme][data-theme][data-ui] body .msg-user__meta {
+  color: var(--hs-ink-3) !important;
+}
+
+/* ---- corners left over: drawers 32, menus as lists 16, rows 12; a request's and Documents' cards as Home's, 32 ---- */
+:root[data-theme][data-theme][data-ui] body .hp-drawer__panel {
+  border-radius: var(--hs-r-xl) !important;
+}
+:root[data-theme][data-theme][data-ui] body .popover.acct-pop {
+  border-radius: var(--hs-r-m) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.stg__item, .filter-bar__search, .input-wrap.filter-bar__search) {
+  border-radius: var(--hs-r-s) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(section.block, .side-card, .gfo.gfo--tile) {
+  border-radius: var(--hs-r-xl) !important;
+}
+
+/* ---- type left over ---- */
+/* titles: one tracking per size */
+:root[data-theme][data-theme][data-ui] body :is(.hc-switch__name, .rq-head__title, .req-head__title, .page-head__title) {
+  letter-spacing: -0.03em !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.db-rep__title, .hh-sec, .hp-drawer__title, .chats-hist__head h2, .chat-drawer__head h2) {
+  letter-spacing: -0.02em !important;
+}
+/* item titles: one style for a request, a chat, a card's figure title, wherever it shows */
+:root[data-theme][data-theme][data-ui] body :is(.rq-row3__title, .hh-fig__title, .hh-latest__title, .hitem__title) {
+  font: 500 15px/1.35 var(--hs-ext) !important;
+  letter-spacing: 0 !important;
+}
+/* table heads and profile terms as labels */
+:root[data-theme][data-theme][data-ui] body :is(.rq-cols > span, .rq-cols > div, .file-list__head > *, .hp-drawer dt) {
+  font: 500 11.5px/16px var(--hs-mono) !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  color: var(--hs-ink-3) !important;
+}
+/* body text: Dr.AI's tip at the body size; what's overdue in the same weight as the stage's due line */
+:root[data-theme][data-theme][data-ui] body .dt-say :is(.dt-say__a, .dt-say__b, .dt-say__ch) {
+  font-size: 14px !important;
+}
+:root[data-theme][data-theme][data-ui] body .req-decide__due {
+  font-weight: 500 !important;
+}
+
+/* ---- spacing: page tops, card padding and the gaps between cards ---- */
+/* every page's title the same distance from the top as Home's (56 px) */
+:root[data-theme][data-theme][data-ui] body :is(.rq-head, .page-head) {
+  padding-top: 20px !important;
+}
+/* cards hold their content 24 px in, 28 at the sides, as Home's */
+:root[data-theme][data-theme][data-ui] body :is(section.block, .side-card) {
+  padding: 24px 28px !important;
+}
+:root[data-theme][data-theme][data-ui] body .drop-card {
+  padding: 24px !important;
+}
+/* 16 px between cards, as on Home */
+:root[data-theme][data-theme][data-ui] body :is(.req-layout, .req-side, .file-grid, .fcard-grid) {
+  gap: 16px !important;
+}
+
+/* ---- shadows left over: the chat box's warm lift, cool as the rest ---- */
+:root[data-theme][data-theme][data-ui] body .composer.composer--box.composer--lg {
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.95), var(--hs-sh-card) !important;
+}
+:root[data-theme][data-theme][data-ui] body .page-head .page-head__title {
+  margin-top: 0 !important;
+}
+/* Company profile's tabs in the same glass pill as Requests' and Documents' (18 Nov, review: "they look different"):
+   a later drawer rule had taken the pill's fill and padding away, leaving the tabs loose */
+:root[data-theme][data-theme][data-ui] body .hp-tabs.hp-tabs {
+  display: inline-flex !important;
+  align-self: flex-start;
+  width: max-content !important;
+  height: auto !important;
+  gap: 0 !important;
+  padding: 4px !important;
+  border-radius: 999px !important;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.66) 60%, rgba(255, 255, 255, 0.76)) !important;
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 0 0 0.5px rgba(14, 17, 22, 0.08),
+    0 12px 28px -14px rgba(30, 30, 60, 0.28),
+    0 2px 6px rgba(30, 30, 60, 0.05) !important;
+}
+/* the view switch's icons centred in their round (18 Nov, review: "align the icon"): the icon-only tabs were flex
+   with no centring, the icon at the left edge */
+:root[data-theme][data-theme][data-ui] body .gtabs button.is-icon {
+  justify-content: center !important;
+  align-items: center !important;
+}
+/* the tab controls without a drop shadow (18 Nov, review: "I'd take the shadow off the tabs"): the glass keeps its
+   bright edges and a hairline only */
+:root[data-theme][data-theme][data-ui] body :is(.gtabs, .hp-tabs.hp-tabs, .hl-tabs.og-tabs) {
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 0 0 0.5px rgba(14, 17, 22, 0.08) !important;
+}
+
+/* ---- switching tabs (18 Nov, review: "a micro-animation when switching tabs") ----
+   Requests', Documents' and a request's tabs: the pressed pill slides to the tab you pick, with a slight overshoot,
+   and leans a little toward a tab under the pointer; the words settle as it arrives. Company profile's tabs (no
+   sliding marker there) press in where you click. */
+:root[data-theme][data-theme][data-ui] body :is(.gtabs, .hl-tabs.og-tabs) {
+  position: relative !important;
+  isolation: isolate;
+}
+:root[data-theme][data-theme][data-ui] body :is(.gtabs, .hl-tabs.og-tabs) > button {
+  position: relative;
+  z-index: 1;
+}
+:root[data-theme][data-theme][data-ui] body :is(.gtabs button.is-on, .hl-tabs.og-tabs > button.is-on) {
+  background: transparent !important;
+  box-shadow: none !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.gtabs .gtabs__bubble, .hl-tabs.og-tabs .og-tabs__bar) {
+  display: block !important;
+  position: absolute !important;
+  z-index: 0;
+  top: 4px !important;
+  bottom: auto !important;
+  left: 0 !important;
+  height: 32px !important;
+  opacity: 1 !important;
+  border-radius: 999px !important;
+  background: linear-gradient(180deg, rgba(14, 17, 22, 0.08), rgba(14, 17, 22, 0.035)) !important;
+  box-shadow: inset 0 1px 3px rgba(14, 17, 22, 0.16), inset 0 0 0 1px rgba(255, 255, 255, 0.65), 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+  filter: none !important;
+  transition:
+    transform 0.5s cubic-bezier(0.3, 1.25, 0.45, 1),
+    width 0.5s cubic-bezier(0.3, 1.25, 0.45, 1) !important;
+  pointer-events: none;
+}
+:root[data-theme][data-theme][data-ui] body .gtabs .gtabs__bubble.is-unset {
+  opacity: 0 !important;
+  transition: none !important;
+}
+/* the hovered tab's own light stays off: the leaning pill says it */
+:root[data-theme][data-theme][data-ui] body .gtabs .gtabs__trace {
+  display: none !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.gtabs, .hl-tabs.og-tabs) > button.is-on {
+  animation: hs-tab-settle 0.45s cubic-bezier(0.22, 1, 0.36, 1);
+}
+@keyframes hs-tab-settle {
+  from {
+    opacity: 0.55;
+    translate: 0 1px;
+  }
+}
+:root[data-theme][data-theme][data-ui] body .hp-tab.is-on {
+  animation: hs-tab-press 0.42s cubic-bezier(0.3, 1.25, 0.45, 1);
+}
+@keyframes hs-tab-press {
+  from {
+    scale: 0.9;
+    opacity: 0.6;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme][data-theme][data-ui] body :is(.gtabs .gtabs__bubble, .hl-tabs.og-tabs .og-tabs__bar) {
+    transition: none !important;
+  }
+  :root[data-theme][data-theme][data-ui] body :is(.gtabs > button.is-on, .hl-tabs.og-tabs > button.is-on, .hp-tab.is-on) {
+    animation: none;
+  }
+}
+:root[data-theme][data-theme][data-ui] body .hl-tabs.og-tabs .og-tabs__bar {
+  top: 5px !important;
+}
