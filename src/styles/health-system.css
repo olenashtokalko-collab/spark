@@ -1374,3 +1374,42 @@
 :root[data-theme][data-theme][data-ui] body .btn.btn--danger:not(.btn--icon):is(:hover, :focus-visible) {
   background: #a8380a !important;
 }
+
+/* Dr.AI's tip with several reminders (18 Nov, review: "if there are two, with a counter"): 1/2 and arrows on the top
+   row beside the close, the words starting under that row; mono figures, pale on the Ink ground */
+:root[data-theme][data-theme][data-ui] body .dt-say:has(.dt-say__pager) {
+  padding-top: 40px !important;
+}
+:root[data-theme][data-theme][data-ui] body .dt-say__pager {
+  position: absolute;
+  top: 12px;
+  left: 20px;
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font: 500 12px/1 var(--hs-mono);
+  letter-spacing: 0.06em;
+  font-variant-numeric: tabular-nums;
+  color: rgba(248, 246, 242, 0.6);
+}
+:root[data-theme][data-theme][data-ui] body .dt-say__pager > span {
+  min-width: 28px;
+  text-align: center;
+}
+:root[data-theme][data-theme][data-ui] body .dt-say__pager button {
+  display: grid;
+  place-items: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 0;
+  border-radius: 50%;
+  background: transparent;
+  color: rgba(248, 246, 242, 0.6);
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s;
+}
+:root[data-theme][data-theme][data-ui] body .dt-say__pager button:is(:hover, :focus-visible) {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}

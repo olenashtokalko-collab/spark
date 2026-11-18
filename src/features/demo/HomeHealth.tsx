@@ -370,7 +370,8 @@ export function HomeHealth({ balance, profile, sidebar = false }: { balance: Rea
             brands={brands}
             current={cur.id}
             onPick={pickBrand}
-            fixed={sidebar}
+            // the brand can be picked here in the Sidebar version too (18 Nov, review), as well as in the account menu
+            fixed={false}
             mode={mode}
             email={me.email}
           />

@@ -6,7 +6,7 @@
 // `?tips=fast` on the address runs the clock ten times faster, for review; window.__drTip() says one now.
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { navigate, useRoute } from '../../lib/router';
-import { X } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X } from 'lucide-react';
 import { Button, cx } from '../../components/ui/primitives';
 import { useMessages, type Msg } from './DrAiDock';
 import * as sfx from '../demo/welcome/sfx';
@@ -180,7 +180,9 @@ export function CornerTip({ paused, onTalk }: { paused: boolean; onTalk: (on: bo
   const all = useMessages().filter((m) => m.kind !== 'news');
   const due = all.filter((m) => m.kind !== 'reminder');
   const msgs = due.length ? due : all;
-  const [tip, setTip] = useState<{ m: Msg; skip: boolean } | null>(null);
+  // several reminders at once (18 Nov, review: "if there are two, show them with a counter"): the tip holds them all,
+  // the most pressing first, and shows one at a time with 1/2 and arrows
+  const [tip, setTip] = useState<{ m: Msg; skip: boolean; list: Msg[]; i: number } | null>(null);
   const [leaving, setLeaving] = useState(false);
   const [folded, setFolded] = useState(false);
   const look = useTipLook();
@@ -202,21 +204,31 @@ export function CornerTip({ paused, onTalk }: { paused: boolean; onTalk: (on: bo
     }, 320);
   }, []);
 
+  const go = useCallback((d: number) => {
+    setTip((t) => {
+      if (!t || t.list.length < 2) return t;
+      const i = (t.i + d + t.list.length) % t.list.length;
+      const m = t.list[i];
+      const book = readBook();
+      return { m, i, list: t.list, skip: (book.tips[m.key]?.n ?? 0) >= SKIP_AFTER };
+    });
+  }, []);
+
   const say = useCallback((force = false) => {
     const { msgs, paused, tip } = live.current;
     if (tip || (!force && paused)) return;
     const book = readBook();
     const open = msgs.filter((m) => !book.tips[m.key]?.skip);
     if (!open.length) return;
-    // the one said least often, the most pressing first among equals
-    const m = open.reduce((a, b) => ((book.tips[b.key]?.n ?? 0) < (book.tips[a.key]?.n ?? 0) ? b : a));
+    // the most pressing first (the list comes ordered: decisions due first); the others behind it, a step away
+    const m = open[0];
     const n = book.tips[m.key]?.n ?? 0;
     book.tips[m.key] = { n: n + 1 };
     book.at = Date.now();
     writeBook(book);
     saidHere.current = true;
     setFolded(false);
-    setTip({ m, skip: n >= SKIP_AFTER });
+    setTip({ m, skip: n >= SKIP_AFTER, list: open, i: 0 });
   }, []);
 
   // a new page: its own quiet start, and one tip on it at most
@@ -326,6 +338,19 @@ export function CornerTip({ paused, onTalk }: { paused: boolean; onTalk: (on: bo
       <button type="button" className="dt-say__x" onClick={close} aria-label="Close">
         <X size={13} strokeWidth={2} />
       </button>
+      {tip.list.length > 1 && (
+        <span className="dt-say__pager">
+          <button type="button" onClick={() => go(-1)} aria-label="Previous reminder">
+            <ChevronLeft size={14} strokeWidth={2} />
+          </button>
+          <span aria-live="polite">
+            {tip.i + 1}/{tip.list.length}
+          </span>
+          <button type="button" onClick={() => go(1)} aria-label="Next reminder">
+            <ChevronRight size={14} strokeWidth={2} />
+          </button>
+        </span>
+      )}
       <p className="dt-say__a" aria-label={a}>
         <Typed text={a} n={typed.n[0]} />
       </p>

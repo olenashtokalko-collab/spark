@@ -7,6 +7,7 @@ import { Dialog, Menu } from '../../components/ui/overlay';
 import { useToast } from '../../components/ui/toast';
 import { fmtRelative } from '../../lib/format';
 import type { ClientRole, Person } from '../../data/types';
+import { useRoleHere } from '../demo/HealthHead';
 
 export const ROLE_INFO: Record<ClientRole, { label: string; desc: string }> = {
   // "Admin", as the role tag beside the brand's name says it (18 Nov, the system)
@@ -58,7 +59,10 @@ function Team() {
   const [inviting, setInviting] = useState(false);
   const [removing, setRemoving] = useState<Person | null>(null);
   const clients = state.people.filter((p) => p.org === 'client');
-  const isOwner = me.org === 'client' && me.role === 'owner';
+  // only an admin invites, changes roles and removes people (18 Nov, review: "as a member, can I invite?"; Jean, 17 Nov:
+  // the admin manages the team), and your role is the one you hold in the brand open now, as Home's tag says
+  const roleHere = useRoleHere();
+  const isOwner = me.org === 'client' && me.role === 'owner' && roleHere === 'admin';
 
   return (
     <div className="team">
@@ -67,7 +71,9 @@ function Team() {
       <div className="rq-head">
         <div>
           <h1 className="rq-head__title">Team</h1>
-          <p className="rq-head__sub">Invite colleagues to this workspace. They see requests, proposals and documents.</p>
+          <p className="rq-head__sub">
+            {isOwner ? 'Invite colleagues to this workspace. They see requests, proposals and documents.' : 'Who’s in this workspace. Your admin invites people and sets their roles.'}
+          </p>
         </div>
         {isOwner && (
           <div className="rq-head__acts">
