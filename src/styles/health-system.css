@@ -1069,3 +1069,16 @@
 :root[data-theme][data-theme][data-ui] body :is(.file-card__thumb, .drop-card) {
   border-radius: var(--hs-r-xl) !important;
 }
+/* Documents' folders as Home's cards (18 Nov, review: "are these cards in the style of Home's?"): the same glass,
+   corners and lift already; now the same inset (24 / 28 / 26), the line under the title as Home's (14, meta grey)
+   and the mono count as Home's labels (secondary grey) */
+:root[data-theme][data-theme][data-ui] body .gfo.gfo--tile {
+  padding: 24px 28px 26px !important;
+}
+:root[data-theme][data-theme][data-ui] body .gfo.gfo--tile b + span {
+  font-size: 14px !important;
+  color: var(--hs-ink-3) !important;
+}
+:root[data-theme][data-theme][data-ui] body .gfo-count.gfo-count {
+  color: var(--hs-ink-2) !important;
+}
