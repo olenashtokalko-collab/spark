@@ -26,7 +26,7 @@ const SPECTRUM = ['#1e3bd6', '#4b3cf2', '#b93ad6', '#ff3d9a', '#ff5a3a', '#ff6a1
 type Line = { text: string; kind: 'meta' | 'hi' | 'sub' };
 /** Who is welcomed, and where from: the card's corners and its greeting. */
 export type WelcomeWho = { name: string; company: string; city: string };
-const DEMO_WHO: WelcomeWho = { name: 'Layla', company: 'Brand Co.', city: 'Abu Dhabi' };
+const DEMO_WHO: WelcomeWho = { name: 'Layla', company: 'Qindeel', city: 'Abu Dhabi' };
 const linesFor = (w: WelcomeWho, back = false): Line[] => [
   { text: 'spark@studios ~ portal', kind: 'meta' },
   { text: `${w.company} · ${w.city}`, kind: 'meta' },

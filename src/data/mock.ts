@@ -1,4 +1,4 @@
-// Seed data for the prototype. Brand Co. is a neutral placeholder client;
+// Seed data for the prototype. Qindeel ("lantern" in Arabic) is an invented client (17 Nov: a real-sounding name);
 // people, numbers and social posts are invented. "Today" is 9 Oct 2026.
 import type {
   Brand,
@@ -17,30 +17,30 @@ import type {
 export const TODAY = '2026-10-09T09:12:00';
 
 export const people: Person[] = [
-  { id: 'u-layla', name: 'Layla Haddad', email: 'layla.haddad@brandco.example', title: 'Head of Brand', org: 'client', role: 'owner', hue: 18, lastActive: TODAY },
-  { id: 'u-omar', name: 'Omar Saeed', email: 'omar.saeed@brandco.example', title: 'Marketing Manager', org: 'client', role: 'member', hue: 160, lastActive: '2026-10-08T17:40:00' },
-  { id: 'u-rania', name: 'Rania Aziz', email: 'rania.aziz@brandco.example', title: 'Finance Director', org: 'client', role: 'viewer', hue: 280, lastActive: '2026-10-02T11:05:00' },
+  { id: 'u-layla', name: 'Layla Haddad', email: 'layla.haddad@qindeel.example', title: 'Head of Brand', org: 'client', role: 'owner', hue: 18, lastActive: TODAY },
+  { id: 'u-omar', name: 'Omar Saeed', email: 'omar.saeed@qindeel.example', title: 'Marketing Manager', org: 'client', role: 'member', hue: 160, lastActive: '2026-10-08T17:40:00' },
+  { id: 'u-rania', name: 'Rania Aziz', email: 'rania.aziz@qindeel.example', title: 'Finance Director', org: 'client', role: 'viewer', hue: 280, lastActive: '2026-10-02T11:05:00' },
   { id: 's-dana', name: 'Dana Kareem', email: 'dana@sparkstudios.example', title: 'Account Lead', org: 'spark', hue: 220, lastActive: TODAY, focus: 'Your main contact. Scopes requests and sends proposals.' },
   { id: 's-youssef', name: 'Youssef Malik', email: 'youssef@sparkstudios.example', title: 'Brand Strategist', org: 'spark', hue: 45, lastActive: '2026-10-08T15:20:00', focus: 'Positioning, audience and KSA market entry.' },
   { id: 's-mira', name: 'Mira Chen', email: 'mira@sparkstudios.example', title: 'Social & Insights', org: 'spark', hue: 330, lastActive: '2026-10-07T10:00:00', focus: 'Weekly monitoring digest and research reports.' },
 ];
 
 export const invitations: Invitation[] = [
-  { id: 'inv-1', email: 'karim.nasser@brandco.example', role: 'member', invitedBy: 'u-layla', invitedAt: '2026-10-06T10:30:00', message: 'Joining for the Riyadh launch.' },
+  { id: 'inv-1', email: 'karim.nasser@qindeel.example', role: 'member', invitedBy: 'u-layla', invitedAt: '2026-10-06T10:30:00', message: 'Joining for the Riyadh launch.' },
 ];
 
 export const brand: Brand = {
-  id: 'b-brandco',
-  name: 'Brand Co.',
-  legalName: 'Brand Co. L.L.C.',
+  id: 'b-qindeel',
+  name: 'Qindeel',
+  legalName: 'Qindeel L.L.C.',
   tagline: 'Design-led everyday products',
-  website: 'brandco.example',
+  website: 'qindeel.example',
   category: 'Consumer brand · retail & online',
   founded: '2017, Dubai',
   hq: 'Al Quoz, Dubai',
   footprint: '14 stores in the UAE · online store · 60 partner retailers',
   // Shown under the company's name on Home: what the company is, then where it sells, a line each.
-  positioning: 'Brand Co. makes everyday products with a Gulf point of view.',
+  positioning: 'Qindeel makes everyday products with a Gulf point of view.',
   reach: 'Sold in 14 stores across the UAE and online.',
   audiences: [
     { name: 'Young professionals', detail: '25–38, buys for quality, discovers new products on Instagram and TikTok.' },
@@ -71,7 +71,7 @@ export const analyses: CompanyAnalysis[] = [
     reviewedBy: 's-youssef',
     title: 'Website analysis',
     headline: 'On brand, but slow on mobile',
-    summary: 'brandco.example looks calm and on brand, but it is slow on mobile and the Arabic version is incomplete.',
+    summary: 'qindeel.example looks calm and on brand, but it is slow on mobile and the Arabic version is incomplete.',
     score: { label: 'Mobile speed', value: '41/100' },
     findings: [
       { title: 'Calm and on brand', good: true, body: 'The look matches the stores: quiet layouts, real product photos, prices up front. Visitors who reach a product page stay 2 min 40 s.' },
@@ -109,7 +109,7 @@ export const analyses: CompanyAnalysis[] = [
     reviewedBy: 's-youssef',
     title: 'Brand analysis',
     headline: 'Clear in stores, lost online',
-    summary: 'People see Brand Co. as well-made and local. The “Gulf point of view” is clear in stores, less so online.',
+    summary: 'People see Qindeel as well-made and local. The “Gulf point of view” is clear in stores, less so online.',
     findings: [
       { title: 'What people say', good: true, body: 'In 1,200 reviews and posts, the words used most are “quality”, “gift” and “calm store”. Price is mentioned, rarely as a complaint.' },
       { title: 'Where it gets lost', issue: true, impact: 'High', body: 'Online, product photos on white look like any global chain. The regional story lives only in store design.', fix: 'Bring the stores’ materials and Gulf references into product photography and the site.', asks: ['Can we see examples of the new photography?', 'Do we need a new shoot for every product?', 'Which store details travel best online?', 'How would the site change?'] },
@@ -140,7 +140,7 @@ export const docs: Doc[] = [
     id: 'd-guidelines', name: 'Brand Guidelines v3.2.pdf', kind: 'pdf', folderId: 'f-guidelines', sizeKb: 18400, uploadedBy: 's-youssef', uploadedAt: '2026-08-28T16:00:00', version: 3, requestId: 'REQ-102',
     summary: 'The refreshed identity: logo usage, colour, type, photography and tone of voice.',
     preview: pages(
-      ['Brand Guidelines', 'Version 3.2 · August 2026', 'Prepared by Spark Studios for Brand Co.'],
+      ['Brand Guidelines', 'Version 3.2 · August 2026', 'Prepared by Spark Studios for Qindeel'],
       ['Our idea', 'Familiar, then unexpected: every product and every store visit should feel considered.', 'We lead with craft, and we speak Arabic and English with equal care.'],
       ['Tone of voice', 'Warm, never loud. Proud of origin, light on jargon. Bilingual by default.', 'We avoid superlatives ("the best in Dubai") and let details do the work.'],
       ['Colour', 'Sand #E9DCC6 · Ink #1E2430 · Olive #5E6B3A · Night #101418', 'Night is used for evening and Ramadan communication only.'],
@@ -149,19 +149,19 @@ export const docs: Doc[] = [
   {
     id: 'd-logo', name: 'Logo pack.zip', kind: 'archive', folderId: 'f-guidelines', sizeKb: 42100, uploadedBy: 's-youssef', uploadedAt: '2026-08-28T16:05:00',
     preview: { type: 'files', files: [
-      { name: 'brandco-logo-primary.svg', size: '24 KB' }, { name: 'brandco-logo-arabic.svg', size: '31 KB' },
-      { name: 'brandco-monogram.svg', size: '9 KB' }, { name: 'brandco-logo-primary@4x.png', size: '1.2 MB' },
+      { name: 'qindeel-logo-primary.svg', size: '24 KB' }, { name: 'qindeel-logo-arabic.svg', size: '31 KB' },
+      { name: 'qindeel-monogram.svg', size: '9 KB' }, { name: 'qindeel-logo-primary@4x.png', size: '1.2 MB' },
       { name: 'README.txt', size: '2 KB' },
     ] },
   },
   {
     id: 'd-ksa', name: 'KSA market entry strategy.pdf', kind: 'pdf', folderId: 'f-strategy', sizeKb: 6200, uploadedBy: 's-youssef', uploadedAt: '2026-09-02T10:00:00',
-    summary: 'Where Brand Co. wins in Riyadh, who it is for and how to open.',
+    summary: 'Where Qindeel wins in Riyadh, who it is for and how to open.',
     preview: pages(
       ['KSA market entry strategy', 'Spark Studios · September 2026'],
-      ['Opportunity', 'Riyadh premium retail spend grew an estimated 19% year on year. Premium stores cluster in Al Olaya, Hittin and King Abdullah Financial District.', 'Saudi shoppers value local relevance; Brand Co. should lead with craft, not with Dubai.'],
+      ['Opportunity', 'Riyadh premium retail spend grew an estimated 19% year on year. Premium stores cluster in Al Olaya, Hittin and King Abdullah Financial District.', 'Saudi shoppers value local relevance; Qindeel should lead with craft, not with Dubai.'],
       ['Who we open for', 'Riyadh young professionals (24–35), heavy Instagram and TikTok users, who discover brands through creators and queue for openings.', 'Secondary: families on weekend evenings, after 8 pm.'],
-      ['Risks', 'Name confusion with local businesses using "Brand Co.". Price sensitivity on extras such as delivery fees. Opening-week queues.'],
+      ['Risks', 'Name confusion with local businesses using "Qindeel". Price sensitivity on extras such as delivery fees. Opening-week queues.'],
     ),
   },
   {
@@ -171,7 +171,7 @@ export const docs: Doc[] = [
       ['Audience personas — GCC', 'Four personas, built from 22 interviews in Dubai and Riyadh.'],
       ['Noura, 29 · Riyadh', 'Product manager in KAFD. Shops in malls 2× a week, mostly after 7 pm. Cares about service and a signature product worth posting.', 'Will pay more for a "first in Riyadh" experience; dislikes surcharges she sees as unfair (delivery fee, extra shot).'],
       ['Faisal, 34 · Riyadh', 'Founder, short on time. Wants fast service and easy online ordering. Loyal once a store knows him.'],
-      ['Aisha, 31 · Dubai', 'Existing Brand Co. customer. Follows the brand, shares new launches, expects regional touches.'],
+      ['Aisha, 31 · Dubai', 'Existing Qindeel customer. Follows the brand, shares new launches, expects regional touches.'],
     ),
   },
   {
@@ -179,8 +179,8 @@ export const docs: Doc[] = [
     summary: 'How Competitors A, B and C position, price and communicate.',
     preview: pages(
       ['Competitive landscape · Q3 2026'],
-      ['Summary', 'Competitor B leads on volume and price. Competitor A owns "heritage" in the UAE. Nobody owns regional design with design-led stores; that is Brand Co.\'s space.'],
-      ['Pricing', 'Average basket: Brand Co. AED 240 · A AED 250 · C AED 220 · B AED 190. Delivery fee: Brand Co. AED 15, others AED 0–10.'],
+      ['Summary', 'Competitor B leads on volume and price. Competitor A owns "heritage" in the UAE. Nobody owns regional design with design-led stores; that is Qindeel\'s space.'],
+      ['Pricing', 'Average basket: Qindeel AED 240 · A AED 250 · C AED 220 · B AED 190. Delivery fee: Qindeel AED 15, others AED 0–10.'],
     ),
   },
   {
@@ -216,7 +216,7 @@ export const docs: Doc[] = [
     summary: 'Mobile speed 41/100: on brand, but slow on mobile. Three issues to fix, one working well.',
     preview: pages(
       ['Website report · October 2026', 'Spark Studios · Digital'],
-      ['In one line', 'The site looks like Brand Co., but product pages take 6.8 s on 4G; most visitors are on phones.'],
+      ['In one line', 'The site looks like Qindeel, but product pages take 6.8 s on 4G; most visitors are on phones.'],
     ),
   },
   {
@@ -232,7 +232,7 @@ export const docs: Doc[] = [
     summary: 'Awareness, perception and consistency across 14 stores and 6 channels.',
     preview: pages(
       ['Brand audit · September 2026', 'Spark Studios · Social & Insights'],
-      ['Headline', 'Brand Co. is known for quality and design, less for value. Regional design details are the most-mentioned reason to buy.'],
+      ['Headline', 'Qindeel is known for quality and design, less for value. Regional design details are the most-mentioned reason to buy.'],
       ['Consistency', '11 of 14 stores match the v3 identity. Al Barsha, JLT and Mirdif still use v2 in-store signage.'],
     ),
   },
@@ -384,8 +384,8 @@ const riyadhBase = {
   requestId: 'REQ-104',
   title: 'Riyadh launch campaign',
   objectives: [
-    'Make Brand Co. the most talked-about store opening in Riyadh in January 2027.',
-    'Position Brand Co. on regional design and craft, not on being "from Dubai".',
+    'Make Qindeel the most talked-about store opening in Riyadh in January 2027.',
+    'Position Qindeel on regional design and craft, not on being "from Dubai".',
     'Fill the Al Olaya flagship in its first four weeks (target: 900 visitors a day).',
   ],
   terms: [
@@ -416,7 +416,7 @@ export const proposals: Proposal[] = [
     id: 'P-104-2', version: 2, sentBy: 's-dana', sentAt: '2026-10-06T15:30:00', validUntil: '2026-10-14', startDate: '2026-11-09',
     summary: 'A 10-week programme from positioning to opening week. Films move to a second wave around Ramadan and are quoted separately, which brings this phase within the Q4 budget.',
     scope: [
-      { title: 'KSA positioning', detail: 'Adapt the Brand Co. platform for Riyadh, based on the KSA market entry strategy.', deliverables: ['Positioning and message house', 'Arabic naming and trademark-risk check', 'Pricing message for delivery'] },
+      { title: 'KSA positioning', detail: 'Adapt the Qindeel platform for Riyadh, based on the KSA market entry strategy.', deliverables: ['Positioning and message house', 'Arabic naming and trademark-risk check', 'Pricing message for delivery'] },
       { title: 'Campaign idea and key visual', detail: 'One campaign idea that works in-store, outdoor and on social.', deliverables: ['Campaign idea (2 routes → 1)', 'Key visual', 'OOH and digital toolkit'] },
       { title: 'Launch content', detail: 'Content for the opening month, made for Instagram and TikTok.', deliverables: ['12 social assets', 'Creator brief and shortlist (10 creators)', '3 short-form edits from event footage'] },
       { title: 'Launch event identity', detail: 'Identity and materials for the opening night on 15 January.', deliverables: ['Invitation', 'On-site signage', 'Merch (tote, notebook)'] },
@@ -480,14 +480,14 @@ export const proposals: Proposal[] = [
 export const reports: ResearchReport[] = [
   {
     id: 'r-audit', title: 'Brand audit · September 2026', kind: 'Brand audit', date: '2026-09-18', by: 's-mira', docId: 'd-audit',
-    summary: 'Brand Co. is known for quality and design, less for value. Regional design details are the most-mentioned reason to buy.',
+    summary: 'Qindeel is known for quality and design, less for value. Regional design details are the most-mentioned reason to buy.',
     findings: ['Awareness among UAE target shoppers: 41% (up from 33%)', '11 of 14 stores match the v3 identity', '"Too expensive" appears in 14% of reviews'],
     prompt: 'What are the main findings of the September brand audit?',
   },
   {
     id: 'r-competitive', title: 'Competitive landscape · Q3', kind: 'Competitive landscape', date: '2026-09-25', by: 's-mira', docId: 'd-competitive',
     summary: 'Nobody owns regional design with design-led stores. Competitor B leads on price, Competitor A on heritage.',
-    findings: ['Brand Co. is 5–10% above the market on core products', 'Only Brand Co. charges AED 15 for delivery', 'Competitor A is opening in Riyadh in March 2027'],
+    findings: ['Qindeel is 5–10% above the market on core products', 'Only Qindeel charges AED 15 for delivery', 'Competitor A is opening in Riyadh in March 2027'],
     prompt: 'How do we compare with Competitor A and Competitor B?',
   },
   {
@@ -535,14 +535,14 @@ export const conversations: Conversation[] = [
       {
         id: 'm2', role: 'assistant', at: '2026-10-07T11:02:20', state: 'done', durationMs: 6200,
         steps: ['Read the W40 social listening digest', 'Checked 188 mentions tagged "delivery fee"', 'Compared with competitor pricing'],
-        text: 'Mentions of the **delivery fee** rose from 61 to 188 (3.1×), 72% negative. Most come from Instagram comments on the signature collection post and from Google reviews of the Dubai Mall store.\n\nBrand Co. is the only brand in your competitive set charging AED 15; others charge AED 0–10.',
+        text: 'Mentions of the **delivery fee** rose from 61 to 188 (3.1×), 72% negative. Most come from Instagram comments on the signature collection post and from Google reviews of the Dubai Mall store.\n\nQindeel is the only brand in your competitive set charging AED 15; others charge AED 0–10.',
         findings: [
           { title: 'Complaints tripled in a week', body: '188 mentions vs 61 in W39, 72% negative.', tone: 'negative', sourceIds: ['s-w40'] },
           { title: 'You are the outlier on price', body: 'Competitors A and C charge AED 0–10 for delivery.', tone: 'attention', sourceIds: ['s-comp'] },
         ],
         sources: [
           { id: 's-w40', kind: 'workspace', title: 'Social listening digest — W40.pdf', docId: 'd-digest-w40', snippet: 'Delivery fee: 188 mentions, +208%, 72% negative.' },
-          { id: 's-comp', kind: 'workspace', title: 'Competitive landscape Q3.pdf', docId: 'd-competitive', snippet: 'Delivery fee: Brand Co. AED 15, others AED 0–10.' },
+          { id: 's-comp', kind: 'workspace', title: 'Competitive landscape Q3.pdf', docId: 'd-competitive', snippet: 'Delivery fee: Qindeel AED 15, others AED 0–10.' },
         ],
         suggestedRequest: { title: 'Response plan for delivery fee complaints', type: 'Social' },
       },
@@ -580,7 +580,7 @@ export const notifications: Notification[] = [
   { id: 'nt2', audience: 'client', at: '2026-10-07T18:00:00', title: 'Approval requested on packaging concepts', body: 'Spark shared round 1 for Ramadan 2027 · due 15 Oct', route: '/documents/f-ramadan?doc=d-pack-r1', kind: 'file', read: false },
   { id: 'nt3', audience: 'client', at: '2026-10-06T15:30:00', title: 'Proposal ready: Riyadh launch campaign', body: 'AED 186,000 · 10 weeks · decision by 14 Oct', route: '/requests/REQ-104/proposal', kind: 'proposal', read: false },
   { id: 'nt4', audience: 'client', at: '2026-10-06T08:30:00', title: 'Social listening digest · W40 shared', body: 'Mentions up 18%; delivery fee complaints rising', route: '/documents/f-research?doc=d-digest-w40', kind: 'file', read: true },
-  { id: 'nt5', audience: 'spark', at: '2026-10-07T11:20:00', title: 'New request from Brand Co.', body: 'REQ-105 · Response plan for delivery fee complaints', route: '/requests/REQ-105', kind: 'request', read: false },
+  { id: 'nt5', audience: 'spark', at: '2026-10-07T11:20:00', title: 'New request from Qindeel', body: 'REQ-105 · Response plan for delivery fee complaints', route: '/requests/REQ-105', kind: 'request', read: false },
   { id: 'nt6', audience: 'spark', at: '2026-10-07T09:20:00', title: 'Omar commented on the proposal', body: 'Riyadh launch campaign · Scope & deliverables', route: '/requests/REQ-104/proposal', kind: 'proposal', read: true },
 ];
 

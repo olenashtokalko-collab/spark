@@ -2,7 +2,7 @@
 // it came from is attached automatically (the focused answer and the question
 // before it) and shown back to the client once the request is sent.
 import { useEffect, useMemo, useState } from 'react';
-import { ArrowRight, BarChart3, Check, FileText, Lightbulb, Megaphone, MonitorSmartphone, Palette, Shapes, Send, type LucideIcon } from 'lucide-react';
+import { ArrowRight, BarChart3, Check, FileText, Lightbulb, Megaphone, MonitorSmartphone, Palette, Shapes, type LucideIcon } from 'lucide-react';
 import { Dialog, IconTile } from '../../components/ui/overlay';
 import { Button, Field, Input, Select, Textarea, cx } from '../../components/ui/primitives';
 import { useStore } from '../../state/store';
@@ -207,7 +207,7 @@ export function CreateRequestDialog({ open, onClose, prefill }: { open: boolean;
 
   if (done)
     return (
-      <Dialog open={open} onClose={onClose} size="md">
+      <Dialog open={open} onClose={onClose} size="md" className="dlg-spark">
         <RequestSent id={done.id} title={done.title} onClose={onClose} closeLabel={basis ? 'Back to chat' : 'Close'} />
       </Dialog>
     );
@@ -217,8 +217,8 @@ export function CreateRequestDialog({ open, onClose, prefill }: { open: boolean;
       open={open}
       onClose={onClose}
       size="md"
-      icon={Send}
-      title="New request"
+      className="dlg-spark"
+      title="New request."
       description={basis ? 'Describe what you need.' : 'Describe what you need. You’ll get questions or a proposal back.'}
       footer={
         <>

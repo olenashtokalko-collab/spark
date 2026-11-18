@@ -111,20 +111,20 @@ const scripts: Script[] = [
     text:
       'Here is a quick background check ahead of the Riyadh opening. Overall the brand is in good shape: strong reviews and positive early buzz. There is **one naming risk** worth checking with legal, and **one pricing issue** that could follow you to Riyadh.',
     findings: [
-      { title: 'Possible name confusion in Jeddah', body: 'A company called "Brand Co. Trading" is listed in Jeddah. Different category and city, but worth a trademark check before launch.', tone: 'attention', sourceIds: ['w-listing', 'ws-ksa'] },
+      { title: 'Possible name confusion in Jeddah', body: 'A company called "Qindeel Trading" is listed in Jeddah. Different category and city, but worth a trademark check before launch.', tone: 'attention', sourceIds: ['w-listing', 'ws-ksa'] },
       { title: 'Reviews are strong, value is the weak spot', body: 'Average 4.6★ across 2,140 reviews; "expensive" appears in 14% of them.', tone: 'neutral', sourceIds: ['w-reviews', 'ws-audit'] },
       { title: 'The delivery fee is a live complaint', body: 'Complaints tripled in W40. Riyadh personas read extra fees as unfair.', tone: 'negative', sourceIds: ['ws-w40', 'ws-pers'] },
       { title: 'Early Riyadh buzz is positive', body: 'Opening rumours were up 120% in W40, mostly excited.', tone: 'positive', sourceIds: ['ws-w40'] },
     ],
     sources: [
-      { id: 'ws-ksa', kind: 'workspace', title: 'KSA market entry strategy.pdf', docId: 'd-ksa', snippet: 'Risks: name confusion with local businesses using "Brand Co.".' },
+      { id: 'ws-ksa', kind: 'workspace', title: 'KSA market entry strategy.pdf', docId: 'd-ksa', snippet: 'Risks: name confusion with local businesses using "Qindeel".' },
       { id: 'ws-audit', kind: 'workspace', title: 'Brand audit — Sep 2026.pdf', docId: 'd-audit', snippet: '"Too expensive" appears in 14% of reviews.' },
       { id: 'ws-w40', kind: 'workspace', title: 'Social listening digest — W40.pdf', docId: 'd-digest-w40', snippet: 'Delivery fee +208%; Riyadh opening +120%.' },
       { id: 'ws-pers', kind: 'workspace', title: 'Audience personas — GCC.pdf', docId: 'd-personas', snippet: 'Dislikes surcharges she sees as unfair.' },
     ],
     webSources: [
-      { id: 'w-listing', kind: 'web', title: 'Business listing: Brand Co. Trading, Jeddah', domain: 'maps.google.com', snippet: 'General trading · Al Rawdah, Jeddah (sample)' },
-      { id: 'w-reviews', kind: 'web', title: 'Public reviews, 14 Brand Co. stores', domain: 'google.com/maps', snippet: '4.6 average across 2,140 reviews (sample)' },
+      { id: 'w-listing', kind: 'web', title: 'Business listing: Qindeel Trading, Jeddah', domain: 'maps.google.com', snippet: 'General trading · Al Rawdah, Jeddah (sample)' },
+      { id: 'w-reviews', kind: 'web', title: 'Public reviews, 14 Qindeel stores', domain: 'google.com/maps', snippet: '4.6 average across 2,140 reviews (sample)' },
     ],
     followUps: ['What would a trademark check involve?', 'How do we compare with Competitor A on price?'],
     suggestedRequest: { title: 'Trademark and naming check for Riyadh', type: 'Research' },
@@ -146,7 +146,7 @@ const scripts: Script[] = [
       { id: 'ws-req', kind: 'workspace', title: 'REQ-105 · Delivery fee response plan', route: '/requests/REQ-105', snippet: 'In review with Spark.' },
     ],
     webSources: [
-      { id: 'w-post', kind: 'web', title: '@dxb.style.diaries on Instagram', domain: 'instagram.com', snippet: '"The new signature collection at Brand Co. is the best thing I\'ve bought this month." (sample)' },
+      { id: 'w-post', kind: 'web', title: '@dxb.style.diaries on Instagram', domain: 'instagram.com', snippet: '"The new signature collection at Qindeel is the best thing I\'ve bought this month." (sample)' },
     ],
     followUps: ['What should we do about Dubai Mall wait times?', 'Which creators are talking about us?'],
     suggestedRequest: { title: 'Fix weekend wait-time perception at Dubai Mall', type: 'Social' },
@@ -166,7 +166,7 @@ const scripts: Script[] = [
     sources: [
       { id: 'ws-ksa', kind: 'workspace', title: 'KSA market entry strategy.pdf', docId: 'd-ksa', snippet: 'Saudi shoppers value local relevance; lead with craft.' },
       { id: 'ws-pers', kind: 'workspace', title: 'Audience personas — GCC.pdf', docId: 'd-personas', snippet: 'Noura, 29 · visits 4× a week, mostly after 7 pm.' },
-      { id: 'ws-comp', kind: 'workspace', title: 'Competitive landscape Q3.pdf', docId: 'd-competitive', snippet: 'Only Brand Co. charges AED 15 for delivery.' },
+      { id: 'ws-comp', kind: 'workspace', title: 'Competitive landscape Q3.pdf', docId: 'd-competitive', snippet: 'Only Qindeel charges AED 15 for delivery.' },
     ],
     webSources: [
       { id: 'w-openings', kind: 'web', title: 'Recent store openings in Al Olaya', domain: 'timeoutriyadh.com', snippet: 'Three premium stores opened in Al Olaya this year (sample)' },
@@ -209,7 +209,7 @@ const scripts: Script[] = [
     match: /audit|compare|competitor/i,
     steps: ['Read Brand audit — Sep 2026', 'Read Competitive landscape Q3'],
     text:
-      'You lead on **regional design and quality**, Competitor B on price and Competitor A on heritage. Brand Co. is 5–10% above the market on core products, and the only one charging AED 15 for delivery. Competitor A plans to open in Riyadh in March 2027, about two months after you.',
+      'You lead on **regional design and quality**, Competitor B on price and Competitor A on heritage. Qindeel is 5–10% above the market on core products, and the only one charging AED 15 for delivery. Competitor A plans to open in Riyadh in March 2027, about two months after you.',
     findings: [
       { title: 'Your space is regional design', body: 'No competitor combines it with design-led stores.', tone: 'positive', sourceIds: ['ws-comp'] },
       { title: 'Competitor A follows you to Riyadh', body: 'Planned opening March 2027.', tone: 'attention', sourceIds: ['ws-comp'] },

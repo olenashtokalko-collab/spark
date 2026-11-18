@@ -7678,7 +7678,7 @@ a.sc-card:hover {
 .qb--light .qb__namecol .qb__body {
   margin-top: 14px;
 }
-/* Grid tiles (13 Nov, review: "Brand Co. smaller"): the name and its key a size down */
+/* Grid tiles (13 Nov, review: "Qindeel smaller"): the name and its key a size down */
 .qb--light .qb__title {
   font-size: 54px;
 }
@@ -9441,7 +9441,7 @@ body:has(.bx--glassbook) .shell .rail :is(.rail__btn.is-active, .rail__me) {
 }
 
 /* ---- Quick overview · every card answers the pointer but the company's (13 Nov, review: "all the cards except
-   Brand Co. should hover as in the example; no links yet, the pages aren't ready"): the same Cobalt ring and a small
+   Qindeel should hover as in the example; no links yet, the pages aren't ready"): the same Cobalt ring and a small
    lift on all of them, the big company card still. ---- */
 .bx .qo-card:not(.qo-card--feature) {
   cursor: pointer;

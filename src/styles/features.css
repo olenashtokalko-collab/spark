@@ -22878,3 +22878,1095 @@ button.anp__report {
   grid-column: 1 / -1;
   justify-self: start;
 }
+
+/* Ask Dr.AI's start, the suggestions a tier below the box (17 Nov, design sync: "the main chat box as the main visual,
+   the suggestions downgraded to another layer", as ChatGPT): no longer rows as wide as the box, but small quiet pills
+   centred under it, a hairline rim and grey words, the label only (the hint on hover as the button's title); the box
+   alone carries weight. Not in the chat drawer, which keeps its own list */
+.screen .chats-start .chats-start__list {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  max-width: 560px;
+  margin: 22px auto 0;
+  padding: 0;
+  border: 0;
+  background: none;
+  box-shadow: none;
+}
+.screen .chats-start .chats-start__list li,
+.screen .chats-start .chats-start__list li + li {
+  margin: 0;
+  border: 0;
+}
+.screen .chats-start .chats-start__row {
+  display: inline-flex;
+  align-items: center;
+  width: auto;
+  height: 34px;
+  padding: 0 14px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.1);
+  font: 400 13px/1 'ABC Diatype Extended', sans-serif;
+  color: rgba(14, 17, 22, 0.6);
+  transition: color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+.screen .chats-start .chats-start__row:hover {
+  background: rgba(255, 255, 255, 0.6);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.18);
+  color: #0e1116;
+}
+.screen .chats-start .chats-start__row b {
+  font-weight: 500;
+  color: inherit;
+}
+.screen .chats-start .chats-start__row .chats-start__hint,
+.screen .chats-start .chats-start__go {
+  display: none;
+}
+/* the theme files style these rows with stronger selectors; the start's quiet pills win here */
+.screen .chats-start .chats-start__list {
+  display: flex !important;
+}
+.screen .chats-start .chats-start__row {
+  height: 34px !important;
+  padding: 0 14px !important;
+  background: transparent !important;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.1) !important;
+  color: rgba(14, 17, 22, 0.6) !important;
+}
+.screen .chats-start .chats-start__row:hover {
+  background: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.18) !important;
+  color: #0e1116 !important;
+}
+
+/* Sparky on the chat box (17 Nov, review): he moves on a layer behind the box (peeking over its top edge, passing
+   behind it along the top of his orbit) or in front of it (along the bottom); the frame lets him out of its bounds */
+.screen .chats-start .chats-start__frame {
+  position: relative;
+  overflow: visible;
+}
+.screen .chats-start .chats-start__frame > :not(.sparky-peek) {
+  position: relative;
+  z-index: 2;
+}
+.sparky-peek {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 0;
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+  will-change: transform;
+  filter: drop-shadow(0 6px 12px rgba(232, 80, 31, 0.28));
+}
+.sparky-peek img,
+.sparky-peek svg {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+/* the box's "+" as in the shared build: a soft white button with a light warm shadow, like the mic beside it, not a
+   grey ring */
+.screen .chats-start .composer .btn--secondary.btn--sm {
+  background: rgba(255, 255, 255, 0.35) !important;
+  box-shadow: 0 2px 6px rgba(120, 102, 80, 0.1) !important;
+}
+
+/* Dr.AI alone on Ask Dr.AI's start (17 Nov, review): his clip is free-standing, so the solo crop is enforced on its
+   right edge only (where his Sparky drifts), his head and hands free to spill over the other sides */
+.screen .chats-start .chats-start__mascot.msc-clip--solo {
+  clip-path: inset(-60px 0 -60px -60px);
+}
+
+/* Sparky bigger and livelier (17 Nov, review): 58 px, his pose on an inner layer; the sparks he leaves */
+.sparky-peek {
+  width: 58px;
+  height: 58px;
+}
+.sparky-peek__body {
+  display: block;
+  width: 100%;
+  height: 100%;
+  transform-origin: 50% 70%;
+}
+.sparky-spark {
+  position: absolute;
+  border-radius: 50%;
+  background: radial-gradient(circle, #fff 0%, rgba(255, 190, 140, 0.95) 35%, rgba(232, 80, 31, 0.5) 60%, rgba(124, 74, 224, 0) 100%);
+  pointer-events: none;
+  animation: sparky-spark 0.9s ease-out forwards;
+}
+@keyframes sparky-spark {
+  from {
+    opacity: 0.95;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(10px) scale(0.2);
+  }
+}
+
+/* Ask Dr.AI's start a little higher on the page (17 Nov, review): Dr.AI, the greeting and the box sit about 50 px
+   above the middle, the suggestions with room under them */
+.screen .chats-start .chats-start__col {
+  transform: translateY(-50px);
+}
+
+/* Ask Dr.AI's start: the shared build's coloured light across the top again (17 Nov, review: "as before, but soft and
+   quiet"): the same washes, Cobalt, violet, pink and Ember from left to right along the top edge, at about half their
+   old strength, and only on this page */
+body:has(.screen .chats-start) .app-bg {
+  background-image:
+    radial-gradient(26% 34% at 96% 2%, rgba(232, 80, 31, 0.22), rgba(232, 80, 31, 0) 70%),
+    radial-gradient(30% 40% at 84% 10%, rgba(233, 88, 142, 0.17), rgba(233, 88, 142, 0) 70%),
+    radial-gradient(30% 42% at 70% 4%, rgba(122, 69, 230, 0.16), rgba(122, 69, 230, 0) 70%),
+    radial-gradient(26% 36% at 56% 0%, rgba(30, 59, 214, 0.14), rgba(30, 59, 214, 0) 70%),
+    radial-gradient(40% 50% at 80% 8%, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0) 70%) !important;
+}
+
+/* Dr.AI alone: his Sparky's last sliver by the headdress cut too, at the top right only (17 Nov, review) */
+.screen .chats-start .chats-start__mascot.msc-clip--solo {
+  clip-path: polygon(-60px -60px, calc(100% - 6px) -60px, calc(100% - 6px) 48%, 100% 48%, 100% calc(100% + 60px), -60px calc(100% + 60px));
+}
+
+/* Chats at Ask Dr.AI's top right as the portal's secondary (17 Nov, review): Console's outline pill in the mono, a
+   12 % Ink rim, no fill; on hover the rim, the words and the icon turn Cobalt and it lifts 1 px */
+.assistant--chats .chats-top .btn {
+  height: 40px;
+  padding: 0 18px 0 16px;
+  gap: 8px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent !important;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.12) !important;
+  -webkit-backdrop-filter: none;
+  backdrop-filter: none;
+  font: 500 12px/16px 'ABC Diatype Mono', ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #0e1116;
+  transition: color 0.2s ease, box-shadow 0.2s ease, translate 0.25s cubic-bezier(0.22, 1, 0.36, 1), scale 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.assistant--chats .chats-top .btn svg {
+  width: 15px;
+  height: 15px;
+}
+.assistant--chats .chats-top .btn:is(:hover, :focus-visible, [aria-expanded='true']) {
+  box-shadow: inset 0 0 0 1px #1e3bd6 !important;
+  color: #1e3bd6;
+  translate: 0 -1px;
+}
+.assistant--chats .chats-top .btn:active {
+  translate: 0;
+  scale: 0.97;
+  transition-duration: 0.08s;
+}
+
+/* the chat box's buttons (17 Nov, review): "+" and the mic as soft white buttons (white, a bright top edge, a light
+   warm shadow, no ring); Send as the portal's primary, the smoked Ink pill, dimmed while the box is empty */
+html body .screen .chats-start .composer :is(button.btn--secondary.btn--sm, button.composer__mic) {
+  border: 0 !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 0 0 0.5px rgba(14, 17, 22, 0.05),
+    0 3px 8px -2px rgba(120, 102, 80, 0.18) !important;
+  color: #0e1116 !important;
+  transition: box-shadow 0.2s ease, translate 0.25s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+html body .screen .chats-start .composer :is(button.btn--secondary.btn--sm, button.composer__mic):hover {
+  translate: 0 -1px;
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 0 0 0.5px rgba(14, 17, 22, 0.07),
+    0 6px 12px -4px rgba(120, 102, 80, 0.24) !important;
+}
+html body .screen .chats-start .composer button.composer__go {
+  border: 0 !important;
+  background: linear-gradient(rgba(34, 38, 48, 0.86), rgba(14, 17, 22, 0.92)) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 8px 18px -8px rgba(14, 17, 22, 0.5) !important;
+  color: #f8f6f2 !important;
+  opacity: 1 !important;
+  transition: opacity 0.2s ease, translate 0.25s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.25s ease !important;
+}
+html body .screen .chats-start .composer button.composer__go:disabled {
+  opacity: 0.62 !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+html body .screen .chats-start .composer button.composer__go:not(:disabled):hover {
+  translate: 0 -1px;
+}
+/* the chat box's "+" past the portal's secondary rule (metal.css gives every secondary a ring, at this strength) */
+:root[data-theme][data-theme][data-ui] body .screen .chats-start .composer .btn.btn--secondary.btn--sm:not(.metal) {
+  background: rgba(255, 255, 255, 0.92) !important;
+  border-color: transparent !important;
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 0 0 0.5px rgba(14, 17, 22, 0.05),
+    0 3px 8px -2px rgba(120, 102, 80, 0.18) !important;
+}
+:root[data-theme][data-theme][data-ui] body .screen .chats-start .composer .btn.btn--secondary.btn--sm:not(.metal):hover {
+  box-shadow:
+    inset 0 1px 0 #fff,
+    0 0 0 0.5px rgba(14, 17, 22, 0.07),
+    0 6px 12px -4px rgba(120, 102, 80, 0.24) !important;
+}
+
+/* Dr.AI's answers, the buttons in the portal's system now (17 Nov, review: "the primary isn't Cobalt any more"):
+   the action (Request proposal) the smoked Ink pill of the Spark site, mono capitals, a light sweep on hover; Copy a
+   quiet round outline that turns Cobalt; the follow-up questions a tier lower, plain pills with a hairline rim */
+:root[data-theme][data-theme][data-ui] body .assistant .msg-actions .btn.btn--primary {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  height: 40px;
+  padding: 0 18px 0 16px;
+  gap: 8px;
+  border: 0 !important;
+  border-radius: 999px;
+  background: linear-gradient(rgba(34, 38, 48, 0.86), rgba(14, 17, 22, 0.92)) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 12px 26px -12px rgba(14, 17, 22, 0.5) !important;
+  color: #f8f6f2 !important;
+  font: 500 12px/16px 'ABC Diatype Mono', ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: translate 0.6s cubic-bezier(0.25, 0.9, 0.3, 1), scale 0.6s cubic-bezier(0.25, 0.9, 0.3, 1);
+}
+:root[data-theme][data-theme][data-ui] body .assistant .msg-actions .btn.btn--primary .metal__glass {
+  display: none;
+}
+:root[data-theme][data-theme][data-ui] body .assistant .msg-actions .btn.btn--primary .metal__label {
+  color: inherit;
+  text-shadow: none;
+}
+:root[data-theme][data-theme][data-ui] body .assistant .msg-actions .btn.btn--primary::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.22) 48%, rgba(255, 255, 255, 0.04) 56%, transparent 70%);
+  translate: -110%;
+  transition: translate 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+:root[data-theme][data-theme][data-ui] body .assistant .msg-actions .btn.btn--primary:is(:hover, :focus-visible) {
+  translate: 0 -1px;
+}
+:root[data-theme][data-theme][data-ui] body .assistant .msg-actions .btn.btn--primary:is(:hover, :focus-visible)::after {
+  translate: 110%;
+}
+:root[data-theme][data-theme][data-ui] body .assistant .msg-actions .btn.btn--primary:active {
+  translate: 0;
+  scale: 0.98;
+}
+:root[data-theme][data-theme][data-ui] body .assistant .msg-actions .btn.btn--ghost.btn--icon {
+  width: 40px;
+  height: 40px;
+  border: 0 !important;
+  border-radius: 50%;
+  background: transparent !important;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.12) !important;
+  color: #0e1116;
+  transition: color 0.2s, box-shadow 0.2s, translate 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+:root[data-theme][data-theme][data-ui] body .assistant .msg-actions .btn.btn--ghost.btn--icon:hover {
+  box-shadow: inset 0 0 0 1px #1e3bd6 !important;
+  color: #1e3bd6;
+  translate: 0 -1px;
+}
+:root[data-theme][data-theme][data-ui] body .assistant .followups .followup {
+  height: 34px;
+  padding: 0 14px 0 12px;
+  border: 0 !important;
+  border-radius: 999px;
+  background: transparent !important;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.1) !important;
+  font: 400 13px/1 'ABC Diatype Extended', sans-serif;
+  color: rgba(14, 17, 22, 0.65);
+  transition: color 0.2s, box-shadow 0.2s, background 0.2s;
+}
+:root[data-theme][data-theme][data-ui] body .assistant .followups .followup svg {
+  color: rgba(14, 17, 22, 0.4);
+}
+:root[data-theme][data-theme][data-ui] body .assistant .followups .followup:hover {
+  background: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.18) !important;
+  color: #0e1116;
+}
+
+/* the chat box under a conversation as on the start (17 Nov, review): the same soft "+" and mic, Send the primary */
+:root[data-theme][data-theme][data-ui] body .assistant .composer .btn.btn--secondary.btn--sm:not(.metal),
+:root[data-theme][data-theme][data-ui] body .assistant .composer button.composer__mic {
+  border: 0 !important;
+  border-color: transparent !important;
+  background: rgba(255, 255, 255, 0.92) !important;
+  box-shadow: inset 0 1px 0 #fff, 0 0 0 0.5px rgba(14, 17, 22, 0.05), 0 3px 8px -2px rgba(120, 102, 80, 0.18) !important;
+  color: #0e1116 !important;
+}
+:root[data-theme][data-theme][data-ui] body .assistant .composer button.composer__go {
+  border: 0 !important;
+  background: linear-gradient(rgba(34, 38, 48, 0.86), rgba(14, 17, 22, 0.92)) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 8px 18px -8px rgba(14, 17, 22, 0.5) !important;
+  color: #f8f6f2 !important;
+  opacity: 1 !important;
+}
+:root[data-theme][data-theme][data-ui] body .assistant .composer button.composer__go:disabled {
+  opacity: 0.62 !important;
+}
+
+/* the ways to start, lighter (17 Nov, review): one line of words under the box, no frames; a small mono "Try" first;
+   each start its icon and its name in grey, the icon in the brand's spectrum on hover with a glass pill behind;
+   they arrive one after another, rising a little */
+.screen .chats-start .chats-start__list {
+  max-width: 760px;
+  gap: 2px !important;
+  align-items: center;
+  margin-top: 18px;
+}
+.screen .chats-start .chats-start__try {
+  margin-right: 6px;
+  font: 500 10.5px/1 'ABC Diatype Mono', ui-monospace, monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(14, 17, 22, 0.38);
+}
+.screen .chats-start .chats-start__row {
+  gap: 6px;
+  height: 30px !important;
+  padding: 0 11px !important;
+  box-shadow: none !important;
+  background: transparent !important;
+  font-size: 12.5px !important;
+  color: rgba(14, 17, 22, 0.55) !important;
+  animation: chats-try-in 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.screen .chats-start .chats-start__list li:nth-child(2) .chats-start__row { animation-delay: 0.35s; }
+.screen .chats-start .chats-start__list li:nth-child(3) .chats-start__row { animation-delay: 0.42s; }
+.screen .chats-start .chats-start__list li:nth-child(4) .chats-start__row { animation-delay: 0.49s; }
+.screen .chats-start .chats-start__list li:nth-child(5) .chats-start__row { animation-delay: 0.56s; }
+@keyframes chats-try-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+}
+.screen .chats-start .chats-start__ico {
+  flex: none;
+  color: rgba(14, 17, 22, 0.35);
+  transition: color 0.2s, transform 0.3s cubic-bezier(0.22, 1, 0.36, 1);
+}
+.screen .chats-start .chats-start__row:hover {
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.75), rgba(255, 255, 255, 0.4)) !important;
+  box-shadow: inset 0 1px 0 #fff, 0 0 0 0.5px rgba(14, 17, 22, 0.06), 0 6px 14px -8px rgba(30, 30, 60, 0.25) !important;
+  color: #0e1116 !important;
+}
+.screen .chats-start .chats-start__row:hover .chats-start__ico {
+  color: #7c4ae0;
+  transform: rotate(-8deg) scale(1.12);
+}
+@media (prefers-reduced-motion: reduce) {
+  .screen .chats-start .chats-start__row {
+    animation: none;
+  }
+}
+/* the line on one row: as wide as its words, centred under the box even where it runs past the box's width */
+.screen .chats-start .chats-start__list {
+  flex-wrap: nowrap !important;
+  width: max-content;
+  max-width: calc(100vw - 340px);
+  margin-left: 50%;
+  translate: -50% 0;
+}
+
+/* Chats and its history, as Health's (17 Nov, review: "not consistent with Health"): Chats is the same secondary as
+   Company profile (an outline that turns Cobalt, never a dark fill, open or not); the history is the same drawer as
+   Company profile (white, a soft corner light, a white rim, a light cool lift, 28 px corners), its title as that
+   drawer's, "New" the same secondary */
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-top .btn.btn--secondary:not(.metal) {
+  background: transparent !important;
+  border-color: transparent !important;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.12) !important;
+  color: #0e1116 !important;
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-top .btn.btn--secondary:not(.metal):is(:hover, :focus-visible, [aria-expanded='true']) {
+  background: transparent !important;
+  box-shadow: inset 0 0 0 1px #1e3bd6 !important;
+  color: #1e3bd6 !important;
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist {
+  border-radius: 28px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  background:
+    radial-gradient(320px 320px at calc(100% + 80px) -80px, rgba(232, 80, 31, 0.16), rgba(122, 60, 240, 0.09) 56%, rgba(122, 60, 240, 0) 100%),
+    linear-gradient(160deg, #fff, rgba(255, 255, 255, 0.96)) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  backdrop-filter: blur(24px) saturate(1.4);
+  box-shadow: 0 1px 2px rgba(14, 17, 22, 0.04), 0 24px 56px -28px rgba(30, 30, 60, 0.22) !important;
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist__head {
+  align-items: center;
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist__head h2 {
+  font: 700 28px/1.1 'ABC Diatype Extended', sans-serif;
+  letter-spacing: -0.03em;
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist__new {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 14px 0 12px;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.12);
+  font: 500 12px/16px 'ABC Diatype Mono', ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: #0e1116;
+  text-decoration: none;
+  transition: color 0.2s, box-shadow 0.2s, translate 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist__new:hover {
+  box-shadow: inset 0 0 0 1px #1e3bd6;
+  color: #1e3bd6;
+  translate: 0 -1px;
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist .history__label {
+  font: 500 10.5px/1 'ABC Diatype Mono', ui-monospace, monospace;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(14, 17, 22, 0.45);
+}
+
+/* the ways to start as the reference (17 Nov, review): soft pills filled a shade darker than the page, no rim, the
+   words 15 px in Ink, an outline icon before them in the indicators' spectrum; on hover the pill deepens a touch and
+   the icon gives a small wiggle and hop */
+.screen .chats-start .chats-start__defs {
+  position: absolute;
+  width: 0;
+  height: 0;
+  overflow: hidden;
+}
+.screen .chats-start .chats-start__list {
+  gap: 12px !important;
+  margin-top: 22px;
+}
+.screen .chats-start .chats-start__row {
+  gap: 9px;
+  height: 42px !important;
+  padding: 0 20px 0 16px !important;
+  border-radius: 999px;
+  background: rgba(14, 17, 22, 0.035) !important;
+  box-shadow: none !important;
+  font: 400 15px/1 'ABC Diatype Extended', sans-serif !important;
+  letter-spacing: -0.005em;
+  color: #0e1116 !important;
+  transition: background 0.2s ease;
+}
+.screen .chats-start .chats-start__row b {
+  font-weight: 400;
+}
+.screen .chats-start .chats-start__row:hover {
+  background: rgba(14, 17, 22, 0.06) !important;
+  box-shadow: none !important;
+}
+.screen .chats-start .chats-start__ico {
+  stroke: url(#spark-spectrum);
+  color: #7c4ae0;
+  transform: none;
+}
+.screen .chats-start .chats-start__row:hover .chats-start__ico {
+  color: #7c4ae0;
+  transform: none;
+  animation: chats-ico-wiggle 0.7s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+@keyframes chats-ico-wiggle {
+  0% {
+    transform: none;
+  }
+  25% {
+    transform: translateY(-3px) rotate(-12deg) scale(1.08);
+  }
+  50% {
+    transform: translateY(-1px) rotate(9deg) scale(1.08);
+  }
+  75% {
+    transform: rotate(-4deg);
+  }
+  100% {
+    transform: none;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .screen .chats-start .chats-start__row:hover .chats-start__ico {
+    animation: none;
+  }
+}
+
+/* Chats' icon follows its words (17 Nov, review, a bug): the portal's secondary hover painted it white */
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-top .btn.btn--secondary:not(.metal) svg,
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-top .btn.btn--secondary:not(.metal):hover:not(:disabled) svg {
+  color: currentColor !important;
+  stroke: currentColor !important;
+}
+
+/* the ways to start, smaller and fewer (17 Nov, review: "four in a row is a lot, the words look too big, a colour per
+   icon"): three pills, 13.5 px words on 36 px pills; each icon one of the brand's colours, Cobalt, violet, Ember */
+.screen .chats-start .chats-start__list {
+  gap: 8px !important;
+}
+.screen .chats-start .chats-start__row {
+  gap: 7px;
+  height: 36px !important;
+  padding: 0 15px 0 12px !important;
+  font-size: 13.5px !important;
+}
+.screen .chats-start .chats-start__ico {
+  width: 16px;
+  height: 16px;
+  stroke: currentColor;
+}
+.screen .chats-start .chats-start__list li:nth-child(2) .chats-start__ico { color: #1e3bd6; }
+.screen .chats-start .chats-start__list li:nth-child(3) .chats-start__ico { color: #7c4ae0; }
+.screen .chats-start .chats-start__list li:nth-child(4) .chats-start__ico { color: #e8501f; }
+.screen .chats-start .chats-start__list li:nth-child(2) .chats-start__row:hover .chats-start__ico { color: #1e3bd6; }
+.screen .chats-start .chats-start__list li:nth-child(3) .chats-start__row:hover .chats-start__ico { color: #7c4ae0; }
+.screen .chats-start .chats-start__list li:nth-child(4) .chats-start__row:hover .chats-start__ico { color: #e8501f; }
+
+/* "New" in Chat history as a ghost button (17 Nov, review): no rim, the mono words and the plus; on hover a faint
+   fill and the words in Cobalt */
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist__new {
+  height: 34px;
+  padding: 0 10px;
+  box-shadow: none;
+  background: transparent;
+  color: #0e1116;
+  transition: color 0.2s, background 0.2s;
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist__new:hover {
+  box-shadow: none;
+  background: rgba(14, 17, 22, 0.05);
+  color: #1e3bd6;
+  translate: none;
+}
+
+/* Chat history, its type in order (17 Nov, review: "the hierarchy doesn't read"): the panel's title 22 px bold; the
+   group labels small mono, with room above; each chat a row, its title 14.5 px Ink at 500, who started it under it
+   12.5 px grey; the row tinted under the pointer. "New" a neutral ghost: grey words, Ink with a faint fill on hover */
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist__head h2 {
+  font: 700 22px/1.2 'ABC Diatype Extended', sans-serif;
+  letter-spacing: -0.02em;
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist .history__group + .history__group {
+  margin-top: 14px;
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist .history__label {
+  margin-bottom: 4px;
+  font-size: 10px;
+  color: rgba(14, 17, 22, 0.42);
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist .hitem__link {
+  display: grid;
+  gap: 3px;
+  margin: 0 -10px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  transition: background 0.15s;
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist .hitem__link:hover {
+  background: rgba(14, 17, 22, 0.045);
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist .hitem__title {
+  font: 500 14.5px/1.3 'ABC Diatype Extended', sans-serif;
+  color: #0e1116;
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist .hitem__meta {
+  font: 400 12.5px/1.2 'ABC Diatype Extended', sans-serif;
+  color: rgba(14, 17, 22, 0.5);
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist__new {
+  color: rgba(14, 17, 22, 0.6);
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist__new:hover {
+  background: rgba(14, 17, 22, 0.05);
+  color: #0e1116;
+}
+
+.screen .chats-start .composer textarea {
+  font-size: 16px;
+}
+.screen .chats-start .chats-start__row {
+  font-size: 13px !important;
+  color: rgba(14, 17, 22, 0.72) !important;
+}
+.screen .chats-start .chats-start__row:hover {
+  color: #0e1116 !important;
+}
+
+/* the ways to start close under the box (17 Nov, review) */
+.screen .chats-start .chats-start__list {
+  margin-top: 10px !important;
+}
+/* the column's own gap (40 px) left the starts far below the box: pulled up to sit 16 px under it */
+.screen .chats-start .chats-start__list {
+  margin-top: -24px !important;
+}
+
+/* Dr.AI's window and tips in the new button system (17 Nov): the step's action (Show me, Finish) and a tip's action
+   the smoked Ink primary in the mono; Ask me the outline secondary that turns Cobalt; no Cobalt fills */
+:root[data-theme][data-theme][data-ui] body :is(.dk--ob .dk-btn--primary, .dt-say .btn.btn--primary) {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  height: 34px;
+  padding: 0 14px;
+  border: 0 !important;
+  border-radius: 999px;
+  background: linear-gradient(rgba(34, 38, 48, 0.86), rgba(14, 17, 22, 0.92)) !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 10px 22px -12px rgba(14, 17, 22, 0.5) !important;
+  color: #f8f6f2 !important;
+  font: 500 11.5px/16px 'ABC Diatype Mono', ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: translate 0.4s cubic-bezier(0.25, 0.9, 0.3, 1), scale 0.4s cubic-bezier(0.25, 0.9, 0.3, 1);
+}
+:root[data-theme][data-theme][data-ui] body :is(.dk--ob .dk-btn--primary, .dt-say .btn.btn--primary) :is(.metal__glass) {
+  display: none;
+}
+:root[data-theme][data-theme][data-ui] body :is(.dk--ob .dk-btn--primary, .dt-say .btn.btn--primary) :is(.metal__label, span, svg) {
+  color: inherit !important;
+  text-shadow: none !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.dk--ob .dk-btn--primary, .dt-say .btn.btn--primary):hover {
+  translate: 0 -1px;
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-btn--ask {
+  height: 34px;
+  padding: 0 14px;
+  border: 0 !important;
+  border-radius: 999px;
+  background: transparent !important;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.12) !important;
+  color: #0e1116 !important;
+  font: 500 11.5px/16px 'ABC Diatype Mono', ui-monospace, monospace;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  transition: color 0.2s, box-shadow 0.2s, translate 0.25s cubic-bezier(0.22, 1, 0.36, 1);
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-btn--ask :is(.metal__glass) {
+  display: none;
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-btn--ask :is(.metal__label, span) {
+  color: inherit !important;
+  text-shadow: none !important;
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-btn--ask:hover {
+  box-shadow: inset 0 0 0 1px #1e3bd6 !important;
+  color: #1e3bd6 !important;
+  translate: 0 -1px;
+}
+
+/* Dr.AI's Getting started window in the Ink of his tips on Health (17 Nov, review: "the dark one we had on Health"):
+   near-black with Cobalt light in the top-left corner and Ember in the bottom-right, a hairline rim and an inner top
+   light, the corner nearest him tucked in; his words Sand, the words still to come faint, the step line on a pale
+   track; Show me turns Sand (the light primary on dark), Ask me a pale outline that turns Cobalt-light on hover */
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-card {
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 26px 26px 8px 26px !important;
+  background:
+    radial-gradient(200px 130px at 0% 0%, rgba(30, 59, 214, 0.5), transparent 70%),
+    radial-gradient(170px 120px at 100% 100%, rgba(232, 80, 31, 0.45), transparent 72%),
+    #0e1116 !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 26px 50px -22px rgba(14, 17, 22, 0.6) !important;
+  padding: 16px 18px 18px !important;
+  color: #f8f6f2;
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-card::before {
+  display: none !important;
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-card::after {
+  opacity: 0.35;
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-card__head b {
+  color: #f8f6f2 !important;
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-card__n {
+  color: rgba(248, 246, 242, 0.5) !important;
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-fold {
+  color: rgba(248, 246, 242, 0.55) !important;
+  background: transparent !important;
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-fold:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  color: #fff !important;
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .og-stepper i {
+  background: rgba(255, 255, 255, 0.14) !important;
+}
+/* a step done or put off fills on the line here too (9 Nov rule: a skipped step shows as passed); the track's colour
+   above had covered them (18 Nov, review). One line across the four, each segment its own stretch of it */
+:root[data-theme][data-theme][data-ui] body .dk--ob .og-stepper i.is-done,
+:root[data-theme][data-theme][data-ui] body .dk--ob .og-stepper i.is-skipped {
+  background: linear-gradient(90deg, #8a9bff, #b28cff 50%, #ff8a4a) !important;
+  background-size: calc(var(--of) * 100% + (var(--of) - 1) * 6px) 100% !important;
+  background-position: calc(var(--i) / (var(--of) - 1) * 100%) 0 !important;
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .og-stepper i::after {
+  background-image: linear-gradient(90deg, #8a9bff, #b28cff 50%, #ff8a4a) !important;
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-msg {
+  color: #f8f6f2 !important;
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-ghost {
+  color: rgba(248, 246, 242, 0.3) !important;
+}
+/* the highlighted words in the lighter spectrum, as the lit deadline in the Ink tip */
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-hl {
+  background-image: linear-gradient(100deg, #8a9bff, #b28cff 35%, #ff7ad0 65%, #ff8a4a) !important;
+  -webkit-background-clip: text !important;
+  background-clip: text !important;
+  color: transparent !important;
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-hl .dk-ghost {
+  color: rgba(248, 246, 242, 0.3) !important;
+  -webkit-text-fill-color: rgba(248, 246, 242, 0.3);
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-skip {
+  color: rgba(248, 246, 242, 0.55) !important;
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-skip:hover {
+  color: #fff !important;
+}
+/* the buttons on the dark: Show me the light pill, Ask me a pale outline */
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-card .dk-btn.dk-btn--primary {
+  background: linear-gradient(180deg, #ffffff, #ece9e3) !important;
+  box-shadow: inset 0 1px 0 #fff, inset 0 0 0 1px rgba(255, 255, 255, 0.6), 0 10px 22px -12px rgba(0, 0, 0, 0.6) !important;
+  color: #0e1116 !important;
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-card .dk-btn.dk-btn--ask {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.22) !important;
+  color: #f8f6f2 !important;
+}
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-card .dk-btn.dk-btn--ask:hover {
+  box-shadow: inset 0 0 0 1px #8a9bff !important;
+  color: #aebaff !important;
+}
+/* Show me's sweep and press, as the light primary */
+:root[data-theme][data-theme][data-ui] body .dk--ob .dk-card .dk-btn.dk-btn--primary:hover {
+  background: #fff !important;
+  translate: 0 -1px;
+}
+
+/* while Sparki guides a step, the Sparky peeking by the message box steps aside: one Sparki on the page */
+body:has(.og-sparki.is-on) .sparky-peek {
+  display: none !important;
+}
+
+/* one pill for Dr.AI's suggestions (18 Nov, review: "align the pills: I like the chat's, with a more see-through
+   fill"): the chat's follow-ups and the ways to start under the box share it, a hairline rim on a light glass, the
+   words in ink; the ways to start keep their coloured icons, the follow-ups their arrow */
+:root[data-theme][data-theme][data-ui] body .assistant .followups .followup,
+:root[data-theme][data-theme][data-ui] body .screen .chats-start .chats-start__row {
+  height: 32px !important;
+  padding: 0 14px 0 11px !important;
+  gap: 6px;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.32) !important;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.08) !important;
+  font: 400 13px/1 'ABC Diatype Extended', sans-serif !important;
+  letter-spacing: -0.005em;
+  color: rgba(14, 17, 22, 0.72) !important;
+  transition: background 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
+}
+:root[data-theme][data-theme][data-ui] body .assistant .followups .followup:hover,
+:root[data-theme][data-theme][data-ui] body .screen .chats-start .chats-start__row:hover {
+  background: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.14) !important;
+  color: #0e1116 !important;
+}
+:root[data-theme][data-theme][data-ui] body .assistant .followups .followup svg {
+  width: 14px;
+  height: 14px;
+  color: rgba(14, 17, 22, 0.4);
+}
+:root[data-theme][data-theme][data-ui] body .assistant .followups {
+  gap: 8px;
+}
+/* the pills' size in step with the button and the text round them (18 Nov, review: "too big now"); the start's
+   coloured icons the same 14 px as the follow-ups' arrow */
+:root[data-theme][data-theme][data-ui] body .screen .chats-start .chats-start__ico {
+  width: 14px;
+  height: 14px;
+}
+/* a small lift on hover (18 Nov, review): the pill rises a pixel with a soft shadow, the arrow nudges on, the
+   coloured icon gives its little wiggle; pressing sets it back down */
+:root[data-theme][data-theme][data-ui] body .assistant .followups .followup,
+:root[data-theme][data-theme][data-ui] body .screen .chats-start .chats-start__row {
+  transition: background 0.2s ease, box-shadow 0.25s ease, color 0.2s ease, translate 0.3s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+:root[data-theme][data-theme][data-ui] body .assistant .followups .followup:hover,
+:root[data-theme][data-theme][data-ui] body .screen .chats-start .chats-start__row:hover {
+  translate: 0 -1px;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.14), 0 6px 14px -8px rgba(30, 30, 60, 0.28) !important;
+}
+:root[data-theme][data-theme][data-ui] body .assistant .followups .followup:active,
+:root[data-theme][data-theme][data-ui] body .screen .chats-start .chats-start__row:active {
+  translate: 0 0;
+  transition-duration: 0.08s !important;
+}
+:root[data-theme][data-theme][data-ui] body .assistant .followups .followup svg {
+  transition: translate 0.42s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s ease;
+}
+/* the arrow as Home's cards' (18 Nov, review): faint grey at rest, on hover it darkens to Ink and steps 2 px right */
+:root[data-theme][data-theme][data-ui] body .assistant .followups .followup:is(:hover, :focus-visible) svg {
+  translate: 2px 0;
+  color: #0e1116;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme][data-theme][data-ui] body .assistant .followups .followup:hover,
+  :root[data-theme][data-theme][data-ui] body .screen .chats-start .chats-start__row:hover,
+  :root[data-theme][data-theme][data-ui] body .assistant .followups .followup:hover svg {
+    translate: none;
+  }
+}
+/* the words get room for their descenders: line-height 1 with the span's overflow cut the "g" (18 Nov, review) */
+:root[data-theme][data-theme][data-ui] body .screen .chats-start .chats-start__row,
+:root[data-theme][data-theme][data-ui] body .assistant .followups .followup {
+  line-height: 18px !important;
+}
+:root[data-theme][data-theme][data-ui] body .screen .chats-start .chats-start__row > span {
+  line-height: 18px;
+  padding-block: 1px;
+}
+
+/* the history's rows lit once (18 Nov, review: two fills on hover, the row's white glass and the link's grey, offset):
+   one grey fill on the whole row, its "…" included; the open chat a touch deeper */
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist .hitem {
+  margin: 0 -10px;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
+  transition: background 0.15s ease;
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist .hitem:not(.is-active):hover {
+  background: rgba(14, 17, 22, 0.045);
+  box-shadow: none;
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist .hitem.is-active {
+  background: rgba(14, 17, 22, 0.07);
+  box-shadow: none;
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist .hitem__link,
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist .hitem__link:hover {
+  margin: 0;
+  background: transparent;
+}
+/* room for the rows' fill to reach 10 px past the words, without a sideways scroll */
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist .history__list {
+  margin-inline: -10px;
+  padding-inline: 10px;
+  overflow-x: hidden;
+}
+
+/* drawers as the modals (18 Nov, review: "fix the corners and the title; align Ask Dr.AI's drawer too"): 32 px
+   corners, the title 700 22 in both drawers (review: "22 for both"); Ask Dr.AI's drawer the same glass as New request, its corner light, white rim, blur
+   and lift, its round buttons the modals' close (40 px glass, a hairline, white on hover) */
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist {
+  border-radius: 32px !important;
+}
+:root[data-theme][data-theme][data-ui] body .assistant--chats .chats-hist__head h2,
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__head h2 {
+  font: 700 22px/26px 'ABC Diatype Extended', sans-serif !important;
+  letter-spacing: -0.02em !important;
+}
+:root[data-theme][data-theme][data-ui] body .chat-drawer {
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+  border-radius: 32px !important;
+  background:
+    radial-gradient(320px 320px at calc(100% + 40px) -40px, rgba(232, 80, 31, 0.24), rgba(122, 60, 240, 0.14) 56%, rgba(122, 60, 240, 0) 100%),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.84)) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  backdrop-filter: blur(24px) saturate(1.4);
+  box-shadow: 0 40px 80px -32px rgba(30, 30, 60, 0.32), 0 1px 2px rgba(14, 17, 22, 0.04) !important;
+}
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__head {
+  padding: 24px 20px 12px 28px;
+  gap: 8px;
+}
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__btn.chat-drawer__btn.chat-drawer__btn.chat-drawer__btn {
+  width: 40px;
+  height: 40px;
+  border: 0;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.64);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.08);
+  color: #0e1116;
+  transition: background 0.2s, rotate 0.4s cubic-bezier(0.2, 0.9, 0.1, 1);
+}
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__btn.chat-drawer__btn.chat-drawer__btn.chat-drawer__btn:hover {
+  background: #fff;
+}
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__btn.chat-drawer__btn.chat-drawer__btn.chat-drawer__btn[aria-label='Close']:hover {
+  rotate: 90deg;
+}
+:root[data-theme][data-theme][data-ui] body .chat-drawer__scrim {
+  background: rgba(14, 17, 22, 0.18);
+  -webkit-backdrop-filter: blur(8px) saturate(1.1);
+  backdrop-filter: blur(8px) saturate(1.1);
+}
+
+/* Ask Dr.AI drawer's ways to start as the Ask Dr.AI page's pills (18 Nov, review): a wrapping row of 32 px pills, a
+   hairline rim on a see-through fill, the words 13 px Ink, each start's icon in its colour (Cobalt, violet, Ember);
+   on hover the pill lifts a pixel and turns milkier, the icon wiggles */
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__list {
+  display: flex !important;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px !important;
+  margin: 8px 0 0 !important;
+  padding: 0 !important;
+}
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__list > li {
+  border: 0 !important;
+}
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__list .chats-start__row {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 6px !important;
+  width: auto !important;
+  height: 32px !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 0 14px 0 11px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.32) !important;
+  -webkit-backdrop-filter: blur(8px);
+  backdrop-filter: blur(8px);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.08) !important;
+  font: 400 13px/18px 'ABC Diatype Extended', sans-serif !important;
+  color: rgba(14, 17, 22, 0.72) !important;
+  transition: background 0.2s ease, box-shadow 0.25s ease, color 0.2s ease, translate 0.3s cubic-bezier(0.22, 1, 0.36, 1) !important;
+}
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__list .chats-start__row:is(:hover, :focus-visible) {
+  translate: 0 -1px;
+  background: rgba(255, 255, 255, 0.6) !important;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.14), 0 6px 14px -8px rgba(30, 30, 60, 0.28) !important;
+  color: #0e1116 !important;
+}
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__list .chats-start__row:active {
+  translate: 0 0;
+}
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__list .chats-start__row > span {
+  display: block !important;
+  font: inherit !important;
+  color: inherit !important;
+  white-space: nowrap !important;
+}
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__list .chats-start__row > svg {
+  display: block !important;
+  flex: none;
+  width: 14px !important;
+  height: 14px !important;
+  opacity: 1 !important;
+  transform: none !important;
+}
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__list li:nth-child(4n + 1) .chats-start__ico { color: #1e3bd6 !important; }
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__list li:nth-child(4n + 2) .chats-start__ico { color: #7c4ae0 !important; }
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__list li:nth-child(4n + 3) .chats-start__ico { color: #e8501f !important; }
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__list li:nth-child(4n + 4) .chats-start__ico { color: #1e3bd6 !important; }
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__list .chats-start__row:hover .chats-start__ico {
+  animation: chats-ico-wiggle 0.7s cubic-bezier(0.3, 1.4, 0.5, 1);
+}
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__list .chats-start__go {
+  color: rgba(14, 17, 22, 0.4) !important;
+  transition: translate 0.42s cubic-bezier(0.22, 1, 0.36, 1), color 0.3s ease !important;
+}
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__list .chats-start__row:hover .chats-start__go {
+  translate: 2px 0;
+  color: #0e1116 !important;
+}
+@media (prefers-reduced-motion: reduce) {
+  :root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__list .chats-start__row:hover {
+    translate: none;
+  }
+  :root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__list .chats-start__row:hover .chats-start__ico {
+    animation: none;
+  }
+}
+
+/* the round glass buttons clearer (18 Nov, review: "more see-through glass, the background showing through; lighter
+   on hover"): a thin wash of white over a blur of what's behind, a hairline and a bright top edge; under the pointer
+   the glass turns milkier. The drawers' buttons and the modals' close alike */
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__btn.chat-drawer__btn.chat-drawer__btn.chat-drawer__btn,
+:root[data-theme][data-theme][data-ui] body .dlg-spark .dialog__head > .btn--icon,
+:root[data-theme][data-theme][data-ui] body .hh-topup [class*='_close_'],
+:root[data-theme][data-theme][data-ui] body [class*='_card_'] > [class*='_close_'] {
+  background: rgba(255, 255, 255, 0.22) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(1.5);
+  backdrop-filter: blur(12px) saturate(1.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.45), 0 0 0 0.5px rgba(14, 17, 22, 0.06) !important;
+  transition: background 0.25s ease, box-shadow 0.25s ease, rotate 0.4s cubic-bezier(0.2, 0.9, 0.1, 1) !important;
+}
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__btn.chat-drawer__btn.chat-drawer__btn.chat-drawer__btn:hover,
+:root[data-theme][data-theme][data-ui] body .dlg-spark .dialog__head > .btn--icon:hover,
+:root[data-theme][data-theme][data-ui] body .hh-topup [class*='_close_']:hover,
+:root[data-theme][data-theme][data-ui] body [class*='_card_'] > [class*='_close_']:hover {
+  background: rgba(255, 255, 255, 0.7) !important;
+  box-shadow: inset 0 1px 0 #fff, inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 4px 12px -6px rgba(30, 30, 60, 0.25) !important;
+}
+
+/* the expand button has its own small move (18 Nov, review: "the cross has one, the arrows don't"): on hover its
+   arrows push out to the corners, the icon growing a little on the same curve as the cross's turn */
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__btn[aria-label='Open in Chats'] svg {
+  transition: scale 0.4s cubic-bezier(0.2, 0.9, 0.1, 1);
+}
+:root[data-theme][data-theme][data-ui] body .chat-drawer .chat-drawer__btn[aria-label='Open in Chats']:hover svg {
+  scale: 1.18;
+}
+
+/* every modal's close the same round glass button (18 Nov, review: "add buttons like these to the modals"): 40 px,
+   see-through, a hairline and a bright top edge, milkier and turning on hover */
+:root[data-theme][data-theme][data-ui] body .dialog .dialog__head > .btn--icon {
+  width: 40px !important;
+  height: 40px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 20px !important;
+  background: rgba(255, 255, 255, 0.22) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(1.5);
+  backdrop-filter: blur(12px) saturate(1.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.45), 0 0 0 0.5px rgba(14, 17, 22, 0.06) !important;
+  color: #0e1116 !important;
+  transition: background 0.25s ease, box-shadow 0.25s ease, rotate 0.4s cubic-bezier(0.2, 0.9, 0.1, 1) !important;
+}
+:root[data-theme][data-theme][data-ui] body .dialog .dialog__head > .btn--icon:hover {
+  background: rgba(255, 255, 255, 0.7) !important;
+  box-shadow: inset 0 1px 0 #fff, inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 4px 12px -6px rgba(30, 30, 60, 0.25) !important;
+  rotate: 90deg;
+}

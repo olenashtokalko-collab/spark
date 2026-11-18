@@ -154,7 +154,7 @@ function AuthForm({ bare, tabs, initial = 'signin', remember, welcome, lean, chi
           <Input id="itd-su-email" type="email" icon={icon(Mail)} {...ph('Work email', 'name@company.com')} value={email} onChange={(e) => setEmail(e.target.value)} />
         </F>
         <F bare={bare} label="Company" id="itd-co">
-          <Input id="itd-co" icon={icon(Building2)} {...ph('Company', 'Brand Co.')} />
+          <Input id="itd-co" icon={icon(Building2)} {...ph('Company', 'Qindeel')} />
         </F>
         <F bare={bare} label="Password" id="itd-su-pw" hint="At least 8 characters.">
           <PasswordInput id="itd-su-pw" bare={bare} />

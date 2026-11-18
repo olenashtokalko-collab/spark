@@ -1,0 +1,459 @@
+<title>Spark Health Consistency Audit</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@112,400;112,500;112,600;112,700;125,700&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: one reading column of findings, ranked by how much each one changes the portal; token tables as swatch rows */
+:root {
+  --bg: #f6f5f2;
+  --surface: #ffffff;
+  --ink: #0e1116;
+  --ink-2: #4c5058;
+  --ink-3: #868a92;
+  --line: rgba(14, 17, 22, 0.1);
+  --cobalt: #1e3bd6;
+  --violet: #7c4ae0;
+  --ember: #c2410c;
+  --good: #13804f;
+  --p1: #c2410c;
+  --p2: #1e3bd6;
+  --p3: #6b6f78;
+  --chip: rgba(14, 17, 22, 0.05);
+  --f-display: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --f-body: 'Archivo', 'Helvetica Neue', Arial, sans-serif;
+  --f-mono: 'IBM Plex Mono', ui-monospace, Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f1115; --surface: #171a20; --ink: #f1efea; --ink-2: #b6b9c0; --ink-3: #7d818a; --line: rgba(255, 255, 255, 0.1);
+    --cobalt: #8a9bff; --violet: #b28cff; --ember: #ff8a4a; --good: #4cc48a; --p1: #ff8a4a; --p2: #8a9bff; --p3: #9a9ea6; --chip: rgba(255, 255, 255, 0.07);
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f1115; --surface: #171a20; --ink: #f1efea; --ink-2: #b6b9c0; --ink-3: #7d818a; --line: rgba(255, 255, 255, 0.1);
+  --cobalt: #8a9bff; --violet: #b28cff; --ember: #ff8a4a; --good: #4cc48a; --p1: #ff8a4a; --p2: #8a9bff; --p3: #9a9ea6; --chip: rgba(255, 255, 255, 0.07);
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+body {
+  background: var(--bg);
+  color: var(--ink);
+  font: 400 15px/1.6 var(--f-body);
+  font-variation-settings: 'wdth' 112;
+}
+.wrap {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding-block: 56px 96px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px));
+  padding-right: max(16px, env(safe-area-inset-right, 0px));
+  display: grid;
+  gap: 56px;
+}
+.eyebrow, .mono, th, .tag {
+  font-family: var(--f-mono);
+  font-size: 11.5px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+.eyebrow { color: var(--ink-3); }
+h1 {
+  margin: 10px 0 14px;
+  font: 700 clamp(30px, 5vw, 46px)/1.05 var(--f-display);
+  font-variation-settings: 'wdth' 125;
+  letter-spacing: -0.03em;
+  text-wrap: balance;
+}
+h2 {
+  margin: 0 0 6px;
+  font: 700 24px/1.2 var(--f-display);
+  font-variation-settings: 'wdth' 118;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+h3 { margin: 0; font: 600 17px/1.35 var(--f-display); text-wrap: balance; }
+p { margin: 0; max-width: 68ch; color: var(--ink-2); }
+.lead { font-size: 17px; color: var(--ink-2); max-width: 64ch; }
+section { display: grid; gap: 20px; min-width: 0; }
+.head p { margin-top: 4px; }
+
+/* the numbers at the top: what the portal uses today */
+.stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 1px; background: var(--line); border: 1px solid var(--line); border-radius: 16px; overflow: hidden; }
+.stat { background: var(--surface); padding: 18px 20px; display: grid; gap: 2px; }
+.stat b { font: 700 32px/1.1 var(--f-display); font-variation-settings: 'wdth' 125; font-variant-numeric: tabular-nums; }
+.stat span { font-size: 13px; color: var(--ink-2); line-height: 1.35; }
+.stat i { font-style: normal; font-family: var(--f-mono); font-size: 11.5px; color: var(--ink-3); }
+
+/* findings */
+.findings { display: grid; gap: 12px; }
+.f { background: var(--surface); border: 1px solid var(--line); border-radius: 16px; padding: 20px 22px; display: grid; gap: 12px; min-width: 0; }
+.f__top { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px 14px; }
+.tag { display: inline-flex; align-items: center; gap: 6px; padding: 3px 9px; border-radius: 999px; font-size: 10.5px; box-shadow: inset 0 0 0 1px currentColor; }
+.tag.p1 { color: var(--p1); }
+.tag.p2 { color: var(--p2); }
+.tag.p3 { color: var(--p3); }
+.f__body { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 14px 28px; }
+.f__body > div { display: grid; gap: 6px; align-content: start; min-width: 0; }
+.f__body .mono { font-size: 10.5px; color: var(--ink-3); }
+.f ul { margin: 0; padding-left: 18px; color: var(--ink-2); display: grid; gap: 4px; font-size: 14px; }
+.f .rec { color: var(--ink); font-size: 14.5px; }
+code { font-family: var(--f-mono); font-size: 12.5px; background: var(--chip); padding: 1px 5px; border-radius: 5px; }
+
+/* token tables */
+.tbl { overflow-x: auto; border: 1px solid var(--line); border-radius: 16px; background: var(--surface); }
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th { text-align: left; font-size: 10.5px; color: var(--ink-3); font-weight: 500; padding: 12px 16px; border-bottom: 1px solid var(--line); white-space: nowrap; }
+td { padding: 10px 16px; border-bottom: 1px solid var(--line); vertical-align: middle; color: var(--ink-2); }
+tr:last-child td { border-bottom: 0; }
+td.n { font-variant-numeric: tabular-nums; text-align: right; color: var(--ink-3); font-family: var(--f-mono); font-size: 12.5px; }
+td.v { font-family: var(--f-mono); font-size: 12.5px; color: var(--ink); white-space: nowrap; }
+.sw { display: inline-block; width: 22px; height: 22px; border-radius: 6px; vertical-align: middle; box-shadow: inset 0 0 0 1px rgba(128, 128, 128, 0.25); }
+.keep { color: var(--good); font-weight: 600; }
+.merge { color: var(--ink-3); }
+.rad { display: inline-block; width: 34px; height: 22px; background: var(--chip); box-shadow: inset 0 0 0 1.5px var(--ink-3); vertical-align: middle; }
+
+/* decisions and next steps */
+.steps { display: grid; gap: 10px; counter-reset: s; padding: 0; margin: 0; list-style: none; }
+.steps li { counter-increment: s; display: grid; grid-template-columns: 34px minmax(0, 1fr); gap: 12px; align-items: start; }
+.steps li::before { content: counter(s); font: 700 15px/30px var(--f-display); text-align: center; width: 30px; height: 30px; border-radius: 50%; background: var(--chip); color: var(--ink); }
+.steps b { color: var(--ink); font-weight: 600; }
+.steps p { font-size: 14.5px; }
+.note { font-size: 13px; color: var(--ink-3); }
+
+@media (max-width: 720px) {
+  .f__body { grid-template-columns: 1fr; }
+  .wrap { gap: 44px; padding-block: 36px 72px; }
+}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Spark client portal · Health · 18 Nov 2026</span>
+    <h1>Consistency audit before the Storybook</h1>
+    <p class="lead">What the approved Health version actually uses today: colours, type, corners, shadows and controls, measured from the running portal. Each finding names the drift and the one value to keep, so the Storybook starts from a single set of tokens and components.</p>
+  </header>
+
+  <section>
+    <div class="head">
+      <h2>What the portal uses today</h2>
+      <p>Computed styles of every visible element on ten Health states: Home, the account menu, Requests, Documents, New request, Top up, Company profile, Ask Dr.AI, a chat and its history. Archived Home versions and demo pages are left out.</p>
+    </div>
+    <div class="stats">
+      <div class="stat"><b>25</b><span>text colours</span><i>14 of them greys</i></div>
+      <div class="stat"><b>68</b><span>text styles</span><i>8 mono caps labels</i></div>
+      <div class="stat"><b>21</b><span>corner radii</span><i>2 px to 32 px</i></div>
+      <div class="stat"><b>30</b><span>shadows</span><i>warm and cool mixed</i></div>
+      <div class="stat"><b>64</b><span>control looks</span><i>buttons, fields, tags</i></div>
+      <div class="stat"><b>72k</b><span>lines of CSS</span><i>~680 !important</i></div>
+    </div>
+    <p class="note">Most of the drift comes from layering: Health restyles older components by overriding them (often with <code>!important</code> on <code>:root[data-theme][data-ui] body …</code>), so each screen we tuned on review kept its own values.</p>
+  </section>
+
+  <section>
+    <div class="head">
+      <h2>Findings</h2>
+      <p>Ranked by what a client would notice. P1 shows the same thing two ways on screen; P2 is drift in the type and colour scale; P3 is under the surface.</p>
+      <p class="note">Status, 18 Nov: P1, P2 and P3 are applied on localhost in one layer, <code>src/styles/health-system.css</code>, with Top up rebuilt on <code>Dialog</code>. Added on review: an xs button size (32 px) and a white primary on dark surfaces.</p>
+    </div>
+    <div class="findings">
+
+      <article class="f">
+        <div class="f__top"><span class="tag p1">P1</span><h3>Primary button: three looks</h3></div>
+        <div class="f__body">
+          <div>
+            <span class="mono">Today</span>
+            <ul>
+              <li>Smoked dark pill, mono caps: Send request (48 px, 12 px type), Request proposal (36 px, 13 px), Top up (47 px, 14 px)</li>
+              <li>Solid Cobalt pill, sentence case 13 px: New request on Requests</li>
+              <li>Send in the chat box: a 36 px dark circle</li>
+            </ul>
+          </div>
+          <div>
+            <span class="mono">Keep</span>
+            <p class="rec">One smoked dark pill in mono caps, two sizes: 36 px with 13 px type, 48 px with 14 px type (the size New request and Top up now use). New request on Requests moves to it; Cobalt stays an accent, not a button fill.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="f">
+        <div class="f__top"><span class="tag p1">P1</span><h3>Secondary button: six variants</h3></div>
+        <div class="f__body">
+          <div>
+            <span class="mono">Today</span>
+            <ul>
+              <li>Company profile: 44 px, mono 12, rim 12 %</li>
+              <li>Chats: 36 px, mono 13, rim 12 %</li>
+              <li>Cancel in New request: 48 px, mono 12, rim 16 %</li>
+              <li>Cancel in Top up: 47 px, mono 14, rim 12 %</li>
+              <li>Copy answer: 36 px, sentence case 13</li>
+              <li>New in chat history: 34 px, mono 12, no rim</li>
+            </ul>
+          </div>
+          <div>
+            <span class="mono">Keep</span>
+            <p class="rec">One outline pill matching the primary's two sizes and type, a 12 % Ink rim that turns Cobalt on hover. A text-only ghost (no rim) for low-weight actions such as New in the history.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="f">
+        <div class="f__top"><span class="tag p1">P1</span><h3>Request status shown two ways</h3></div>
+        <div class="f__body">
+          <div>
+            <span class="mono">Today</span>
+            <ul>
+              <li>Home, Latest update: mono caps 11 px, Ink, a ringed dot</li>
+              <li>Requests list: sentence case 13 px, a filled dot in its own colours (lilac <code>#a58cf2</code>, coral <code>#f07d52</code>, green <code>#4cb782</code>, grey <code>#b7b3bf</code>)</li>
+            </ul>
+          </div>
+          <div>
+            <span class="mono">Keep</span>
+            <p class="rec">One status component for a request wherever it appears, with one dot palette taken from the brand: Cobalt, violet, Ember, the green of “On track” and a neutral grey. Home's health verdicts (Fix first, On track, Watch) are a different thing and keep their outline pill.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="f">
+        <div class="f__top"><span class="tag p1">P1</span><h3>Close and round icon buttons</h3></div>
+        <div class="f__body">
+          <div>
+            <span class="mono">Today</span>
+            <ul>
+              <li>Modals and the Ask Dr.AI drawer: 40 px see-through glass, turns on hover</li>
+              <li>Company profile drawer: 36 px grey fill, 60 % Ink icon</li>
+              <li>Chat box + and mic: 36 px raised white with a warm shadow</li>
+              <li>Chat history “…”: 26 px, 6 px corners</li>
+            </ul>
+          </div>
+          <div>
+            <span class="mono">Keep</span>
+            <p class="rec">One round glass icon button, 40 px on surfaces (close, expand) and 36 px inside the chat box. The Company profile close moves to it; the “…” becomes its 28 px size.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="f">
+        <div class="f__top"><span class="tag p2">P2</span><h3>Fourteen text greys</h3></div>
+        <div class="f__body">
+          <div>
+            <span class="mono">Today</span>
+            <p>Ink at 40, 42, 45, 48, 50, 55, 60, 62, 64, 72 and 82 %, plus <code>#4e535e</code>, <code>#8a8e97</code>, <code>#505154</code> and the sidebar's <code>#6c6d6e</code>. Neighbours are 2 to 3 % apart, so nobody can tell them apart, but each was picked by hand.</p>
+          </div>
+          <div>
+            <span class="mono">Keep</span>
+            <p class="rec">Four: Ink, Ink 72 % (secondary text), Ink 50 % (meta, captions), Ink 40 % (placeholders, disabled). See the colour table below.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="f">
+        <div class="f__top"><span class="tag p2">P2</span><h3>Eight mono caps labels</h3></div>
+        <div class="f__body">
+          <div>
+            <span class="mono">Today</span>
+            <p>10 px at 0.10 and 0.14 em, 11 px at 0.08 and 0.10 em, 11.5 px at 0.12 em, 12 px at 0.10 em, 13 px and 14 px at 0.10 em. Card labels (BRAND HEALTH), statuses, the role tag, history groups, message meta and buttons each have their own.</p>
+          </div>
+          <div>
+            <span class="mono">Keep</span>
+            <p class="rec">Three: label 11.5 px / 0.12 em (card and group labels, statuses), tag 10 px / 0.10 em (role tags), button 13 or 14 px / 0.10 em with the button sizes.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="f">
+        <div class="f__top"><span class="tag p2">P2</span><h3>Titles and body sizes</h3></div>
+        <div class="f__body">
+          <div>
+            <span class="mono">Today</span>
+            <ul>
+              <li>Page titles: Home's brand 32 px, Requests and Documents 22 px, Ask Dr.AI's greeting 38 px</li>
+              <li>Overlay titles: modals 28 px, chat history and Ask Dr.AI drawers 22 px, Company profile drawer 28 px</li>
+              <li>Body text at 12, 12.5, 13, 14, 14.5, 15 and 16 px</li>
+            </ul>
+          </div>
+          <div>
+            <span class="mono">Keep</span>
+            <p class="rec">Page title 32 (the Ask Dr.AI greeting stays 38 as the one display moment), section and drawer title 22, modal title 28. Body at 12, 13, 14 and 15 px; 12.5, 14.5 and 16 fold into their neighbours.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="f">
+        <div class="f__top"><span class="tag p2">P2</span><h3>Twenty-one corner radii</h3></div>
+        <div class="f__body">
+          <div>
+            <span class="mono">Today</span>
+            <p>Cards 28, Requests list 16, drawers and modals 32, chat box 24 (its frame 23), sidebar items 17, menu items 10, history rows 12, tabs 6 and 8, search 8 against form fields 16, amount tiles 20, the user's chat bubble 22, plus 2, 3 and 4 px on small parts.</p>
+          </div>
+          <div>
+            <span class="mono">Keep</span>
+            <p class="rec">A scale of six: 6 (tiny parts), 12 (rows, menu items, small fields), 16 (fields, tiles), 24 (chat box, inner cards), 32 (cards, drawers, modals), and full round for pills. See the table below.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="f">
+        <div class="f__top"><span class="tag p2">P2</span><h3>Two tab styles, two field sizes</h3></div>
+        <div class="f__body">
+          <div>
+            <span class="mono">Today</span>
+            <ul>
+              <li>Requests and Documents: a grey segmented control, 28 px, 6 px corners</li>
+              <li>Company profile: pressed glass tabs, 36 px, 17 px corners (as the sidebar)</li>
+              <li>Search and filters: 32 px, 8 px corners; form fields: 48 px, 16 px corners</li>
+            </ul>
+          </div>
+          <div>
+            <span class="mono">Keep</span>
+            <p class="rec">One tab control (the pressed glass, already shared with the sidebar). Fields in two sizes from one family: 36 px with 12 px corners for search and filters, 48 px with 16 px corners in forms.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="f">
+        <div class="f__top"><span class="tag p3">P3</span><h3>Shadows and surfaces</h3></div>
+        <div class="f__body">
+          <div>
+            <span class="mono">Today</span>
+            <p>Home's cards and the sidebar lift on a warm brown shadow (<code>rgba(92, 72, 40)</code>); menus, drawers and the Requests list on a cool violet one (<code>rgba(30, 30, 60)</code>, <code>rgba(40, 30, 90)</code>). Card fills differ too: Home's white gradient, the Requests list at 50 % white, drawers solid white.</p>
+          </div>
+          <div>
+            <span class="mono">Keep</span>
+            <p class="rec">One shadow tint (the cool one, as the glass and the brand's light) in three elevations: card, floating (menus, popovers), overlay (drawers, modals). Two surfaces: card glass and overlay glass.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="f">
+        <div class="f__top"><span class="tag p3">P3</span><h3>Two modal implementations</h3></div>
+        <div class="f__body">
+          <div>
+            <span class="mono">Today</span>
+            <p>New request uses the portal's <code>Dialog</code>; Top up is the concepts' own modal (a CSS module) restyled to match it. They look alike now, but every change has to be made twice.</p>
+          </div>
+          <div>
+            <span class="mono">Keep</span>
+            <p class="rec">Top up rebuilt on <code>Dialog</code>, so the Storybook has one modal with its parts (head, fields, foot).</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="f">
+        <div class="f__top"><span class="tag p3">P3</span><h3>Accent shades</h3></div>
+        <div class="f__body">
+          <div>
+            <span class="mono">Today</span>
+            <p>Ember in four shades (<code>#e8501f</code>, <code>#c2410c</code>, <code>#b8421d</code>, <code>#f07d52</code>), green in two (<code>#13804f</code>, <code>#4cb782</code>), violet in two (<code>#7c4ae0</code>, <code>#a58cf2</code>). Cobalt is the one consistent accent.</p>
+          </div>
+          <div>
+            <span class="mono">Keep</span>
+            <p class="rec">Each brand colour once, plus a darker “text” shade only where it sits on white as words: Ember <code>#e8501f</code> and Ember text <code>#c2410c</code>.</p>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </section>
+
+  <section>
+    <div class="head">
+      <h2>Buttons to keep</h2>
+      <p>Three levels by how much the action weighs, and two kinds of their own outside the levels.</p>
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Kind</th><th>Look</th><th>Sizes</th><th>For</th></tr></thead>
+        <tbody>
+          <tr><td class="keep">primary</td><td>smoked dark pill, mono caps</td><td class="v">36 / 13 · 48 / 14</td><td>the one main action: Send request, Top up, Request proposal, New request</td></tr>
+          <tr><td class="keep">secondary</td><td>outline pill, 12 % Ink rim, Cobalt on hover, mono caps</td><td class="v">36 / 13 · 48 / 14</td><td>actions beside the main one: Company profile, Chats, Cancel</td></tr>
+          <tr><td class="keep">tertiary</td><td>words only, grey, Ink with a faint fill on hover</td><td class="v">36 / 13</td><td>light actions: New in the chat history, Copy answer</td></tr>
+          <tr><td class="keep">icon button</td><td>round see-through glass, a hairline and a bright top edge</td><td class="v">40 · 36 · 28</td><td>actions shown by an icon alone: close, expand, the chat box's + and mic, “…”</td></tr>
+          <tr><td class="keep">AI button</td><td>the liquid metal rim</td><td class="v">one size</td><td>Ask Dr.AI only, at most one on a screen, so the metal stays the sign of Dr.AI</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="head">
+      <h2>Colours to keep</h2>
+      <p>The text greys fold into four; the accents into one each.</p>
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th></th><th>Token</th><th>Value</th><th>Replaces</th><th style="text-align:right">Uses today</th></tr></thead>
+        <tbody>
+          <tr><td><span class="sw" style="background:#0e1116"></span></td><td class="keep">ink</td><td class="v">#0e1116</td><td>titles, body</td><td class="n">223</td></tr>
+          <tr><td><span class="sw" style="background:rgba(14,17,22,.72)"></span></td><td class="keep">ink-2</td><td class="v">ink 72 %</td><td class="merge">62, 64, 72, 82 %, #4e535e, #505154, #6c6d6e</td><td class="n">196</td></tr>
+          <tr><td><span class="sw" style="background:rgba(14,17,22,.5)"></span></td><td class="keep">ink-3</td><td class="v">ink 50 %</td><td class="merge">45, 48, 50, 55, 60 %, #8a8e97</td><td class="n">60</td></tr>
+          <tr><td><span class="sw" style="background:rgba(14,17,22,.4)"></span></td><td class="keep">ink-4</td><td class="v">ink 40 %</td><td class="merge">40, 42 %</td><td class="n">7</td></tr>
+          <tr><td><span class="sw" style="background:#1e3bd6"></span></td><td class="keep">cobalt</td><td class="v">#1e3bd6</td><td>links, admin tag, Watch</td><td class="n">17</td></tr>
+          <tr><td><span class="sw" style="background:#7c4ae0"></span></td><td class="keep">violet</td><td class="v">#7c4ae0</td><td class="merge">#a58cf2</td><td class="n">9</td></tr>
+          <tr><td><span class="sw" style="background:#e8501f"></span></td><td class="keep">ember</td><td class="v">#e8501f</td><td class="merge">#f07d52</td><td class="n">38</td></tr>
+          <tr><td><span class="sw" style="background:#c2410c"></span></td><td class="keep">ember-text</td><td class="v">#c2410c</td><td class="merge">#b8421d</td><td class="n">7</td></tr>
+          <tr><td><span class="sw" style="background:#13804f"></span></td><td class="keep">good</td><td class="v">#13804f</td><td class="merge">#4cb782</td><td class="n">14</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="head">
+      <h2>Corners to keep</h2>
+      <p>Twenty-one radii fold into six steps.</p>
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th></th><th>Step</th><th>Used for</th><th>Replaces</th></tr></thead>
+        <tbody>
+          <tr><td><span class="rad" style="border-radius:6px"></span></td><td class="v">6</td><td>badges, tiny parts</td><td class="merge">2, 3, 4, 8 px</td></tr>
+          <tr><td><span class="rad" style="border-radius:12px"></span></td><td class="v">12</td><td>rows, menu items, small fields</td><td class="merge">10, 17 px</td></tr>
+          <tr><td><span class="rad" style="border-radius:16px"></span></td><td class="v">16</td><td>form fields, amount tiles, lists</td><td class="merge">20 px</td></tr>
+          <tr><td><span class="rad" style="border-radius:24px"></span></td><td class="v">24</td><td>chat box, chat bubble, inner cards</td><td class="merge">22, 23, 26 px</td></tr>
+          <tr><td><span class="rad" style="border-radius:32px; width:44px; height:30px"></span></td><td class="v">32</td><td>cards, drawers, modals</td><td class="merge">28 px</td></tr>
+          <tr><td><span class="rad" style="border-radius:999px"></span></td><td class="v">full</td><td>pills, buttons, tags, avatars</td><td class="merge">99, 996, 999 px, 50 %</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="head">
+      <h2>Type to keep</h2>
+      <p>ABC Diatype Extended for words, Diatype Mono for labels and buttons, Doto for the big figures. Sixty-eight styles fold into these.</p>
+    </div>
+    <div class="tbl">
+      <table>
+        <thead><tr><th>Role</th><th>Style</th><th>Where</th></tr></thead>
+        <tbody>
+          <tr><td class="keep">display</td><td class="v">700 38 / -0.02em</td><td>Ask Dr.AI greeting</td></tr>
+          <tr><td class="keep">page title</td><td class="v">700 32 / -0.03em</td><td>Home's brand, Requests, Documents</td></tr>
+          <tr><td class="keep">modal title</td><td class="v">700 28 / -0.03em</td><td>New request, Top up</td></tr>
+          <tr><td class="keep">section title</td><td class="v">700 22 / -0.02em</td><td>Brand analysis, card headlines, drawers</td></tr>
+          <tr><td class="keep">item title</td><td class="v">500 15</td><td>card and row titles, menu items</td></tr>
+          <tr><td class="keep">body</td><td class="v">400 15 / 14</td><td>card text / lists and chat</td></tr>
+          <tr><td class="keep">small</td><td class="v">400 13 / 12</td><td>meta, hints / notes</td></tr>
+          <tr><td class="keep">label</td><td class="v">mono 500 11.5 / 0.12em caps</td><td>card labels, groups, statuses</td></tr>
+          <tr><td class="keep">tag</td><td class="v">mono 500 10 / 0.10em caps</td><td>role tags</td></tr>
+          <tr><td class="keep">button</td><td class="v">mono 500 13–14 / 0.10em caps</td><td>primary and secondary buttons</td></tr>
+          <tr><td class="keep">figure</td><td class="v">Doto 900 56</td><td>health score and card figures</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <div class="head">
+      <h2>From here to the Storybook</h2>
+    </div>
+    <ol class="steps">
+      <li><div><b>Agree the keeps above.</b><p>Mainly P1: one primary, one secondary, one status, one round icon button. The scales (greys, radii, type) follow from them.</p></div></li>
+      <li><div><b>Write the Health tokens.</b><p>One tokens file for colour, type, radius, shadow and spacing, used by Health's styles in place of the hand-picked values.</p></div></li>
+      <li><div><b>Fold the components onto the tokens.</b><p>Button, icon button, field, tabs, status, tag, card, modal, drawer, menu; Top up onto <code>Dialog</code>. The overrides that only fought older styles come out.</p></div></li>
+      <li><div><b>Start the Storybook.</b><p>Tokens first, then those components with their variants and states, each story rendered in Health's theme.</p></div></li>
+    </ol>
+    <p class="note">Measured on localhost from the prototype on the glass-variant branch. Counts are uses of each computed value across the ten states, so a value seen on several screens counts once per screen.</p>
+  </section>
+</div>

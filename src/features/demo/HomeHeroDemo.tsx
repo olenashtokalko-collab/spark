@@ -9,7 +9,7 @@ import { MainSide, useModel, type ReqIcons, type ReqLook, type IssueActions, typ
 
 const VARIANTS = [
   { v: 'now', label: 'Before', team: false, framed: false, note: 'The header before: no team, no card.' },
-  { v: 'team', label: 'A · Team', team: true, framed: false, note: 'The client’s team under the description: their faces and “Brand Co. team · you and 2 colleagues”; it opens Team. Only the client’s people: Spark stays one team.' },
+  { v: 'team', label: 'A · Team', team: true, framed: false, note: 'The client’s team under the description: their faces and “Qindeel team · you and 2 colleagues”; it opens Team. Only the client’s people: Spark stays one team.' },
   { v: 'frame', label: 'B · Card', team: false, framed: true, note: 'The header, from the cover to the requests, in one card with a hairline stroke, no fill; the tabs stay under it.' },
   { v: 'both', label: 'C · Team + card', team: true, framed: true, note: 'Both: the team line inside the card.' },
   { v: 'divider', label: 'D · Divider', team: true, framed: 'divider', note: 'One card; the requests under a hairline across it, so the company and its requests read as two parts of one header.' },

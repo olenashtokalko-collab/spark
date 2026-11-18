@@ -866,7 +866,7 @@ function RequestsCard({ m }: { m: Model }) {
 
 // ---- D · Main and side (after a reference: a wide column of content, narrower cards beside it) -----
 
-/** The company's own team under its description, after the client's reference: their faces, "Brand Co.
+/** The company's own team under its description, after the client's reference: their faces, "Qindeel
  *  team · you and 2 colleagues"; it opens Team. Only the client's people: Spark shows as one
  *  team, never by name. */
 export function TeamLine() {

@@ -5,17 +5,20 @@
 // is booked from a card of time chips. Ink (as the reference) or Sand, switched at the top. #/demo/home-bento
 import { useEffect, useRef, useState, type CSSProperties, type ReactNode } from 'react';
 import '../../styles/bento.css';
-import { ArrowDownRight, ArrowRight, ArrowUpRight, Send, Building2, CalendarClock, Check, ChevronDown, Globe, Heart, Lock, MessagesSquare, Sparkles, Video, Wallet, type LucideIcon } from 'lucide-react';
+import { ArrowDownRight, ArrowRight, ArrowUpRight, Send, Building2, CalendarClock, Check, ChevronDown, Globe, Heart, Lock, MessagesSquare, Plus, Sparkles, Video, Wallet, type LucideIcon } from 'lucide-react';
 import { useUI } from '../../state/ui';
 import { navigate } from '../../lib/router';
 import { dotted } from './dotted';
 import { BriefHome } from './HomeBrief';
-import { HomeDashboard, ReportCard } from './HomeDashboard';
+import { HomeDashboard } from './HomeDashboard';
+import { HealthTopUp } from './HealthTopUp';
+import { useRoleHere } from './HealthHead';
 import { HomeHealth } from './HomeHealth';
 import { MetalSurface, NoorField } from '../onboarding/LiquidWelcome';
 
 const noop = () => undefined;
 import { useStore } from '../../state/store';
+import { CreditRing } from '../../components/layout/Credits';
 import { analyses } from '../../data/mock';
 import { Avatar, cx } from '../../components/ui/primitives';
 import { GlassTabs } from '../../components/ui/GlassTabs';
@@ -641,9 +644,9 @@ function TopUpPanel({ onTopUp, onDone }: { onTopUp: (n: number) => void; onDone:
       {/* no balance or bar here any more (13 Nov, review: the card under it already shows them); what the credits
           are for, in the brand's voice (short, specific, a pair of plain sentences), then the amounts */}
       <b className="bx-topup__title" id="bx-topup-title">
-        Add credits.
+        Add credits
       </b>
-      <span className="bx-topup__hint">One balance for reports, consultations and new work. Pick an amount.</span>
+      <span className="bx-topup__hint">One balance for reports and new work. Pick an amount.</span>
       {/* the amount on the glass tabs Requests filters with (13 Nov, review: not the black-filled toggle), the
           picked one under the clear bubble */}
       <span className="bx-topup__amounts">
@@ -664,7 +667,8 @@ function TopUpPanel({ onTopUp, onDone }: { onTopUp: (n: number) => void; onDone:
           onDone(amount);
         }}
       >
-        Add USD {amount}
+        {/* 17 Nov, review: "just Top up, no amount": the amount is the one picked above */}
+        Top up
       </button>
     </div>
   );
@@ -1220,7 +1224,7 @@ function Focus({ title, children }: { title: string; children: ReactNode[] }) {
 // jelly glass rendered in Blender, each in its own colour as the service keys on sparkstudios.ae (ui/MorphVideo)
 // brandTiles (13 Nov, review): Layout 5's Grid tiles made Layout 2 ("replace Layout 2 with Layout 5 · Grid tiles"), and
 // Layout 5 is now Glass slabs; the CARDS switch is gone. The old Layout 2 (boldGlass) leaves the switch; its code stays.
-type HomeLook = 'current' | 'boldGlass' | 'qo2' | 'layout2' | 'brand' | 'brandKeys' | 'brandTiles' | 'tabs' | 'brief' | 'dash' | 'greet' | 'health';
+type HomeLook = 'current' | 'boldGlass' | 'qo2' | 'layout2' | 'brand' | 'brandKeys' | 'brandTiles' | 'tabs' | 'brief' | 'dash' | 'greet' | 'health' | 'healthSide';
 const isBand = (l: HomeLook) => l === 'brand' || l === 'brandKeys' || l === 'brandTiles';
 /** The card set each band layout shows: Layout 2 its Grid tiles, Layout 5 its Glass slabs. */
 const cardsOf = (l: HomeLook): CardStyle | undefined => (l === 'brandTiles' ? 'tiles' : l === 'brandKeys' ? 'slabs' : undefined);
@@ -1240,18 +1244,19 @@ const HOME_LOOK_KEY = 'spark-home-look';
 // mascot flies into its right corner; after it ours and the colleague's alternate. HOME_ON_SWITCH is the looks among
 // them (what a saved look is checked against, and the one a visit opens on); SWITCH_ORDER is the switch as it reads,
 // with the colleague's two concepts and the page of empty states in their places.
-const HOME_ON_SWITCH: HomeLook[] = ['health', 'qo2'];
+// 17 Nov: Health in three heads (Jean's sketch, ours, a workspace menu) reviewed; ours kept as Health, the other two
+// deleted. A browser that last had one of them opens on Health
+// 17 Nov (late): Health again with the brand switcher in the sidebar's account menu, as Claude Code's workspaces
+// 17 Nov (late), design sync: Jean reviews one Home, so the switch keeps only Health and its sidebar version, and
+// the onboarding as a new company sees it; Console, Overview, Studio and the empty states are off it (their pages stay)
+const HOME_ON_SWITCH: HomeLook[] = ['health', 'healthSide'];
 /** The switch in the order it is shown: a look of the portal, or a page of its own. */
-type SwitchItem = HomeLook | { id: 'console' | 'studio' | 'empty'; name: string; to: string };
+type SwitchItem = HomeLook | { id: 'console' | 'studio' | 'empty' | 'onboarding'; name: string; to: string };
 const SWITCH_ORDER: SwitchItem[] = [
   'health',
-  // Console and Studio, a colleague's concepts, as versions of their own: each keeps its own menu and its own Dr.AI,
-  // so it opens on its own page, without the portal's shell. They alternate with ours (13 Nov, review), so no two
-  // alike stand together and each step is a change of direction
-  { id: 'console', name: 'Console', to: '/concepts/console' },
-  'qo2',
-  { id: 'studio', name: 'Studio', to: '/concepts/studio' },
-  { id: 'empty', name: 'Empty states', to: '/empty-states' },
+  'healthSide',
+  // the portal as a new company finds it: the welcome, then Dr.AI's four first steps in his corner (shown once)
+  { id: 'onboarding', name: 'Onboarding', to: '/' },
 ];
 // renumbered 1–4 once the rest were archived (13 Nov, review): the old Layouts 1, 3, 4 and 9. The archived ones keep
 // the names they had when reviewed, with "(archived)", should they come back
@@ -1261,6 +1266,7 @@ const HOME_LOOK_NAMES: Record<HomeLook, string> = {
   // and Studio. Were Classic and Quick overview
   qo2: 'Overview',
   health: 'Health',
+  healthSide: 'Health · Sidebar',
   // Glass archived (13 Nov, review: "take the Glass version off, put it in the archive"), its code kept
   brandTiles: 'Glass (archived)',
   // Keys archived (13 Nov, review: "delete the Keys variant, or put it in the archive of the ones we made before")
@@ -1778,7 +1784,7 @@ function QuickOverview2({ webScore, social, band, keys, l2Cards, cards, hold }: 
     ) : band ? (
       // Layout 4 (13 Nov, review): the brand as a dark band across the top of the page, comets flying over it the
       // whole width, the company's data on the left, the glass shape on the right; the dashboard's cards under it
-      // Grid tiles (13 Nov, review: "the Brand Co. section light too, with the glass shapes turning into one another"):
+      // Grid tiles (13 Nov, review: "the Qindeel section light too, with the glass shapes turning into one another"):
       // the same band in light, the loop rendered on white multiplied onto it
       <header className={cx('qb', lightBand && 'qb--light')}>
         {/* not comets (13 Nov, review: "we have no comets in the product, we have light"): the brand's light as on
@@ -2073,38 +2079,74 @@ function BalanceHover() {
 /** The balance, quiet (13 Nov, review, Layouts 7 and 8: "compact, not a section that draws the eye; clear it's your
  *  balance"; then "balance in small letters, under it 100 credits in the plain face, a small chevron"): no pill, two
  *  lines at the right of the head; the top-up panel opens while the pointer rests on it (or on a click). */
+/** Our Health head's balance (17 Nov, after the Console concept's account bar): "Balance" in the mono face, the
+ *  amount, and a small round plus in place of Top up, which turns a quarter on hover and opens the top-up panel. */
+export function BalancePlus() {
+  const { state, actions } = useStore();
+  const [open, setOpen, box] = usePop();
+  const [added, setAdded] = useState<number | null>(null);
+  const credits = Math.floor(state.credits);
+  return (
+    <div className={cx('bal-plus bx-credcard', open && 'is-open')} ref={box}>
+      <span className="bal-plus__stack">
+        <span className="bal-plus__label">Balance</span>
+        <span className="bal-plus__val">
+          {credits} <i>credits</i>
+          {added ? <em> · +{added}</em> : null}
+        </span>
+      </span>
+      <button type="button" className="bal-plus__btn" aria-expanded={open} aria-label="Top up" title="Top up" onClick={() => setOpen((o) => !o)}>
+        <Plus size={18} strokeWidth={1.8} aria-hidden />
+      </button>
+      {open && <TopUpPanel onTopUp={actions.topUp} onDone={(n) => (setAdded(n), setOpen(false))} />}
+    </div>
+  );
+}
+
 export function BalancePill({ inline }: { inline?: boolean } = {}) {
   const { state, actions } = useStore();
   const [open, setOpen, box] = usePop();
   const [added, setAdded] = useState<number | null>(null);
-  const timer = useRef<number>();
-  const hold = (v: boolean, ms: number) => {
-    window.clearTimeout(timer.current);
-    timer.current = window.setTimeout(() => setOpen(v), ms);
-  };
-  useEffect(() => () => window.clearTimeout(timer.current), []);
+  // Health's top-up is a modal on <body>, outside this pill, so it keeps its own open state: the pill's click-outside
+  // would close it on the first click inside it (17 Nov, review: "picking 100 closes it")
+  const [modal, setModal] = useState(false);
+  // only an admin tops up (17 Nov, review: roles): a member and Spark see the balance, without the plus
+  const role = useRoleHere();
+  const canTopUp = !inline || role === 'admin';
   const credits = Math.floor(state.credits);
+  // the top-up opens on click only, not on hover (17 Nov, review)
   return (
-    <div className={cx('bal-pill bx-credcard', inline && 'bal-pill--inline', open && 'is-open')} ref={box} onMouseEnter={() => hold(true, 120)} onMouseLeave={() => hold(false, 260)}>
+    <div className={cx('bal-pill bx-credcard', inline && 'bal-pill--inline', open && 'is-open')} ref={box}>
       <button
         type="button"
         className="bal-pill__btn"
         aria-expanded={open}
         aria-label={`Balance: ${credits} credits. Top up`}
-        onClick={() => {
-          window.clearTimeout(timer.current);
-          setOpen((o) => !o);
-        }}
+        onClick={() => (inline ? canTopUp && setModal(true) : setOpen((o) => !o))}
+        disabled={inline && !canTopUp}
+        title={inline && !canTopUp ? (role === 'spark' ? 'The client’s balance' : 'Your admin tops up credits') : undefined}
       >
         {/* 13 Nov, review: "balance" small, under it "100 credits" in the words' face, a small chevron */}
         {/* Layout 9 (13 Nov, review: "as the name and its caret there, no avatar"): one line, "100 credits" and a caret */}
         {!inline && <span className="bal-pill__label">Balance</span>}
         <span className="bal-pill__val">
+          {/* how much is left, at a glance (17 Nov, review): a ring before the figure */}
+          {inline && <CreditRing left={state.credits} total={Math.max(state.creditsTotal, state.credits)} size={16} stroke={2.2} />}
           {credits} credits{added ? ` · +${added}` : ''}
-          {inline ? <span className="bal-pill__caret" aria-hidden /> : <ChevronDown className="bal-pill__go" size={14} strokeWidth={2.2} aria-hidden />}
+          {/* a plain secondary plus in place of the caret (17 Nov, review); it turns on hover */}
+          {inline ? (
+            canTopUp && <span className="bal-pill__plus" aria-hidden>
+              <Plus size={16} strokeWidth={1.8} />
+            </span>
+          ) : (
+            <ChevronDown className="bal-pill__go" size={14} strokeWidth={2.2} aria-hidden />
+          )}
         </span>
       </button>
-      {open && <TopUpPanel onTopUp={actions.topUp} onDone={(n) => (setAdded(n), setOpen(false))} />}
+      {/* Health (17 Nov, review): the concepts' Top up modal, as the client liked it (the balance now, the amounts as
+          tiles, another amount, the new balance, Top up and Cancel); elsewhere the small panel as before */}
+      {open && !inline && <TopUpPanel onTopUp={actions.topUp} onDone={(n) => (setAdded(n), setOpen(false))} />}
+      {inline && <HealthTopUp open={modal} balance={state.credits} onClose={() => setModal(false)} onTopUp={(n) => (actions.topUp(n), setAdded(n))} />}
     </div>
   );
 }
@@ -2219,7 +2261,7 @@ function TopPanel({ noConsult, fresh }: { noConsult?: boolean; fresh?: boolean }
 /** Layout 6's tabs, after sparkstudios.ae's menu (13 Nov, review): a white glass pill holding the two in Diatype Mono
  *  capitals, the open one pressed into it; the pressed pill glides to the tab picked, a ghost pill follows the
  *  pointer, as on the site. Lower than the site's (32 px, not 40). */
-function HomeTabs({ reports }: { reports: ReactNode }) {
+function HomeTabs({ reports, noProfile }: { reports: ReactNode; noProfile?: boolean }) {
   const [tab, setTab] = useState<'reports' | 'profile'>('reports');
   const [hover, setHover] = useState<'reports' | 'profile' | null>(null);
   const btns = useRef<Record<string, HTMLButtonElement | null>>({});
@@ -2236,6 +2278,8 @@ function HomeTabs({ reports }: { reports: ReactNode }) {
     const b = id ? btns.current[id] : null;
     return b ? { transform: `translateX(${b.offsetLeft}px)`, width: b.offsetWidth } : {};
   };
+  // Health (17 Nov, review): the profile opens from the head's button, so no tabs here, the reports alone
+  if (noProfile) return <div className="hx-panel">{reports}</div>;
   return (
     <>
       <div className="hx-tabs" role="tablist" aria-label="Home sections" onMouseLeave={() => setHover(null)}>
@@ -2274,7 +2318,8 @@ function HomeTabs({ reports }: { reports: ReactNode }) {
 }
 
 /** The company profile as a section to read (Layout 6): what the company is, who it sells to, how it speaks. */
-function ProfileSection() {
+/** `only` shows one of its three parts (17 Nov, review: the profile drawer's tabs). */
+function ProfileSection({ only }: { only?: 'company' | 'audience' | 'voice' } = {}) {
   const { state } = useStore();
   const b = state.brand;
   const facts: [string, string][] = [
@@ -2286,6 +2331,7 @@ function ProfileSection() {
   ];
   return (
     <>
+      {(!only || only === 'company') && (
       <section className="hx-prof">
         <span className="hx-prof__label">The company</span>
         <h3 className="hx-prof__title">{b.tagline}</h3>
@@ -2301,8 +2347,12 @@ function ProfileSection() {
           ))}
         </dl>
       </section>
+      )}
+      {(!only || only === 'audience') && (
       <section className="hx-prof">
         <span className="hx-prof__label">Who it sells to</span>
+        <h3 className="hx-prof__title hx-only-drawer">Who buys from {b.name}</h3>
+        <p className="hx-prof__body hx-only-drawer">The people Spark plans campaigns for.</p>
         <ul className="hx-prof__list">
           {b.audiences.map((a) => (
             <li key={a.name}>
@@ -2312,20 +2362,28 @@ function ProfileSection() {
           ))}
         </ul>
       </section>
+      )}
+      {(!only || only === 'voice') && (
       <section className="hx-prof">
         <span className="hx-prof__label">How it speaks</span>
+        {/* in the drawer (17 Nov, review: "all in a heap"): two parts with their own titles, the voice as numbered rows */}
+        <h3 className="hx-prof__title hx-only-drawer">Tone of voice</h3>
+        <p className="hx-prof__body hx-only-drawer">The rules Spark writes by, for every post, page and campaign.</p>
         <ul className="hx-prof__voice">
           {b.voice.map((v) => (
             <li key={v}>{v}</li>
           ))}
         </ul>
         <span className="hx-prof__label hx-prof__label--sub">Up against</span>
+        <h3 className="hx-prof__title hx-only-drawer hx-prof__title--next">Up against</h3>
+        <p className="hx-prof__body hx-only-drawer">Who people compare {b.name} with.</p>
         <ul className="hx-prof__voice hx-prof__voice--quiet">
           {b.competitors.map((v) => (
             <li key={v}>{v}</li>
           ))}
         </ul>
       </section>
+      )}
     </>
   );
 }
@@ -2343,7 +2401,7 @@ function readHomeLook(): HomeLook {
   }
 }
 const homeRootClass = (look: HomeLook) =>
-  cx('bx bx--sand bx--page', look !== 'current' && look !== 'tabs' && look !== 'brief' && look !== 'dash' && look !== 'greet' && look !== 'health' && 'bx--bold', (look === 'tabs' || look === 'brief' || look === 'dash' || look === 'greet' || look === 'health') && 'bx--tabs', look.startsWith('layout') && 'bx--layout', look === 'layout2' && 'bx--dots', look === 'layout2' && 'bx--refined', look === 'boldGlass' && 'bx--glassbook');
+  cx('bx bx--sand bx--page', look !== 'current' && look !== 'tabs' && look !== 'brief' && look !== 'dash' && look !== 'greet' && look !== 'health' && look !== 'healthSide' && 'bx--bold', (look === 'tabs' || look === 'brief' || look === 'dash' || look === 'greet' || look === 'health' || look === 'healthSide') && 'bx--tabs', look.startsWith('layout') && 'bx--layout', look === 'layout2' && 'bx--dots', look === 'layout2' && 'bx--refined', look === 'boldGlass' && 'bx--glassbook');
 
 /** The company card alone, for Home while a company is still onboarding (13 Nov, review: the old card there is
  *  replaced by the one Current's Home has), in the look Home is set to, with the HERO switch to try its grounds. */
@@ -2365,9 +2423,16 @@ export function HomeCompanyCard() {
 /** The one review switch (13 Nov, review: "only switches between the versions; Empty states as a version too"):
  *  the four Home looks by name, then Empty states, the page of every empty state. Shown on Home and on that page, so
  *  either leads back to the other. */
-export function HomeSwitch({ current, onPick }: { current: HomeLook | 'empty' | 'console' | 'studio'; onPick?: (l: HomeLook) => void }) {
+export function HomeSwitch({ current, onPick }: { current: HomeLook | 'empty' | 'console' | 'studio' | 'onboarding'; onPick?: (l: HomeLook) => void }) {
+  const { state, actions } = useStore();
   if (!SHOW_HOME_SWITCH) return null;
+  // while the portal shows a new company, Onboarding is the one on; leaving it brings the full demo back
+  const on = state.onboarding ? 'onboarding' : current;
   const pick = (l: HomeLook) => {
+    if (state.onboarding) {
+      actions.reset();
+      actions.seeIntro();
+    }
     if (onPick) return onPick(l);
     try {
       localStorage.setItem(HOME_LOOK_KEY, l);
@@ -2381,11 +2446,25 @@ export function HomeSwitch({ current, onPick }: { current: HomeLook | 'empty' | 
       <span className="ui-switch__label">HOME</span>
       {SWITCH_ORDER.map((v) =>
         typeof v === 'string' ? (
-          <button key={v} type="button" role="radio" aria-checked={current === v} className={cx(current === v && 'is-on')} onClick={() => pick(v)}>
+          <button key={v} type="button" role="radio" aria-checked={on === v} className={cx(on === v && 'is-on')} onClick={() => pick(v)}>
             {HOME_LOOK_NAMES[v]}
           </button>
         ) : (
-          <button key={v.id} type="button" role="radio" aria-checked={current === v.id} className={cx(current === v.id && 'is-on')} onClick={() => navigate(v.to)}>
+          <button
+            key={v.id}
+            type="button"
+            role="radio"
+            aria-checked={on === v.id}
+            className={cx(on === v.id && 'is-on')}
+            onClick={() => {
+              if (v.id === 'onboarding') {
+                if (!state.onboarding) actions.startOnboarding();
+                navigate('/');
+                return;
+              }
+              navigate(v.to);
+            }}
+          >
             {v.name}
           </button>
         ),
@@ -2498,7 +2577,7 @@ export function HomeBentoC() {
       <SpectrumDefs />
       {/* no HERO in Quick overview 2 (13 Nov, review): its company card is its own layout, not the hero's grounds */}
       {/* no HERO on Layout 6 (13 Nov, review): its top is the one light section, not the hero */}
-      {SHOW_HOME_SWITCH && look !== 'qo2' && look !== 'tabs' && look !== 'brief' && look !== 'dash' && look !== 'greet' && look !== 'health' && !isBand(look) && <HeroLookSwitch />}
+      {SHOW_HOME_SWITCH && look !== 'qo2' && look !== 'tabs' && look !== 'brief' && look !== 'dash' && look !== 'greet' && look !== 'health' && look !== 'healthSide' && !isBand(look) && <HeroLookSwitch />}
       {SHOW_HOME_SWITCH && <HomeSwitch current={look} onPick={pickLook} />}
       {look === 'qo2' || isBand(look) ? (
         <QuickOverview2
@@ -2558,28 +2637,14 @@ export function HomeBentoC() {
           })()}
         </div>
       ) : (
-      look === 'health' ? (
+      look === 'health' || look === 'healthSide' ? (
       // Layout 9 · Brand health (13 Nov, review, after me.thebluejackgroup.com): the head with the credits, Summary,
       // the health ring, four figures against their aims, the tabs, Book consultation floating (HomeHealth.tsx)
       <div className="bx-grid bx-grid--doto bx-grid--first bx-grid--brief bx-grid--health">
         <HomeHealth
+          sidebar={look === 'healthSide'}
           balance={<BalancePill inline />}
-          onBook={() => {
-            /* Classic doesn't open the consultation yet (13 Nov, review: the page isn't ready) */
-          }}
-          reports={
-            <HomeTabs
-              reports={
-                <>
-                  {/* the reports as Layout 7 draws them (13 Nov, review), side by side, the locked ones under them */}
-                  {['an-website', 'an-social'].map((id) => (
-                    <ReportCard key={id} id={id} className="hh-rep" verdict />
-                  ))}
-                  {/* no locked report (13 Nov, review): only the two Spark prepared */}
-                </>
-              }
-            />
-          }
+          profile={(tab) => <ProfileSection only={tab} />}
         />
       </div>
       ) : look === 'dash' ? (

@@ -1,4 +1,4 @@
-// Layout 5's cards under the Brand Co. band, four more ways (13 Nov, review), all on the same content: the three
+// Layout 5's cards under the Qindeel band, four more ways (13 Nov, review), all on the same content: the three
 // analyses (website, social media, brand), then the two next steps (a consultation, Dr.AI). Our colours, corners and
 // type throughout; only the card's manner changes, after the references the client sent:
 //   results: a pale tinted header holding one of our glass icons, pill tags, the finding, and a results strip with a
@@ -501,7 +501,7 @@ function ScenesLayout({ reports, next, webScore, social }: { reports: Item[]; ne
           <span className="cv5-charthead">
             <b>Mobile speed score, June to November</b>
             <span>
-              <i className="cv5-key cv5-key--ours" /> Brand Co. <i className="cv5-key cv5-key--typ" /> Typical, 58
+              <i className="cv5-key cv5-key--ours" /> Qindeel <i className="cv5-key cv5-key--typ" /> Typical, 58
             </span>
           </span>
           <LineChart months={[31, 33, 35, webScore - 6, webScore - 3, webScore]} typical={58} typicalLabel="" />
@@ -547,7 +547,7 @@ function ScenesLayout({ reports, next, webScore, social }: { reports: Item[]; ne
         </span>
         <span className="cv5-bottom">
           <span className="cv5-title cv5-title--md">{brand.title}.</span>
-          <span className="cv5-text">People see Brand Co. as well-made and local; online it looks like any global chain.</span>
+          <span className="cv5-text">People see Qindeel as well-made and local; online it looks like any global chain.</span>
           <span className="cv5-go">
             {brand.cta} <ArrowRight size={15} aria-hidden />
           </span>

@@ -14,7 +14,7 @@ type Variant = 'primary' | 'secondary' | 'ghost' | 'danger' | 'quiet' | 'ai';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: Variant;
-  size?: 'sm' | 'md' | 'lg';
+  size?: 'xs' | 'sm' | 'md' | 'lg';
   icon?: LucideIcon;
   iconRight?: LucideIcon;
   lead?: ReactNode; // any leading graphic, e.g. the Spark AI glyph
@@ -34,9 +34,9 @@ export const Button = forwardRef<HTMLButtonElement, ButtonProps>(function Button
   const metal = useMetalUi() && !plain && (variant === 'primary' || variant === 'ai') && !!children; // secondary stays outlined (12 Nov)
   const inner = (
     <>
-      {loading ? <Loader2 className="spin" size={15} /> : Icon ? <Icon size={size === 'sm' ? 14 : 16} strokeWidth={1.8} /> : lead}
+      {loading ? <Loader2 className="spin" size={15} /> : Icon ? <Icon size={size === 'sm' || size === 'xs' ? 14 : 16} strokeWidth={1.8} /> : lead}
       {children && <span>{children}</span>}
-      {IconR && <IconR size={size === 'sm' ? 14 : 16} strokeWidth={1.8} />}
+      {IconR && <IconR size={size === 'sm' || size === 'xs' ? 14 : 16} strokeWidth={1.8} />}
     </>
   );
   return (

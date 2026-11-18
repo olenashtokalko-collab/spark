@@ -626,7 +626,7 @@ function DecisionDialog({ p, kind, onClose, onConfirm }: { p: Proposal; kind: De
               setError(null);
             }}
           >
-            I'm authorised to approve spend of {aed(total)} for Brand Co.
+            I'm authorised to approve spend of {aed(total)} for Qindeel
           </Checkbox>
         )}
         {error && <div className="field__error">{error}</div>}

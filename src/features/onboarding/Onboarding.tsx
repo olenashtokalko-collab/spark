@@ -7,15 +7,15 @@ import { useEffect, useLayoutEffect, useRef, useState, type PointerEvent as RPoi
 import { createPortal } from 'react-dom';
 import { ArrowDown, ArrowRight, ArrowUp } from 'lucide-react';
 import { AnalysisView } from '../home/AnalysisLooks';
-import { HomeBentoC, HomeCompanyCard } from '../demo/HomeBentoDemo';
+import { HomeBentoC, HomeCompanyCard, HomeSwitch } from '../demo/HomeBentoDemo';
 import { analyses } from '../../data/mock';
-import { ConsultCard } from '../demo/HomeCardsDemo';
 import { Gauge } from '../demo/HomeVariantsDemo';
 import { useRoute } from '../../lib/router';
 import { useStore, type State } from '../../state/store';
 import { SlideTabs, cx } from '../../components/ui/primitives';
 import { MetalParts, metalClass, useMetalUi } from '../../components/ui/MetalButton';
 import { playWelcome } from './LiquidWelcome';
+import { HighlightRim, useHlLook } from './HighlightRim';
 import { SparkiStill } from '../../components/ui/DrAi';
 import { FactsCard, HomeCredits, ProfileFull } from '../demo/HomeRethinkDemo';
 import { navigate } from '../../lib/router';
@@ -180,22 +180,45 @@ export function SparkiGuide({ point, id, active }: { point?: (path: string) => P
       setAt(null);
       return;
     }
+    // a new page or a new step starts clean: nothing from the last one lingers (18 Nov, review: the rim and "Click
+    // Request proposal" stayed on Home and on an empty chat, where the button had gone)
+    setAt(null);
     let last = '';
     const tick = () => {
-      // A dialog over the page (the New request form): Sparki waits by Dr.AI until it closes, unless what he
-      // points at is in the dialog itself (Go to requests, once the request is sent).
-      const dialog = document.querySelector('[role="dialog"]');
-      let p: Point | null = point(path);
-      if (dialog && p?.el && !dialog.contains(p.el)) p = null;
-      const r = p?.el?.getBoundingClientRect();
-      const key = r && r.width && p ? `${r.x | 0},${r.y | 0},${r.width | 0},${r.height | 0},${p.say}` : '';
+      raf.current = requestAnimationFrame(tick);
+      let next: { box: DOMRect; say: string; radius: number } | null = null;
+      let key = '';
+      try {
+        // A dialog over the page (the New request form): Sparki waits by Dr.AI until it closes, unless what he
+        // points at is in the dialog itself (Go to requests, once the request is sent).
+        const dialog = document.querySelector('[role="dialog"]');
+        let p: Point | null = point(path);
+        if (dialog && p?.el && !dialog.contains(p.el)) p = null;
+        const el = p?.el;
+        const r = el?.isConnected ? el.getBoundingClientRect() : undefined;
+        // only what can be seen: on screen, not hidden, not covered at its middle
+        const seen =
+          !!r && r.width > 0 && r.height > 0 && r.bottom > 0 && r.right > 0 && r.top < innerHeight && r.left < innerWidth &&
+          !!el && el.checkVisibility?.({ visibilityProperty: true }) !== false;
+        if (seen && p && el && r) {
+          const cx = Math.min(Math.max(r.left + r.width / 2, 0), innerWidth - 1);
+          const cy = Math.min(Math.max(r.top + r.height / 2, 0), innerHeight - 1);
+          const hit = document.elementsFromPoint(cx, cy).find((n) => !n.closest('.og-sparki, .og-hlm'));
+          if (!hit || el.contains(hit) || hit.contains(el)) {
+            key = `${r.x | 0},${r.y | 0},${r.width | 0},${r.height | 0},${p.say}`;
+            // The rim follows the target's own corners (a pill stays a pill), 7 px out.
+            const radius = Math.min(parseFloat(getComputedStyle(el).borderTopLeftRadius) || 10, r.height / 2);
+            next = { box: r, say: p.say, radius };
+          }
+        }
+      } catch {
+        next = null;
+        key = '';
+      }
       if (key !== last) {
         last = key;
-        // The rim follows the target's own corners (a pill stays a pill), 7 px out.
-        const radius = p?.el ? Math.min(parseFloat(getComputedStyle(p.el).borderTopLeftRadius) || 10, (r?.height ?? 0) / 2) : 10;
-        setAt(r && r.width && p ? { box: r, say: p.say, radius } : null);
+        setAt(next);
       }
-      raf.current = requestAnimationFrame(tick);
     };
     tick();
     return () => cancelAnimationFrame(raf.current);
@@ -239,7 +262,20 @@ function GuideView({
       return () => clearTimeout(t);
     }
   }, [at?.box.left, at?.box.top]); // eslint-disable-line react-hooks/exhaustive-deps
+  const hl = useHlLook();
   const box = at?.box;
+  // the beats for each thing he shows (17 Nov, review: "don't fly round it, just appear beside it"): the rim
+  // lights the target alone ('lit'), then Sparki appears by it with his tip ('rest')
+  const target = box ? `${id}${path}` : '';
+  const [beat, setBeat] = useState<{ of: string; is: 'lit' | 'rest' }>({ of: '', is: 'lit' });
+  useEffect(() => {
+    if (!target) return;
+    setBeat({ of: target, is: 'lit' });
+    const t = setTimeout(() => setBeat((b) => (b.of === target ? { of: target, is: 'rest' } : b)), 700);
+    return () => clearTimeout(t);
+  }, [target]);
+  const phase = beat.of === target ? beat.is : 'lit';
+  const seen = !box || phase !== 'lit';
   // Sparki sits on the highlighted target's right edge, centred, a little on its glass rim (9 Nov, review), or on
   // its left edge near the page's right edge; at rest by Dr.AI's card.
   const right = box ? box.right + 60 < window.innerWidth : true;
@@ -250,34 +286,29 @@ function GuideView({
   return createPortal(
     <>
       {box && (
-        // The glass rim round what to press, and the spectrum's light under it (9 Nov, #/demo/highlight-looks, C).
-        <>
-          {/* The light all round the rim (9 Nov, review): Cobalt on the left, violet and magenta below, Ember on the
-              right; little at the corner where Sparki sits. */}
-          <span
-            className={cx('og-ring-glow', !right && 'is-left')}
-            style={{ left: box.left - 5, top: box.top - 5, width: box.width + 10, height: box.height + 10, borderRadius: (at?.radius ?? 10) + 5, ['--og-r' as string]: `${(at?.radius ?? 10) + 5}px` }}
-            aria-hidden
-          />
-          <span
-            // A new key per target: the light runs round the rim once each time it lights something up.
-            key={`${id}${path}`}
-            className="og-ring"
-            style={{ left: box.left - 6, top: box.top - 6, width: box.width + 12, height: box.height + 12, borderRadius: (at?.radius ?? 10) + 6, ['--og-r' as string]: `${(at?.radius ?? 10) + 6}px` }}
-            aria-hidden
-          />
-        </>
+        // The rim round what to press in the Ask Dr.AI button's metal (17 Nov, review; the look picked on
+        // #/demo/highlight-metal), 6 px outside the target, following its corners. A new key per target.
+        <HighlightRim
+          key={`${id}${path}`}
+          look={hl}
+          className="og-hlm"
+          still
+          style={{ left: box.left - 6, top: box.top - 6, width: box.width + 12, height: box.height + 12, ['--metal-radius' as string]: `${(at?.radius ?? 10) + 6}px`, borderRadius: (at?.radius ?? 10) + 6 }}
+        />
       )}
       <span
-        className={cx('og-sparki', box && 'is-on', !right && 'is-left', dragging && 'is-dragging', flying && 'is-flying')}
+        className={cx('og-sparki', box && seen && 'is-on', box && phase === 'lit' && 'is-wait', !right && 'is-left', dragging && 'is-dragging', flying && 'is-flying')}
         style={{ transform: `translate(${x + off.dx}px, ${y + off.dy}px)${shift}` }}
         aria-hidden
       >
         <span className="og-sparki__bob" onPointerDown={down} onPointerMove={move} onPointerUp={up} onPointerCancel={up} onDragStart={(e) => e.preventDefault()} title="Drag me aside">
-          <SparkiStill size={44} />
+          {/* a fresh pop each time he appears by something new */}
+          <span key={phase === 'rest' ? target : 'wait'} className="og-sparki__pop">
+            <SparkiStill size={44} />
+          </span>
         </span>
         {/* Sparki says it (6 Nov): mono capitals typed out in the same glass as Dr.AI's card, Ember's dot breathing. */}
-        {at && (
+        {at && phase === 'rest' && (
           // In Dr.AI's "Thinking" pill (9 Nov, picked on #/demo/sparki-bubbles, D): Sparki speaks in the chat's own
           // bubble, a sentence and the grey dots breathing; the wrapper keeps his bubble's place.
           <span key={`${id}${path}${at.say}`} className="og-say og-say--thk">
@@ -509,7 +540,7 @@ function FilledOverview() {
         <ScoreTile kind="website" />
         <ScoreTile kind="social" />
       </div>
-      <ConsultCard look="ink" />
+      {/* no consultation here (17 Nov, design sync: Dr.AI's chat and requests cover it) */}
       {/* The same list as Home D (rows as tiles to click). */}
       <section id="latest" className="hc-card hd-fixes hd-latest og-full__latest">
         {/* No icon by the title (9 Nov, review): the news is in Dr.AI's window too, Sparki is for hints. */}
@@ -568,7 +599,8 @@ export function OnboardingHome({ noIntro }: { noIntro?: boolean } = {}) {
   }, [see]);
   // Home for a company past onboarding, Current UI (12 Nov, review: variant C from #/demo/home-bento): its cards on
   // the overview, no greeting; the report and profile tabs keep the page below, which they link to.
-  if (filled && tab === 'overview' && ui === 'a')
+  // 17 Nov: a new company's Home in the same Health look (empty until Spark has looked), onboarding in Dr.AI's corner
+  if (tab === 'overview' && ui === 'a')
     return (
       <div className="og-home og-home--bento">
         {!noIntro && <FirstWelcome />}
@@ -580,6 +612,8 @@ export function OnboardingHome({ noIntro }: { noIntro?: boolean } = {}) {
     <div className="og-home">
       {/* The welcome after sign-in (11 Nov): the liquid card that pours into Dr.AI (LiquidWelcome), once. */}
       {!noIntro && <FirstWelcome />}
+      {/* the review switch here too (17 Nov), so the client can leave the onboarding for Health */}
+      {!filled && <HomeSwitch current="onboarding" />}
       {/* The redesign directions (UI variants b, c): the page's name in mono and the credits as a figure at the top
           right, as in the design file; the company card keeps the rest. */}
       {ui !== 'a' && (

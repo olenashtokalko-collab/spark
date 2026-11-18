@@ -121,7 +121,7 @@ function InPlace() {
     <div className="agp">
       <div className="agp__head">
         <div>
-          <b>Brand Co.</b>
+          <b>Qindeel</b>
           <span>Everyday products with a Gulf point of view</span>
         </div>
         <span className="agp__credits">USD 64.20 credits</span>

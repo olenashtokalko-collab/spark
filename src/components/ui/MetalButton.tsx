@@ -24,7 +24,7 @@ const SPEED_HOVER = 3; // and while a pointer is on a metal button
 const MAGNET = 0.2; // the button leans this share of the pointer's offset from its centre (adamperlis.com's Contact)
 const SPECTRUM = ['#1e3bd6', '#5a36d4', '#a33abf', '#e8501f'];
 
-type Entry = { el: HTMLElement; ring: HTMLCanvasElement; halo: HTMLCanvasElement; tone: MetalTone; rim: boolean; on: boolean };
+type Entry = { el: HTMLElement; ring: HTMLCanvasElement; halo: HTMLCanvasElement; tone: MetalTone; rim: boolean; on: boolean; k?: number; still?: number };
 type Engine = ReturnType<typeof createEngine>;
 
 /** One shader for every metal button of a profile on the page (its lines' speed is the shader's). */
@@ -125,7 +125,7 @@ function createEngine(SPEED: number, SPEED_HOVER: number) {
     const dpr = Math.min(devicePixelRatio || 1, 2);
     const [x, y, w, h] = [PAD * dpr, PAD * dpr, e.el.offsetWidth * dpr, e.el.offsetHeight * dpr];
     const r = (parseFloat(getComputedStyle(e.el).borderTopLeftRadius) || 0) * dpr;
-    const k = RING * dpr;
+    const k = (e.k ?? RING) * dpr;
     // the metal, cover-fitted to the button
     const s = Math.max(w / source.width, h / source.height);
     const sw = w / s, sh = h / s;
@@ -139,6 +139,15 @@ function createEngine(SPEED: number, SPEED_HOVER: number) {
       ctx.fillStyle = g;
       rounded(ctx, x, y, w, h, r);
       ctx.fill();
+      // a still rim (the guide's) holds one frame, so its white glints read as gaps (17 Nov, review): the
+      // spectrum laid over them again, multiplied in, so the brightest spots stay light but tinted
+      if (e.still !== undefined) {
+        ctx.globalCompositeOperation = 'multiply';
+        ctx.globalAlpha = 0.9;
+        rounded(ctx, x, y, w, h, r);
+        ctx.fill();
+        ctx.globalAlpha = 1;
+      }
     }
     ctx.globalCompositeOperation = 'destination-in';
     rounded(ctx, x, y, w, h, r);
@@ -167,7 +176,15 @@ function createEngine(SPEED: number, SPEED_HOVER: number) {
     raf = requestAnimationFrame(loop);
     if (t - last < 1000 / FPS) return;
     last = t;
-    entries.forEach((e) => e.on && draw(e));
+    entries.forEach((e) => {
+      if (!e.on) return;
+      // a still rim takes a few frames (the shader's first ones may be blank) and then keeps the last
+      if (e.still !== undefined) {
+        if (e.still <= 0) return;
+        e.still--;
+      }
+      draw(e);
+    });
   }
 
   return {
@@ -299,6 +316,28 @@ export function MetalParts({ tone = 'spark', profile = 'spark' }: { tone?: Metal
       <canvas ref={halo} className="metal__halo" aria-hidden />
       <canvas ref={ring} className="metal__ring" aria-hidden />
       <span ref={glass} className="metal__glass" aria-hidden />
+    </>
+  );
+}
+
+/** Only the metal's rim, for something that isn't a button (17 Nov, review: the next-step highlight in the Ask
+ *  Dr.AI button's metal): the ring and its halo round the parent, `width` px of metal, the parent's middle left
+ *  clear. The parent needs `position` and the corners it should follow; nothing leans toward the pointer. */
+export function MetalRim({ tone = 'spark', width = RING, still }: { tone?: MetalTone; width?: number; /** drawn once and held, no flowing lines */ still?: boolean }) {
+  const ring = useRef<HTMLCanvasElement>(null);
+  const halo = useRef<HTMLCanvasElement>(null);
+  useEffect(() => {
+    const el = ring.current?.parentElement;
+    if (!el || !ring.current || !halo.current) return;
+    const engine = engineFor('spark');
+    const e: Entry = { el, ring: ring.current, halo: halo.current, tone, rim: true, on: true, k: width, still: still ? 12 : undefined };
+    engine.add(e);
+    return () => engine.remove(e);
+  }, [tone, width, still]);
+  return (
+    <>
+      <canvas ref={halo} className="metal__halo" aria-hidden />
+      <canvas ref={ring} className="metal__ring" aria-hidden />
     </>
   );
 }

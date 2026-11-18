@@ -28,6 +28,7 @@ import { DrAiDock } from '../../features/assistant/DrAiDock';
 import { fmtRelative } from '../../lib/format';
 import type { Notification } from '../../data/types';
 import { PageArtView, useArt } from '../../features/onboarding/EmptyArt';
+import { SidebarBrands, requestProfile, useActiveBrand, useActiveBrandName } from '../../features/demo/HealthHead';
 
 // Home is the start page after sign-in: the company, Spark's analysis and the work (feedback 23 Oct).
 // Chats is its own page, with the history in a column on the left and "New chat" on top of it.
@@ -336,6 +337,20 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
     navigate(path);
   };
   const left = Math.max(0, Math.min(1, state.credits / Math.max(state.creditsTotal, 1)));
+  // Health · Sidebar (17 Nov, review: "the switcher in the left panel, as Claude Code does"): the row names the brand
+  // open now, and the menu lists the brands first, as Claude lists its workspaces
+  const [, brandsHere] = useActiveBrand();
+  const brandName = useActiveBrandName(state.brand.name);
+  // Home in Health's look, either version (18 Nov, review): the brand before your role ("Qindeel · Head of Brand"),
+  // and no credits in this menu (they're on Home)
+  const health = (() => {
+    try {
+      return ['health', 'healthSide'].includes(localStorage.getItem('spark-home-look') ?? 'health');
+    } catch {
+      return true;
+    }
+  })();
+  const roleLine = health ? `${brandName} · ${me.title}` : `${me.title} · ${state.brand.name}`;
   return (
     <>
       <Popover
@@ -356,7 +371,7 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
             <span className="rail__me-text">
               <span className="rail__me-name">{me.name}</span>
               <span className="rail__me-sub">
-                {me.title} · {state.brand.name}
+                {roleLine}
               </span>
             </span>
             <ChevronsUpDown size={15} className="rail__me-chev" />
@@ -364,18 +379,34 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
         )}
       >
         {(close) => (
-          <div className="acct">
+          <div className={cx('acct', brandsHere && 'acct--brands')}>
+            {brandsHere && (
+              <>
+                {/* who you are first (18 Nov, review): your face, your name, your role and the brand open now; the
+                    email under it */}
+                <div className="acct__ws acct__ws--top">
+                  <Avatar person={me} size={40} />
+                  <div className="acct__ws-text">
+                    <b>{me.name}</b>
+                    <span className="acct__role">{roleLine}</span>
+                  </div>
+                </div>
+                <span className="acct__email">{me.email}</span>
+                <SidebarBrands onPicked={close} names={{ 'b-qindeel': state.brand.name }} />
+                <div className="acct__divider" />
+              </>
+            )}
             <div className="acct__ws">
               <Avatar person={me} size={40} />
               <div className="acct__ws-text">
                 <b>{me.name}</b>
-                <span className="acct__role">
-                  {me.title} · {state.brand.name}
-                </span>
+                <span className="acct__role">{roleLine}</span>
               </div>
             </div>
             {/* The company's credits, as beside its name on Home: the spark, the balance, "credits". The
                 row shows the same credits card as on Home, beside the menu, on hover. */}
+            {/* no credits here in either Health version (18 Nov, review): they stay on Home */}
+            {!brandsHere && !health && (
             <button
               type="button"
               className={cx('acct__credits', left < 0.2 && 'is-low')}
@@ -395,11 +426,12 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
               </span>
               <span className="acct__credits-word">{left < 0.2 ? 'left · running low' : 'credits'}</span>
             </button>
+            )}
             {/* the team and the company's profile shown but not open while the client approves the look (13 Nov,
                 review), as Requests and Documents in the sidebar: a tip beside them on hover, the names unchanged */}
             {[
               { label: 'Manage my team', Icon: UserPlus },
-              { label: 'Company profile', Icon: Building2 },
+              ...(brandsHere ? [] : [{ label: 'Company profile', Icon: Building2 }]),
             ].map(({ label, Icon }) => (
               <span
                 key={label}
@@ -413,6 +445,20 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
                 <span>{label}</span>
               </span>
             ))}
+            {/* Health · Sidebar: Company profile opens Home's profile drawer (18 Nov, review), Home first if elsewhere */}
+            {brandsHere && (
+              <button
+                className="acct__item"
+                onClick={() => {
+                  close();
+                  if (!/^\/?$/.test(window.location.hash.replace(/^#/, '').split('?')[0])) navigate('/');
+                  requestProfile();
+                }}
+              >
+                <Building2 size={18} strokeWidth={1.6} />
+                <span>Company profile</span>
+              </button>
+            )}
             <div className="acct__divider" />
             <button className="acct__item" onClick={() => go(close, '/settings')}>
               <Settings size={18} strokeWidth={1.6} />

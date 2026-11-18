@@ -39,8 +39,10 @@ function Gauge({ id, value, scale, typical }: { id: string; value: number; scale
     <svg className="db-gauge__svg" viewBox={`0 0 ${W} ${H}`} aria-hidden>
       <defs>
         <linearGradient id={`db-gauge-${id}`} x1="0" x2="1">
+          {/* Overview's indicator colours (17 Nov, review): Cobalt into violet into Ember */}
           <stop offset="0" stopColor="#1e3bd6" />
-          <stop offset="1" stopColor="#7a5cff" />
+          <stop offset="0.55" stopColor="#7c4ae0" />
+          <stop offset="1" stopColor="#e8501f" />
         </linearGradient>
       </defs>
       <path d={arc(1)} className="db-gauge__track" />

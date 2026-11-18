@@ -75,19 +75,24 @@ export function useMessages(): Msg[] {
   const m = useModel(analyses);
   const { state } = useStore();
   const ob = useOnboarding();
+  // 17 Nov, design sync: after onboarding his corner only reminds ("the things the user needs to focus on") and never
+  // repeats Latest update or Brand analysis on Home: no news from Spark, no findings. A decision waiting on you is
+  // said by its deadline, which Home doesn't show; then whatever was put off during onboarding.
   const due: Msg[] = m.waiting.slice(0, 2).map((w) => ({
     key: w.key,
-    tag: w.date ? `Due ${fmtDate(w.date.iso)}` : 'Needs you',
-    tone: 'urgent',
+    kind: 'reminder',
+    tag: w.date ? `Due ${fmtDate(w.date.iso)}` : 'Reminder',
+    tone: 'reminder',
     text:
       w.type === 'Proposal'
-        ? `Spark’s proposal for [${w.title}] is waiting for your decision.`
-        : `Spark needs your feedback on [${w.title}] to keep going.`,
+        ? w.date
+          ? `Don’t forget: your decision on [${w.title}] is due ${fmtDate(w.date.iso)}.`
+          : `Don’t forget: Spark’s proposal for [${w.title}] is waiting for your decision.`
+        : `Spark is waiting for your feedback on [${w.title}] to keep going.`,
     action: { label: w.action, href: w.href },
   }));
-  // A new account after the tutorial (6 Nov): no reports to warn about; instead, what was put off, as reminders.
-  if (ob.fresh) {
-    const later: Msg[] = [];
+  const later: Msg[] = [];
+  if (ob.fresh || (state.onboardingSkipped ?? []).length) {
     if (!state.docs.some((d) => d.uploadedBy === 'u-layla'))
       later.push({
         key: 'files',
@@ -104,27 +109,8 @@ export function useMessages(): Msg[] {
         text: 'Your team can’t see requests yet. [Invite them] when you’re ready.',
         action: { label: 'Invite people', href: '#/team' },
       });
-    return [...due, ...later];
   }
-  return [
-    ...due,
-    {
-      key: 'web-speed',
-      tag: 'Critical',
-      tone: 'critical',
-      text: 'Your website is [slow on mobile]: 6.8 s on 4G. It’s costing you sales.',
-      action: { label: 'See the fix', href: '#/brand-analysis/website' },
-    },
-    // What Spark did this week (9 Nov, review): the news in Dr.AI's window too, after what needs you, titled as news.
-    {
-      key: 'news',
-      kind: 'news',
-      tag: 'This week',
-      tone: 'news',
-      text: '[Two new reports] this week, and the shoot is booked.',
-      action: { label: 'See what’s new', href: '#/?see=latest' },
-    },
-  ];
+  return [...due, ...later];
 }
 
 /** Types the line each time it changes; reduced motion shows it at once. */
@@ -335,7 +321,9 @@ export function DrAiDock({ place }: { place: 'fixed' | 'top' | 'foot' }) {
   );
   // Current UI (11 Nov, review): after the new welcome Dr.AI stands alone in the bottom-right corner, as the welcome
   // leaves him: no window, no Sparki guide. A click opens the chat. Not on Ask Dr.AI itself, where he already is.
-  if (metal) {
+  // 17 Nov, design sync: a new company sees the four onboarding steps in Dr.AI's window once ("one-time show"); after
+  // it, he stands alone and only reminds (SoloDock's tips). So the solo corner waits until onboarding is over.
+  if (metal && !ob.on) {
     if (place !== 'fixed' || path.startsWith('/assistant') || NO_DOCK) return null;
     return <SoloDock chat={chat} setChat={setChat} />;
   }

@@ -94,7 +94,8 @@
 .chipUnit { font-family: var(--f-mono); font-size: 12px; line-height: 16px; letter-spacing: .1em; color: var(--text-muted); }
 
 .field { margin-top: 16px; display: grid; gap: 8px; }
-.fieldLabel { font-family: var(--f-mono); font-size: 12px; line-height: 16px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-muted); }
+/* the field as New request's (18 Nov, review): its label in sentence case, its focus a fine Ink ring */
+.fieldLabel { font-family: var(--f-ui, 'ABC Diatype Extended', sans-serif); font-weight: 500; font-size: 13px; line-height: 18px; letter-spacing: 0; text-transform: none; color: var(--ink); }
 .field input {
   height: 48px;
   padding: 0 16px;
@@ -107,7 +108,7 @@
   outline: none;
   transition: background .2s, box-shadow .2s;
 }
-.field input:focus { background: #fff; box-shadow: 0 0 0 2px var(--cobalt), 0 0 0 8px rgba(30, 59, 214, .12); }
+.field input:focus { background: #fff; box-shadow: 0 0 0 1.5px rgba(14, 17, 22, .5); }
 
 .sum {
   margin-top: 24px;
@@ -156,3 +157,13 @@
   .card { width: 100%; border-radius: 32px 32px 0 0; padding: 32px 20px 24px; }
   .chips { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
+
+/* the whole modal as New request (18 Nov, review): no eyebrow over the title (dropped in TopUp.tsx), the balance now
+   read as a line like the new one under it ("Current balance … 64.20 USD"), Cancel first and Top up after it, the
+   buttons' words 14 px */
+.title { margin-top: 0; }
+.now { justify-content: flex-start; gap: 8px; }
+.now > .nowLabel:first-child { margin-right: auto; font-family: inherit; font-size: 16px; line-height: 24px; letter-spacing: 0; text-transform: none; color: var(--text-muted); }
+.fig + .nowLabel { letter-spacing: .06em; color: var(--text-dim); }
+.actions { flex-direction: row-reverse; }
+.primary, .ghost { font-size: 14px; line-height: 18px; }

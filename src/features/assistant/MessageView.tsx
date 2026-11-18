@@ -199,7 +199,6 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
             <Button
               size="sm"
               variant={isLast ? 'primary' : 'secondary'}
-              icon={Inbox}
               onClick={() =>
                 openRequest({
                   conversationId: convId,

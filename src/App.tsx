@@ -37,6 +37,8 @@ import { HomeCardsDemo } from './features/demo/HomeCardsDemo';
 import { DockDemo } from './features/demo/DockDemo';
 import { DockLooksDemo } from './features/demo/DockLooksDemo';
 import { HighlightLooksDemo } from './features/demo/HighlightLooksDemo';
+import { OnboardingIconsDemo } from './features/demo/OnboardingIconsDemo';
+import { HighlightMetalDemo } from './features/demo/HighlightMetalDemo';
 import { SparkiBubbleDemo } from './features/demo/SparkiBubbleDemo';
 import { StatusGlassDemo } from './features/demo/StatusGlassDemo';
 import { IntroExitDemo } from './features/demo/IntroExitDemo';
@@ -144,6 +146,8 @@ function Screen() {
       if (a === 'dock') return <DockDemo />;
       if (a === 'dock-looks') return <DockLooksDemo />;
       if (a === 'highlight-looks') return <HighlightLooksDemo />;
+      if (a === 'highlight-metal') return <HighlightMetalDemo />;
+      if (a === 'onboarding-icons') return <OnboardingIconsDemo />;
       if (a === 'sparki-bubbles') return <SparkiBubbleDemo />;
       if (a === 'status-glass') return <StatusGlassDemo />;
       if (a === 'intro-exit') return <IntroExitDemo />;

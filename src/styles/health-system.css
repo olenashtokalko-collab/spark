@@ -1,0 +1,632 @@
+/* Health's system, P1 of the consistency audit (18 Nov, docs/audit/spark-health-audit.html): one button in each role,
+   one request status, one round glass icon button, wherever they appear on Health. Loaded after every other layer,
+   so these are the values the portal shows; the Storybook is built from them.
+
+   Buttons, by how much the action weighs:
+   · primary   the smoked dark pill, mono caps; 36 px with 13 px type (sm), 48 px with 14 px type (md)
+   · secondary the outline pill, a 12 % Ink rim that turns Cobalt on hover; the same sizes and type
+   · tertiary  words only, grey, Ink with a faint fill on hover; 36 px, 13 px
+   Outside the roles: the icon button (round see-through glass: 40 on surfaces, 36 in the chat box and under
+   answers, 28 in rows) and the AI button (the liquid metal, Ask Dr.AI only), left as they are. */
+
+:root {
+  --hs-ink: #0e1116;
+  --hs-mono: 'ABC Diatype Mono', ui-monospace, monospace;
+  --hs-ease: cubic-bezier(0.25, 0.9, 0.3, 1);
+}
+
+/* ---- primary ---- */
+:root[data-theme][data-theme][data-ui] body .btn.btn--primary:not(.btn--icon):not(.rail__drai-metal):not(.composer *),
+:root[data-theme][data-theme][data-ui] body .hh-topup [class*='_primary_'],
+:root[data-theme][data-theme][data-ui] body .hh-latest__cta {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px !important;
+  padding: 0 18px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: linear-gradient(180deg, rgba(34, 38, 48, 0.86), rgba(14, 17, 22, 0.92)) !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 12px 26px -12px rgba(14, 17, 22, 0.5) !important;
+  font: 500 13px/16px var(--hs-mono) !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  color: #f8f6f2 !important;
+  transition:
+    box-shadow 0.3s ease,
+    translate 0.4s var(--hs-ease),
+    scale 0.4s var(--hs-ease) !important;
+}
+:root[data-theme][data-theme][data-ui] body .btn.btn--primary:is(.btn--md, .btn--lg):not(.btn--icon):not(.rail__drai-metal):not(.composer *),
+:root[data-theme][data-theme][data-ui] body .dlg-spark :is(.dialog__foot, .req-done__actions) .btn.btn--primary,
+:root[data-theme][data-theme][data-ui] body .hh-topup [class*='_primary_'] {
+  height: 48px !important;
+  padding: 0 24px !important;
+  font-size: 14px !important;
+  line-height: 18px !important;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3),
+    0 16px 32px -12px rgba(14, 17, 22, 0.5) !important;
+}
+:root[data-theme][data-theme][data-ui] body .btn.btn--primary:not(.btn--icon):not(.rail__drai-metal):not(.composer *) :is(.metal__label, span, svg) {
+  color: inherit !important;
+  font: inherit !important;
+  letter-spacing: inherit !important;
+  text-shadow: none !important;
+}
+:root[data-theme][data-theme][data-ui] body .btn.btn--primary:not(.btn--icon):not(.rail__drai-metal):not(.composer *) :is(.metal__glass, .metal__ring, .metal__halo) {
+  display: none !important;
+}
+/* the light sweeping across on hover, as the Spark site's; a pixel up; pressed, it settles */
+:root[data-theme][data-theme][data-ui] body .btn.btn--primary:not(.btn--icon):not(.rail__drai-metal):not(.composer *)::after,
+:root[data-theme][data-theme][data-ui] body .hh-latest__cta::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: inherit;
+  background: linear-gradient(105deg, transparent 30%, rgba(255, 255, 255, 0.22) 48%, rgba(255, 255, 255, 0.04) 56%, transparent 70%);
+  translate: -110%;
+  transition: translate 0.9s cubic-bezier(0.22, 1, 0.36, 1);
+  pointer-events: none;
+}
+:root[data-theme][data-theme][data-ui] body .btn.btn--primary:not(.btn--icon):not(.rail__drai-metal):not(.composer *):not(:disabled):is(:hover, :focus-visible),
+:root[data-theme][data-theme][data-ui] body .hh-topup [class*='_primary_']:not(:disabled):is(:hover, :focus-visible),
+:root[data-theme][data-theme][data-ui] body :is(.hh-latest__row:hover, .hh-latest__cta:hover) .hh-latest__cta {
+  translate: 0 -1px;
+  background: linear-gradient(180deg, rgba(34, 38, 48, 0.86), rgba(14, 17, 22, 0.92)) !important;
+}
+:root[data-theme][data-theme][data-ui] body .btn.btn--primary:not(.btn--icon):not(.rail__drai-metal):not(.composer *):not(:disabled):is(:hover, :focus-visible)::after,
+:root[data-theme][data-theme][data-ui] body :is(.hh-latest__row:hover, .hh-latest__cta:hover) .hh-latest__cta::after {
+  translate: 110%;
+}
+:root[data-theme][data-theme][data-ui] body :is(.btn.btn--primary:not(.btn--icon):not(.rail__drai-metal):not(.composer *), .hh-topup [class*='_primary_']):active {
+  translate: 0;
+  scale: 0.98;
+  transition-duration: 0.12s !important;
+}
+
+/* ---- secondary ---- */
+:root[data-theme][data-theme][data-ui] body .btn.btn--secondary:not(.btn--icon):not(.composer *),
+:root[data-theme][data-theme][data-ui] body .hb-profile,
+:root[data-theme][data-theme][data-ui] body .hh-topup [class*='_ghost_'] {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 36px !important;
+  padding: 0 18px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.12) !important;
+  font: 500 13px/16px var(--hs-mono) !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  color: var(--hs-ink) !important;
+  transition:
+    color 0.2s ease,
+    box-shadow 0.2s ease,
+    translate 0.3s var(--hs-ease) !important;
+}
+:root[data-theme][data-theme][data-ui] body .btn.btn--secondary:is(.btn--md, .btn--lg):not(.btn--icon):not(.composer *),
+:root[data-theme][data-theme][data-ui] body .dlg-spark :is(.dialog__foot, .req-done__actions) .btn.btn--secondary,
+:root[data-theme][data-theme][data-ui] body .hh-topup [class*='_ghost_'] {
+  height: 48px !important;
+  padding: 0 24px !important;
+  font-size: 14px !important;
+  line-height: 18px !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.btn.btn--secondary:not(.btn--icon):not(.composer *), .hb-profile, .hh-topup [class*='_ghost_']):is(:hover, :focus-visible) {
+  background: transparent !important;
+  box-shadow: inset 0 0 0 1px #1e3bd6 !important;
+  color: #1e3bd6 !important;
+  translate: 0 -1px;
+}
+:root[data-theme][data-theme][data-ui] body :is(.btn.btn--secondary:not(.btn--icon):not(.composer *), .hb-profile, .hh-topup [class*='_ghost_']):active {
+  translate: 0;
+}
+:root[data-theme][data-theme][data-ui] body .btn.btn--secondary:not(.btn--icon):not(.composer *) :is(span, svg) {
+  color: inherit !important;
+}
+
+/* ---- tertiary: words only ---- */
+:root[data-theme][data-theme][data-ui] body .chats-hist__new {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px !important;
+  padding: 0 12px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font: 500 13px/16px var(--hs-mono) !important;
+  letter-spacing: 0.1em !important;
+  text-transform: uppercase !important;
+  color: rgba(14, 17, 22, 0.6) !important;
+  translate: none !important;
+  transition: background 0.2s ease, color 0.2s ease !important;
+}
+:root[data-theme][data-theme][data-ui] body .chats-hist__new:is(:hover, :focus-visible) {
+  background: rgba(14, 17, 22, 0.05) !important;
+  box-shadow: none !important;
+  color: var(--hs-ink) !important;
+}
+
+/* ---- the icon button: round see-through glass ---- */
+:root[data-theme][data-theme][data-ui] body .hp-drawer__close,
+:root[data-theme][data-theme][data-ui] body .assistant .msg-actions .btn.btn--ghost.btn--icon,
+:root[data-theme][data-theme][data-ui] body .composer--box .composer__bar > .btn:first-child,
+:root[data-theme][data-theme][data-ui] body .composer button.composer__mic,
+:root[data-theme][data-theme][data-ui] body .hitem__more {
+  display: inline-grid !important;
+  place-items: center;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.22) !important;
+  -webkit-backdrop-filter: blur(12px) saturate(1.5);
+  backdrop-filter: blur(12px) saturate(1.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.45), 0 0 0 0.5px rgba(14, 17, 22, 0.08) !important;
+  color: var(--hs-ink) !important;
+  translate: none !important;
+  transition: background 0.25s ease, box-shadow 0.25s ease, rotate 0.4s cubic-bezier(0.2, 0.9, 0.1, 1) !important;
+}
+:root[data-theme][data-theme][data-ui] body .hp-drawer__close {
+  width: 40px !important;
+  height: 40px !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.assistant .msg-actions .btn.btn--ghost.btn--icon, .composer--box .composer__bar > .btn:first-child, .composer button.composer__mic) {
+  width: 36px !important;
+  height: 36px !important;
+  padding: 0 !important;
+}
+:root[data-theme][data-theme][data-ui] body .hitem__more {
+  width: 28px !important;
+  height: 28px !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.hp-drawer__close, .assistant .msg-actions .btn.btn--ghost.btn--icon, .composer--box .composer__bar > .btn:first-child, .composer button.composer__mic, .hitem__more):is(:hover, :focus-visible) {
+  background: rgba(255, 255, 255, 0.7) !important;
+  box-shadow: inset 0 1px 0 #fff, inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 4px 12px -6px rgba(30, 30, 60, 0.25) !important;
+  color: var(--hs-ink) !important;
+}
+:root[data-theme][data-theme][data-ui] body .hp-drawer__close:hover {
+  rotate: 90deg;
+}
+
+/* ---- one request status: a dot and a word, the dot in Home's palette wherever the status shows ----
+   with Spark (submitted, in review) a ring; a proposal waiting on you Cobalt with its halo; in progress amber;
+   approved green; delivered a ring; declined and superseded a pale ring. The word keeps its line's own type. */
+:root[data-theme][data-theme][data-ui] body .rstatus {
+  --dot: transparent;
+  --hs-ring: rgba(14, 17, 22, 0.82);
+}
+:root[data-theme][data-theme][data-ui] body .rstatus .rstatus__dot {
+  width: 8px !important;
+  height: 8px !important;
+  background: var(--dot) !important;
+  box-shadow: inset 0 0 0 1.4px var(--hs-ring) !important;
+}
+:root[data-theme][data-theme][data-ui] body .rstatus:is(.rstatus--proposal, .rstatus--you) {
+  --dot: #1e3bd6;
+  --hs-ring: #1e3bd6;
+}
+:root[data-theme][data-theme][data-ui] body .rstatus:is(.rstatus--proposal, .rstatus--you) .rstatus__dot {
+  box-shadow: 0 0 0 3px rgba(30, 59, 214, 0.16) !important;
+}
+:root[data-theme][data-theme][data-ui] body .rstatus.rstatus--in_progress {
+  --dot: #e0a100;
+  --hs-ring: #e0a100;
+}
+:root[data-theme][data-theme][data-ui] body .rstatus.rstatus--approved {
+  --dot: #2f8a57;
+  --hs-ring: #2f8a57;
+}
+:root[data-theme][data-theme][data-ui] body .rstatus:is(.rstatus--declined, .rstatus--superseded, .rstatus--changes_requested) {
+  --hs-ring: rgba(14, 17, 22, 0.3);
+}
+:root[data-theme][data-theme][data-ui] body .rstatus:is(.rstatus--submitted, .rstatus--in_review, .rstatus--delivered, .rstatus--declined, .rstatus--superseded, .rstatus--changes_requested) .rstatus__dot {
+  background: transparent !important;
+}
+/* the chat box's "+" past the older chat-box rules (they name it .btn--secondary.btn--sm inside .screen/.assistant) */
+:root[data-theme][data-theme][data-ui] body :is(.screen .chats-start, .assistant, .chat-drawer) .composer .composer__bar > .btn.btn--secondary.btn--sm:first-child,
+:root[data-theme][data-theme][data-ui] body :is(.screen .chats-start, .assistant, .chat-drawer) .composer button.composer__mic.composer__mic {
+  /* the same clear glass as the modals' close (18 Nov, review: "same as modals") */
+  background: rgba(255, 255, 255, 0.22) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.45), 0 0 0 0.5px rgba(14, 17, 22, 0.08) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.screen .chats-start, .assistant, .chat-drawer) .composer .composer__bar > .btn.btn--secondary.btn--sm:first-child:is(:hover, :focus-visible),
+:root[data-theme][data-theme][data-ui] body :is(.screen .chats-start, .assistant, .chat-drawer) .composer button.composer__mic.composer__mic:is(:hover, :focus-visible) {
+  background: rgba(255, 255, 255, 0.7) !important;
+  box-shadow: inset 0 1px 0 #fff, inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 4px 12px -6px rgba(30, 30, 60, 0.25) !important;
+}
+
+/* ===================================================================================================================
+   P2 of the audit (18 Nov): the scales. Text greys fold into four, mono labels into three, titles and body sizes onto
+   one scale, corners onto six steps; one tab control; search and filters as the small field.
+   =================================================================================================================== */
+:root {
+  --hs-ink-2: rgba(14, 17, 22, 0.72); /* secondary text */
+  --hs-ink-3: rgba(14, 17, 22, 0.5); /* meta, captions, hints */
+  --hs-ink-4: rgba(14, 17, 22, 0.4); /* placeholders, disabled */
+  --hs-ext: 'ABC Diatype Extended', sans-serif;
+  --hs-r-xs: 6px;
+  --hs-r-s: 12px;
+  --hs-r-m: 16px;
+  --hs-r-l: 24px;
+  --hs-r-xl: 32px;
+}
+
+/* ---- greys: secondary text (was 62, 64, 82 %, #4e535e, #505154, #6c6d6e and the sidebar's grey) ---- */
+:root[data-theme][data-theme][data-ui] body :is(
+    .rail__label,
+    .db-label,
+    .hc-switch__line,
+    .hh-arc__unit,
+    .hx-prof__body,
+    .dialog__desc,
+    .rq-head__sub,
+    .page-head__sub,
+    .gtabs button,
+    .filter-btn,
+    .hp-tab,
+    .hh-latest__meta .hh-latest__status,
+    .bx-co__invite,
+    .hh-team > span:not(.bx-co__faces),
+    [class*='_nowLabel_'],
+    [class*='_chipUnit_'],
+    .acct__role
+  ) {
+  color: var(--hs-ink-2) !important;
+}
+/* meta, captions and hints (was 45, 48, 55, 60 %, #8a8e97 and the sidebar's grey under your name) */
+:root[data-theme][data-theme][data-ui] body :is(
+    .rail__me-sub,
+    .gtabs__n:not(.is-you),
+    .hb-updated-sm,
+    .hitem__meta,
+    .field__optional,
+    .field__hint,
+    [class*='_note_'],
+    .hp-drawer dt,
+    .hh-measured,
+    .hh-vs,
+    .acct__email
+  ) {
+  color: var(--hs-ink-3) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.history__label, .input::placeholder, textarea::placeholder) {
+  color: var(--hs-ink-4) !important;
+}
+
+/* ---- mono labels: label 11.5 / 0.12em caps; tag 10 / 0.10em caps (the role tags keep theirs) ---- */
+:root[data-theme][data-theme][data-ui] body :is(.db-label:not(h2), .history__label, .hh-latest__meta, .msg-user__meta, .sb-brands__head) {
+  font-family: var(--hs-mono) !important;
+  font-size: 11.5px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+}
+:root[data-theme][data-theme][data-ui] body .hh-latest__meta .hh-latest__status {
+  font: inherit !important;
+  letter-spacing: inherit !important;
+}
+
+/* ---- titles: page 32, modal 28, section and drawer 22; the Ask Dr.AI greeting the one 38 ---- */
+:root[data-theme][data-theme][data-ui] body :is(.rq-head__title, .page-head__title) {
+  font: 700 32px/1.1 var(--hs-ext) !important;
+  letter-spacing: -0.03em !important;
+}
+:root[data-theme][data-theme][data-ui] body .hp-drawer__title {
+  font: 700 22px/26px var(--hs-ext) !important;
+  letter-spacing: -0.02em !important;
+}
+/* ---- body sizes: 12, 13, 14, 15 (12.5, 14.5 and 16 fold into their neighbours); item titles 500 15 ---- */
+:root[data-theme][data-theme][data-ui] body :is(.hitem__meta, .hb-updated-sm) {
+  font-size: 12px !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.rail__label, .hx-prof__body) {
+  font-size: 14px !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.hitem__title, .hh-latest__title) {
+  font-size: 15px !important;
+  font-weight: 500 !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.hc-switch__line, [class*='_now_'] > [class*='_nowLabel_']:first-child) {
+  font-size: 15px !important;
+}
+
+/* ---- corners: 6, 12, 16, 24, 32 and full ---- */
+:root[data-theme][data-theme][data-ui] body :is(.rail__btn, .rail__me, .rail__toggle, .acct__item, .hitem, .rq-search, .filter-btn, .input--with-icon, .sb-brand) {
+  border-radius: var(--hs-r-s) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is([class*='_chip_']) {
+  border-radius: var(--hs-r-m) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.chats-start__frame, .msg-user__bubble) {
+  border-radius: var(--hs-r-l) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.hh-card, .db-card.hh-card) {
+  border-radius: var(--hs-r-xl) !important;
+}
+
+/* ---- one tab control: Company profile's glass pill with the pressed tab, now on Requests and Documents too ---- */
+:root[data-theme][data-theme][data-ui] body .gtabs {
+  height: auto !important;
+  padding: 4px !important;
+  gap: 0 !important;
+  border-radius: 999px !important;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.66) 60%, rgba(255, 255, 255, 0.76)) !important;
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 0 0 0.5px rgba(14, 17, 22, 0.08),
+    0 12px 28px -14px rgba(30, 30, 60, 0.28),
+    0 2px 6px rgba(30, 30, 60, 0.05) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.gtabs__bubble, .gtabs__trace) {
+  display: none !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.gtabs button, .hp-tab) {
+  height: 32px !important;
+  padding: 0 16px !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font: 400 13px/1 var(--hs-ext) !important;
+  transition: color 0.3s, background 0.3s, box-shadow 0.3s !important;
+}
+:root[data-theme][data-theme][data-ui] body .gtabs button.is-icon {
+  width: 32px !important;
+  padding: 0 !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.gtabs button, .hp-tab):not(.is-on):hover {
+  color: var(--hs-ink) !important;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.34)) !important;
+  box-shadow: inset 1px 1px 0 #fff, inset 0 0 0 1px rgba(255, 255, 255, 0.7), 0 4px 12px -4px rgba(30, 30, 60, 0.18) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.gtabs button.is-on, .hp-tab.is-on) {
+  font-weight: 500 !important;
+  color: var(--hs-ink) !important;
+  background: linear-gradient(180deg, rgba(14, 17, 22, 0.08), rgba(14, 17, 22, 0.035)) !important;
+  box-shadow: inset 0 1px 3px rgba(14, 17, 22, 0.16), inset 0 0 0 1px rgba(255, 255, 255, 0.65), 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+/* ---- fields: the small size for search and filters, 36 px with 12 px corners, from the form fields' family ---- */
+:root[data-theme][data-theme][data-ui] body :is(.rq-search, .filter-btn, .input.input--with-icon) {
+  height: 36px !important;
+  padding: 0 12px !important;
+  background: rgba(14, 17, 22, 0.04) !important;
+  box-shadow: none !important;
+  font-size: 13px !important;
+  transition: background 0.2s, box-shadow 0.2s !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.rq-search, .filter-btn, .input.input--with-icon):hover {
+  background: rgba(14, 17, 22, 0.065) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.rq-search:focus-within, .input.input--with-icon:focus) {
+  background: #fff !important;
+  box-shadow: 0 0 0 1.5px rgba(14, 17, 22, 0.5) !important;
+}
+:root[data-theme][data-theme][data-ui] body .rq-search input {
+  height: 100% !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+/* the rest of the greys, found on the second pass */
+:root[data-theme][data-theme][data-ui] body :is(.hh-based, .hh-health__text, .hh-verdict > span, .hh-fig__n > i) {
+  color: var(--hs-ink-2) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.rq-row3__type, .rq-row3__when, .rq-cols > span, .drop-card .faint, .file-card__meta) {
+  color: var(--hs-ink-3) !important;
+}
+:root[data-theme][data-theme][data-ui] body .chats-hist__new {
+  color: var(--hs-ink-3) !important;
+}
+
+/* ---- buttons, a third size and the primary on dark (18 Nov, review on Dr.AI's Ink tip: "the button looks big, add
+   another size; on a dark ground the primary simply white; the buttons in one row") ----
+   xs: 32 px with 12 px type, for small cards and tips. On a dark surface (the Ink tip) the primary is a white pill
+   with Ink words, the secondary a pale rim, the tertiary pale words; they sit in one row. */
+:root[data-theme][data-theme][data-ui] body :is(.btn.btn--primary, .btn.btn--secondary).btn--xs:not(.btn--icon):not(.rail__drai-metal):not(.composer *) {
+  height: 32px !important;
+  min-height: 0 !important;
+  padding: 0 14px !important;
+  gap: 6px !important;
+  font-size: 12px !important;
+  line-height: 16px !important;
+}
+:root[data-theme][data-theme][data-ui] body .dt-say.dt-say--ink .btn.btn--primary:not(.btn--icon):not(.rail__drai-metal):not(.composer *) {
+  background: linear-gradient(180deg, #ffffff, #ece9e3) !important;
+  box-shadow: inset 0 1px 0 #fff, 0 8px 18px -10px rgba(0, 0, 0, 0.5) !important;
+  color: var(--hs-ink) !important;
+}
+:root[data-theme][data-theme][data-ui] body .dt-say.dt-say--ink .btn.btn--primary:not(.btn--icon):not(.rail__drai-metal):not(.composer *)::after {
+  background: linear-gradient(105deg, transparent 30%, rgba(14, 17, 22, 0.08) 48%, transparent 66%) !important;
+}
+:root[data-theme][data-theme][data-ui] body .dt-say.dt-say--ink .btn.btn--primary:not(.btn--icon):not(.rail__drai-metal):not(.composer *):not(:disabled):is(:hover, :focus-visible) {
+  background: #fff !important;
+  box-shadow: inset 0 1px 0 #fff, 0 10px 22px -10px rgba(0, 0, 0, 0.6) !important;
+}
+:root[data-theme][data-theme][data-ui] body .dt-say__acts {
+  flex-wrap: nowrap !important;
+  flex-direction: row !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+:root[data-theme][data-theme][data-ui] body .dt-say__acts > * {
+  flex: none !important;
+  width: auto !important;
+  margin: 0 !important;
+}
+
+/* ===================================================================================================================
+   P3 of the audit (18 Nov): one shadow tint (the cool one of the glass and the brand's light) in three elevations,
+   two surfaces, one shade per accent.
+   =================================================================================================================== */
+:root {
+  --hs-sh-card: 0 1px 2px rgba(14, 17, 22, 0.04), 0 16px 36px -20px rgba(30, 30, 60, 0.22);
+  --hs-sh-float: 0 0 0 0.5px rgba(14, 17, 22, 0.06), 0 12px 28px -14px rgba(30, 30, 60, 0.28), 0 2px 6px rgba(30, 30, 60, 0.05);
+  --hs-sh-overlay: 0 1px 2px rgba(14, 17, 22, 0.04), 0 40px 80px -32px rgba(30, 30, 60, 0.32);
+  /* card glass: Home's cards */
+  --hs-glass-card: linear-gradient(165deg, rgba(255, 255, 255, 0.93), rgba(255, 255, 255, 0.8) 55%, rgba(255, 255, 255, 0.88));
+  /* overlay glass: modals and drawers, their corner light of Ember and violet */
+  --hs-glass-overlay:
+    radial-gradient(320px 320px at calc(100% + 40px) -40px, rgba(232, 80, 31, 0.24), rgba(122, 60, 240, 0.14) 56%, rgba(122, 60, 240, 0) 100%),
+    linear-gradient(160deg, rgba(255, 255, 255, 0.94), rgba(255, 255, 255, 0.84));
+  --hs-ember: #e8501f;
+  --hs-ember-text: #c2410c;
+  --hs-good: #13804f;
+  --hs-violet: #7c4ae0;
+}
+
+/* ---- card elevation and card glass: Home's cards, the Requests list, the files' tiles; the sidebar keeps its glass ---- */
+:root[data-theme][data-theme][data-ui] body :is(.hh-card, .db-card.hh-card) {
+  box-shadow: inset 0 1px 0 #fff, var(--hs-sh-card) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.rq-list.rq-tbl, .file-card__thumb) {
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  background: var(--hs-glass-card) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  backdrop-filter: blur(24px) saturate(1.6);
+  box-shadow: inset 0 1px 0 #fff, var(--hs-sh-card) !important;
+}
+:root[data-theme][data-theme][data-ui] body nav.rail {
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.35),
+    var(--hs-sh-card) !important;
+}
+
+/* ---- floating elevation: menus and popovers ---- */
+:root[data-theme][data-theme][data-ui] body .popover {
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.9), var(--hs-sh-float) !important;
+}
+
+/* ---- overlay elevation and overlay glass: modals and drawers ---- */
+:root[data-theme][data-theme][data-ui] body :is(.dlg-spark .dialog, .chat-drawer, .assistant--chats .chats-hist, .hp-drawer__panel, .hh-topup [class*='_card_']) {
+  border: 1px solid rgba(255, 255, 255, 0.9) !important;
+  background: var(--hs-glass-overlay) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.4);
+  backdrop-filter: blur(24px) saturate(1.4);
+  box-shadow: var(--hs-sh-overlay) !important;
+}
+/* the light the modals drew in a layer of their own is in the glass now */
+:root[data-theme][data-theme][data-ui] body .dlg-spark .dialog::before,
+:root[data-theme][data-theme][data-ui] body .hh-topup [class*='_light_'] {
+  display: none !important;
+}
+
+/* ---- accents: one shade each, plus Ember's text shade for words on white ---- */
+:root[data-theme][data-theme][data-ui] body :is(.steps-toggle, .gtabs__n.is-you, .hh-status.is-work) {
+  color: var(--hs-ember-text) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.hh-status.is-good, .hh-verdict.is-good) {
+  color: var(--hs-good) !important;
+}
+/* approved, in a status dot, the one green */
+:root[data-theme][data-theme][data-ui] body .rstatus.rstatus--approved {
+  --dot: var(--hs-good);
+  --hs-ring: var(--hs-good);
+}
+:root[data-theme][data-theme][data-ui] body .hh-latest__status.is-approved::before {
+  background: var(--hs-good) !important;
+}
+
+/* ---- Top up on the portal's Dialog (P3): its own parts only; the head, fields, foot and close are New request's ---- */
+:root[data-theme][data-theme][data-ui] body .dlg-topup .tu-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+  font: 400 15px/24px var(--hs-ext);
+  color: var(--hs-ink-2);
+}
+:root[data-theme][data-theme][data-ui] body .dlg-topup .tu-row b {
+  font: 600 28px/32px var(--hs-ext);
+  letter-spacing: -0.02em;
+  color: var(--hs-ink);
+  font-variant-numeric: tabular-nums;
+}
+:root[data-theme][data-theme][data-ui] body .dlg-topup .tu-row b i {
+  font: 500 12px/16px var(--hs-mono);
+  font-style: normal;
+  letter-spacing: 0.1em;
+  color: var(--hs-ink-3);
+}
+:root[data-theme][data-theme][data-ui] body .dlg-topup .tu-row--sum {
+  padding-top: 16px;
+  border-top: 1px solid rgba(14, 17, 22, 0.1);
+}
+:root[data-theme][data-theme][data-ui] body .dlg-topup .tu-row--sum b {
+  color: #1e3bd6;
+}
+:root[data-theme][data-theme][data-ui] body .dlg-topup .tu-chips {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+:root[data-theme][data-theme][data-ui] body .dlg-topup .tu-chip {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 4px;
+  height: 72px;
+  border: 1.5px solid transparent;
+  border-radius: var(--hs-r-m);
+  background: rgba(14, 17, 22, 0.04);
+  color: var(--hs-ink);
+  transition: background 0.2s, box-shadow 0.2s, translate 0.3s var(--hs-ease);
+}
+:root[data-theme][data-theme][data-ui] body .dlg-topup .tu-chip:hover {
+  background: rgba(14, 17, 22, 0.065);
+}
+:root[data-theme][data-theme][data-ui] body .dlg-topup .tu-chip b {
+  font: 600 28px/1 var(--hs-ext);
+  letter-spacing: -0.02em;
+}
+:root[data-theme][data-theme][data-ui] body .dlg-topup .tu-chip span {
+  font: 500 12px/16px var(--hs-mono);
+  letter-spacing: 0.1em;
+  color: var(--hs-ink-2);
+}
+:root[data-theme][data-theme][data-ui] body .dlg-topup .tu-chip.is-on {
+  background:
+    linear-gradient(#fff, #fff) padding-box,
+    linear-gradient(110deg, #1e3bd6, #7c4ae0 55%, #e8501f) border-box;
+  box-shadow: 0 10px 22px -16px rgba(124, 74, 224, 0.45);
+}
+:root[data-theme][data-theme][data-ui] body .dlg-topup .tu-chip:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(14, 17, 22, 0.4);
+}
+:root[data-theme][data-theme][data-ui] body .dlg-topup .tu-note {
+  margin: -8px 0 0;
+  font: 400 12px/16px var(--hs-ext);
+  color: var(--hs-ink-3);
+}
+:root[data-theme][data-theme][data-ui] body .dlg-topup .tu-big {
+  display: block;
+  font: 600 56px/1 var(--hs-ext);
+  letter-spacing: -0.03em;
+  color: var(--hs-ink);
+  font-variant-numeric: tabular-nums;
+}
+/* the foot as Top up's was: Cancel first, Top up filling the row */
+:root[data-theme][data-theme][data-ui] body .dlg-topup .dialog__foot .btn.btn--primary {
+  flex: 1;
+}
+@media (max-width: 760px) {
+  :root[data-theme][data-theme][data-ui] body .dlg-topup .tu-chips {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

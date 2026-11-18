@@ -17,6 +17,8 @@ import './styles/ui-b.css';
 import './styles/ui-c.css';
 // Current UI's statuses as a dot and a word (11 Nov), after every other layer.
 import './styles/status-dot.css';
+// Health's system (18 Nov, the consistency audit): one button per role, one status, one icon button. Last of all.
+import './styles/health-system.css';
 import { UiVariantRoot } from './lib/uiVariant';
 
 createRoot(document.getElementById('root')!).render(

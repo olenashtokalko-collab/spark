@@ -79,7 +79,7 @@ export function BrandUiDemo() {
           </div>
           <div className="bui-type__row">
             <Label>Labels · Mono</Label>
-            <span className="bui-label bui-label--lg">Brand Co. · Requests · 2026</span>
+            <span className="bui-label bui-label--lg">Qindeel · Requests · 2026</span>
           </div>
           <div className="bui-type__row">
             <Label>Highlights · Doto</Label>
@@ -271,7 +271,7 @@ export function BrandUiDemo() {
           {/* Home: Ask Spark as the glass box under the company's name. */}
           <div className="bui-apply__home">
             <Label>Home · hero</Label>
-            <h3 className="bui-t-ultra bui-t-ultra--sm">Brand Co.</h3>
+            <h3 className="bui-t-ultra bui-t-ultra--sm">Qindeel</h3>
             <p className="bui-t-light">Everyday products with a Gulf point of view.</p>
             <div className="bui-stage bui-stage--left">
               <div className="bui-glow bui-glow--wide" />

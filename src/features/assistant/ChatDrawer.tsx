@@ -13,6 +13,7 @@ import { Mascot } from '../../components/ui/Mascot';
 import { SparkDisc } from '../../components/ui/BrandSpark';
 import { Composer } from './Composer';
 import { suggestedPrompts } from '../../data/assistant';
+import { CHIP_ICON } from './ChatStart';
 
 export { Mascot };
 
@@ -102,11 +103,16 @@ export function ChatDrawer({ open, onClose, initial, topic, top }: { open: boole
           )}
           {/* The same four ways to start as on the Ask Dr.AI page (9 Nov, review): the name, what you get, an arrow on hover. */}
           <ul className="chats-start__list chat-drawer__list">
-            {(topic ? topic.questions.map((q) => ({ ...q, hint: '' })) : suggestedPrompts.slice(0, 4)).map((p) => (
+            {(topic ? topic.questions.map((q) => ({ ...q, hint: '' })) : suggestedPrompts.slice(0, 3)).map((p) => (
               <li key={p.label}>
-                <button type="button" className="chats-start__row" onClick={() => start(p.prompt)}>
-                  <span>{p.hint ? <><b>{p.label}</b> {p.hint.charAt(0).toLowerCase() + p.hint.slice(1)}</> : p.label}</span>
-                  <ArrowRight size={15} strokeWidth={1.7} className="chats-start__go" />
+                {/* the Ask Dr.AI page's pills (18 Nov, review): the start's coloured icon and its name, the hint on hover;
+                    a topic's questions lead with the follow-ups' arrow */}
+                <button type="button" className="chats-start__row" onClick={() => start(p.prompt)} title={p.hint || undefined}>
+                  {(() => {
+                    const Icon = CHIP_ICON[p.label] ?? ArrowRight;
+                    return <Icon size={14} strokeWidth={1.7} className={CHIP_ICON[p.label] ? 'chats-start__ico' : 'chats-start__go'} aria-hidden />;
+                  })()}
+                  <span>{p.label}</span>
                 </button>
               </li>
             ))}

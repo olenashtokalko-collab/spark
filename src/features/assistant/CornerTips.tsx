@@ -330,7 +330,7 @@ export function CornerTip({ paused, onTalk }: { paused: boolean; onTalk: (on: bo
         <Typed text={b} n={typed.n[1]} hl={/^It’s due /.test(b) ? 5 : -1} lit={typed.done} />
       </p>
       <div className={cx('dt-say__acts', typed.done && 'is-on')} aria-hidden={!typed.done}>
-        <Button size="sm" variant="primary" onClick={() => (close(), navigate(tip.m.action.href.replace(/^#/, '')))}>
+        <Button size="xs" variant="primary" onClick={() => (close(), navigate(tip.m.action.href.replace(/^#/, '')))}>
           {tip.m.action.label}
         </Button>
         {tip.skip && (

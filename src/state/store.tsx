@@ -432,7 +432,7 @@ function useStoreValue() {
           : st.conversations,
         notifications: notify(st, {
           audience: 'spark',
-          title: 'New request from Brand Co.',
+          title: 'New request from Qindeel',
           body: `${id} · ${input.title}`,
           route: `/requests/${id}`,
           kind: 'request',
@@ -510,7 +510,7 @@ function useStoreValue() {
         })),
         notifications: notify(st, {
           audience: 'spark',
-          title: `Brand Co. ${decision === 'approved' ? 'approved' : decision === 'declined' ? 'declined' : 'requested changes on'} the proposal`,
+          title: `Qindeel ${decision === 'approved' ? 'approved' : decision === 'declined' ? 'declined' : 'requested changes on'} the proposal`,
           body: p.title,
           route: `/requests/${p.requestId}/proposal`,
           kind: 'decision',
@@ -603,7 +603,7 @@ function useStoreValue() {
           : s.requests,
         notifications: notify(s, {
           audience: 'spark',
-          title: `Brand Co. ${verb} a file`,
+          title: `Qindeel ${verb} a file`,
           body: doc.name,
           route: `/documents/${doc.folderId}?doc=${docId}`,
           kind: 'file',

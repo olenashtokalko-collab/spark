@@ -22,8 +22,8 @@ export const user = {
 
 // SAMPLE client: a large UAE organisation (name stays an obvious placeholder on purpose).
 export const company = {
-  name: 'Brand Co.',
-  initial: 'B',
+  name: 'Qindeel',
+  initial: 'Q',
   description: 'A UAE group in energy, mobility and real estate. 6,000 people across the GCC.',
   profileLine: 'Abu Dhabi group since 2009: energy, mobility and real estate, 6,000 people, a government partner.',
   chips: ['Energy · Mobility · Real estate', 'Abu Dhabi, since 2009', '6,000 people', 'Government partner', 'Arabic and English'],
@@ -31,7 +31,7 @@ export const company = {
     { initials: 'OS', name: 'Colleague' },
     { initials: 'RA', name: 'Colleague' },
   ],
-  teamLine: 'Brand Co. team · you and 2 colleagues',
+  teamLine: 'Qindeel team · you and 2 colleagues',
 }
 
 /** SAMPLE. The client never discussed money, so A, C and D show no balance or prices.

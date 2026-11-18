@@ -13,7 +13,7 @@ import t from './topup.module.css'
 const AMOUNTS = [25, 50, 100, 250]
 const fmt = (n: number) => n.toFixed(2)
 
-export default function TopUp({ balance, onClose, onTopUp, noun = 'balance' }: { balance: number; onClose: () => void; onTopUp: (amount: number) => void; noun?: 'balance' | 'budget' }) {
+export default function TopUp({ balance, onClose, onTopUp, noun = 'balance', scope }: { balance: number; onClose: () => void; onTopUp: (amount: number) => void; noun?: 'balance' | 'budget'; /** a class for the modal's root, for pages outside the concepts that must give it the concepts' type and colours */ scope?: string }) {
   const Noun = noun[0].toUpperCase() + noun.slice(1)
   const [amount, setAmount] = useState<number>(50)
   const [custom, setCustom] = useState('')
@@ -41,7 +41,7 @@ export default function TopUp({ balance, onClose, onTopUp, noun = 'balance' }: {
 
   // portal to <body>: the hero's backdrop-filter would otherwise trap position: fixed inside the card
   return createPortal(
-    <div className={t.wrap} role="presentation" onMouseDown={e => { if (!card.current?.contains(e.target as Node)) onClose() }}>
+    <div className={scope ? `${t.wrap} ${scope}` : t.wrap} role="presentation" onMouseDown={e => { if (!card.current?.contains(e.target as Node)) onClose() }}>
       <div className={t.scrim} aria-hidden />
       <div ref={card} className={t.card} role="dialog" aria-modal="true" aria-labelledby="topup-title">
         <span className={t.light} aria-hidden />
@@ -51,11 +51,11 @@ export default function TopUp({ balance, onClose, onTopUp, noun = 'balance' }: {
 
         {!done ? (
           <>
-            <span className={t.label}>{Noun} · USD</span>
             <h2 id="topup-title" className={t.title}>Top up your {noun}.</h2>
             <div className={t.now}>
-              <span className={t.nowLabel}>Now</span>
+              <span className={t.nowLabel}>Current {noun}</span>
               <span className={t.fig}>{fmt(balance)}</span>
+              <span className={t.nowLabel}>USD</span>
             </div>
 
             <div className={t.chips} role="radiogroup" aria-label="Amount">
@@ -91,13 +91,12 @@ export default function TopUp({ balance, onClose, onTopUp, noun = 'balance' }: {
             <p className={t.note}>Charged to the card on file. Receipts go to Documents.</p>
 
             <div className={t.actions}>
-              <button className={t.primary} onClick={confirm} disabled={!value}>Top up · USD {value}</button>
+              <button className={t.primary} onClick={confirm} disabled={!value}>Top up</button>
               <button className={t.ghost} onClick={onClose}>Cancel</button>
             </div>
           </>
         ) : (
           <div className={t.doneBox}>
-            <span className={t.label}>{Noun} · USD</span>
             <h2 id="topup-title" className={t.title}>{Noun} updated.</h2>
             <span className={t.figBig}>{fmt(balance)}</span>
             <p className={t.note}>USD {value} added. The receipt is in Documents.</p>

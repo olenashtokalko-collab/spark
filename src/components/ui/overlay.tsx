@@ -19,6 +19,10 @@ interface DialogProps {
    *  above a centred title. */
   icon?: LucideIcon;
   tone?: IconTileTone;
+  /** a class on the dialog's root, for a dialog dressed in a page's own look */
+  className?: string;
+  /** a small mono label over the title */
+  eyebrow?: ReactNode;
 }
 
 /** 'ai' marks moments where Spark's AI takes over; Brand A gives it the Noor spectrum. */
@@ -33,7 +37,7 @@ export function IconTile({ icon: Icon, tone = 'accent', className }: { icon: Luc
   );
 }
 
-export function Dialog({ open, onClose, title, description, children, footer, size = 'md', bare, icon, tone }: DialogProps) {
+export function Dialog({ open, onClose, title, description, children, footer, size = 'md', bare, icon, tone, className, eyebrow }: DialogProps) {
   const ref = useRef<HTMLDivElement>(null);
   const closeRef = useRef(onClose);
   closeRef.current = onClose;
@@ -78,13 +82,14 @@ export function Dialog({ open, onClose, title, description, children, footer, si
 
   if (!open) return null;
   return createPortal(
-    <div className="dialog-root">
+    <div className={cx('dialog-root', className)}>
       <div className="dialog-overlay" onClick={onClose} />
       <div ref={ref} className={cx('dialog', `dialog--${size}`, bare && 'dialog--bare', icon && 'dialog--hero')} role="dialog" aria-modal="true" tabIndex={-1}>
         {!bare && (title || description) && (
           <div className="dialog__head">
             <div>
               {icon && <IconTile icon={icon} tone={tone} />}
+              {eyebrow && <span className="dialog__eyebrow">{eyebrow}</span>}
               {title && <h2 className="dialog__title">{title}</h2>}
               {description && <p className="dialog__desc">{description}</p>}
             </div>
