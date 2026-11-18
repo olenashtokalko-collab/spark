@@ -1,0 +1,106 @@
+/* the Storybook's own frames around the stories: grids of swatches and specimens, a dark ground where a story needs it */
+.sb-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 16px;
+}
+.sb-swatch {
+  display: grid;
+  gap: 8px;
+  font-size: 13px;
+}
+.sb-swatch i {
+  display: block;
+  height: 72px;
+  border-radius: 16px;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.08);
+}
+.sb-swatch b {
+  font-weight: 500;
+}
+.sb-swatch code,
+.sb-spec code {
+  font-family: 'ABC Diatype Mono', monospace;
+  font-size: 12px;
+  color: rgba(14, 17, 22, 0.5);
+}
+.sb-h {
+  margin: 0 0 12px;
+  font: 500 11.5px/16px 'ABC Diatype Mono', monospace;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(14, 17, 22, 0.72);
+}
+.sb-section + .sb-section {
+  margin-top: 40px;
+}
+.sb-spec {
+  display: grid;
+  grid-template-columns: 160px minmax(0, 1fr);
+  gap: 8px 24px;
+  align-items: baseline;
+  padding: 14px 0;
+  border-bottom: 1px solid rgba(14, 17, 22, 0.08);
+}
+.sb-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 16px;
+}
+.sb-col {
+  display: grid;
+  gap: 24px;
+}
+.sb-box {
+  display: grid;
+  place-items: center;
+  height: 96px;
+  background: #fff;
+  font-size: 13px;
+  color: rgba(14, 17, 22, 0.72);
+}
+.sb-dark {
+  padding: 28px;
+  border-radius: 26px 26px 8px 26px;
+  background:
+    radial-gradient(180px 120px at 0% 0%, rgba(30, 59, 214, 0.5), rgba(0, 0, 0, 0) 70%),
+    radial-gradient(150px 110px at 100% 100%, rgba(232, 80, 31, 0.45), rgba(0, 0, 0, 0) 70%),
+    #0e1116;
+}
+.sb-note {
+  max-width: 64ch;
+  margin: 0 0 20px;
+  font-size: 14px;
+  line-height: 21px;
+  color: rgba(14, 17, 22, 0.72);
+}
+.sb-light {
+  position: relative;
+  padding: 32px;
+  border-radius: 32px;
+  background:
+    radial-gradient(260px 200px at 85% 0%, rgba(232, 80, 31, 0.28), rgba(0, 0, 0, 0) 70%),
+    radial-gradient(260px 200px at 10% 100%, rgba(30, 59, 214, 0.22), rgba(0, 0, 0, 0) 70%),
+    #f3f0ea;
+}
+/* a bare frame for parts that only take their look inside a drawer (the ways to start) */
+:root[data-theme][data-theme][data-ui] body .sb-stage .chat-drawer.sb-plain {
+  position: static !important;
+  width: auto !important;
+  height: auto !important;
+  border: 0 !important;
+  background: none !important;
+  box-shadow: none !important;
+  -webkit-backdrop-filter: none !important;
+  backdrop-filter: none !important;
+  animation: none !important;
+  overflow: visible !important;
+}
+:root[data-theme][data-theme][data-ui] body .sb-stage .chat-drawer.sb-plain,
+:root[data-theme][data-theme][data-ui] body .sb-stage .chat-drawer.sb-plain > * {
+  clip-path: none !important;
+  animation: none !important;
+  opacity: 1 !important;
+  transform: none !important;
+}

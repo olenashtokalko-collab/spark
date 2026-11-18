@@ -22,3 +22,4 @@ screenshots/
 # Blender renders and scenes: rebuilt from blender/*.py (the web images live in public/brand/glass)
 blender/renders/
 __pycache__/
+storybook-static/

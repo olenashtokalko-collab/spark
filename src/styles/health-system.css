@@ -5,7 +5,7 @@
    Buttons, by how much the action weighs:
    · primary   the smoked dark pill, mono caps; 36 px with 13 px type (sm), 48 px with 14 px type (md)
    · secondary the outline pill, a 12 % Ink rim that turns Cobalt on hover; the same sizes and type
-   · tertiary  words only, grey, Ink with a faint fill on hover; 36 px, 13 px
+   · tertiary  words only, grey, Ink with a faint fill on hover; 36 px, 13 px (the Button's "ghost" variant)
    Outside the roles: the icon button (round see-through glass: 40 on surfaces, 36 in the chat box and under
    answers, 28 in rows) and the AI button (the liquid metal, Ask Dr.AI only), left as they are. */
 
@@ -139,6 +139,7 @@
 }
 
 /* ---- tertiary: words only ---- */
+:root[data-theme][data-theme][data-ui] body .btn.btn--ghost:not(.btn--icon):not(.composer *),
 :root[data-theme][data-theme][data-ui] body .chats-hist__new {
   display: inline-flex;
   align-items: center;
@@ -156,6 +157,7 @@
   translate: none !important;
   transition: background 0.2s ease, color 0.2s ease !important;
 }
+:root[data-theme][data-theme][data-ui] body .btn.btn--ghost:not(.btn--icon):not(.composer *):is(:hover, :focus-visible),
 :root[data-theme][data-theme][data-ui] body .chats-hist__new:is(:hover, :focus-visible) {
   background: rgba(14, 17, 22, 0.05) !important;
   box-shadow: none !important;
@@ -629,4 +631,44 @@
   :root[data-theme][data-theme][data-ui] body .dlg-topup .tu-chips {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+}
+
+/* ---- the icon button as a component of its own (IconButton.tsx), for new screens and the Storybook ---- */
+.hs-icon-btn {
+  display: inline-grid;
+  place-items: center;
+  flex: none;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.22);
+  -webkit-backdrop-filter: blur(12px) saturate(1.5);
+  backdrop-filter: blur(12px) saturate(1.5);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.45), 0 0 0 0.5px rgba(14, 17, 22, 0.08);
+  color: #0e1116;
+  cursor: pointer;
+  transition: background 0.25s ease, box-shadow 0.25s ease, rotate 0.4s cubic-bezier(0.2, 0.9, 0.1, 1);
+}
+.hs-icon-btn:is(:hover, :focus-visible) {
+  background: rgba(255, 255, 255, 0.7);
+  box-shadow: inset 0 1px 0 #fff, inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 4px 12px -6px rgba(30, 30, 60, 0.25);
+}
+.hs-icon-btn:focus-visible {
+  outline: 2px solid rgba(14, 17, 22, 0.4);
+  outline-offset: 2px;
+}
+.hs-icon-btn--turn:hover {
+  rotate: 90deg;
+}
+.hs-icon-btn--40 {
+  width: 40px;
+  height: 40px;
+}
+.hs-icon-btn--36 {
+  width: 36px;
+  height: 36px;
+}
+.hs-icon-btn--28 {
+  width: 28px;
+  height: 28px;
 }

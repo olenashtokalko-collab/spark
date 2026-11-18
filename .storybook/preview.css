@@ -1,0 +1,9 @@
+/* the stage every story sits on: the portal's Sand ground */
+html,
+body {
+  background: #f6f5f2;
+}
+.sb-stage {
+  font-family: 'ABC Diatype Extended', sans-serif;
+  color: #0e1116;
+}
