@@ -2494,6 +2494,8 @@ function holdLinks(e: React.MouseEvent) {
   const href = a.getAttribute('href') ?? '';
   // in-page anchors (#foo) and outside links are left alone; the portal's own routes (#/…) are held
   if (!href.startsWith('#/')) return;
+  // the team opens now (18 Nov, review: "the way to the team must be clickable")
+  if (href.startsWith('#/team')) return;
   e.preventDefault();
 }
 
