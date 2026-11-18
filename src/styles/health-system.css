@@ -672,3 +672,137 @@
   width: 28px;
   height: 28px;
 }
+
+/* ===================================================================================================================
+   Requests and Documents on the system (18 Nov, review: "align them with the Storybook and the chosen style; open the
+   sidebar's tabs"): their cards in card glass, their labels and greys on the scale, one tab control, the page title
+   at 32, Ember's text shade for what's overdue.
+   =================================================================================================================== */
+
+/* ---- cards: the request's blocks, its stages, the folders and the files, as Home's cards ---- */
+:root[data-theme][data-theme][data-ui] body :is(section.block, .side-card, .gfo.gfo--tile) {
+  border: 1px solid rgba(255, 255, 255, 0.95) !important;
+  border-radius: var(--hs-r-l) !important;
+  background: var(--hs-glass-card) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(1.6);
+  backdrop-filter: blur(24px) saturate(1.6);
+  box-shadow: inset 0 1px 0 #fff, var(--hs-sh-card) !important;
+}
+/* the decision panel inside a request: white, a step lighter, the inner-card corner */
+:root[data-theme][data-theme][data-ui] body .req-decide {
+  border-radius: var(--hs-r-m) !important;
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.06), 0 8px 20px -14px rgba(30, 30, 60, 0.25) !important;
+}
+:root[data-theme][data-theme][data-ui] body .stg__mark {
+  border-radius: var(--hs-r-s) !important;
+}
+
+/* ---- titles: a request's title as a page title ---- */
+:root[data-theme][data-theme][data-ui] body .req-head__title {
+  font: 700 32px/1.1 var(--hs-ext) !important;
+  letter-spacing: -0.03em !important;
+  text-wrap: balance;
+}
+:root[data-theme][data-theme][data-ui] body .gfo.gfo--tile b {
+  font: 500 15px/20px var(--hs-ext) !important;
+}
+
+/* ---- labels: the cards' mono labels, counts beside them ---- */
+:root[data-theme][data-theme][data-ui] body :is(.brief__title, .side-card__title, .block__title, .gfo-count) {
+  font: 500 11.5px/16px var(--hs-mono) !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase !important;
+  color: var(--hs-ink-2) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.block__count, .gfo-count, .hl-count) {
+  color: var(--hs-ink-3) !important;
+}
+
+/* ---- greys ---- */
+:root[data-theme][data-theme][data-ui] body :is(.back, .req-decide__facts, .gfo--tile b + span) {
+  color: var(--hs-ink-2) !important;
+  font-weight: 400 !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.req-head .mono, .req-head__id) {
+  color: var(--hs-ink-3) !important;
+}
+:root[data-theme][data-theme][data-ui] body .back:hover {
+  color: var(--hs-ink) !important;
+}
+
+/* ---- what's overdue or waiting on you: Ember's text shade; the folders' "to review" as the attention pill ---- */
+:root[data-theme][data-theme][data-ui] body :is(.req-decide__due, .stg__due-when) {
+  color: var(--hs-ember-text) !important;
+}
+:root[data-theme][data-theme][data-ui] body .gfo-badge {
+  height: 24px !important;
+  padding: 0 10px !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: inset 0 0 0 1px rgba(232, 80, 31, 0.32) !important;
+  font: 500 12px/1 var(--hs-ext) !important;
+  color: var(--hs-ember-text) !important;
+}
+
+/* ---- the request's tabs (Overview, Messages, Files, Activity): the one tab control, not an underline ---- */
+:root[data-theme][data-theme][data-ui] body .hl-tabs.og-tabs {
+  display: inline-flex !important;
+  align-self: flex-start;
+  width: auto !important;
+  height: auto !important;
+  gap: 0 !important;
+  padding: 4px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.84), rgba(255, 255, 255, 0.66) 60%, rgba(255, 255, 255, 0.76)) !important;
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset -1px -1px 0 rgba(255, 255, 255, 0.35),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.55),
+    0 0 0 0.5px rgba(14, 17, 22, 0.08),
+    0 12px 28px -14px rgba(30, 30, 60, 0.28),
+    0 2px 6px rgba(30, 30, 60, 0.05) !important;
+}
+:root[data-theme][data-theme][data-ui] body .hl-tabs.og-tabs .og-tabs__bar {
+  display: none !important;
+}
+:root[data-theme][data-theme][data-ui] body .hl-tabs.og-tabs > button {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px !important;
+  margin: 0 !important;
+  padding: 0 16px !important;
+  border: 0 !important;
+  border-radius: 999px !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  font: 400 13px/1 var(--hs-ext) !important;
+  color: var(--hs-ink-2) !important;
+  transition: color 0.3s, background 0.3s, box-shadow 0.3s !important;
+}
+:root[data-theme][data-theme][data-ui] body .hl-tabs.og-tabs > button:not(.is-on):hover {
+  color: var(--hs-ink) !important;
+  background: linear-gradient(160deg, rgba(255, 255, 255, 0.7), rgba(255, 255, 255, 0.34)) !important;
+  box-shadow: inset 1px 1px 0 #fff, inset 0 0 0 1px rgba(255, 255, 255, 0.7), 0 4px 12px -4px rgba(30, 30, 60, 0.18) !important;
+}
+:root[data-theme][data-theme][data-ui] body .hl-tabs.og-tabs > button.is-on {
+  font-weight: 500 !important;
+  color: var(--hs-ink) !important;
+  background: linear-gradient(180deg, rgba(14, 17, 22, 0.08), rgba(14, 17, 22, 0.035)) !important;
+  box-shadow: inset 0 1px 3px rgba(14, 17, 22, 0.16), inset 0 0 0 1px rgba(255, 255, 255, 0.65), 0 1px 0 rgba(255, 255, 255, 0.9) !important;
+}
+
+/* ---- Documents' search: room for its icon ---- */
+:root[data-theme][data-theme][data-ui] body .input.input--with-icon {
+  padding-left: 36px !important;
+}
+:root[data-theme][data-theme][data-ui] body .hl-tabs.og-tabs.og-tabs {
+  width: max-content !important;
+  max-width: 100%;
+  justify-self: start !important;
+}
+:root[data-theme][data-theme][data-ui] body .hl-tabs.og-tabs > button::after {
+  content: none !important;
+  display: none !important;
+}

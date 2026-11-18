@@ -138,23 +138,7 @@ export function AppShell({ children }: { children: ReactNode }) {
           .map((n) => {
           const active = n.match(route.path);
           const count = n.path === '/requests' ? counts.requests : n.path === '/documents' ? counts.documents : 0;
-          // Requests and Documents shown but not open while the client approves the look (13 Nov, review); a tip
-          // beside one says they're coming, the name itself unchanged
-          if (n.path === '/requests' || n.path === '/documents')
-            return (
-              <span
-                key={n.path}
-                className="rail__btn rail__btn--off"
-                tabIndex={0}
-                aria-disabled="true"
-                aria-label={`${n.label}, coming soon`}
-                data-tip={railOpen ? 'Coming soon' : `${n.label} · coming soon`}
-              >
-                <n.icon size={18} strokeWidth={1.7} />
-                <span className="rail__label">{n.label}</span>
-                {count > 0 && <span className="rail__dot" aria-hidden />}
-              </span>
-            );
+          // Requests and Documents open again (18 Nov, review: aligned to the Storybook's system)
           return (
             <a
               key={n.path}
