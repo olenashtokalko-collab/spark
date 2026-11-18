@@ -1224,7 +1224,7 @@ function Focus({ title, children }: { title: string; children: ReactNode[] }) {
 // jelly glass rendered in Blender, each in its own colour as the service keys on sparkstudios.ae (ui/MorphVideo)
 // brandTiles (13 Nov, review): Layout 5's Grid tiles made Layout 2 ("replace Layout 2 with Layout 5 · Grid tiles"), and
 // Layout 5 is now Glass slabs; the CARDS switch is gone. The old Layout 2 (boldGlass) leaves the switch; its code stays.
-type HomeLook = 'current' | 'boldGlass' | 'qo2' | 'layout2' | 'brand' | 'brandKeys' | 'brandTiles' | 'tabs' | 'brief' | 'dash' | 'greet' | 'health' | 'healthSide';
+type HomeLook = 'current' | 'boldGlass' | 'qo2' | 'layout2' | 'brand' | 'brandKeys' | 'brandTiles' | 'tabs' | 'brief' | 'dash' | 'greet' | 'health' | 'healthSide' | 'healthBar';
 const isBand = (l: HomeLook) => l === 'brand' || l === 'brandKeys' || l === 'brandTiles';
 /** The card set each band layout shows: Layout 2 its Grid tiles, Layout 5 its Glass slabs. */
 const cardsOf = (l: HomeLook): CardStyle | undefined => (l === 'brandTiles' ? 'tiles' : l === 'brandKeys' ? 'slabs' : undefined);
@@ -1249,13 +1249,18 @@ const HOME_LOOK_KEY = 'spark-home-look';
 // 17 Nov (late): Health again with the brand switcher in the sidebar's account menu, as Claude Code's workspaces
 // 17 Nov (late), design sync: Jean reviews one Home, so the switch keeps only Health and its sidebar version, and
 // the onboarding as a new company sees it; Console, Overview, Studio and the empty states are off it (their pages stay)
-const HOME_ON_SWITCH: HomeLook[] = ['health', 'healthSide'];
+const HOME_ON_SWITCH: HomeLook[] = ['health', 'healthSide', 'healthBar'];
 /** The switch in the order it is shown: a look of the portal, or a page of its own. */
 type SwitchItem = HomeLook | { id: 'console' | 'studio' | 'empty' | 'onboarding'; name: string; to: string };
 // Health is the default (18 Nov, review: "Health is the default, so the switch keeps Sidebar brands and Onboarding"):
 // the switch shows the two departures from it, each a toggle; pressing the one that's on comes back to Health
 const SWITCH_ORDER: SwitchItem[] = [
+  // the sketch's version, the default (18 Nov, review: "add the sketch's version to the variants"): the brand picked
+  // from the dropdown by its name on Home
+  'health',
   'healthSide',
+  // concept 3 (18 Nov, review, after Covey's app strip): the brands as a row of marks under a grid button
+  'healthBar',
   // the portal as a new company finds it: the welcome, then Dr.AI's four first steps in his corner (shown once)
   { id: 'onboarding', name: 'Onboarding', to: '/' },
 ];
@@ -1266,8 +1271,10 @@ const HOME_LOOK_NAMES: Record<HomeLook, string> = {
   // tried and dropped): the brand's health; the overview at a glance. The colleague's two keep her names, Console
   // and Studio. Were Classic and Quick overview
   qo2: 'Overview',
-  health: 'Health',
-  healthSide: 'Sidebar brands',
+  // named by where the brand is picked (18 Nov, review: "the names should say what each is")
+  health: 'Dropdown by the name',
+  healthSide: 'In the profile menu',
+  healthBar: 'Bar across the top',
   // Glass archived (13 Nov, review: "take the Glass version off, put it in the archive"), its code kept
   brandTiles: 'Glass (archived)',
   // Keys archived (13 Nov, review: "delete the Keys variant, or put it in the archive of the ones we made before")
@@ -2402,7 +2409,7 @@ export function readHomeLook(): HomeLook {
   }
 }
 const homeRootClass = (look: HomeLook) =>
-  cx('bx bx--sand bx--page', look !== 'current' && look !== 'tabs' && look !== 'brief' && look !== 'dash' && look !== 'greet' && look !== 'health' && look !== 'healthSide' && 'bx--bold', (look === 'tabs' || look === 'brief' || look === 'dash' || look === 'greet' || look === 'health' || look === 'healthSide') && 'bx--tabs', look.startsWith('layout') && 'bx--layout', look === 'layout2' && 'bx--dots', look === 'layout2' && 'bx--refined', look === 'boldGlass' && 'bx--glassbook');
+  cx('bx bx--sand bx--page', look !== 'current' && look !== 'tabs' && look !== 'brief' && look !== 'dash' && look !== 'greet' && look !== 'health' && look !== 'healthSide' && look !== 'healthBar' && 'bx--bold', (look === 'tabs' || look === 'brief' || look === 'dash' || look === 'greet' || look === 'health' || look === 'healthSide' || look === 'healthBar') && 'bx--tabs', look.startsWith('layout') && 'bx--layout', look === 'layout2' && 'bx--dots', look === 'layout2' && 'bx--refined', look === 'boldGlass' && 'bx--glassbook');
 
 /** The company card alone, for Home while a company is still onboarding (13 Nov, review: the old card there is
  *  replaced by the one Current's Home has), in the look Home is set to, with the HERO switch to try its grounds. */
@@ -2444,7 +2451,8 @@ export function HomeSwitch({ current, onPick }: { current: HomeLook | 'empty' | 
   };
   return (
     <div className="ui-switch ui-switch--home" role="group" aria-label="Home look">
-      <span className="ui-switch__label">HOME</span>
+      {/* what it switches: where you pick the brand (18 Nov, review: "it isn't Home, it's how brands are shown") */}
+      <span className="ui-switch__label">Brand switch</span>
       {SWITCH_ORDER.map((v) =>
         typeof v === 'string' ? (
           <button key={v} type="button" aria-pressed={on === v} className={cx(on === v && 'is-on')} onClick={() => pick(on === v ? 'health' : v)}>
@@ -2455,7 +2463,8 @@ export function HomeSwitch({ current, onPick }: { current: HomeLook | 'empty' | 
             key={v.id}
             type="button"
             aria-pressed={on === v.id}
-            className={cx(on === v.id && 'is-on')}
+            // Onboarding isn't a way to switch brands: set apart after a rule
+            className={cx(on === v.id && 'is-on', v.id === 'onboarding' && 'ui-switch__apart')}
             onClick={() => {
               // pressed again, Onboarding gives the full demo back on Health
               if (v.id === 'onboarding' && on === 'onboarding') return pick('health');
@@ -2581,7 +2590,7 @@ export function HomeBentoC() {
       <SpectrumDefs />
       {/* no HERO in Quick overview 2 (13 Nov, review): its company card is its own layout, not the hero's grounds */}
       {/* no HERO on Layout 6 (13 Nov, review): its top is the one light section, not the hero */}
-      {SHOW_HOME_SWITCH && look !== 'qo2' && look !== 'tabs' && look !== 'brief' && look !== 'dash' && look !== 'greet' && look !== 'health' && look !== 'healthSide' && !isBand(look) && <HeroLookSwitch />}
+      {SHOW_HOME_SWITCH && look !== 'qo2' && look !== 'tabs' && look !== 'brief' && look !== 'dash' && look !== 'greet' && look !== 'health' && look !== 'healthSide' && look !== 'healthBar' && !isBand(look) && <HeroLookSwitch />}
       {SHOW_HOME_SWITCH && <HomeSwitch current={look} onPick={pickLook} />}
       {look === 'qo2' || isBand(look) ? (
         <QuickOverview2
@@ -2641,12 +2650,13 @@ export function HomeBentoC() {
           })()}
         </div>
       ) : (
-      look === 'health' || look === 'healthSide' ? (
+      look === 'health' || look === 'healthSide' || look === 'healthBar' ? (
       // Layout 9 · Brand health (13 Nov, review, after me.thebluejackgroup.com): the head with the credits, Summary,
       // the health ring, four figures against their aims, the tabs, Book consultation floating (HomeHealth.tsx)
       <div className="bx-grid bx-grid--doto bx-grid--first bx-grid--brief bx-grid--health">
         <HomeHealth
           sidebar={look === 'healthSide'}
+          bar={look === 'healthBar'}
           balance={<BalancePill inline />}
           profile={(tab) => <ProfileSection only={tab} />}
         />

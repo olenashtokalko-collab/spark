@@ -251,6 +251,16 @@ export function ProfileDrawer({ open, onClose, tab, onTab, children }: { open: b
    `inSidebar` is on while the Sidebar version of Health is open; the account menu shows the brands only then. ---- */
 let activeBrand = 'b-qindeel';
 let inSidebar = false;
+// Brand bar (concept 3): whether Home shows that version, and whether its strip is open
+let inBar = false;
+// open by default (18 Nov, review: "show the brands by default; the user folds them if they want"); a fold is kept
+let barOpen = (() => {
+  try {
+    return localStorage.getItem('spark-brandbar') !== 'folded';
+  } catch {
+    return true;
+  }
+})();
 const subs = new Set<() => void>();
 const emit = () => subs.forEach((f) => f());
 export const brandStore = {
@@ -262,6 +272,19 @@ export const brandStore = {
   },
   setSidebar: (on: boolean) => {
     inSidebar = on;
+    emit();
+  },
+  setBar: (on: boolean) => {
+    inBar = on;
+    emit();
+  },
+  setBarOpen: (on: boolean) => {
+    barOpen = on;
+    try {
+      localStorage.setItem('spark-brandbar', on ? 'open' : 'folded');
+    } catch {
+      /* this visit only */
+    }
     emit();
   },
   subscribe: (f: () => void) => {
@@ -349,4 +372,70 @@ export function useProfileRequest(on: () => void, enabled: boolean) {
       profileSubs.delete(f);
     };
   }, [on, enabled]);
+}
+
+/** Brand bar's state: whether Home shows the version, and whether the strip is open. */
+export function useBrandBar(): [boolean, boolean] {
+  const snap = useSyncExternalStore(brandStore.subscribe, () => `${inBar ? 1 : 0}|${barOpen ? 1 : 0}`);
+  const [a, b] = snap.split('|');
+  return [a === '1', b === '1'];
+}
+
+/** Concept 3, Brand bar (18 Nov, review, after Covey's strip of apps): a grid button in the window's top right corner;
+ *  it opens a strip across the top of the page, the brands in a row, each its glass mark with its name under it, the
+ *  open one underlined; the page moves down under it. Open by default; a pick changes the brand, the grid button
+ *  folds it. */
+export function BrandStrip({ names }: { names?: Record<string, string> }) {
+  const mode = useMode();
+  const [cur] = useActiveBrand();
+  const [, open] = useBrandBar();
+  const brands = brandsFor(mode);
+  return (
+    <>
+      <div className={cx('hb-strip', open && 'is-open')} aria-hidden={!open}>
+        <div className="hb-strip__in">
+          <nav className="hb-strip__row" aria-label={mode === 'view' ? 'Your clients' : 'Your brands'}>
+            {brands.map((b) => (
+              <button
+                key={b.id}
+                type="button"
+                tabIndex={open ? 0 : -1}
+                className={cx('hb-strip__brand', b.id === cur && 'is-on')}
+                aria-current={b.id === cur ? 'true' : undefined}
+                onClick={() => brandStore.set(b.id)}
+              >
+                <BrandMark b={b} size={26} glass />
+                <span>{names?.[b.id] ?? b.name}</span>
+              </button>
+            ))}
+          </nav>
+        </div>
+      </div>
+      <button
+        type="button"
+        className={cx('hs-icon-btn hs-icon-btn--36 hb-grid', open && 'is-on')}
+        aria-expanded={open}
+        aria-label={open ? 'Hide your brands' : 'Your brands'}
+        onClick={() => brandStore.setBarOpen(!open)}
+      >
+        {/* what it is, on hover (18 Nov, review) */}
+        <span className="hb-grid__tip" role="tooltip">
+          {open ? 'Hide your brands' : 'Switch brand'}
+        </span>
+        <svg width="18" height="18" viewBox="0 0 18 18" aria-hidden>
+          {[3, 9, 15].flatMap((y) => [3, 9, 15].map((x) => <circle key={`${x}${y}`} cx={x} cy={y} r="1.6" fill="currentColor" />))}
+        </svg>
+      </button>
+    </>
+  );
+}
+
+/** The brand open now as the sidebar's account row shows it in Brand bar (18 Nov, review): its coloured mark, its name,
+ *  and your role in it with your email under them. */
+export function useActiveBrandRow(fallbackName: string) {
+  const mode = useMode();
+  const [id] = useActiveBrand();
+  const b = brandsFor(mode).find((x) => x.id === id) ?? brandsFor(mode)[0];
+  const role = roleOf(mode, b);
+  return { b, name: b.id === 'b-qindeel' ? fallbackName : b.name, role: ROLE[role].name === 'Spark team' ? 'Spark' : ROLE[role].name };
 }

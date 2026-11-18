@@ -28,7 +28,7 @@ import { DrAiDock } from '../../features/assistant/DrAiDock';
 import { fmtRelative } from '../../lib/format';
 import type { Notification } from '../../data/types';
 import { PageArtView, useArt } from '../../features/onboarding/EmptyArt';
-import { SidebarBrands, requestProfile, useActiveBrand, useActiveBrandName } from '../../features/demo/HealthHead';
+import { BrandMark, BrandStrip, SidebarBrands, requestProfile, useActiveBrand, useActiveBrandName, useActiveBrandRow, useBrandBar } from '../../features/demo/HealthHead';
 import { HomeSwitch, readHomeLook } from '../../features/demo/HomeBentoDemo';
 
 // Home is the start page after sign-in: the company, Spark's analysis and the work (feedback 23 Oct).
@@ -76,6 +76,17 @@ const NAV = [
 export function AppShell({ children }: { children: ReactNode }) {
   const { state, me } = useStore();
   const route = useRoute();
+  const [inBar, barOpenNow] = useBrandBar();
+  const barMode = inBar || readHomeLook() === 'healthBar';
+  // Brand bar: the sidebar joins the strip, flush under it (18 Nov, review, as Covey): the shell is told on <html>
+  useEffect(() => {
+    const el = document.documentElement;
+    if (barMode) el.dataset.brandbar = barOpenNow ? 'open' : 'folded';
+    else delete el.dataset.brandbar;
+    return () => {
+      delete el.dataset.brandbar;
+    };
+  }, [barMode, barOpenNow]);
 
   const counts = useMemo(() => {
     const decisions = state.requests.filter((r) => r.status === 'proposal').length;
@@ -108,6 +119,9 @@ export function AppShell({ children }: { children: ReactNode }) {
   // The sidebar holds everything around the work: logo, sections, notifications, and the person with
   // their company at the foot (feedback 21 Oct). The page sits beside it on its own rounded panel.
   return (
+    <>
+    {/* Brand bar (concept 3): the strip of brands across the top, its grid button in the corner, on every page */}
+    {barMode && <BrandStrip names={{ 'b-qindeel': state.brand.name }} />}
     <div className={cx('shell', railOpen && 'shell--rail-open')}>
       {/* Spotlight background behind every page (light from above, grain). */}
       <div className="app-bg" aria-hidden>
@@ -206,6 +220,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       {/* keep me in scope for screen readers */}
       <span className="sr-only">Signed in as {me.name}</span>
     </div>
+    </>
   );
 }
 
@@ -338,6 +353,15 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
       return true;
     }
   })();
+  const [inBarHere] = useBrandBar();
+  const barHere = inBarHere || (() => {
+    try {
+      return localStorage.getItem('spark-home-look') === 'healthBar';
+    } catch {
+      return false;
+    }
+  })();
+  const brandRow = useActiveBrandRow(state.brand.name);
   const roleLine = health ? `${brandName} · ${me.title}` : `${me.title} · ${state.brand.name}`;
   return (
     <>
@@ -355,11 +379,13 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
             aria-label="Account, team and settings"
             data-tip={labels || open ? undefined : me.name}
           >
-            <Avatar person={me} size={32} />
+            {/* Brand bar (18 Nov, review): the brand open now leads the row, its coloured mark and name, your role in it
+                and your email under them; elsewhere you lead, with your brand and title */}
+            {barHere ? <BrandMark b={brandRow.b} size={32} glass /> : <Avatar person={me} size={32} />}
             <span className="rail__me-text">
-              <span className="rail__me-name">{me.name}</span>
-              <span className="rail__me-sub">
-                {roleLine}
+              <span className="rail__me-name">{barHere ? brandRow.name : me.name}</span>
+              <span className="rail__me-sub" title={barHere ? `${brandRow.role} · ${me.email}` : undefined}>
+                {barHere ? `${brandRow.role} · ${me.email}` : roleLine}
               </span>
             </span>
             <ChevronsUpDown size={15} className="rail__me-chev" />
@@ -367,20 +393,33 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
         )}
       >
         {(close) => (
-          <div className={cx('acct', brandsHere && 'acct--brands')}>
-            {brandsHere && (
+          <div className={cx('acct', (brandsHere || barHere) && 'acct--brands')}>
+            {(brandsHere || barHere) && (
               <>
                 {/* who you are first (18 Nov, review): your face, your name, your role and the brand open now; the
-                    email under it */}
-                <div className="acct__ws acct__ws--top">
-                  <Avatar person={me} size={40} />
-                  <div className="acct__ws-text">
-                    <b>{me.name}</b>
-                    <span className="acct__role">{roleLine}</span>
+                    email under it. In Brand bar the brand leads, as in the row: its mark and name, your role and email */}
+                {barHere ? (
+                  <div className="acct__ws acct__ws--top">
+                    <BrandMark b={brandRow.b} size={40} glass />
+                    <div className="acct__ws-text">
+                      <b>{brandRow.name}</b>
+                      <span className="acct__role acct__role--line" title={`${brandRow.role} · ${me.email}`}>{`${brandRow.role} · ${me.email}`}</span>
+                    </div>
                   </div>
-                </div>
-                <span className="acct__email">{me.email}</span>
-                <SidebarBrands onPicked={close} names={{ 'b-qindeel': state.brand.name }} />
+                ) : (
+                  <>
+                    <div className="acct__ws acct__ws--top">
+                      <Avatar person={me} size={40} />
+                      <div className="acct__ws-text">
+                        <b>{me.name}</b>
+                        <span className="acct__role">{roleLine}</span>
+                      </div>
+                    </div>
+                    <span className="acct__email">{me.email}</span>
+                  </>
+                )}
+                {/* Brand bar: the brands are in the strip at the top, not here (18 Nov, review) */}
+                {!barHere && <SidebarBrands onPicked={close} names={{ 'b-qindeel': state.brand.name }} />}
                 <div className="acct__divider" />
               </>
             )}
@@ -394,7 +433,7 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
             {/* The company's credits, as beside its name on Home: the spark, the balance, "credits". The
                 row shows the same credits card as on Home, beside the menu, on hover. */}
             {/* no credits here in either Health version (18 Nov, review): they stay on Home */}
-            {!brandsHere && !health && (
+            {!brandsHere && !barHere && !health && (
             <button
               type="button"
               className={cx('acct__credits', left < 0.2 && 'is-low')}
@@ -422,7 +461,7 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
               <UserPlus size={18} strokeWidth={1.6} />
               <span>Manage my team</span>
             </button>
-            {[...(brandsHere ? [] : [{ label: 'Company profile', Icon: Building2 }])].map(({ label, Icon }) => (
+            {[...(brandsHere || barHere ? [] : [{ label: 'Company profile', Icon: Building2 }])].map(({ label, Icon }) => (
               <span
                 key={label}
                 className="acct__item acct__item--off"
@@ -436,7 +475,7 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
               </span>
             ))}
             {/* Health · Sidebar: Company profile opens Home's profile drawer (18 Nov, review), Home first if elsewhere */}
-            {brandsHere && (
+            {(brandsHere || barHere) && (
               <button
                 className="acct__item"
                 onClick={() => {

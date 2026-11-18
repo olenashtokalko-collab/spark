@@ -288,7 +288,7 @@ const Sk = ({ w, h = 12, r = 6, round }: { w: number | string; h?: number; r?: n
 );
 
 /** Home as the brand's health. `balance` is the credits with their caret; `reports` the tabs. */
-export function HomeHealth({ balance, profile, sidebar = false }: { balance: ReactNode; profile?: (tab: ProfileTab) => ReactNode; /** the brand switcher in the sidebar's account menu (Health · Sidebar) */ sidebar?: boolean }) {
+export function HomeHealth({ balance, profile, sidebar = false, bar = false }: { balance: ReactNode; profile?: (tab: ProfileTab) => ReactNode; /** the brand switcher in the sidebar's account menu (Health · Sidebar) */ sidebar?: boolean; /** concept 3: the brands as a row of marks under a grid button (Brand bar) */ bar?: boolean }) {
   const { state, me } = useStore();
   // the four requests changed last, newest first
   const latest = [...state.requests].sort((a, b) => b.updatedAt.localeCompare(a.updatedAt)).slice(0, 4);
@@ -323,6 +323,11 @@ export function HomeHealth({ balance, profile, sidebar = false }: { balance: Rea
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [brandId]);
   const pickBrand = useCallback((id: string) => brandStore.set(id), []);
+  // Brand bar (concept 3): the shell draws the strip and its grid button; Home says the version is on
+  useEffect(() => {
+    brandStore.setBar(bar);
+    return () => brandStore.setBar(false);
+  }, [bar]);
   // what your role lets you do here (17 Nov, review): an admin invites and approves; a member sees the same page and
   // can open it all, but the approval waits for the admin; Spark's team only looks, and the client's team isn't theirs
   const role = useRoleHere();
@@ -370,8 +375,9 @@ export function HomeHealth({ balance, profile, sidebar = false }: { balance: Rea
             brands={brands}
             current={cur.id}
             onPick={pickBrand}
-            // the brand can be picked here in the Sidebar version too (18 Nov, review), as well as in the account menu
-            fixed={false}
+            // two versions (18 Nov, review): Health, the brand picked from the caret by its name (as Jean drew it);
+            // Profile brands, picked only from the account menu (as Notion, Slack and Claude do), so no caret here
+            fixed={sidebar || bar}
             mode={mode}
             email={me.email}
           />
