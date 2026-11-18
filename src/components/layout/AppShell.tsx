@@ -29,6 +29,7 @@ import { fmtRelative } from '../../lib/format';
 import type { Notification } from '../../data/types';
 import { PageArtView, useArt } from '../../features/onboarding/EmptyArt';
 import { SidebarBrands, requestProfile, useActiveBrand, useActiveBrandName } from '../../features/demo/HealthHead';
+import { HomeSwitch, readHomeLook } from '../../features/demo/HomeBentoDemo';
 
 // Home is the start page after sign-in: the company, Spark's analysis and the work (feedback 23 Oct).
 // Chats is its own page, with the history in a column on the left and "New chat" on top of it.
@@ -198,6 +199,9 @@ export function AppShell({ children }: { children: ReactNode }) {
         <DrAiDock place="foot" />
       </main>
       <DrAiDock place="fixed" />
+      {/* the version switch on every page (18 Nov, review: "it disappears on the other pages; keep it"); Home draws
+          its own, which also switches the page in place */}
+      {route.path !== '/' && <HomeSwitch current={readHomeLook()} />}
       <Shortcuts />
       {/* keep me in scope for screen readers */}
       <span className="sr-only">Signed in as {me.name}</span>

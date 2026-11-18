@@ -2389,7 +2389,7 @@ function ProfileSection({ only }: { only?: 'company' | 'audience' | 'voice' } = 
   );
 }
 
-function readHomeLook(): HomeLook {
+export function readHomeLook(): HomeLook {
   try {
     const v = localStorage.getItem(HOME_LOOK_KEY);
     // Bold glass unless another look was picked (13 Nov); the dropped Bold, Grid draft and old Main land on it
