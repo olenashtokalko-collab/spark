@@ -1538,7 +1538,7 @@
   top: 0 !important;
   margin: 0 !important;
   border-radius: 0 !important;
-  height: calc(100vh - 53px) !important;
+  height: calc(100vh - 61px) !important;
   box-shadow: inset -1px 0 0 rgba(14, 17, 22, 0.08) !important;
   background: rgba(250, 250, 249, 0.92) !important;
 }
@@ -1600,4 +1600,44 @@
 }
 :root[data-theme][data-theme][data-ui] body .hb-grid {
   top: 7px !important;
+}
+/* the open brand runs down to the strip's hairline, its underline on it (18 Nov, review: "take the space under it
+   off, down to the border") */
+:root[data-theme][data-theme][data-ui] body .hb-strip__row {
+  padding-bottom: 0 !important;
+  align-items: flex-end;
+}
+:root[data-theme][data-theme][data-ui] body .hb-strip__brand {
+  padding-bottom: 9px !important;
+  border-radius: 10px 10px 0 0 !important;
+}
+:root[data-theme][data-theme][data-ui] body .hb-strip__brand.is-on::after {
+  bottom: 0 !important;
+}
+/* the grid button: in its rest state whether the strip is open or not (18 Nov, review: "default unless I click it"),
+   centred in the strip's 52 px row; its dots centred in the round */
+:root[data-theme][data-theme][data-ui] body .hb-grid,
+:root[data-theme][data-theme][data-ui] body .hb-grid.is-on {
+  top: 8px !important;
+  background: rgba(255, 255, 255, 0.22) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7), inset 0 0 0 1px rgba(255, 255, 255, 0.45), 0 0 0 0.5px rgba(14, 17, 22, 0.08) !important;
+}
+:root[data-theme][data-theme][data-ui] body .hb-grid:is(:hover, :focus-visible) {
+  background: rgba(255, 255, 255, 0.7) !important;
+  box-shadow: inset 0 1px 0 #fff, inset 0 0 0 1px rgba(255, 255, 255, 0.8), 0 4px 12px -6px rgba(30, 30, 60, 0.25) !important;
+}
+:root[data-theme][data-theme][data-ui] body .hb-grid svg {
+  display: block;
+}
+/* the strip's marks and names a step up (18 Nov, review: "the icons and text are too small now"): 22 px marks,
+   13 px names */
+:root[data-theme][data-theme][data-ui] body .hb-strip__brand {
+  min-width: 84px !important;
+  gap: 4px !important;
+  padding: 6px 12px 9px !important;
+  font: 400 13px/16px var(--hs-ext) !important;
+}
+:root[data-theme][data-theme][data-ui] body .hb-grid,
+:root[data-theme][data-theme][data-ui] body .hb-grid.is-on {
+  top: 12px !important;
 }

@@ -404,7 +404,7 @@ export function BrandStrip({ names }: { names?: Record<string, string> }) {
                 aria-current={b.id === cur ? 'true' : undefined}
                 onClick={() => brandStore.set(b.id)}
               >
-                <BrandMark b={b} size={18} glass />
+                <BrandMark b={b} size={22} glass />
                 <span>{names?.[b.id] ?? b.name}</span>
               </button>
             ))}

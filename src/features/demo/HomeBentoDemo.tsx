@@ -1255,10 +1255,11 @@ type SwitchItem = HomeLook | { id: 'console' | 'studio' | 'empty' | 'onboarding'
 // Health is the default (18 Nov, review: "Health is the default, so the switch keeps Sidebar brands and Onboarding"):
 // the switch shows the two departures from it, each a toggle; pressing the one that's on comes back to Health
 const SWITCH_ORDER: SwitchItem[] = [
+  // In the profile menu first (18 Nov, review)
+  'healthSide',
   // the sketch's version, the default (18 Nov, review: "add the sketch's version to the variants"): the brand picked
   // from the dropdown by its name on Home
   'health',
-  'healthSide',
   // concept 3 (18 Nov, review, after Covey's app strip): the brands as a row of marks under a grid button
   'healthBar',
   // the portal as a new company finds it: the welcome, then Dr.AI's four first steps in his corner (shown once)
