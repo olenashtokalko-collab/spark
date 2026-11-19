@@ -30,7 +30,9 @@ export function ChatStart({ onAsk }: { onAsk: (text: string, attachments?: Attac
   const first = me.name.split(' ')[0];
   // Dr.AI on (#/demo/mascot), or ?mascot=1: his whole figure over the greeting.
   const drai = useDrAi();
-  const flag = useRoute().query.get('mascot') === '1';
+  const query = useRoute().query;
+  const flag = query.get('mascot') === '1';
+  const peek = query.get('sparky') === 'peek';
   const mascot = drai || flag;
   const [typing, setTyping] = useState(false);
   // Recording a voice message: Dr.AI listens, as while typing.
@@ -44,7 +46,10 @@ export function ChatStart({ onAsk }: { onAsk: (text: string, attachments?: Attac
           {/* Prototype (#/assistant?mascot=1, 5 Nov): Dr.AI over the greeting in a tile of the film's own ground, standing by, listening once you type. */}
           {/* Dr.AI alone (17 Nov, review): Sparky lives on the chat box here, so the clip is cropped short of the Sparky
               that flies by his head, and plays without the intro (Sparky leaving his chest): one Sparky on the page */}
-          {mascot && <MascotClip state={typing || voice ? 'listening' : 'idle'} crop="solo" width={116} className="chats-start__mascot" />}
+          {/* 19 Nov, Jean: back to the earlier Dr.AI ("the previous version where Dr.AI has more movement is better"):
+              his whole figure with Sparki by his head, opening with the intro (Sparki leaves his chest and circles his
+              head), listening once you type. The floating Sparky on the box is off; ?sparky=peek brings it back */}
+          {mascot && (peek ? <MascotClip state={typing || voice ? 'listening' : 'idle'} crop="solo" width={116} className="chats-start__mascot" /> : <MascotClip state={typing || voice ? 'listening' : 'idle'} width={150} intro className="chats-start__mascot" />)}
           <h1 className="chats-start__greet">
             <span className="chats-start__soft">{greeting()},</span> {first}.
             <br />
@@ -53,7 +58,7 @@ export function ChatStart({ onAsk }: { onAsk: (text: string, attachments?: Attac
           <div className="chats-start__glass">
             <span className="chats-start__light" aria-hidden />
             <div className="chats-start__frame" ref={frame}>
-              <SparkyPeek frame={frame} />
+              {peek && <SparkyPeek frame={frame} />}
               <BeamEdge>
                 <Composer look="box" onSubmit={onAsk} onVoice={setVoice} onTyping={setTyping} autoFocus placeholder={drai ? 'Ask Dr.AI anything…' : 'Ask Spark anything…'} />
               </BeamEdge>

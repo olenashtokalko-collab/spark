@@ -12,7 +12,7 @@ import { PageHeader, cx } from '../../components/ui/primitives';
 import { createContext, useContext, useEffect, useRef, useState, type ReactNode } from 'react';
 import { SparkDisc } from '../../components/ui/BrandSpark';
 import { SparkStar } from '../../components/ui/SparkStar';
-import { AnalysisView } from '../home/AnalysisLooks';
+import { AnalysisView, HealthReport } from '../home/AnalysisLooks';
 import { NoReports } from '../onboarding/Onboarding';
 import { ReportTiles } from './HomeVariantsDemo';
 import { PortalHome } from './HomeCardsDemo';
@@ -1234,13 +1234,14 @@ export function GBrandAnalysisPage({ kind }: { kind?: string }) {
   const m = useModel(analyses);
   const { query } = useRoute();
   const empty = !!useStore().state.onboarding;
-  if (!empty && kind && REPORTS.some((a) => a.kind === kind)) return <ToHomeTab tab={kind} issue={query.get('issue')} />;
+  // a report opens on its own page again (19 Nov, review: Home's analysis cards are clickable); Home has no tabs
   if (!empty && query.get('tab') === 'profile') return <ToHomeTab tab="profile" />;
   return (
     <GPathsCtx.Provider value={PORTAL_PATHS}>
       <div className="hld">
         {kind && !empty ? (
-          <GReportView kind={kind} issue={query.get('issue') ?? undefined} />
+          // Health's report page (19 Nov): Home's system, the Storybook's parts
+          <HealthReport a={REPORTS.find((r) => r.kind === kind) ?? REPORTS[0]} focus={query.get('issue') ?? undefined} />
         ) : query.get('tab') === 'profile' ? (
           <ProfilePage />
         ) : empty ? (

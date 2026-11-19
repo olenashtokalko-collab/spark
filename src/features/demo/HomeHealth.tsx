@@ -8,10 +8,12 @@
 //   · four figures from the reports the report cards don't show, each against its aim, the arrow saying which way
 //   · the reports and the company profile (Layout 5's tabs), Book consultation floating
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
-import { ArrowRight, Building2, History } from 'lucide-react';
-import { CompanySwitch, ProfileDrawer, brandStore, brandsFor, useActiveBrand, useMode, useProfileRequest, useRoleHere, type ProfileTab } from './HealthHead';
+import { ArrowRight, Building2, History, Plus } from 'lucide-react';
+import { AddUpdateDialog } from './ClientsPage';
+import { Link } from '../../components/ui/Link';
+import { CompanySwitch, ProfileDrawer, brandStore, brandsFor, useActiveBrand, useMode, useProfileRequest, useRoleHere, useUpdatedAt, type ProfileTab } from './HealthHead';
 import { useStore } from '../../state/store';
-import { Avatar, cx } from '../../components/ui/primitives';
+import { Avatar, Button, cx } from '../../components/ui/primitives';
 import { dotted } from './dotted';
 import { analyses } from '../../data/mock';
 import { needsYou, requestStatusMeta } from '../../components/domain';
@@ -38,7 +40,7 @@ const fmtLong = (iso: string) => {
   const d = new Date(iso);
   return `${d.getDate()} ${MONTHS[d.getMonth()]} ${d.getFullYear()}`;
 };
-const verdict = (n: number) =>
+export const verdict = (n: number) =>
   n >= 85 ? { word: 'Strong', good: true } : n >= 70 ? { word: 'Good', good: true } : n >= 50 ? { word: 'Fair', good: false } : { word: 'Weak', good: false };
 const TICKS = 64;
 
@@ -55,7 +57,8 @@ const mix = (t: number) => {
 
 /** The ring: TICKS short lines round a circle, the score's share in Spark's colours, the rest grey. On arrival they
  *  fill one by one, clockwise from the top. */
-function HealthRing({ score, aim }: { score: number; aim: number }) {
+/** `fig` (19 Nov): what stands in the ring when it isn't the score itself (a report's "4%"); `score` and `aim` out of 100. */
+export function HealthRing({ score, aim, fig }: { score: number; aim: number; fig?: ReactNode }) {
   const [on, setOn] = useState(false);
   useEffect(() => {
     const t = window.setTimeout(() => setOn(true), 120);
@@ -91,7 +94,7 @@ function HealthRing({ score, aim }: { score: number; aim: number }) {
       </svg>
       <span className="hh-ring__in">
         <b className="hh-ring__fig" role="img" aria-label={`Brand health ${score} of 100`}>
-          {score}
+          {fig ?? score}
         </b>
         {/* the figure alone in its circle (13 Nov, review): "Good health" is said beside it */}
       </span>
@@ -101,10 +104,10 @@ function HealthRing({ score, aim }: { score: number; aim: number }) {
 
 // 13 Nov, review: Layout 6's figure cards (a bar, a tick where the aim is, how far it got) with these cards' arrows,
 // and a word that says whether it's good, since the colour alone didn't. The bar in Cobalt, not Ember.
-type Status = 'good' | 'watch' | 'work';
+export type Status = 'good' | 'watch' | 'work';
 // said as the work ahead, not as a mark (13 Nov, review): Fix first · Watch · On track
-const STATUS: Record<Status, string> = { good: 'On track', watch: 'Watch', work: 'Fix first' };
-type Fig = {
+export const STATUS: Record<Status, string> = { good: 'On track', watch: 'Watch', work: 'Fix first' };
+export type Fig = {
   /** 17 Nov, design sync: a card's look follows its figure: a score in a ring ("7 out of 10"), a share or a count as
    *  a big figure over a bar ("it's not a score, it's a percentage... another layout") */
   look: 'score' | 'figure';
@@ -123,9 +126,9 @@ type Fig = {
 // Brand Analysis (17 Nov, design sync; three cards, as Jean's sketch: Website, Social, PR): one card per pillar, each with the one figure
 // that matters most and "More" to its full report. PR's figure is a prototype's: no PR report in the data yet.
 const FIGS: Fig[] = [
-  { look: 'score', from: 'Website', title: 'Website score', fig: '41', unit: '/100', mine: 41, aim: 58, scale: 100, dir: 'down', vs: <><b>17</b> below the 58 typical</>, status: 'work', href: '#/?tab=website' },
-  { look: 'figure', from: 'Social', title: 'Instagram engagement', fig: '4', unit: '%', mine: 4, aim: 1.9, scale: 6, dir: 'up', vs: <>Above the <b>1.9%</b> typical</>, status: 'good', href: '#/?tab=social' },
-  { look: 'figure', from: 'PR', title: 'Press mentions since Sep', fig: '18', mine: 18, aim: 40, scale: 60, dir: 'down', vs: <>Rivals average <b>40</b></>, status: 'watch', href: '#/?tab=pr' },
+  { look: 'score', from: 'Website', title: 'Website score', fig: '41', unit: '/100', mine: 41, aim: 58, scale: 100, dir: 'down', vs: <><b>17</b> below the 58 typical</>, status: 'work', href: '#/brand-analysis/website' },
+  { look: 'figure', from: 'Social', title: 'Instagram engagement', fig: '4', unit: '%', mine: 4, aim: 1.9, scale: 6, dir: 'up', vs: <>Above the <b>1.9%</b> typical</>, status: 'good', href: '#/brand-analysis/social' },
+  { look: 'figure', from: 'PR', title: 'Press mentions since Sep', fig: '18', mine: 18, aim: 40, scale: 60, dir: 'down', vs: <>Rivals average <b>40</b></>, status: 'watch', href: '#/analysis/pr' },
 ];
 
 // Each brand's own page (17 Nov, review: "the data should change when I pick a brand"): its health, what it means,
@@ -161,9 +164,9 @@ const PAGES: Record<string, BrandPage> = {
     text: 'Buyers rate the furniture highly once it’s in their homes, but few find Bayt & Co. in search, and the site loses them at checkout.',
     based: 'We read 640 reviews, 31 pages of your site and 205 social posts.',
     figs: [
-      fig('score', 'Website', 'Website score', 58, '/100', 58, 100, 'watch', <>Level with the <b>58</b> typical</>, '#/?tab=website'),
-      fig('figure', 'Social', 'Instagram engagement', 2.1, '%', 1.9, 6, 'good', <>Above the <b>1.9%</b> typical</>, '#/?tab=social'),
-      fig('figure', 'PR', 'Press mentions since Sep', 9, undefined, 25, 40, 'work', <>Rivals average <b>25</b></>, '#/?tab=pr'),
+      fig('score', 'Website', 'Website score', 58, '/100', 58, 100, 'watch', <>Level with the <b>58</b> typical</>, '#/brand-analysis/website'),
+      fig('figure', 'Social', 'Instagram engagement', 2.1, '%', 1.9, 6, 'good', <>Above the <b>1.9%</b> typical</>, '#/brand-analysis/social'),
+      fig('figure', 'PR', 'Press mentions since Sep', 9, undefined, 25, 40, 'work', <>Rivals average <b>25</b></>, '#/analysis/pr'),
     ],
     latest: [
       { id: 'REQ-212', title: 'Checkout fixes for the online store', status: 'in_progress', updatedAt: '2026-11-14T10:00:00', type: 'Digital' },
@@ -177,9 +180,9 @@ const PAGES: Record<string, BrandPage> = {
     text: 'Parents come back for the quality and tell their friends. Online it holds its own; the press hasn’t found it yet.',
     based: 'We read 980 reviews, 18 pages of your site and 330 social posts, and asked 200 parents.',
     figs: [
-      fig('score', 'Website', 'Website score', 74, '/100', 58, 100, 'good', <><b>16</b> above the 58 typical</>, '#/?tab=website'),
-      fig('figure', 'Social', 'Instagram engagement', 5, '%', 1.9, 6, 'good', <>Well above the <b>1.9%</b> typical</>, '#/?tab=social'),
-      fig('figure', 'PR', 'Press mentions since Sep', 12, undefined, 30, 40, 'watch', <>Rivals average <b>30</b></>, '#/?tab=pr'),
+      fig('score', 'Website', 'Website score', 74, '/100', 58, 100, 'good', <><b>16</b> above the 58 typical</>, '#/brand-analysis/website'),
+      fig('figure', 'Social', 'Instagram engagement', 5, '%', 1.9, 6, 'good', <>Well above the <b>1.9%</b> typical</>, '#/brand-analysis/social'),
+      fig('figure', 'PR', 'Press mentions since Sep', 12, undefined, 30, 40, 'watch', <>Rivals average <b>30</b></>, '#/analysis/pr'),
     ],
     latest: [
       { id: 'REQ-305', title: 'Back-to-school content for January', status: 'in_review', updatedAt: '2026-11-15T11:00:00', type: 'Content' },
@@ -192,9 +195,9 @@ const PAGES: Record<string, BrandPage> = {
     text: 'Regulars in Dubai love the coffee and the room. Abu Dhabi hardly knows the name, and a slow, dated site turns away people who look it up.',
     based: 'We read 410 reviews, 9 pages of your site and 120 social posts.',
     figs: [
-      fig('score', 'Website', 'Website score', 33, '/100', 58, 100, 'work', <><b>25</b> below the 58 typical</>, '#/?tab=website'),
-      fig('figure', 'Social', 'Instagram engagement', 1.2, '%', 1.9, 6, 'work', <>Below the <b>1.9%</b> typical</>, '#/?tab=social'),
-      fig('figure', 'PR', 'Press mentions since Sep', 6, undefined, 22, 40, 'work', <>Rivals average <b>22</b></>, '#/?tab=pr'),
+      fig('score', 'Website', 'Website score', 33, '/100', 58, 100, 'work', <><b>25</b> below the 58 typical</>, '#/brand-analysis/website'),
+      fig('figure', 'Social', 'Instagram engagement', 1.2, '%', 1.9, 6, 'work', <>Below the <b>1.9%</b> typical</>, '#/brand-analysis/social'),
+      fig('figure', 'PR', 'Press mentions since Sep', 6, undefined, 22, 40, 'work', <>Rivals average <b>22</b></>, '#/analysis/pr'),
     ],
     latest: [
       { id: 'REQ-411', title: 'Abu Dhabi opening: who to reach first', status: 'proposal', updatedAt: '2026-11-16T09:30:00', type: 'Strategy' },
@@ -205,6 +208,12 @@ const PAGES: Record<string, BrandPage> = {
 // Spark's other clients borrow a group brand's figures, so every client in the list opens a full page
 const PAGE_ALIAS: Record<string, string> = { 'b-dune': 'b-home', 'b-noor': 'b-kids', 'b-aster': 'b-saffron' };
 const pageOf = (id: string) => PAGES[id] ?? PAGES[PAGE_ALIAS[id] ?? 'b-brandco'];
+/** A client's health and latest requests, for the Spark team's Clients page (19 Nov); Brand Co.'s requests are the
+ *  portal's own, so `latest` is undefined for it. */
+export const clientPage = (id: string) => {
+  const p = pageOf(id);
+  return { score: p.score, title: p.title, verdict: verdict(p.score), latest: p.latest };
+};
 
 /** A report Spark can make next, as a card of the reports' own (13 Nov, review: "one locked report, in the style of
  *  the report cards, with Unlock"): its name, its headline, the gauge's place held by a pane of clear glass with the
@@ -252,6 +261,190 @@ export function LockedReportCard({ r, credits, onBuy }: { r: { eyebrow: string; 
       </div>
     </article>
   );
+}
+
+/** A Brand analysis card's face (19 Nov: shared by Home's card and the top of its report, so the report opens on
+ *  the card you clicked): the report's name and status, the figure in its ring or over its bar, its title and how it
+ *  compares. */
+export function FigFace({ f, more }: { f: Fig; /** the way to the full report at the foot: an arrow, "More" sliding in on hover */ more?: boolean }) {
+  return (
+    <>
+      <span className="hh-fig__top">
+        <span className="db-label">{f.from}</span>
+        <span className={cx('hh-status', `is-${f.status}`)}>{STATUS[f.status]}</span>
+      </span>
+      <FigChart f={f} />
+      <span className="hh-fig__title">{f.title}</span>
+      <span className="hh-fig__foot">
+        <span className={cx('hh-vs', `is-${f.status}`)}>
+          {f.dir && (
+            <span className="hh-vs__arrow" aria-hidden>
+              {f.dir === 'up' ? '▲' : '▼'}
+            </span>
+          )}
+          <span>{f.vs}</span>
+        </span>
+        {more && (
+          <span className="hh-fig__more">
+            <span className="hh-fig__more-word">More</span>
+            <ArrowRight size={16} strokeWidth={1.8} aria-hidden />
+          </span>
+        )}
+      </span>
+    </>
+  );
+}
+
+/** A card's chart alone (19 Nov: the report's top uses it beside what was found): the score in its ring, or the
+ *  figure over its bar, the typical's tick on either. */
+export function FigChart({ f }: { f: Fig }) {
+  return (
+    <>
+      {f.look === 'score' ? (
+        // the score in a ring open at the foot (Overview's website gauge, which Jean liked), a tick at the typical
+        <span className="hh-arcwrap">
+          <ArcGauge share={f.mine / f.scale} aim={f.aim !== undefined ? f.aim / f.scale : undefined} id={f.title} />
+          <span className="hh-fig__n" role="img" aria-label={`${f.fig}${f.unit ?? ''} ${f.title}`}>
+            {dotted(f.fig)}
+          </span>
+          {f.unit && <i className="hh-arc__unit is-of">{f.unit}</i>}
+        </span>
+      ) : (
+        // the figure with its bar beside it, on the right (17 Nov, review)
+        <span className="hh-fig__row">
+          <span className="hh-fig__n" role="img" aria-label={`${f.fig}${f.unit ?? ''} ${f.title}`}>
+            {dotted(f.fig)}
+            {f.unit && <i>{f.unit}</i>}
+          </span>
+          <span className="hh-bar" aria-hidden>
+            <span style={{ width: `${Math.min(100, (f.mine / f.scale) * 100)}%` }} />
+            {f.aim !== undefined && <i style={{ left: `${(f.aim / f.scale) * 100}%` }} />}
+          </span>
+        </span>
+      )}
+    </>
+  );
+}
+
+/** A report's verdict and lead for each brand (19 Nov, review: "the report should be the brand's"): Brand Co.'s are
+ *  the report's own (none here); the group's other brands have their own, Spark's other clients borrow theirs. The
+ *  issues under them stay the prototype's one set. */
+const REPORT_COPY: Record<string, Record<string, { headline: string; summary: string }>> = {
+  'b-home': {
+    website: { headline: 'Looks like the showroom, loses people at checkout', summary: 'Bayt & Co.’s site holds visitors with real rooms and clear prices, but one in three leave at checkout, and few pages are found in search.' },
+    social: { headline: 'Rooms people save', summary: 'Engagement of 2.1% is above the 1.9% typical: finished rooms are saved and shared. TikTok and Pinterest are barely used.' },
+  },
+  'b-kids': {
+    website: { headline: 'A shop parents find easy', summary: 'Little Ghaf’s site is quick, clear and in both languages. Size guides and returns could be easier to reach.' },
+    social: { headline: 'Parents talk back', summary: 'Engagement of 5% is well above the 1.9% typical: parents share outfits and tag the brand. Posting is irregular.' },
+  },
+  'b-saffron': {
+    website: { headline: 'Slow, dated and hard to book', summary: 'Saffron & Salt’s site takes 7 s to open on a phone, the menu is a PDF, and there’s no way to book a table.' },
+    social: { headline: 'A pretty feed with few replies', summary: 'Engagement of 1.2% is below the 1.9% typical: dishes without people or a story, and few followers in Abu Dhabi.' },
+  },
+};
+export const reportCopy = (brandId: string, kind: string) => REPORT_COPY[PAGES[brandId] ? brandId : PAGE_ALIAS[brandId] ?? '']?.[kind];
+
+/** Each brand's own reports (19 Nov, review: "the issues are the same for every brand; write them in each brand's
+ *  spirit"): what Spark found, what to do, what to keep, and what it rests on. Brand Co.'s are the reports' own. Bayt &
+ *  Co. is about Gulf homes and the gatherings in them; Little Ghaf about clothes that last, as the ghaf tree does, for
+ *  busy parents; Saffron & Salt about the room and its regulars. The impacts follow each card's status on Home. */
+type F = { title: string; body: string; issue?: boolean; good?: boolean; impact?: 'High' | 'Medium' | 'Low'; fix?: string; keep?: string };
+type R = { headline?: string; summary?: string; basis: string; findings: F[] };
+const BRAND_REPORTS: Record<string, Record<string, R>> = {
+  'b-home': {
+    website: {
+      basis: '31 pages, speed tested on 4G and broadband, Arabic and English versions',
+      findings: [
+        { title: 'Rooms people recognise', good: true, body: 'Every piece is shown in a real Gulf living room or majlis, with the price up front. Visitors who reach a room browse four more pieces.', keep: 'Keep shooting in real homes, and carry the room scenes into checkout and emails.' },
+        { title: 'Checkout loses one in three', issue: true, impact: 'Medium', body: 'A third of carts are left at delivery details: big pieces show no delivery date or assembly cost until the last step.', fix: 'Show the delivery date and assembly cost on the product page, before the cart.' },
+        { title: 'Hard to find in search', impact: 'Medium', body: 'Few pages come up for “sofa Dubai” or “majlis furniture”: category pages have photos and no words.', fix: 'Write a short guide for each room, in Arabic and English, around what families search for.' },
+        { title: 'No way to check a fit', impact: 'Low', body: 'Buyers ask in chat whether a sofa will fit; nothing on the page helps them check.', fix: 'Add plain room sizes and a “will it fit” note to the large pieces.' },
+      ],
+    },
+    social: {
+      basis: '205 posts and 1,900 comments on Instagram, 1 Sep – 4 Oct',
+      findings: [
+        { title: 'Finished rooms get saved', good: true, body: 'Engagement of 2.1%, above the 1.9% typical: whole rooms are saved three times as often as single pieces.', keep: 'Keep posting whole rooms styled by real families, and invite customers to share theirs.' },
+        { title: 'Missing where homes are planned', issue: true, impact: 'Medium', body: 'No Pinterest and almost no TikTok: the two places people plan a room before they buy.', fix: 'Start Pinterest boards by room and season: the Ramadan majlis, Eid, a winter evening outside.' },
+        { title: 'Arabic comments, English replies', impact: 'Low', body: 'Questions in Arabic get answers in English, a day later.', fix: 'Answer in the language asked, the same day.' },
+      ],
+    },
+    pr: {
+      headline: 'Admired for the craft, missing from the season',
+      summary: 'Design titles praise the pieces, but the Ramadan and Eid home guides list rivals, who are written about almost three times as often.',
+      basis: '9 articles in UAE and KSA media, 1 Sep – 15 Nov, set against three rivals',
+      findings: [
+        { title: 'Design press likes the pieces', good: true, body: 'Four of the nine articles are design features that praise the craft and the materials.', keep: 'Keep sending each new collection to design editors first, with the makers’ story.' },
+        { title: 'Not in the season’s home guides', issue: true, impact: 'High', body: 'Ramadan and Eid home guides in UAE media named rivals and left Bayt & Co. out.', fix: 'Offer five home editors a Ramadan majlis edit by early February.' },
+        { title: 'No faces behind the brand', impact: 'Medium', body: 'No article quotes anyone from Bayt & Co.; rivals’ founders are quoted often.', fix: 'Put the founders forward to talk about how Gulf families live at home.' },
+      ],
+    },
+  },
+  'b-kids': {
+    website: {
+      basis: '18 pages, speed tested on 4G and broadband, Arabic and English versions',
+      findings: [
+        { title: 'Easy for busy parents', good: true, body: 'Quick, in both languages, sized by age: parents finish an order in under three minutes.', keep: 'Keep the age-first sizes and the short checkout as the range grows.' },
+        { title: 'The size guide is hard to reach', issue: true, impact: 'Medium', body: 'Sizes are the first question in chat; the guide sits three clicks away.', fix: 'Put the age-to-size guide on every product page, by the size picker.' },
+        { title: 'Returns are hidden', impact: 'Low', body: 'The returns policy is in the footer, and parents ask about it before they buy.', fix: 'Say “Free returns for 30 days” by the buy button.' },
+      ],
+    },
+    social: {
+      basis: '330 posts and 2,600 comments on Instagram and TikTok, 1 Sep – 4 Oct',
+      findings: [
+        { title: 'Parents share the outfits', good: true, body: 'Engagement of 5%, well above the 1.9% typical: parents tag Little Ghaf in first-day-of-school and Eid photos.', keep: 'Keep sharing parents’ photos, with their consent, and give each season its own hashtag.' },
+        { title: 'Posting comes and goes', issue: true, impact: 'Medium', body: 'Up to three weeks between posts; reach drops after every gap.', fix: 'Plan two posts a week around the school year and family days.' },
+        { title: 'Nothing for grandparents', impact: 'Low', body: 'One buyer in five is a grandparent shopping for a gift; no post speaks to them.', fix: 'Add gift edits by age, ready to send.' },
+      ],
+    },
+    pr: {
+      headline: 'Trusted by parents’ media, the name unexplained',
+      summary: 'Parenting sites recommend Little Ghaf for clothes that last. No one has told the story of the name, and Saudi media barely know it.',
+      basis: '12 articles and 3 podcast mentions in UAE and KSA media, 1 Sep – 15 Nov, set against three rivals',
+      findings: [
+        { title: 'Parenting sites recommend it', good: true, body: 'Parenting sites name Little Ghaf for everyday clothes that survive the playground.', keep: 'Keep sending each new range to parenting editors, with how long the clothes last.' },
+        { title: 'The ghaf story isn’t told', issue: true, impact: 'Medium', body: 'The name comes from the ghaf, the tree that roots deep and lasts; no article says so.', fix: 'Tell it: clothes made to last, as the ghaf does, in a short piece for UAE family media.' },
+        { title: 'Quiet in Saudi Arabia', impact: 'Low', body: 'One mention in Saudi media since September.', fix: 'Send the back-to-school range to two Riyadh parenting sites.' },
+      ],
+    },
+  },
+  'b-saffron': {
+    website: {
+      basis: '9 pages, speed tested on 4G and broadband, Arabic and English versions',
+      findings: [
+        { title: 'Photos that feel like the room', good: true, body: 'The few pages there are show the cafés’ morning light and long tables well.', keep: 'Keep the real photos of each café, and use them on every new page.' },
+        { title: 'Slow on a phone', issue: true, impact: 'High', body: 'The site takes 7 s to open on a phone, and most visits come from Maps, on the way to a café.', fix: 'A light one-page site with the menu, hours and each café, open in under 2 s.' },
+        { title: 'No way to book a table', impact: 'High', body: 'Weekend tables can’t be booked online; people call, or go elsewhere.', fix: 'Add booking for weekend breakfasts and groups, café by café.' },
+        { title: 'The menu is a PDF', impact: 'Medium', body: 'The menu is a 6 MB PDF, in English only.', fix: 'Put the menu on the page, in Arabic and English, with prices.' },
+      ],
+    },
+    social: {
+      basis: '120 posts and 640 comments on Instagram, 1 Sep – 4 Oct',
+      findings: [
+        { title: 'Regulars comment warmly', good: true, body: 'Dubai regulars tag their friends and name their favourite table.', keep: 'Keep answering regulars by name; it’s what makes the cafés feel like theirs.' },
+        { title: 'Dishes, never people', issue: true, impact: 'High', body: 'Posts show plates and cups, never the room, the baristas or the guests: engagement of 1.2%.', fix: 'Show the people: the baristas, the regulars, the morning rush, in short videos.' },
+        { title: 'Few followers in Abu Dhabi', impact: 'Medium', body: 'Abu Dhabi has two of the six cafés and 8% of the followers.', fix: 'Give the Abu Dhabi cafés their own posts and neighbourhood stories.' },
+      ],
+    },
+    pr: {
+      headline: 'Praised for the coffee, unknown in Abu Dhabi',
+      summary: 'Dubai critics rate the coffee among the city’s best; Abu Dhabi’s press hasn’t written about the cafés, and rivals get nearly four times the mentions.',
+      basis: '6 articles in UAE media, 1 Sep – 15 Nov, set against three rivals',
+      findings: [
+        { title: 'Critics rate the coffee', good: true, body: 'Two Dubai food reviews put the coffee among the city’s best.', keep: 'Keep inviting critics to taste each new seasonal menu.' },
+        { title: 'Unknown in the Abu Dhabi press', issue: true, impact: 'High', body: 'No Abu Dhabi title has written about the cafés since they opened there.', fix: 'Host Abu Dhabi food writers for a morning at the Saadiyat café.' },
+        { title: 'No story beyond the coffee', impact: 'Medium', body: 'Articles mention the coffee and nothing else: not the founders, not the two-city idea.', fix: 'Offer the founders’ story: one café family across two cities.' },
+      ],
+    },
+  },
+};
+/** A brand's own report for a kind, when it has one (Spark's other clients borrow a group brand's). */
+export const brandReport = (brandId: string, kind: string): R | undefined => BRAND_REPORTS[PAGES[brandId] ? brandId : PAGE_ALIAS[brandId] ?? '']?.[kind];
+
+/** The figure a brand's report opens on: its Home card for that report (Website, Social), by the brand open now. */
+export function reportFig(brandId: string, kind: string): Fig | undefined {
+  return pageOf(brandId).figs.find((f) => f.href.endsWith(`/${kind}`));
 }
 
 /** A ring open at the foot (as Overview's website score): the faint track, the share filled from Cobalt through violet
@@ -334,6 +527,9 @@ export function HomeHealth({ balance, profile, sidebar = false, bar = false }: {
   const page = pageOf(shownId);
   const latestHere: Latest[] = page.latest ?? latest;
   const [profileOpen, setProfileOpen] = useState(false);
+  // the Spark team posts what changed on the client's page (19 Nov)
+  const [updateOpen, setUpdateOpen] = useState(false);
+  const updatedAt = useUpdatedAt();
   const [profileTab, setProfileTab] = useState<ProfileTab>('company');
   const closeProfile = useCallback(() => setProfileOpen(false), []);
   // Health · Sidebar: Company profile opens from the account menu (18 Nov, review)
@@ -387,6 +583,11 @@ export function HomeHealth({ balance, profile, sidebar = false, bar = false }: {
               <Building2 size={14} strokeWidth={1.8} aria-hidden />
               Company profile
             </button>
+            {role === 'spark' && (
+              <Button size="sm" variant="primary" icon={Plus} onClick={() => setUpdateOpen(true)}>
+                Add update
+              </Button>
+            )}
           </span>
           {/* one line under the description (17 Nov, review): the team at the left, when Spark last updated the page in
               the right corner */}
@@ -404,15 +605,19 @@ export function HomeHealth({ balance, profile, sidebar = false, bar = false }: {
                 <ArrowRight className="hh-team__go" size={16} strokeWidth={1.8} aria-hidden />
               </a>
             ) : (
-              <span />
+              // the Spark team came from Clients: the way back where the client's team would be
+              <Link kind="nav" back href="#/clients">
+                All clients
+              </Link>
             )}
             <span className="hb-updated-sm">
               <History size={13} strokeWidth={1.8} aria-hidden />
-              {fresh ? 'Set up today' : `Last update ${fmtLong(cur.updated)}`}
+              {fresh ? 'Set up today' : `Last update ${updatedAt(cur) !== cur.updated ? 'today' : fmtLong(cur.updated)}`}
             </span>
           </span>
         </header>
 
+      {role === 'spark' && <AddUpdateDialog open={updateOpen} client={cur} onClose={() => setUpdateOpen(false)} />}
       <ProfileDrawer open={profileOpen} onClose={closeProfile} tab={profileTab} onTab={setProfileTab}>
         <div className="hb-profile-body">
           {profile?.(profileTab)}
@@ -528,51 +733,9 @@ export function HomeHealth({ balance, profile, sidebar = false, bar = false }: {
             </div>
           ))}
         {!loading && !fresh && page.figs.map((f) => (
+          // back as it was (19 Nov, review): the comparison and "More" at the foot, no top issue; a click opens the report
           <a key={f.title} className="db-card hh-card hh-fig" href={f.href}>
-            {/* the label as every card has (13 Nov, review): the report it's from, the status across from it */}
-            <span className="hh-fig__top">
-              <span className="db-label">{f.from}</span>
-              <span className={cx('hh-status', `is-${f.status}`)}>{STATUS[f.status]}</span>
-            </span>
-            {f.look === 'score' ? (
-              // the score in a ring open at the foot (Overview's website gauge, which Jean liked), a tick at the typical
-              <span className="hh-arcwrap">
-                <ArcGauge share={f.mine / f.scale} aim={f.aim !== undefined ? f.aim / f.scale : undefined} id={f.title} />
-                <span className="hh-fig__n" role="img" aria-label={`${f.fig}${f.unit ?? ''} ${f.title}`}>
-                  {dotted(f.fig)}
-                </span>
-                {f.unit && <i className="hh-arc__unit is-of">{f.unit}</i>}
-              </span>
-            ) : (
-              // the figure with its bar beside it, on the right (17 Nov, review)
-              <span className="hh-fig__row">
-                <span className="hh-fig__n" role="img" aria-label={`${f.fig}${f.unit ?? ''} ${f.title}`}>
-                  {dotted(f.fig)}
-                  {f.unit && <i>{f.unit}</i>}
-                </span>
-                <span className="hh-bar" aria-hidden>
-                  <span style={{ width: `${Math.min(100, (f.mine / f.scale) * 100)}%` }} />
-                  {f.aim !== undefined && <i style={{ left: `${(f.aim / f.scale) * 100}%` }} />}
-                </span>
-              </span>
-            )}
-            <span className="hh-fig__title">{f.title}</span>
-            {/* the comparison, and at its right the way to the full report (17 Nov, design sync: "More" opens the report):
-                an arrow always, the word "More" sliding in beside it on hover (17 Nov, review) */}
-            <span className="hh-fig__foot">
-              <span className={cx('hh-vs', `is-${f.status}`)}>
-                {f.dir && (
-                  <span className="hh-vs__arrow" aria-hidden>
-                    {f.dir === 'up' ? '▲' : '▼'}
-                  </span>
-                )}
-                <span>{f.vs}</span>
-              </span>
-              <span className="hh-fig__more">
-                <span className="hh-fig__more-word">More</span>
-                <ArrowRight size={16} strokeWidth={1.8} aria-hidden />
-              </span>
-            </span>
+            <FigFace f={f} more />
           </a>
         ))}
       </section>

@@ -17,7 +17,7 @@
 //   K · Featured     the same header; the most important issue large with its signals, the others as
 //                    smaller tinted cards under it, what works in green
 import { useEffect, useRef, useState, type ReactNode } from 'react';
-import { ArrowLeft, ArrowRight, BadgeCheck, Check, ChevronDown, ChevronLeft, ChevronRight, CircleAlert, Clock, FileSearch, FileText, Plus, TriangleAlert } from 'lucide-react';
+import { ArrowLeft, ArrowRight, BadgeCheck, Download, ThumbsUp, Check, ChevronDown, ChevronLeft, ChevronRight, CircleAlert, Clock, FileSearch, FileText, Plus, TriangleAlert } from 'lucide-react';
 import { SparkStar } from '../../components/ui/SparkStar';
 import { useStore } from '../../state/store';
 import { useUI } from '../../state/ui';
@@ -27,6 +27,10 @@ import { fmtDate } from '../../lib/format';
 import { ANALYSIS_ICON } from '../assistant/Home';
 import { ChatDrawer, Mascot, type DrawerTopic } from '../assistant/ChatDrawer';
 import { AskPill, useDrAi } from '../../components/ui/DrAi';
+import { Link } from '../../components/ui/Link';
+import { IconButton } from '../../components/ui/IconButton';
+import { FigFace, STATUS, brandReport, reportCopy, reportFig } from '../demo/HomeHealth';
+import { brandsFor, useActiveBrand, useMode } from '../demo/HealthHead';
 import { Composer } from '../assistant/Composer';
 import type { CompanyAnalysis } from '../../data/types';
 import { SparkDisc } from '../../components/ui/BrandSpark';
@@ -1093,4 +1097,256 @@ function AgentLook({ a, x, featured, focus }: { a: CompanyAnalysis; x: Ctx; feat
 function AnalysisReply({ onSend }: { onSend: (text: string) => void }) {
   const drai = useDrAi();
   return <Composer placeholder={drai ? 'Ask Dr.AI about this analysis' : 'Reply to Spark about this analysis'} onSubmit={(t) => onSend(t)} />;
+}
+
+// ---- Health · a report on its own page (19 Nov, review: "align the reports with Health and the Storybook") --------
+// The report wears Home's own system: the page inside Home's grid (so its cards, labels and statuses are Home's), a
+// nav Link back to Home and to the PDF, the report's name as a mono label, the verdict as the page title, the figures
+// as one card with each verdict in Home's words (Fix first · Watch · On track), then the issues, each a card: its
+// impact as a status, what Spark found, what Spark would do on a grey fill and one secondary button.
+const REPORT_NAME: Record<string, string> = { website: 'Website report', social: 'Social media report', brand: 'Brand report', pr: 'PR report' };
+const IMPACT: Record<string, { cls: string; word: string }> = {
+  High: { cls: 'is-work', word: 'High impact' },
+  Medium: { cls: 'is-watch', word: 'Medium impact' },
+  Low: { cls: 'is-low', word: 'Low impact' },
+};
+export function HealthReport({ a: base, focus }: { a: CompanyAnalysis; focus?: string }) {
+  const { state } = useStore();
+  // the brand open on Home (19 Nov, review): its figure on top, its verdict and lead, and its own issues, what works
+  // and what it rests on (Brand Co.'s are the report's own)
+  const [brandId] = useActiveBrand();
+  const mode = useMode();
+  const brand = brandsFor(mode).find((b) => b.id === brandId) ?? brandsFor(mode)[0];
+  const own = brandReport(brand.id, base.kind);
+  const a: CompanyAnalysis = own ? { ...base, basis: own.basis, findings: own.findings, headline: own.headline ?? base.headline, summary: own.summary ?? base.summary } : base;
+  const x = useAnalysis(a);
+  const pdf = state.docs.find((d) => d.id === `d-rep-${a.kind}`) ?? x.doc;
+  // the request made from an issue: its title as the issue's, or its description opening with what Spark found
+  const requestFor = (f: Finding) =>
+    [...state.requests].reverse().find((r) => r.title === f.title || r.description?.startsWith(f.body));
+  const fig = reportFig(brand.id, a.kind);
+  const copy = reportCopy(brand.id, a.kind);
+  const headline = copy?.headline ?? a.headline ?? a.title;
+  const summary = copy?.summary ?? a.summary;
+  const reviewerPerson = state.people.find((p) => p.id === a.reviewedBy);
+  const reviewer = reviewerPerson?.name.split(' ')[0];
+  const reviewerName = reviewer;
+  const focusRef = useRef<HTMLElement>(null);
+  useEffect(() => {
+    const t = setTimeout(() => focusRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' }), 250);
+    return () => clearTimeout(t);
+  }, [focus]);
+  return (
+    <div className="bx bx--sand bx--page bx--tabs hr-page">
+      <div className="bx-grid bx-grid--health">
+        <div className="br hh hr">
+          <nav className="hr-top" aria-label="Report">
+            <Link kind="nav" back href="#/">
+              Home
+            </Link>
+            {/* no "PDF copy in Documents" (19 Nov, review): the download by the title gives the PDF */}
+          </nav>
+          {/* the report's top as Home's Brand health card (19 Nov, review): the page names the report; the card holds what was found: the label, the verdict as its title, the figure in the ring with the typical's tick, the verdict in words and colour, the reading and what it rests on */}
+            <>
+              {/* the report's name and, level with it, when it was made, as Home's "Last update" (19 Nov, review) */}
+              <header className="hr-head hr-head--row">
+                {/* the date by the title, the download at the right (19 Nov, review) */}
+                <span className="hr-head__name">
+                  <h1 className="hr-head__title">{REPORT_NAME[a.kind] ?? a.title}</h1>
+                  <span className="hb-updated-sm hr-head__date">Created {fmtLongDate(a.updatedAt)}</span>
+                </span>
+                {pdf && <IconButton icon={Download} label="Download the PDF" onClick={() => x.openDoc(pdf.id)} className="hr-head__dl" />}
+              </header>
+              <section className="db-card hh-card hh-health hr-health" aria-label="What we found">
+                <span className="hh-health__head">
+                  {/* no "Website · what we found" (19 Nov, review): the page's title names the report; the verdict and the
+                      date in one row */}
+                  <h2 className="db-rep__title">{headline}</h2>
+                  {/* the card's status in the card's top right corner (19 Nov, review) */}
+                  {fig && <span className={cx('hh-status', `is-${fig.status}`)}>{STATUS[fig.status]}</span>}
+                </span>
+                <div className="hh-health__body hr-health__body">
+                  {/* the chart of the card clicked on Home (19 Nov, review: "the same chart as the card"), with its title
+                      under it, as on the card */}
+                  {fig ? (
+                    <span className={cx('hh-fig is-in hr-health__chart', fig.look === 'figure' && 'is-bar')}>
+                      {/* the card clicked on Home, whole (19 Nov, review: its status and how it compares came with it): the
+                          report's name and status, the chart, its title and the comparison */}
+                      <FigFace f={fig} />
+                    </span>
+                  ) : (
+                    <span />
+                  )}
+                  <div className="hh-health__side hr-health__side">
+                    {/* 1 · the reading on top, from a capital (19 Nov, review); then the counts, then what it rests on */}
+                    {/* how it compares, over the reading (19 Nov, review), as the card says it */}
+                    {fig && (
+                      <span className={cx('hh-vs hr-vs', `is-${fig.status}`)}>
+                        {fig.dir && (
+                          <span className="hh-vs__arrow" aria-hidden>
+                            {fig.dir === 'up' ? '▲' : '▼'}
+                          </span>
+                        )}
+                        <span>{fig.vs}</span>
+                      </span>
+                    )}
+                    <p className="hh-health__text">{summary.charAt(0).toUpperCase() + summary.slice(1)}</p>
+                    {/* 2 · the counts, as the example's cells; no verdict line (the card on Home says it) */}
+                    <span className="hr-counts">
+                      <span className="hr-cell">
+                        <span className="hr-cell__label">Issues to fix</span>
+                        <span className="hr-cell__row">
+                        <b className="hr-cell__n">{x.issues.length}</b>
+                        {/* how many weigh most (19 Nov, review: "add 1 high impact"), in the High impact status's colour */}
+                        {(() => {
+                          const high = x.issues.filter((f) => f.impact === 'High').length;
+                          return high > 0 ? (
+                            // a dot and the words, on the figure's baseline (19 Nov, review: neater than the pill)
+                            <span className="hr-cell__st is-work">
+                              <i aria-hidden />
+                              {high} high impact
+                            </span>
+                          ) : null;
+                        })()}
+                        </span>
+                      </span>
+                      <span className="hr-cell">
+                        <span className="hr-cell__label">Working well</span>
+                        <b className="hr-cell__n">{x.works.length}</b>
+                      </span>
+                    </span>
+                    {/* 3 · what it rests on, and who checked it */}
+                    <p className="hh-based hr-health__based">
+                      Based on {a.basis}.{reviewer ? ` Checked by ${reviewer}, Spark strategist.` : ''}
+                    </p>
+                  </div>
+                </div>
+              </section>
+            </>
+
+          {/* Issues to fix (19 Nov, review: A kept) */}
+          {(() => {
+            const card = (f: Finding, lead?: boolean) => {
+              const im = IMPACT[f.impact ?? 'Low'];
+              return (
+                <article key={f.title} ref={f.title === focus ? focusRef : undefined} className={cx('db-card hh-card hr-issue', f.title === focus && 'is-focus', lead && 'is-lead')}>
+                  <div className="hr-issue__found">
+                    {/* the impact as a dot and the words, as "1 high impact" above (19 Nov, review) */}
+                    <span className={cx('hr-cell__st', im.cls)}>
+                      <i aria-hidden />
+                      {im.word}
+                    </span>
+                    <h3 className="hr-issue__title">{f.title}</h3>
+                    <p className="hr-issue__body">{f.body}</p>
+                  </div>
+                  {f.fix && (
+                    <div className="hr-issue__do">
+                      {/* the brand's spark in Ember beside it (19 Nov, review): what Spark would do */}
+                      <span className="db-label hr-issue__do-label">
+                        <SparkStar size={13} className="hr-spark" aria-hidden />
+                        What we’d do
+                      </span>
+                      <p>{f.fix}</p>
+                      {(() => {
+                        // once asked for (19 Nov, review): the request in place of the button, its status and a way to it
+                        const sent = requestFor(f);
+                        return sent ? (
+                          <a className="hr-sent" href={`#/requests/${sent.id}`}>
+                            <span className="hr-sent__dot" aria-hidden />
+                            Proposal requested
+                            <span className="hr-sent__id">{sent.id}</span>
+                            <ArrowRight size={14} strokeWidth={1.8} aria-hidden />
+                          </a>
+                        ) : (
+                          <Button size="sm" variant="secondary" onClick={() => x.request(f)}>
+                            Request proposal
+                          </Button>
+                        );
+                      })()}
+                    </div>
+                  )}
+                </article>
+              );
+            };
+            // A kept (19 Nov, review), without the pills by the title: the title alone, each high-impact issue led by
+            // the card the review picked (an Ember rim, its What we'd do lit warm, the secondary button)
+            return (
+              <>
+                <h2 className="db-label hh-sec">Issues to fix</h2>
+                <div className="hr-list">{x.issues.map((f) => card(f, f.impact === 'High'))}</div>
+              </>
+            );
+          })()}
+
+          {/* What works and How Spark did this as the Console's cards (19 Nov, review: B kept): each a card with its mono
+              label inside and a count or who checked it across from it; what works as rows on hairlines; how Spark did
+              it as three numbered steps */}
+            <>
+              {x.works.length > 0 && (
+                <>
+                  {/* the section's title as Issues to fix (19 Nov, review) */}
+                  <h2 className="db-label hh-sec">What works</h2>
+                  {/* each as an issue's card (19 Nov, review: "follow layout 1"): what Spark found at the left, and at the
+                      right on the grey fill, with the thumb, what to keep doing */}
+                  <div className="hr-list">
+                    {x.works.map((f) => (
+                      <article key={f.title} className="db-card hh-card hr-issue hr-issue--good">
+                        <div className="hr-issue__found">
+                          <h3 className="hr-issue__title">{f.title}</h3>
+                          <p className="hr-issue__body">{f.body}</p>
+                        </div>
+                        <div className="hr-issue__do">
+                          <span className="db-label hr-issue__do-label">
+                            <ThumbsUp size={13} strokeWidth={2} className="hr-thumb" aria-hidden />
+                            Keep it
+                          </span>
+                          <p>{(f as Finding & { keep?: string }).keep ?? KEEP[f.title] ?? 'Keep doing this as it is, and build the next changes around it.'}</p>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </>
+              )}
+              {/* a title of its own, as the sections above (19 Nov, review); who checked it inside */}
+              <h2 className="db-label hh-sec">How Spark did this</h2>
+              {/* each step a card of its own (19 Nov, review), its number as the Console's mono "01", the step and what it
+                  was in What works' type */}
+              {/* one white card, as the page's cards, the steps inside on the grey fill (19 Nov, review) */}
+              <section className="db-card hh-card hr-con hr-steps-card">
+              <ol className="hr-steps">
+                {[
+                  ['Gathered', `${a.basis.charAt(0).toUpperCase()}${a.basis.slice(1)}.`],
+                  // said as the team would say it (19 Nov, review: "less obviously AI")
+                  ['Sorted', 'We put what we found in order: what to fix, most urgent first, and what already works.'],
+                  ['Checked', `${reviewerName ?? 'A Spark strategist'}, a Spark strategist, checked it before it was shared.`],
+                ].map(([h, d], i) => (
+                  <li key={h} className="hr-step">
+                    <span className="db-label hr-step__n">0{i + 1}</span>
+                    <b>{h}</b>
+                    <p>{d}</p>
+                  </li>
+                ))}
+              </ol>
+              </section>
+            </>
+          {x.drawer}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+
+/** What to keep doing about each thing that works (19 Nov, review): the advice beside it, as an issue's "What we'd do". */
+const KEEP: Record<string, string> = {
+  'Calm and on brand': 'Keep the quiet layouts, real photos and prices up front as the site changes, and carry them into the Arabic pages.',
+  'Instagram works': 'Keep the behind-the-design stories coming at the same pace; they’re what people save. Use them as the model for TikTok.',
+  'What people say': 'Keep “quality”, “gift” and the calm store at the heart of what you say; they’re the words people already use.',
+};
+
+const LONG_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+/** "2 Oct 2026", as Home's "Last update 17 Nov 2026" */
+function fmtLongDate(iso: string) {
+  const d = new Date(iso);
+  return `${d.getDate()} ${LONG_MONTHS[d.getMonth()]} ${d.getFullYear()}`;
 }

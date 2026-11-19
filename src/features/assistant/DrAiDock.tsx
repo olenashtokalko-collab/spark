@@ -631,7 +631,7 @@ function Confetti() {
   );
 }
 
-/** Dr.AI alone in his corner (Current UI): a click opens the chat; now and then he gives a piece of advice from the
+/** Dr.AI in his corner with Sparki by his head (Current UI; alone until 19 Nov): a click opens the chat; now and then he gives a piece of advice from the
  *  attention cards, and talks while he does (CornerTips, 12 Nov). */
 function SoloDock({ chat, setChat }: { chat: boolean; setChat: (v: boolean) => void }) {
   const [talk, setTalk] = useState(false);
@@ -642,7 +642,9 @@ function SoloDock({ chat, setChat }: { chat: boolean; setChat: (v: boolean) => v
           <CornerTip paused={chat} onTalk={setTalk} />
           {/* no TIP switch (13 Nov, review: only the switch between the versions); his tips come on their own */}
           <button type="button" className="dk-solo" onClick={() => setChat(true)} aria-label="Ask Dr.AI">
-            <MascotClip state={talk ? 'speaking' : 'idle'} crop="solo" width={92} />
+            {/* Sparki back by his head (19 Nov, Jean: "the version with Sparki next to Dr.AI": Home has no other spot for
+                Sparki, so they're shown together): the body crop, the same height as the solo one was */}
+            <MascotClip state={talk ? 'speaking' : 'idle'} width={119} />
           </button>
         </>
       )}

@@ -156,19 +156,19 @@ export function RequestSent({ onClose, closeLabel }: { id?: string; title?: stri
       <h2 className="req-done__title">Request sent</h2>
       <p className="req-done__reply">Your request has been sent successfully! You’ll usually receive a reply within 2 business days. We’ll notify you as soon as Spark responds.</p>
       <div className="req-done__actions">
-        <Button variant="secondary" onClick={onClose}>
-          {closeLabel}
-        </Button>
+        {/* Close the main action, its own width; Go to requests the secondary (19 Nov, review) */}
         <Button
-          variant="primary"
+          variant="secondary"
           iconRight={ArrowRight}
           onClick={() => {
             onClose();
             navigate('/requests');
           }}
-          data-autofocus
         >
           Go to requests
+        </Button>
+        <Button variant="primary" onClick={onClose} data-autofocus>
+          {closeLabel}
         </Button>
       </div>
     </div>

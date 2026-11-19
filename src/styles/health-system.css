@@ -125,7 +125,8 @@
   font-size: 14px !important;
   line-height: 18px !important;
 }
-:root[data-theme][data-theme][data-ui] body :is(.btn.btn--secondary:not(.btn--icon):not(.composer *), .hb-profile, .hh-topup [class*='_ghost_']):is(:hover, :focus-visible) {
+/* past the older ui-a hover (its :is(...):hover:not(:disabled) filled the pill with Ink): two :not()s more */
+:root[data-theme][data-theme][data-ui] body :is(.btn.btn--secondary:not(.btn--icon):not(.composer *), .hb-profile, .hh-topup [class*='_ghost_']):is(:hover, :focus-visible):not(:disabled):not(.metal) {
   background: transparent !important;
   box-shadow: inset 0 0 0 1px #1e3bd6 !important;
   color: #1e3bd6 !important;
@@ -1640,4 +1641,984 @@
 :root[data-theme][data-theme][data-ui] body .hb-grid,
 :root[data-theme][data-theme][data-ui] body .hb-grid.is-on {
   top: 12px !important;
+}
+
+/* ---- Clients, the Spark team's start page (19 Nov): the Requests table's frame, a row per client ---- */
+:root[data-theme][data-theme][data-ui] body .cl .cl-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) 104px 140px 88px 16px;
+  column-gap: 24px;
+  align-items: center;
+  width: 100%;
+  min-height: 64px;
+  padding: 0 8px;
+  border: 0;
+  background: transparent;
+  text-align: left;
+  font: inherit;
+  color: var(--hs-ink);
+  box-shadow: inset 0 -1px 0 rgba(14, 17, 22, 0.07);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-row:last-child {
+  box-shadow: none;
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-row:not(.cl-cols):hover {
+  background: rgba(14, 17, 22, 0.03);
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-row.cl-cols {
+  min-height: 40px;
+  cursor: default;
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-row:focus-visible {
+  outline: 2px solid var(--hs-ink);
+  outline-offset: -2px;
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-row__when {
+  text-align: right;
+  font-size: 13px;
+  color: var(--hs-ink-3);
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-row__when.is-quiet {
+  color: var(--hs-ember-text);
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-row__go {
+  color: var(--hs-ink-4);
+  transition: transform 0.2s, color 0.2s;
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-row:hover .cl-row__go {
+  color: var(--hs-ink);
+  transform: translateX(2px);
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-who {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  min-width: 0;
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-who__text {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-who__text b {
+  font: 500 15px/1.35 var(--hs-ext);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-who__text span {
+  font-size: 13px;
+  color: var(--hs-ink-3);
+}
+/* health: the figure, then its word in the verdict's colour */
+:root[data-theme][data-theme][data-ui] body .cl .cl-health {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 8px;
+  font-size: 13px;
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-health b {
+  font: 500 18px/1 var(--hs-ext);
+  font-variant-numeric: tabular-nums;
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-health.is-good span {
+  color: var(--hs-good);
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-health.is-fair span {
+  color: #a36a00;
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-health.is-weak span {
+  color: var(--hs-ember-text);
+}
+/* what waits, a dot and words: on Spark Cobalt with its halo (as a proposal waiting on you), on the client a ring */
+:root[data-theme][data-theme][data-ui] body .cl .cl-wait {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  font-size: 13px;
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-wait__on {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--hs-ink-2);
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-wait__on i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.4px rgba(14, 17, 22, 0.82);
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-wait__on.is-spark {
+  color: var(--hs-ink);
+  font-weight: 500;
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-wait__on.is-spark i {
+  background: #1e3bd6;
+  box-shadow: 0 0 0 3px rgba(30, 59, 214, 0.16);
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-wait__none {
+  color: var(--hs-ink-4);
+}
+@media (max-width: 900px) {
+  :root[data-theme][data-theme][data-ui] body .cl .cl-row {
+    grid-template-columns: minmax(0, 1fr) 90px 120px 16px;
+    column-gap: 16px;
+  }
+  :root[data-theme][data-theme][data-ui] body .cl .cl-row__when {
+    display: none;
+  }
+}
+/* Add update: where it shows, as pills */
+:root[data-theme][data-theme][data-ui] body .cl-where {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+:root[data-theme][data-theme][data-ui] body .cl-where__opt {
+  height: 32px;
+  padding: 0 14px;
+  border-radius: 999px;
+  border: 0;
+  background: rgba(14, 17, 22, 0.05);
+  font: 400 13px/1 inherit;
+  color: var(--hs-ink-2);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+:root[data-theme][data-theme][data-ui] body .cl-where__opt:hover {
+  background: rgba(14, 17, 22, 0.08);
+}
+:root[data-theme][data-theme][data-ui] body .cl-where__opt.is-on {
+  background: var(--hs-ink);
+  color: #fff;
+}
+:root[data-theme][data-theme][data-ui] body .cl .cl-cols > span {
+  white-space: nowrap;
+}
+
+/* Dr.AI in Home's corner with Sparki by his head (19 Nov, Jean): the body crop, wider than the solo one by Sparki's
+   path, at the same height; the clip isn't cut, so Sparki shows whole */
+:root[data-theme][data-theme][data-ui] body .dk-solo {
+  width: 119px;
+  right: 18px;
+}
+/* his advice steps left of the wider figure, clear of his arm */
+:root[data-theme][data-theme][data-ui] body .dt-say {
+  right: calc(18px + 119px + 6px);
+}
+
+/* ---- a report on its own page (19 Nov, review: "align the reports with Health and the Storybook"): Home's grid,
+   cards, labels and statuses; the page's own parts below ---- */
+:root[data-theme][data-theme][data-ui] body .hr-page {
+  max-width: 1120px;
+  padding: 8px 0 160px;
+}
+:root[data-theme][data-theme][data-ui] body .hr > * {
+  grid-column: 1 / -1;
+}
+:root[data-theme][data-theme][data-ui] body .hr-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 0 2px;
+}
+:root[data-theme][data-theme][data-ui] body .hr-head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 24px;
+  row-gap: 8px;
+  padding: 16px 2px 24px;
+}
+:root[data-theme][data-theme][data-ui] body .hr-head > .db-label {
+  grid-column: 1;
+}
+:root[data-theme][data-theme][data-ui] body .hr-head__title {
+  grid-column: 1;
+  margin: 0;
+  font: 700 32px/1.1 var(--hs-ext);
+  letter-spacing: -0.03em;
+  color: var(--hs-ink);
+  text-wrap: balance;
+}
+:root[data-theme][data-theme][data-ui] body .hr-head__lead {
+  grid-column: 1;
+  margin: 4px 0 0;
+  max-width: 64ch;
+  font: 400 15px/22px var(--hs-ext);
+  color: var(--hs-ink-2);
+}
+:root[data-theme][data-theme][data-ui] body .hr-head__ask {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: start;
+}
+/* the figures: one card, a cell each, hairlines between */
+:root[data-theme][data-theme][data-ui] body .hr-figs {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  padding: 24px 0 !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr-fig {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 0 28px;
+}
+:root[data-theme][data-theme][data-ui] body .hr-fig + .hr-fig {
+  box-shadow: inset 1px 0 0 rgba(14, 17, 22, 0.07);
+}
+:root[data-theme][data-theme][data-ui] body .hr-fig__n {
+  /* the figure as Home's (the Storybook's "figure": Doto 900 56) */
+  font: 900 56px/1 'Doto Rounded', ui-monospace, monospace;
+  color: var(--hs-ink);
+}
+:root[data-theme][data-theme][data-ui] body .hr .hh-sec {
+  margin-top: 16px;
+}
+/* an issue: what Spark found at the left, what Spark would do at the right on a grey fill */
+:root[data-theme][data-theme][data-ui] body .hr-list,
+:root[data-theme][data-theme][data-ui] body .hr-works {
+  display: grid;
+  gap: 16px;
+}
+:root[data-theme][data-theme][data-ui] body .hr-works {
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+}
+:root[data-theme][data-theme][data-ui] body .hr-issue {
+  display: grid;
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 1fr);
+  gap: 24px;
+  padding: 24px 28px !important;
+  scroll-margin: 120px;
+}
+:root[data-theme][data-theme][data-ui] body .hr-issue.is-focus {
+  box-shadow: 0 0 0 2px var(--hs-ink), var(--hs-sh-card) !important;
+}
+:root[data-theme][data-theme][data-ui] body :is(.hr-issue__found, .hr-work) {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+}
+:root[data-theme][data-theme][data-ui] body .hr-work {
+  padding: 24px 28px !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr-issue__title {
+  margin: 4px 0 0;
+  /* item title: 500 15 */
+  font: 500 15px/20px var(--hs-ext);
+  color: var(--hs-ink);
+}
+:root[data-theme][data-theme][data-ui] body .hr-issue__body {
+  margin: 0;
+  font: 400 14px/20px var(--hs-ext);
+  color: var(--hs-ink-2);
+}
+:root[data-theme][data-theme][data-ui] body .hr-issue__do {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 20px;
+  border-radius: var(--hs-r-m);
+  background: rgba(14, 17, 22, 0.04);
+}
+:root[data-theme][data-theme][data-ui] body .hr-issue__do p {
+  margin: 0 0 8px;
+  font: 400 14px/20px var(--hs-ext);
+  color: var(--hs-ink);
+}
+:root[data-theme][data-theme][data-ui] body .hr-issue__do .btn {
+  margin-top: auto;
+}
+/* low impact: the status quiet grey */
+:root[data-theme][data-theme][data-ui] body .hr .hh-status.is-low {
+  color: var(--hs-ink-3);
+}
+:root[data-theme][data-theme][data-ui] body .hr-basis {
+  display: grid;
+  gap: 16px;
+  padding: 24px 28px !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr-basis__row {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr);
+  gap: 16px;
+  font: 400 14px/20px var(--hs-ext);
+  color: var(--hs-ink-2);
+}
+@media (max-width: 900px) {
+  :root[data-theme][data-theme][data-ui] body .hr-issue {
+    grid-template-columns: 1fr;
+  }
+  :root[data-theme][data-theme][data-ui] body .hr-head {
+    grid-template-columns: 1fr;
+  }
+  :root[data-theme][data-theme][data-ui] body .hr-head__ask {
+    grid-column: 1;
+    grid-row: auto;
+  }
+}
+/* what follows a report's figure ("/100", "%"): the plain type, smaller, as Home's units */
+:root[data-theme][data-theme][data-ui] body .hr-fig__unit {
+  margin-left: 4px;
+  font: 500 20px/1 var(--hs-ext);
+  font-style: normal;
+  letter-spacing: 0;
+  color: var(--hs-ink-3);
+}
+
+/* ---- a Brand analysis card leads into its report (19 Nov, review: "the card and the report feel apart") ----
+   Home's card: under its comparison a hairline, then what to fix first and "Open report" */
+:root[data-theme][data-theme][data-ui] body .hh-fig__peek {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 14px;
+  box-shadow: inset 0 1px 0 rgba(14, 17, 22, 0.07);
+}
+:root[data-theme][data-theme][data-ui] body .hh-fig__peek-text {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+}
+:root[data-theme][data-theme][data-ui] body .hh-fig__peek-text b {
+  font: 500 14px/20px var(--hs-ext);
+  color: var(--hs-ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+:root[data-theme][data-theme][data-ui] body .hh-fig__more.is-open {
+  flex: none;
+  margin-top: 0;
+  font: 500 13px/20px var(--hs-ext);
+  color: var(--hs-ink-3);
+}
+:root[data-theme][data-theme][data-ui] body .hh-fig__more.is-open .hh-fig__more-word {
+  max-width: none !important;
+  opacity: 1 !important;
+  margin: 0 4px 0 0 !important;
+  padding: 0 !important;
+  transform: none !important;
+  filter: none !important;
+}
+:root[data-theme][data-theme][data-ui] body .hh-fig__more.is-open svg {
+  transition: transform 0.3s var(--hs-ease);
+}
+:root[data-theme][data-theme][data-ui] body .hh-fig:is(:hover, :focus-visible) .hh-fig__more.is-open svg {
+  transform: translateX(2px);
+}
+:root[data-theme][data-theme][data-ui] body .hh-fig:hover .hh-fig__more.is-open {
+  color: var(--hs-ink);
+}
+/* the report's top: the same card, grown: its face at the left as on Home, the counts at the right */
+:root[data-theme][data-theme][data-ui] body .bx .bx-grid--health .db-card.hh-fig.hr-hero {
+  display: grid;
+  grid-template-columns: minmax(280px, 360px) minmax(0, 1fr);
+  gap: 0;
+  padding: 28px 0 !important;
+  translate: none;
+}
+:root[data-theme][data-theme][data-ui] body .hr-hero__face {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0 32px;
+}
+:root[data-theme][data-theme][data-ui] body .hr-hero__counts {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  align-items: start;
+  box-shadow: inset 1px 0 0 rgba(14, 17, 22, 0.07);
+}
+@media (max-width: 900px) {
+  :root[data-theme][data-theme][data-ui] body .bx .bx-grid--health .db-card.hh-fig.hr-hero {
+    grid-template-columns: 1fr;
+    row-gap: 24px;
+  }
+  :root[data-theme][data-theme][data-ui] body .hr-hero__counts {
+    box-shadow: inset 0 1px 0 rgba(14, 17, 22, 0.07);
+    padding-top: 24px;
+  }
+}
+/* the report's top isn't a link: no lift on hover */
+:root[data-theme][data-theme][data-ui] body .bx .bx-grid--health .db-card.hh-fig.hr-hero:hover {
+  translate: none;
+}
+
+/* ---- the report's top, three variants (19 Nov, review) ---- */
+:root[data-theme][data-theme][data-ui] body .ui-switch.ui-switch--report {
+  bottom: 58px;
+}
+/* 1 · figures in a row, as the example: three cells on hairlines, the figures in the plain type */
+:root[data-theme][data-theme][data-ui] body .hr-cells {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  padding: 0 !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 24px 28px;
+}
+:root[data-theme][data-theme][data-ui] body .hr-cell + .hr-cell {
+  box-shadow: inset 1px 0 0 rgba(14, 17, 22, 0.07);
+}
+:root[data-theme][data-theme][data-ui] body .hr-cell__label {
+  font: 400 14px/20px var(--hs-ext);
+  color: var(--hs-ink-2);
+}
+:root[data-theme][data-theme][data-ui] body .hr-cell__n {
+  font: 700 32px/1.1 var(--hs-ext);
+  letter-spacing: -0.03em;
+  color: var(--hs-ink);
+}
+:root[data-theme][data-theme][data-ui] body .hr-cell__st {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font: 500 13px/18px var(--hs-ext);
+}
+:root[data-theme][data-theme][data-ui] body .hr-cell__st i {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+}
+:root[data-theme][data-theme][data-ui] body .hr-cell__st.is-work {
+  color: var(--hs-ember-text);
+}
+:root[data-theme][data-theme][data-ui] body .hr-cell__st.is-watch {
+  color: #1e3bd6;
+}
+:root[data-theme][data-theme][data-ui] body .hr-cell__st.is-good {
+  color: var(--hs-good);
+}
+/* 3 · as Brand health: Home's card, its ring holding the report's figure */
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-ring__unit {
+  margin-left: 2px;
+  font: 500 18px/1 var(--hs-ext);
+  font-style: normal;
+  letter-spacing: 0;
+  color: var(--hs-ink-3);
+}
+:root[data-theme][data-theme][data-ui] body .hr-health .hh-verdict.is-watch {
+  color: #1e3bd6;
+}
+:root[data-theme][data-theme][data-ui] body .hr-health .hh-verdict span b {
+  font-weight: 500;
+  color: inherit !important;
+}
+/* 3 · the card's own chart in Brand health's place, what was found beside it */
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-health__body {
+  grid-template-columns: 260px minmax(0, 1fr);
+  align-items: start;
+  gap: 40px;
+  margin-top: 20px;
+}
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-health__chart {
+  gap: 12px;
+  padding: 0;
+  border: 0;
+  background: none;
+}
+:root[data-theme][data-theme][data-ui] body .hr-health__side {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+:root[data-theme][data-theme][data-ui] body .hr-health .hh-health__text {
+  margin: 0;
+}
+:root[data-theme][data-theme][data-ui] body .hr-drivers {
+  display: grid;
+  gap: 8px;
+  margin: 4px 0 0;
+  padding: 14px 0 0;
+  box-shadow: inset 0 1px 0 rgba(14, 17, 22, 0.07);
+}
+:root[data-theme][data-theme][data-ui] body .hr-drivers > div {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 16px;
+}
+:root[data-theme][data-theme][data-ui] body .hr-drivers dd {
+  margin: 0;
+  font: 500 14px/20px var(--hs-ext);
+  color: var(--hs-ink);
+}
+:root[data-theme][data-theme][data-ui] body .hr-drivers dd .hs-link--nav {
+  color: var(--hs-ink) !important;
+  font: 500 14px/20px var(--hs-ext) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr-health__based {
+  margin: 0;
+  /* no rule above it (19 Nov, review) */
+  padding-top: 4px !important;
+  border-top: 0 !important;
+}
+@media (max-width: 900px) {
+  :root[data-theme][data-theme][data-ui] body .hr-health .hr-health__body {
+    grid-template-columns: 1fr;
+  }
+}
+/* 3 · the verdict and the date in one row, on the title's baseline */
+:root[data-theme][data-theme][data-ui] body .hr-health .hh-health__head {
+  align-items: baseline;
+}
+:root[data-theme][data-theme][data-ui] body .hr-health .hh-health__head .db-rep__title {
+  margin: 0;
+}
+/* 3 · the counts beside the chart: two cells on hairlines, the figures in the plain type */
+:root[data-theme][data-theme][data-ui] body .hr-counts {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-self: stretch;
+  margin-top: 4px;
+  border-radius: var(--hs-r-m);
+  box-shadow: inset 0 0 0 1px rgba(14, 17, 22, 0.08);
+}
+:root[data-theme][data-theme][data-ui] body .hr-counts .hr-cell {
+  gap: 8px;
+  padding: 18px 22px;
+}
+/* "What we'd do" with the brand's spark in Ember before it */
+:root[data-theme][data-theme][data-ui] body .hr-issue__do-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+:root[data-theme][data-theme][data-ui] body .hr-spark {
+  flex: none;
+  color: #e8501f;
+}
+/* 3 · the card's chart larger in the report, centred in its column; "/100" under the score, in the ring's open foot */
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-health__chart {
+  align-items: center;
+  text-align: center;
+}
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-health__chart .hh-arcwrap {
+  width: 190px;
+  height: 168px;
+  margin: 0;
+}
+:root[data-theme][data-theme][data-ui] body .bx .bx-grid--health .hr-health .hh-fig .hh-arcwrap .hh-fig__n {
+  top: 88px;
+  font-size: 72px !important;
+  line-height: 1 !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-health__chart .hh-arc__unit.is-of {
+  left: 50%;
+  top: auto;
+  bottom: 8px;
+  translate: -50% 0;
+  font: 400 15px/1 var(--hs-ext);
+  letter-spacing: 0;
+  color: var(--hs-ink-3);
+}
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-health__chart .hh-fig__row {
+  width: 100%;
+}
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-health__chart .hh-fig__title {
+  font: 500 15px/20px var(--hs-ext);
+}
+/* the count and how many are high impact, side by side */
+:root[data-theme][data-theme][data-ui] body .hr-cell__row {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 12px;
+}
+:root[data-theme][data-theme][data-ui] body .hr-rule {
+  display: block;
+  align-self: stretch;
+  flex: none;
+  height: 1px;
+  background: rgba(14, 17, 22, 0.08);
+}
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-counts {
+  margin-top: 0;
+}
+/* 3 · the report's name and its date in one row */
+:root[data-theme][data-theme][data-ui] body .hr-head.hr-head--row {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: baseline;
+}
+:root[data-theme][data-theme][data-ui] body .hr-head.hr-head--row {
+  align-items: center;
+}
+:root[data-theme][data-theme][data-ui] body .hr-head__name {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+  min-width: 0;
+}
+:root[data-theme][data-theme][data-ui] body .hr-head--row .hr-head__date {
+  white-space: nowrap;
+}
+:root[data-theme][data-theme][data-ui] body .hr-head--row .hr-head__dl {
+  grid-column: 2;
+  grid-row: 1;
+}
+/* the counts in the figures' own face, Doto, as the score beside them (19 Nov, review) */
+:root[data-theme][data-theme][data-ui] body .hr-counts .hr-cell__n {
+  font: 900 44px/1 'Doto Rounded', ui-monospace, monospace;
+  letter-spacing: 0;
+  -webkit-text-stroke: 0.022em currentColor;
+}
+:root[data-theme][data-theme][data-ui] body .hr-counts .hr-cell__row {
+  /* the label's foot on the figure's foot (19 Nov, review): one baseline, the digits sit on it */
+  align-items: baseline;
+}
+
+/* ---- the report's foot, after the Console (19 Nov, review) ---- */
+:root[data-theme][data-theme][data-ui] body .hr-con {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  margin-top: 16px;
+  padding: 24px 28px !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr .hr-con {
+  /* under its section title now (19 Nov, review): the grid's gap is the space */
+  margin-top: 0;
+}
+:root[data-theme][data-theme][data-ui] body .hr-con__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 8px;
+}
+:root[data-theme][data-theme][data-ui] body .hr-con__meta {
+  color: var(--hs-ink-3) !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr-con__meta.is-good {
+  color: var(--hs-good) !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr-con__rows {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:root[data-theme][data-theme][data-ui] body .hr-con__row {
+  display: grid;
+  gap: 6px;
+  padding: 16px 0;
+  box-shadow: inset 0 1px 0 rgba(14, 17, 22, 0.07);
+}
+:root[data-theme][data-theme][data-ui] body .hr-con__row b {
+  font: 500 15px/20px var(--hs-ext);
+  color: var(--hs-ink);
+}
+:root[data-theme][data-theme][data-ui] body .hr-con__row p {
+  margin: 0;
+  max-width: 72ch;
+  font: 400 14px/20px var(--hs-ext);
+  color: var(--hs-ink-2);
+}
+/* the Console's status line: a dot, mono caps */
+:root[data-theme][data-theme][data-ui] body .hr-con__line {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 2px;
+  font: 500 11.5px/16px var(--hs-mono);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--hs-ink-3);
+}
+:root[data-theme][data-theme][data-ui] body .hr-con__line i {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--hs-good);
+}
+:root[data-theme][data-theme][data-ui] body .hr-con__note {
+  margin: 8px 0 0;
+  font: 400 13px/18px var(--hs-ext);
+  color: var(--hs-ink-3);
+}
+/* How Spark did this: three cards, one per step (19 Nov, review): the Console's mono number, then the step and what it
+   was in What works' type (item title, body) */
+:root[data-theme][data-theme][data-ui] body .hr-steps {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+:root[data-theme][data-theme][data-ui] body .hr-step {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 20px;
+  border-radius: var(--hs-r-m);
+  background: rgba(14, 17, 22, 0.04);
+}
+:root[data-theme][data-theme][data-ui] body .hr-step__n {
+  margin-bottom: 6px;
+  /* greyer (19 Nov, review): the number steps back behind the step */
+  color: var(--hs-ink-4) !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr-step b {
+  font: 500 15px/20px var(--hs-ext);
+  color: var(--hs-ink);
+}
+:root[data-theme][data-theme][data-ui] body .hr-step p {
+  margin: 0;
+  font: 400 14px/20px var(--hs-ext);
+  color: var(--hs-ink-2);
+}
+/* C · two cards side by side */
+:root[data-theme][data-theme][data-ui] body .hr-split {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 40px;
+}
+:root[data-theme][data-theme][data-ui] body .hr-split .hr-con {
+  margin-top: 0 !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr-sig {
+  margin: 0;
+}
+:root[data-theme][data-theme][data-ui] body .hr-sig > div {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  align-items: baseline;
+  gap: 16px;
+  padding: 12px 0;
+  box-shadow: inset 0 1px 0 rgba(14, 17, 22, 0.07);
+}
+:root[data-theme][data-theme][data-ui] body .hr-sig dd {
+  margin: 0;
+  font: 500 14px/20px var(--hs-ext);
+  color: var(--hs-ink);
+}
+:root[data-theme][data-theme][data-ui] body .hr-by {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-top: auto;
+  padding-top: 16px;
+  box-shadow: inset 0 1px 0 rgba(14, 17, 22, 0.07);
+}
+:root[data-theme][data-theme][data-ui] body .hr-by > span:last-child {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+:root[data-theme][data-theme][data-ui] body .hr-by b {
+  font: 500 14px/20px var(--hs-ext);
+  color: var(--hs-ink);
+}
+:root[data-theme][data-theme][data-ui] body .hr-by > span:last-child > span {
+  font: 400 13px/18px var(--hs-ext);
+  color: var(--hs-ink-3);
+}
+@media (max-width: 900px) {
+  :root[data-theme][data-theme][data-ui] body :is(.hr-split, .hr-steps) {
+    grid-template-columns: 1fr;
+  }
+}
+/* What works: a thumb before its label, in the good green */
+:root[data-theme][data-theme][data-ui] body .hr-thumb {
+  flex: none;
+  color: var(--hs-good);
+}
+/* How Spark did this: the step strip alone in its card */
+
+/* ---- Issues to fix, what matters most standing out (19 Nov, review) ---- */
+/* a high-impact issue leads: an Ember rim, its What we'd do lit warm */
+:root[data-theme][data-theme][data-ui] body .bx .bx-grid--health .db-card.hr-issue.is-lead {
+  box-shadow: 0 0 0 1.5px rgba(232, 80, 31, 0.55), var(--hs-sh-card) !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr-issue.is-lead .hr-issue__do {
+  background: rgba(232, 80, 31, 0.06);
+}
+/* the focus from Home's card: a quieter Ink rim than before */
+:root[data-theme][data-theme][data-ui] body .hr-issue.is-focus:not(.is-lead) {
+  /* no rim on medium and low issues (19 Nov, review): the one opened from Home is only scrolled to */
+  box-shadow: var(--hs-sh-card) !important;
+}
+:root[data-theme][data-theme][data-ui] body .bx .bx-grid--health .hr .hr-step .db-label.hr-step__n {
+  color: var(--hs-ink-4) !important;
+}
+
+/* ---- the report, one set of values (19 Nov, review: "check radii, spacing, type") ----
+   cards: 32 radius, 24/28 padding; grey boxes inside: 16 radius, 20 padding, Ink words; body 14/20, the reading 15/22,
+   item titles 15/20, labels mono 11.5 */
+:root[data-theme][data-theme][data-ui] body .bx .bx-grid--health .db-card.hr-health {
+  padding: 24px 28px !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr-health .hh-health__text {
+  font: 400 15px/22px var(--hs-ext) !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-health__based {
+  font: 400 14px/20px var(--hs-ext) !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-health__chart .hh-fig__title {
+  line-height: 20px !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr-counts .hr-cell {
+  padding: 20px !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr-counts .hr-cell__label {
+  font: 500 11.5px/16px var(--hs-mono) !important;
+  letter-spacing: 0.12em !important;
+  text-transform: uppercase;
+  color: var(--hs-ink-2);
+}
+:root[data-theme][data-theme][data-ui] body .hr-step p {
+  color: var(--hs-ink) !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr-cell__st.is-low {
+  color: var(--hs-ink-3);
+}
+/* the figure over its bar reads from left to right (19 Nov, review): the column aligned left, the ring stays centred */
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-health__chart.is-bar {
+  align-items: flex-start;
+  text-align: left;
+}
+
+/* the credits stay Ink on hover and while open (17 Nov, review: "no Cobalt"; 19 Nov: an older Cobalt rule won) */
+:root[data-theme][data-theme][data-ui] body .bal-pill.bal-pill--inline:is(:hover, .is-open, :focus-within) .bal-pill__val,
+:root[data-theme][data-theme][data-ui] body .bal-pill.bal-pill--inline:is(:hover, .is-open, :focus-within) .bal-pill__go {
+  color: var(--hs-ink) !important;
+}
+
+/* the report's chart column is the Home card whole (19 Nov): its top row across the column, the comparison under */
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-health__chart .hh-fig__top {
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-health__chart .hh-fig__foot {
+  align-self: stretch;
+  justify-content: center;
+  margin-top: 0;
+}
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-health__chart.is-bar .hh-fig__foot {
+  justify-content: flex-start;
+}
+/* an issue asked about: the request in the button's place, a Cobalt dot (a proposal on its way) and its number */
+:root[data-theme][data-theme][data-ui] body .hr-sent {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: auto;
+  height: 36px;
+  font: 500 13px/18px var(--hs-ext);
+  color: var(--hs-ink);
+  text-decoration: none;
+}
+:root[data-theme][data-theme][data-ui] body .hr-sent__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  box-shadow: inset 0 0 0 1.4px rgba(14, 17, 22, 0.82);
+}
+:root[data-theme][data-theme][data-ui] body .hr-sent__id {
+  font: 500 11.5px/16px var(--hs-mono);
+  letter-spacing: 0.12em;
+  color: var(--hs-ink-3);
+}
+:root[data-theme][data-theme][data-ui] body .hr-sent svg {
+  color: var(--hs-ink-3);
+  transition: transform 0.2s, color 0.2s;
+}
+:root[data-theme][data-theme][data-ui] body .hr-sent:hover svg {
+  color: var(--hs-ink);
+  transform: translateX(2px);
+}
+/* the status moved to the card's top right corner: not again by the chart */
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-health__chart .hh-fig__top .hh-status {
+  display: none;
+}
+:root[data-theme][data-theme][data-ui] body .hr-health .hh-health__head > .hh-status {
+  flex: none;
+  align-self: center;
+}
+/* no "Website" over the chart, and the comparison moved over the reading (19 Nov, review) */
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-health__chart :is(.hh-fig__top, .hh-fig__foot) {
+  display: none !important;
+}
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-vs {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  font: 400 14px/20px var(--hs-ext);
+  color: var(--hs-ink-2);
+}
+:root[data-theme][data-theme][data-ui] body .hr-health .hr-vs b {
+  font-weight: 500;
+  color: var(--hs-ink);
+}
+
+/* "Request sent": its buttons sit in the scrolling body, which cut the primary's shadow (19 Nov, review): room under
+   them for the shadow, taken back from the dialog's foot so the dialog keeps its size */
+:root[data-theme][data-theme][data-ui] body .dlg-spark .dialog .dialog__body:has(.req-done) {
+  padding-bottom: 28px !important;
+  margin-bottom: -24px !important;
+}
+/* "Request sent": the two buttons at their own widths, not stretched across the row (19 Nov, review) */
+:root[data-theme][data-theme][data-ui] body .dlg-spark .req-done__actions {
+  justify-content: flex-start !important;
+}
+:root[data-theme][data-theme][data-ui] body .dlg-spark .req-done__actions .btn {
+  flex: none !important;
+  width: auto !important;
+}
+/* the arrow closer to the request's number (19 Nov, review) */
+:root[data-theme][data-theme][data-ui] body .hr-sent svg {
+  margin-left: -4px;
+}
+/* Close at the row's right end, Go to requests at its left (19 Nov, review) */
+:root[data-theme][data-theme][data-ui] body .dlg-spark .req-done__actions .btn.btn--primary {
+  margin-left: auto !important;
+}
+
+/* more room between Home's sections (19 Nov, review): 32 px above each section title (the grid's 16 and 16 more),
+   16 under it to its cards; the reports the same */
+:root[data-theme][data-theme][data-ui] body .bx .bx-grid--health .br.hh > .hh-sec {
+  margin-top: 16px !important;
+}
+
+/* the proposal's decision: Request changes and Decline share the row inside the card (19 Nov, check: Decline ran
+   past the card's edge) */
+:root[data-theme][data-theme][data-ui] body .decision .decision__row {
+  /* one row, both secondary (19 Nov, review): each as wide as its words, the space shared out */
+  display: flex !important;
+  gap: 8px !important;
+  margin-top: 8px;
+}
+:root[data-theme][data-theme][data-ui] body .decision .decision__row .btn {
+  flex: 1 1 auto;
+  min-width: 0;
+  justify-content: center;
+  padding: 0 14px !important;
+}
+/* the proposal's title as every page title (19 Nov, check: it was 24 px): page title, 700 32 */
+:root[data-theme][data-theme][data-ui] body .proposal__title {
+  font: 700 32px/1.1 var(--hs-ext) !important;
+  letter-spacing: -0.03em !important;
 }

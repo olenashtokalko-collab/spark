@@ -1,5 +1,4 @@
 import { Fragment, useEffect, useState } from 'react';
-import { AskButton } from '../../components/ui/DrAi';
 import { Download, X, PenLine } from 'lucide-react';
 import { Dialog } from '../../components/ui/overlay';
 import { Avatar, Badge, Button, Textarea } from '../../components/ui/primitives';
@@ -8,7 +7,6 @@ import { useToast } from '../../components/ui/toast';
 import { personById, useStore } from '../../state/store';
 import type { Doc } from '../../data/types';
 import { dueLabel, fmtDateTime, fmtRelative, fmtSize } from '../../lib/format';
-import { navigate } from '../../lib/router';
 
 export function downloadDoc(doc: Doc) {
   // The prototype has no file storage, so it exports a faithful copy of the
@@ -48,7 +46,7 @@ export function downloadDoc(doc: Doc) {
 }
 
 export function DocPreviewDialog({ docId, onClose }: { docId: string | null; onClose: () => void }) {
-  const { state, actions } = useStore();
+  const { state } = useStore();
   const toast = useToast();
   const doc = docId ? state.docs.find((d) => d.id === docId) : undefined;
   const [loading, setLoading] = useState(true);
@@ -66,11 +64,6 @@ export function DocPreviewDialog({ docId, onClose }: { docId: string | null; onC
   const folder = state.folders.find((f) => f.id === doc.folderId);
   const req = doc.requestId ? state.requests.find((r) => r.id === doc.requestId) : undefined;
 
-  const ask = () => {
-    const id = actions.ask(null, `What should I know about ${doc.name}?`, { docId: doc.id });
-    onClose();
-    navigate(`/assistant/${id}`);
-  };
 
   return (
     <Dialog open={!!doc} onClose={onClose} size="xl" bare>
@@ -107,10 +100,7 @@ export function DocPreviewDialog({ docId, onClose }: { docId: string | null; onC
           </div>
           <h2 className="preview__title">{doc.name}</h2>
           {doc.summary && <p className="preview__summary">{doc.summary}</p>}
-          <div className="preview__actions">
-            {/* The same Ask Spark button as on Home: the mascot in a white pill with a hairline. */}
-            <AskButton className="preview__ask" onClick={ask} about="about this file" />
-          </div>
+          {/* no Ask Dr.AI here (19 Nov, review: as on the reports and proposals, Dr.AI is in his corner and the sidebar) */}
           <dl className="meta-list">
             <dt>Shared by</dt>
             <dd>

@@ -71,7 +71,7 @@ export const analyses: CompanyAnalysis[] = [
     reviewedBy: 's-youssef',
     title: 'Website analysis',
     headline: 'On brand, but slow on mobile',
-    summary: 'brandco.example looks calm and on brand, but it is slow on mobile and the Arabic version is incomplete.',
+    summary: 'The site looks calm and on brand, but it is slow on mobile and the Arabic version is incomplete.',
     score: { label: 'Mobile speed', value: '41/100' },
     findings: [
       { title: 'Calm and on brand', good: true, body: 'The look matches the stores: quiet layouts, real product photos, prices up front. Visitors who reach a product page stay 2 min 40 s.' },
@@ -94,7 +94,7 @@ export const analyses: CompanyAnalysis[] = [
     score: { label: 'Engagement, Instagram', value: '4%' },
     findings: [
       { title: 'Instagram works', good: true, body: '38K followers, engagement of 4%, above the 1.9% typical for retail in the UAE. Behind-the-design stories are saved most.' },
-      { title: 'TikTok is reposted Reels', issue: true, impact: 'High', body: 'Videos are cut for Instagram and reposted. Views stay under 2K; the native creator-led posts of competitors reach 20–60K.', fix: 'Make TikTok its own: short, vertical, creator-led videos, three a week.', asks: ['Which creators would fit us?', 'Can we keep reusing some Reels?', 'What would three videos a week cost?', 'Which competitor does TikTok best?'] },
+      { title: 'TikTok is reposted Reels', issue: true, impact: 'Medium', body: 'Videos are cut for Instagram and reposted. Views stay under 2K; the native creator-led posts of competitors reach 20–60K.', fix: 'Make TikTok its own: short, vertical, creator-led videos, three a week.', asks: ['Which creators would fit us?', 'Can we keep reusing some Reels?', 'What would three videos a week cost?', 'Which competitor does TikTok best?'] },
       { title: 'Replies are slow', impact: 'Medium', body: 'Comments asking about stock wait 26 hours for an answer on average.', fix: 'Answer stock questions within 2 hours with saved replies, and post stock updates weekly.', asks: ['Who should answer: us or Spark?', 'Can we draft the saved replies?', 'Which questions come up most?'] },
     ],
     docId: 'd-digest-w40',
@@ -119,6 +119,28 @@ export const analyses: CompanyAnalysis[] = [
     updatedAt: '2026-09-22T12:00:00',
   },
 ];
+
+/** The PR report (19 Nov, review: "as on Jean's sketch": every Brand analysis card, PR too, opens its own report).
+ *  Kept apart from `analyses`, which older Homes list as they were; the figure is the PR card's on Home. */
+export const prAnalysis: CompanyAnalysis = {
+  id: 'an-pr',
+  kind: 'pr',
+  origin: 'spark',
+  basis: '18 articles and 6 podcast mentions in UAE and KSA media, 1 Sep – 15 Nov, set against three rivals',
+  signals: [{ label: 'Articles read', value: '18 and 6 podcast mentions' }, { label: 'Rivals compared', value: '3' }, { label: 'Period', value: '1 Sep – 15 Nov' }],
+  reviewedBy: 's-dana',
+  title: 'PR analysis',
+  headline: 'Liked by the press that knows you, unknown beyond it',
+  summary: 'UAE lifestyle titles write about Brand Co. warmly, but rivals are mentioned twice as often, and Saudi media hardly know the name before the Riyadh opening.',
+  score: { label: 'Press mentions since Sep', value: '18' },
+  findings: [
+    { title: 'Liked by UAE lifestyle titles', good: true, body: 'Twelve of the 18 articles are in UAE lifestyle and design titles, all positive; three name the calm stores and the Gulf point of view.' },
+    { title: 'Quiet in Saudi media', issue: true, impact: 'Medium', body: 'Two of the 18 articles ran in Saudi media, both a line in a list of openings. Rivals had 11 there in the same months.', fix: 'Brief five Riyadh lifestyle and business editors before the flagship opens, with a story on the brand, not the store.', asks: ['Which Saudi titles matter most for us?', 'What story would they run?', 'When should we start before the opening?'] },
+    { title: 'Covered as a shop, not a brand', impact: 'Medium', body: 'Most mentions are store openings and sales. Few say what Brand Co. stands for or who is behind it.', fix: 'Offer the founders and the design team for interviews: the story of a Gulf brand, told by the people who make it.', asks: ['Who should speak for the brand?', 'Which angles would editors pick up?', 'How do we keep it from reading as an ad?'] },
+    { title: 'No press kit online', impact: 'Low', body: 'Journalists can’t find photos, facts or a contact on the site; two articles used old store photos.', fix: 'Add a press page with the story, fresh photos, key facts and one contact.', asks: ['What goes in a press kit?', 'Who should be the press contact?'] },
+  ],
+  updatedAt: '2026-11-15T12:00:00',
+};
 
 export const folders: Folder[] = [
   { id: 'f-guidelines', name: 'Brand guidelines', parentId: null, description: 'Logo, colour and voice' },
@@ -225,6 +247,15 @@ export const docs: Doc[] = [
     preview: pages(
       ['Social media report · October 2026', 'Spark Studios · Social & Insights'],
       ['In one line', 'Instagram carries the brand; TikTok is reposted Reels with under 2K views.'],
+    ),
+  },
+  {
+    // the PR report's PDF (19 Nov, review: "a download on every report")
+    id: 'd-rep-pr', name: 'PR report — Nov 2026.pdf', kind: 'pdf', folderId: 'f-research', sizeKb: 1400, uploadedBy: 's-dana', uploadedAt: '2026-11-15T12:00:00',
+    summary: '18 press mentions since September, rivals average 40: liked by UAE lifestyle titles, quiet in Saudi media.',
+    preview: pages(
+      ['PR report · November 2026', 'Spark Studios · Account Lead'],
+      ['In one line', 'The press that knows Brand Co. likes it; Saudi media hardly know the name before the Riyadh opening.'],
     ),
   },
   {

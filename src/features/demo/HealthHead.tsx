@@ -59,11 +59,54 @@ const ROLE_HINT: Record<Role, string> = {
   spark: 'You see this client’s page as they do.',
 };
 
+const MODE_KEY = 'spark-as';
+/** Set the prototype's mode (the switch's "Spark team"); the page re-reads it on the hashchange that follows. */
+export function setMode(m: Mode) {
+  try {
+    if (m === 'admin') sessionStorage.removeItem(MODE_KEY);
+    else sessionStorage.setItem(MODE_KEY, m);
+  } catch {
+    /* this visit only */
+  }
+}
+
+/** Updates the Spark team posted on a client's page in this visit (prototype): the client's id → when. */
+const posted = new Map<string, string>();
+const postedSubs = new Set<() => void>();
+let postedVer = 0;
+export const updatesStore = {
+  post: (id: string) => {
+    posted.set(id, new Date().toISOString());
+    postedVer++;
+    postedSubs.forEach((f) => f());
+  },
+  subscribe: (f: () => void) => {
+    postedSubs.add(f);
+    return () => {
+      postedSubs.delete(f);
+    };
+  },
+};
+/** When Spark last updated a client's page: today's post, else the brand's own date. */
+export function useUpdatedAt(): (b: BrandItem) => string {
+  useSyncExternalStore(updatesStore.subscribe, () => postedVer);
+  return (b) => posted.get(b.id) ?? b.updated;
+}
+
 /** The mode from the address (?as=view|user), Admin otherwise. A prototype's way to show all three. */
 export function useMode(): Mode {
+  // 19 Nov: the mode is kept for the visit (sessionStorage), so the Spark team stays the Spark team page to page
   const read = (): Mode => {
     const m = /[?&]as=(view|user|admin)\b/.exec(window.location.hash + window.location.search);
-    return (m?.[1] as Mode) ?? 'admin';
+    if (m) return m[1] as Mode;
+    // 19 Nov: the Spark team's view is off the switch, so a mode kept from an earlier visit no longer carries over;
+    // ?as=view on the address still shows it
+    try {
+      sessionStorage.removeItem(MODE_KEY);
+    } catch {
+      /* nothing kept */
+    }
+    return 'admin';
   };
   const [mode, setMode] = useState<Mode>(read);
   useEffect(() => {

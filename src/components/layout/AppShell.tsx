@@ -16,6 +16,7 @@ import {
   Users,
   Settings,
   LogOut,
+  LayoutGrid,
 } from 'lucide-react';
 import { useStore } from '../../state/store';
 import { navigate, useRoute } from '../../lib/router';
@@ -28,7 +29,7 @@ import { DrAiDock } from '../../features/assistant/DrAiDock';
 import { fmtRelative } from '../../lib/format';
 import type { Notification } from '../../data/types';
 import { PageArtView, useArt } from '../../features/onboarding/EmptyArt';
-import { BrandMark, BrandStrip, SidebarBrands, requestProfile, useActiveBrand, useActiveBrandName, useActiveBrandRow, useBrandBar } from '../../features/demo/HealthHead';
+import { BrandMark, BrandStrip, SidebarBrands, requestProfile, useActiveBrand, useMode, useActiveBrandName, useActiveBrandRow, useBrandBar } from '../../features/demo/HealthHead';
 import { HomeSwitch, readHomeLook } from '../../features/demo/HomeBentoDemo';
 
 // Home is the start page after sign-in: the company, Spark's analysis and the work (feedback 23 Oct).
@@ -77,6 +78,7 @@ export function AppShell({ children }: { children: ReactNode }) {
   const { state, me } = useStore();
   const route = useRoute();
   const [inBar, barOpenNow] = useBrandBar();
+  const mode = useMode();
   const barMode = inBar || readHomeLook() === 'healthBar';
   // Brand bar: the sidebar joins the strip, flush under it (18 Nov, review, as Covey): the shell is told on <html>
   useEffect(() => {
@@ -147,7 +149,11 @@ export function AppShell({ children }: { children: ReactNode }) {
         </div>
         {/* the sections in one glass pill, as the nav on sparkstudios.ae (13 Nov, review), stood upright */}
         <nav className="rail__nav" aria-label="Sections">
-        {navFor(route.path, route.query)
+        {[
+          // the Spark team starts on Clients (19 Nov): every client, what waits on whom; Home is the client open now
+          ...(mode === 'view' ? [{ path: '/clients', label: 'Clients', icon: LayoutGrid, match: (p: string) => p.startsWith('/clients') }] : []),
+          ...navFor(route.path, route.query),
+        ]
           // Dr.AI on (#/demo/mascot): Chats leaves the list and comes back under a line as Ask Dr.AI.
           .filter((n) => !(drai && n.path.startsWith('/assistant')))
           .map((n) => {

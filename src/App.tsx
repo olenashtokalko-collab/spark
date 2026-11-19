@@ -73,6 +73,7 @@ import { Monitoring } from './features/monitoring/Monitoring';
 import { RequestDetail } from './features/requests/RequestDetail';
 import { ProposalView } from './features/requests/ProposalView';
 import { Documents } from './features/documents/Documents';
+import { ClientsPage } from './features/demo/ClientsPage';
 import { Settings, TeamPage } from './features/team/Settings';
 import { EmptyState, Button } from './components/ui/primitives';
 
@@ -98,6 +99,9 @@ function Screen() {
       if (a && b === 'proposal') return <ProposalView requestId={a} />;
       if (a) return <RequestDetail id={a} />;
       return <Requests />;
+    // the Spark team's start page (19 Nov): every client, what waits on whom
+    case 'clients':
+      return <ClientsPage />;
     case 'documents':
       return <Documents folderId={a} docId={query.get('doc')} />;
     // every empty state the client can meet, on one page (13 Nov, review)

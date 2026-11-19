@@ -12,7 +12,7 @@ import { dotted } from './dotted';
 import { BriefHome } from './HomeBrief';
 import { HomeDashboard } from './HomeDashboard';
 import { HealthTopUp } from './HealthTopUp';
-import { useRoleHere } from './HealthHead';
+import { setMode, useMode, useRoleHere } from './HealthHead';
 import { HomeHealth } from './HomeHealth';
 import { MetalSurface, NoorField } from '../onboarding/LiquidWelcome';
 
@@ -1249,7 +1249,9 @@ const HOME_LOOK_KEY = 'spark-home-look';
 // 17 Nov (late): Health again with the brand switcher in the sidebar's account menu, as Claude Code's workspaces
 // 17 Nov (late), design sync: Jean reviews one Home, so the switch keeps only Health and its sidebar version, and
 // the onboarding as a new company sees it; Console, Overview, Studio and the empty states are off it (their pages stay)
-const HOME_ON_SWITCH: HomeLook[] = ['health', 'healthSide', 'healthBar'];
+// 19 Nov, Jean: the brand is switched from the dropdown by its name, the one way kept; the profile menu and the bar
+// across the top are off, so Home is Health alone (a browser that kept one of them opens on Health)
+const HOME_ON_SWITCH: HomeLook[] = ['health'];
 /** The switch in the order it is shown: a look of the portal, or a page of its own. */
 type SwitchItem = HomeLook | { id: 'console' | 'studio' | 'empty' | 'onboarding'; name: string; to: string };
 // Health is the default (18 Nov, review: "Health is the default, so the switch keeps Sidebar brands and Onboarding"):
@@ -1348,6 +1350,7 @@ function Carousel({ title, children }: { title: string; children: ReactNode[] })
   );
 }
 const SHOW_HOME_SWITCH = import.meta.env.DEV || import.meta.env.VITE_UI_SWITCH === '1';
+const SWITCH_OFF = true;
 
 /** Quick overview's cards lean toward the pointer (13 Nov, review, after clicker-sigma-six.vercel.app): up to 5°
  *  each way in a 900 px perspective, lifted 4 px, easing back flat when the pointer leaves. Not the company card (it
@@ -2434,7 +2437,10 @@ export function HomeCompanyCard() {
  *  either leads back to the other. */
 export function HomeSwitch({ current, onPick }: { current: HomeLook | 'empty' | 'console' | 'studio' | 'onboarding'; onPick?: (l: HomeLook) => void }) {
   const { state, actions } = useStore();
-  if (!SHOW_HOME_SWITCH) return null;
+  const mode = useMode();
+  // 19 Nov, Jean: one way to switch brands (the dropdown by the name), so nothing left to switch: the review switch is
+  // off, Onboarding and the Spark team's view with it. Its code stays for the next round
+  if (SWITCH_OFF || !SHOW_HOME_SWITCH) return null;
   // while the portal shows a new company, Onboarding is the one on; leaving it brings the full demo back
   const on = state.onboarding ? 'onboarding' : current;
   const pick = (l: HomeLook) => {
@@ -2481,6 +2487,18 @@ export function HomeSwitch({ current, onPick }: { current: HomeLook | 'empty' | 
           </button>
         ),
       )}
+      {/* the Spark team's view (19 Nov): Clients, then a client's page as Spark sees it; pressed again, the client's */}
+      <button
+        type="button"
+        aria-pressed={mode === 'view'}
+        className={cx(mode === 'view' && 'is-on')}
+        onClick={() => {
+          setMode(mode === 'view' ? 'admin' : 'view');
+          navigate(mode === 'view' ? '/' : '/clients');
+        }}
+      >
+        Spark team
+      </button>
     </div>
   );
 }
@@ -2506,6 +2524,10 @@ function holdLinks(e: React.MouseEvent) {
   if (!href.startsWith('#/')) return;
   // the team opens now (18 Nov, review: "the way to the team must be clickable")
   if (href.startsWith('#/team')) return;
+  // and the reports (19 Nov, review: "make the report cards clickable")
+  if (href.startsWith('#/brand-analysis/') || href.startsWith('#/analysis/')) return;
+  // and Latest update's requests and proposals (19 Nov, review: "Latest update isn't clickable")
+  if (href.startsWith('#/requests/')) return;
   e.preventDefault();
 }
 

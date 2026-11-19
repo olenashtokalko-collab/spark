@@ -4,7 +4,6 @@ import { canApprove, latestProposal, personById, proposalTotal, proposalWeeks, u
 import { Avatar, Button, Checkbox, EmptyState, Field, Select, Textarea, cx } from '../../components/ui/primitives';
 import { Dialog } from '../../components/ui/overlay';
 import { ProposalStatus } from '../../components/domain';
-import { AskButton } from '../../components/ui/DrAi';
 import { ChatDrawer } from '../assistant/ChatDrawer';
 import { useToast } from '../../components/ui/toast';
 import { aed, addDays, daysUntil, fmtDate, fmtDateTime, fmtRelative } from '../../lib/format';
@@ -81,7 +80,6 @@ export function ProposalView({ requestId }: { requestId: string }) {
   };
 
   // Opens the chat drawer over the proposal with the question written in, to edit and send.
-  const askSpark = () => setAsk(`Help me decide on the proposal for ${p.title}: what's included, what's not, and what to ask before approving.`);
 
   const sectionHead = (s: Section) => (
     <div className="psec__head">
@@ -127,9 +125,9 @@ export function ProposalView({ requestId }: { requestId: string }) {
             <div className="proposal__headrow">
               <h1 className="proposal__title">{p.title}</h1>
               <div className="proposal__acts">
-                {/* Download first, as an icon (6 Nov), Ask Dr.AI at the end of the row, as the report's Ask sits at its right. */}
+                {/* Download as an icon (6 Nov); no Ask Dr.AI here (19 Nov, review: as on the reports, Dr.AI is in his corner
+                    and the sidebar) */}
                 <Button size="sm" variant="secondary" icon={Download} onClick={exportProposal} aria-label="Download" data-tip="Download" />
-                <AskButton className="rq-ask" size={22} onClick={askSpark} />
               </div>
             </div>
             <p className="proposal__sent">
@@ -310,14 +308,16 @@ export function ProposalView({ requestId }: { requestId: string }) {
             )}
             {mayDecide && (
               <div className="decision__btns">
-                <Button variant="primary" size="lg" onClick={() => setDecision('approved')}>
+                {/* the small size, as the report's buttons (19 Nov, review: "make the buttons smaller") */}
+                <Button variant="primary" size="sm" onClick={() => setDecision('approved')}>
                   Approve proposal
                 </Button>
+                {/* both secondary in one row (19 Nov, review): Request changes takes what it needs, Decline the rest */}
                 <div className="decision__row">
-                  <Button onClick={() => setDecision('changes_requested')}>
+                  <Button variant="secondary" size="sm" onClick={() => setDecision('changes_requested')}>
                     Request changes
                   </Button>
-                  <Button onClick={() => setDecision('declined')}>
+                  <Button variant="secondary" size="sm" onClick={() => setDecision('declined')}>
                     Decline
                   </Button>
                 </div>

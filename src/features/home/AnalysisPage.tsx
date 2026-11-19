@@ -5,16 +5,17 @@
 // the analysis rests on. Questions open the chat drawer with questions about this analysis.
 import { useEffect } from 'react';
 import { navigate, useRoute } from '../../lib/router';
-import { analyses } from '../../data/mock';
+import { analyses, prAnalysis } from '../../data/mock';
 import { Button, EmptyState } from '../../components/ui/primitives';
-import { AnalysisView } from './AnalysisLooks';
+import { HealthReport } from './AnalysisLooks';
 
 // Reports with a page in Brand Analysis (5 Nov) open there, so there is one way to each report; this page stays only for
 // analyses without a tab.
 const ON_HOME = ['social', 'website'];
 
 export function AnalysisPage({ kind }: { kind?: string }) {
-  const a = analyses.find((x) => x.kind === kind);
+  // the PR report kept apart from `analyses` (19 Nov)
+  const a = [...analyses, prAnalysis].find((x) => x.kind === kind);
   // ?issue= names the issue the client clicked on Home: the page brings it into view and marks it.
   const issue = useRoute().query.get('issue') ?? undefined;
   useEffect(() => {
@@ -29,5 +30,6 @@ export function AnalysisPage({ kind }: { kind?: string }) {
         action={<Button onClick={() => navigate('/')}>Back to Home</Button>}
       />
     );
-  return <AnalysisView key={a.kind} a={a} look="tabs" focus={issue} />;
+  // Health's report page (19 Nov), as Website and Social
+  return <HealthReport key={a.kind} a={a} focus={issue} />;
 }
