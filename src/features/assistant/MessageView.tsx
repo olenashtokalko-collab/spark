@@ -199,6 +199,7 @@ function AssistantMessage({ msg, convId, onFollowUp, isLast }: Props) {
             <Button
               size="sm"
               variant={isLast ? 'primary' : 'secondary'}
+              data-client-only
               onClick={() =>
                 openRequest({
                   conversationId: convId,

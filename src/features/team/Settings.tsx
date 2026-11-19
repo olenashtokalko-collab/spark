@@ -77,7 +77,7 @@ function Team() {
         </div>
         {isOwner && (
           <div className="rq-head__acts">
-            <Button size="sm" variant="primary" icon={UserPlus} onClick={() => setInviting(true)}>
+            <Button size="sm" variant="primary" icon={UserPlus} onClick={() => setInviting(true)} data-client-only>
               Invite people
             </Button>
           </div>

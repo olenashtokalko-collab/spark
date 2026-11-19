@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState, type ReactNode } from 'react';
 import {
+  Eye,
   Bell,
   Check,
   CheckCheck,
@@ -16,9 +17,9 @@ import {
   Users,
   Settings,
   LogOut,
-  LayoutGrid,
 } from 'lucide-react';
 import { useStore } from '../../state/store';
+import { useToast } from '../ui/toast';
 import { navigate, useRoute } from '../../lib/router';
 import { Avatar, cx } from '../ui/primitives';
 import { Popover } from '../ui/overlay';
@@ -115,6 +116,9 @@ export function AppShell({ children }: { children: ReactNode }) {
       return !o;
     });
   const tip = (label: string) => (railOpen ? undefined : label);
+  // Spark team view (19 Nov, review): the Spark team sees the client's portal as the client does (as Chrome's
+  // Incognito: the same pages, a small pill says whose), so Dr.AI and the chats stay
+  const sparkView = mode === 'view';
   const drai = useDrAi();
   const metalUi = useMetalUi();
 
@@ -150,8 +154,8 @@ export function AppShell({ children }: { children: ReactNode }) {
         {/* the sections in one glass pill, as the nav on sparkstudios.ae (13 Nov, review), stood upright */}
         <nav className="rail__nav" aria-label="Sections">
         {[
-          // the Spark team starts on Clients (19 Nov): every client, what waits on whom; Home is the client open now
-          ...(mode === 'view' ? [{ path: '/clients', label: 'Clients', icon: LayoutGrid, match: (p: string) => p.startsWith('/clients') }] : []),
+          // no Clients for the Spark team (19 Nov, review: as Jean asked, the clients are in the dropdown by the name);
+          // the page stays at #/clients, unlinked
           ...navFor(route.path, route.query),
         ]
           // Dr.AI on (#/demo/mascot): Chats leaves the list and comes back under a line as Ask Dr.AI.
@@ -213,6 +217,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       </nav>
 
       <main className="content" id="content">
+        {sparkView && <SparkViewBar />}
         {/* Dr.AI's dock (6 Nov, #/demo/dock): the strip at the top, the bar at the foot, or the corner. */}
         <DrAiDock place="top" />
         {children}
@@ -227,6 +232,39 @@ export function AppShell({ children }: { children: ReactNode }) {
       <span className="sr-only">Signed in as {me.name}</span>
     </div>
     </>
+  );
+}
+
+/** Spark team view (19 Nov, review: "as Google's Incognito", then "more visible", as Facebook's View As): the Spark
+ *  team sees the client's portal as the client does, and a thin Ink strip at the top of every page says whose. The
+ *  client's own decisions (approve, request, top up, invite, write to Dr.AI) show but don't act: a note says they
+ *  stay with the client. */
+function SparkViewBar() {
+  const { state } = useStore();
+  const name = useActiveBrandName(state.brand.name);
+  const toast = useToast();
+  useEffect(() => {
+    document.documentElement.dataset.sparkView = '';
+    const stop = (e: MouseEvent) => {
+      const el = (e.target as HTMLElement | null)?.closest?.('[data-client-only]');
+      if (!el) return;
+      e.preventDefault();
+      e.stopPropagation();
+      toast({ title: `Only ${name} can do this`, body: `You see ${name}’s portal as they do. Their decisions stay with them.` });
+    };
+    document.addEventListener('click', stop, true);
+    return () => {
+      delete document.documentElement.dataset.sparkView;
+      document.removeEventListener('click', stop, true);
+    };
+  }, [name, toast]);
+  return (
+    <div className="spark-view" role="status">
+      <Eye size={16} strokeWidth={1.8} aria-hidden />
+      <span>
+        Viewing as <b>{name}</b>
+      </span>
+    </div>
   );
 }
 
@@ -256,6 +294,7 @@ const notifIcon: Record<Notification['kind'], typeof Bell> = {
 
 function Notifications({ labels }: { labels?: boolean }) {
   const { state, actions } = useStore();
+  const sparkView = useMode() === 'view';
   const list = state.notifications.filter((n) => n.audience === 'client').sort((a, b) => b.at.localeCompare(a.at));
   const unread = list.filter((n) => !n.read).length;
   const art = useArt();
@@ -281,7 +320,7 @@ function Notifications({ labels }: { labels?: boolean }) {
         <div className="notifs">
           <div className="notifs__head">
             <span>Notifications</span>
-            <button className="link-btn" onClick={actions.markAllRead} disabled={!unread}>
+            <button className="link-btn" onClick={actions.markAllRead} disabled={!unread} data-client-only={sparkView || undefined}>
               <CheckCheck size={14} /> Mark all read
             </button>
           </div>
@@ -299,7 +338,8 @@ function Notifications({ labels }: { labels?: boolean }) {
                     key={n.id}
                     className={cx('notif', !n.read && 'is-unread')}
                     onClick={() => {
-                      actions.markRead(n.id);
+                      // Spark's view leaves the client's notifications unread (19 Nov, review): they're the client's
+                      if (!sparkView) actions.markRead(n.id);
                       close();
                       navigate(n.route);
                     }}
@@ -327,7 +367,14 @@ function Notifications({ labels }: { labels?: boolean }) {
 /** The person and their company at the foot of the sidebar. The menu follows the reference's workspace
  *  menu: the company, its credits with Top up, the team and company profile, settings, log out. */
 function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
-  const { state, me, actions } = useStore();
+  const { state, me: client, actions } = useStore();
+  // Spark team view (19 Nov, review: "Brand Co. · Head of Brand" read as if it were the Spark person's title): here you
+  // are someone at Spark, so the menu shows a Spark strategist, with Spark as the company, not the client open now
+  const sparkView = useMode() === 'view';
+  const spark = state.people.find((p) => p.id === 's-youssef');
+  // in the menu, in the light blue (Haze) of the client's avatar, not Spark's Ink (19 Nov, review); org is only read for
+  // the avatar's colour here
+  const me = sparkView && spark ? { ...spark, org: 'client' as const } : client;
   // Hovering the credits row shows Home's credits card beside the menu. It lives outside the menu, with
   // the Top up dialog, so both outlive the menu closing; a short delay lets the pointer cross to the card.
   const [creditsRow, setCreditsRow] = useState<HTMLElement | null>(null);
@@ -368,7 +415,7 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
     }
   })();
   const brandRow = useActiveBrandRow(state.brand.name);
-  const roleLine = health ? `${brandName} · ${me.title}` : `${me.title} · ${state.brand.name}`;
+  const roleLine = sparkView ? `Spark · ${me.title}` : health ? `${brandName} · ${me.title}` : `${me.title} · ${state.brand.name}`;
   return (
     <>
       <Popover
@@ -462,39 +509,45 @@ function AccountMenu({ labels, active }: { labels: boolean; active: boolean }) {
             )}
             {/* the team and the company's profile shown but not open while the client approves the look (13 Nov,
                 review), as Requests and Documents in the sidebar: a tip beside them on hover, the names unchanged */}
-            {/* the team opens (18 Nov, review: "make Manage my team clickable") */}
-            <button className="acct__item" onClick={() => go(close, '/team')}>
-              <UserPlus size={18} strokeWidth={1.6} />
-              <span>Manage my team</span>
-            </button>
-            {[...(brandsHere || barHere ? [] : [{ label: 'Company profile', Icon: Building2 }])].map(({ label, Icon }) => (
-              <span
-                key={label}
-                className="acct__item acct__item--off"
-                tabIndex={0}
-                aria-disabled="true"
-                aria-label={`${label}, coming soon`}
-                data-tip="Coming soon"
-              >
-                <Icon size={18} strokeWidth={1.6} />
-                <span>{label}</span>
-              </span>
-            ))}
-            {/* Health · Sidebar: Company profile opens Home's profile drawer (18 Nov, review), Home first if elsewhere */}
-            {(brandsHere || barHere) && (
-              <button
-                className="acct__item"
-                onClick={() => {
-                  close();
-                  if (!/^\/?$/.test(window.location.hash.replace(/^#/, '').split('?')[0])) navigate('/');
-                  requestProfile();
-                }}
-              >
-                <Building2 size={18} strokeWidth={1.6} />
-                <span>Company profile</span>
+            {/* Spark's view (19 Nov, review): the team and the profile are the client's, and on their Home; the menu keeps
+                your own Settings and Log out */}
+            {!sparkView && (
+              <>
+              {/* the team opens (18 Nov, review: "make Manage my team clickable") */}
+              <button className="acct__item" onClick={() => go(close, '/team')}>
+                <UserPlus size={18} strokeWidth={1.6} />
+                <span>Manage my team</span>
               </button>
+              {[...(brandsHere || barHere ? [] : [{ label: 'Company profile', Icon: Building2 }])].map(({ label, Icon }) => (
+                <span
+                  key={label}
+                  className="acct__item acct__item--off"
+                  tabIndex={0}
+                  aria-disabled="true"
+                  aria-label={`${label}, coming soon`}
+                  data-tip="Coming soon"
+                >
+                  <Icon size={18} strokeWidth={1.6} />
+                  <span>{label}</span>
+                </span>
+              ))}
+              {/* Health · Sidebar: Company profile opens Home's profile drawer (18 Nov, review), Home first if elsewhere */}
+              {(brandsHere || barHere) && (
+                <button
+                  className="acct__item"
+                  onClick={() => {
+                    close();
+                    if (!/^\/?$/.test(window.location.hash.replace(/^#/, '').split('?')[0])) navigate('/');
+                    requestProfile();
+                  }}
+                >
+                  <Building2 size={18} strokeWidth={1.6} />
+                  <span>Company profile</span>
+                </button>
+              )}
+              <div className="acct__divider" />
+              </>
             )}
-            <div className="acct__divider" />
             <button className="acct__item" onClick={() => go(close, '/settings')}>
               <Settings size={18} strokeWidth={1.6} />
               <span>Settings</span>

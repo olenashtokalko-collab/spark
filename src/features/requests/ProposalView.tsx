@@ -309,15 +309,15 @@ export function ProposalView({ requestId }: { requestId: string }) {
             {mayDecide && (
               <div className="decision__btns">
                 {/* the small size, as the report's buttons (19 Nov, review: "make the buttons smaller") */}
-                <Button variant="primary" size="sm" onClick={() => setDecision('approved')}>
+                <Button variant="primary" size="sm" onClick={() => setDecision('approved')} data-client-only>
                   Approve proposal
                 </Button>
                 {/* both secondary in one row (19 Nov, review): Request changes takes what it needs, Decline the rest */}
                 <div className="decision__row">
-                  <Button variant="secondary" size="sm" onClick={() => setDecision('changes_requested')}>
+                  <Button variant="secondary" size="sm" onClick={() => setDecision('changes_requested')} data-client-only>
                     Request changes
                   </Button>
-                  <Button variant="secondary" size="sm" onClick={() => setDecision('declined')}>
+                  <Button variant="secondary" size="sm" onClick={() => setDecision('declined')} data-client-only>
                     Decline
                   </Button>
                 </div>

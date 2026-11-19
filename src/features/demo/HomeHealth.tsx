@@ -8,12 +8,10 @@
 //   · four figures from the reports the report cards don't show, each against its aim, the arrow saying which way
 //   · the reports and the company profile (Layout 5's tabs), Book consultation floating
 import { useCallback, useEffect, useRef, useState, type ReactNode } from 'react';
-import { ArrowRight, Building2, History, Plus } from 'lucide-react';
-import { AddUpdateDialog } from './ClientsPage';
-import { Link } from '../../components/ui/Link';
+import { ArrowRight, Building2, History } from 'lucide-react';
 import { CompanySwitch, ProfileDrawer, brandStore, brandsFor, useActiveBrand, useMode, useProfileRequest, useRoleHere, useUpdatedAt, type ProfileTab } from './HealthHead';
 import { useStore } from '../../state/store';
-import { Avatar, Button, cx } from '../../components/ui/primitives';
+import { Avatar, cx } from '../../components/ui/primitives';
 import { dotted } from './dotted';
 import { analyses } from '../../data/mock';
 import { needsYou, requestStatusMeta } from '../../components/domain';
@@ -527,8 +525,6 @@ export function HomeHealth({ balance, profile, sidebar = false, bar = false }: {
   const page = pageOf(shownId);
   const latestHere: Latest[] = page.latest ?? latest;
   const [profileOpen, setProfileOpen] = useState(false);
-  // the Spark team posts what changed on the client's page (19 Nov)
-  const [updateOpen, setUpdateOpen] = useState(false);
   const updatedAt = useUpdatedAt();
   const [profileTab, setProfileTab] = useState<ProfileTab>('company');
   const closeProfile = useCallback(() => setProfileOpen(false), []);
@@ -575,7 +571,7 @@ export function HomeHealth({ balance, profile, sidebar = false, bar = false }: {
             // Profile brands, picked only from the account menu (as Notion, Slack and Claude do), so no caret here
             fixed={sidebar || bar}
             mode={mode}
-            email={me.email}
+            email={mode === 'view' ? state.people.find((p) => p.id === 's-youssef')?.email ?? me.email : me.email}
           />
           <span className="hb-head__acts">
             {balance}
@@ -583,33 +579,22 @@ export function HomeHealth({ balance, profile, sidebar = false, bar = false }: {
               <Building2 size={14} strokeWidth={1.8} aria-hidden />
               Company profile
             </button>
-            {role === 'spark' && (
-              <Button size="sm" variant="primary" icon={Plus} onClick={() => setUpdateOpen(true)}>
-                Add update
-              </Button>
-            )}
           </span>
           {/* one line under the description (17 Nov, review): the team at the left, when Spark last updated the page in
               the right corner */}
           <span className="hb-foot">
-            {role !== 'spark' ? (
-              <a className="hh-team" href="#/team?from=home">
-                <span className="bx-co__faces" aria-hidden>
-                  {(colleagues.length ? colleagues : [me]).slice(0, 3).map((p) => (
-                    <Avatar key={p.id} person={p} size={30} ring />
-                  ))}
-                  {/* only an admin invites */}
-                  {role === 'admin' && <span className="bx-co__invite">+</span>}
-                </span>
-                <span>{colleagues.length ? `You and ${colleagues.length} colleague${colleagues.length === 1 ? '' : 's'}` : 'Just you so far'}</span>
-                <ArrowRight className="hh-team__go" size={16} strokeWidth={1.8} aria-hidden />
-              </a>
-            ) : (
-              // the Spark team came from Clients: the way back where the client's team would be
-              <Link kind="nav" back href="#/clients">
-                All clients
-              </Link>
-            )}
+            {/* Spark's view shows the client's team too (19 Nov: the client's portal as they see it) */}
+            <a className="hh-team" href="#/team?from=home">
+              <span className="bx-co__faces" aria-hidden>
+                {(colleagues.length ? colleagues : [me]).slice(0, 3).map((p) => (
+                  <Avatar key={p.id} person={p} size={30} ring />
+                ))}
+                {/* only an admin invites */}
+                {role === 'admin' && <span className="bx-co__invite">+</span>}
+              </span>
+              <span>{colleagues.length ? `You and ${colleagues.length} colleague${colleagues.length === 1 ? '' : 's'}` : 'Just you so far'}</span>
+              <ArrowRight className="hh-team__go" size={16} strokeWidth={1.8} aria-hidden />
+            </a>
             <span className="hb-updated-sm">
               <History size={13} strokeWidth={1.8} aria-hidden />
               {fresh ? 'Set up today' : `Last update ${updatedAt(cur) !== cur.updated ? 'today' : fmtLong(cur.updated)}`}
@@ -617,7 +602,6 @@ export function HomeHealth({ balance, profile, sidebar = false, bar = false }: {
           </span>
         </header>
 
-      {role === 'spark' && <AddUpdateDialog open={updateOpen} client={cur} onClose={() => setUpdateOpen(false)} />}
       <ProfileDrawer open={profileOpen} onClose={closeProfile} tab={profileTab} onTab={setProfileTab}>
         <div className="hb-profile-body">
           {profile?.(profileTab)}

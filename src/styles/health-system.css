@@ -2622,3 +2622,42 @@
   font: 700 32px/1.1 var(--hs-ext) !important;
   letter-spacing: -0.03em !important;
 }
+
+/* Spark team view (19 Nov, review: "as Google's Incognito", then "more visible", as Facebook's View As): a thin Ink
+   strip at the top of every page says whose portal you see; it stays as the page scrolls. The client's own decisions
+   show, dimmed, and a click says they stay with the client */
+:root[data-theme][data-theme][data-ui] body .spark-view {
+  position: sticky;
+  top: 8px;
+  z-index: 30;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-height: 40px;
+  /* as wide as the page under it (19 Nov, review: "align it"), not the whole panel: Requests and Documents run to
+     1240, Home to 1120 */
+  max-width: 1240px;
+  margin: 0 auto 16px;
+  padding: 8px 16px;
+  border-radius: var(--hs-r-s);
+  background: var(--hs-ink);
+  color: var(--sand, #f5f2ec);
+  font-size: 14px;
+  line-height: 1.3;
+  box-shadow: var(--hs-sh-card);
+}
+.spark-view b {
+  font-weight: 600;
+}
+:root[data-theme][data-theme][data-ui] body #content:has(.og-home) > .spark-view {
+  max-width: 1120px;
+}
+:root[data-theme][data-theme][data-ui] body #content:has(.hr-page) > .spark-view {
+  /* a report's column is 1120, at the left of the 1240 page */
+  max-width: 1120px;
+  margin-left: max(0px, calc((100% - 1240px) / 2));
+}
+:root[data-spark-view] [data-client-only] {
+  opacity: 0.45;
+  cursor: not-allowed !important;
+}

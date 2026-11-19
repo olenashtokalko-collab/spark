@@ -12,7 +12,7 @@ import { dotted } from './dotted';
 import { BriefHome } from './HomeBrief';
 import { HomeDashboard } from './HomeDashboard';
 import { HealthTopUp } from './HealthTopUp';
-import { setMode, useMode, useRoleHere } from './HealthHead';
+import { useRoleHere } from './HealthHead';
 import { HomeHealth } from './HomeHealth';
 import { MetalSurface, NoorField } from '../onboarding/LiquidWelcome';
 
@@ -1256,14 +1256,9 @@ const HOME_ON_SWITCH: HomeLook[] = ['health'];
 type SwitchItem = HomeLook | { id: 'console' | 'studio' | 'empty' | 'onboarding'; name: string; to: string };
 // Health is the default (18 Nov, review: "Health is the default, so the switch keeps Sidebar brands and Onboarding"):
 // the switch shows the two departures from it, each a toggle; pressing the one that's on comes back to Health
+// 19 Nov (late): the brand switches from the dropdown only, so the switch keeps Onboarding alone (Dr.AI shows
+// differently there, and the team reviews it); the brand versions are off it, their code stays
 const SWITCH_ORDER: SwitchItem[] = [
-  // In the profile menu first (18 Nov, review)
-  'healthSide',
-  // the sketch's version, the default (18 Nov, review: "add the sketch's version to the variants"): the brand picked
-  // from the dropdown by its name on Home
-  'health',
-  // concept 3 (18 Nov, review, after Covey's app strip): the brands as a row of marks under a grid button
-  'healthBar',
   // the portal as a new company finds it: the welcome, then Dr.AI's four first steps in his corner (shown once)
   { id: 'onboarding', name: 'Onboarding', to: '/' },
 ];
@@ -1350,7 +1345,8 @@ function Carousel({ title, children }: { title: string; children: ReactNode[] })
   );
 }
 const SHOW_HOME_SWITCH = import.meta.env.DEV || import.meta.env.VITE_UI_SWITCH === '1';
-const SWITCH_OFF = true;
+// on again (19 Nov, late): Onboarding has no other way in
+const SWITCH_OFF = false;
 
 /** Quick overview's cards lean toward the pointer (13 Nov, review, after clicker-sigma-six.vercel.app): up to 5°
  *  each way in a 900 px perspective, lifted 4 px, easing back flat when the pointer leaves. Not the company card (it
@@ -2437,9 +2433,8 @@ export function HomeCompanyCard() {
  *  either leads back to the other. */
 export function HomeSwitch({ current, onPick }: { current: HomeLook | 'empty' | 'console' | 'studio' | 'onboarding'; onPick?: (l: HomeLook) => void }) {
   const { state, actions } = useStore();
-  const mode = useMode();
-  // 19 Nov, Jean: one way to switch brands (the dropdown by the name), so nothing left to switch: the review switch is
-  // off, Onboarding and the Spark team's view with it. Its code stays for the next round
+  // 19 Nov, Jean: one way to switch brands (the dropdown by the name); the switch keeps Onboarding only, and the Spark
+  // team's view is paused (its code stays)
   if (SWITCH_OFF || !SHOW_HOME_SWITCH) return null;
   // while the portal shows a new company, Onboarding is the one on; leaving it brings the full demo back
   const on = state.onboarding ? 'onboarding' : current;
@@ -2458,8 +2453,8 @@ export function HomeSwitch({ current, onPick }: { current: HomeLook | 'empty' | 
   };
   return (
     <div className="ui-switch ui-switch--home" role="group" aria-label="Home look">
-      {/* what it switches: where you pick the brand (18 Nov, review: "it isn't Home, it's how brands are shown") */}
-      <span className="ui-switch__label">Brand switch</span>
+      {/* only Onboarding on it now (19 Nov, late), so it reads as what it shows */}
+      <span className="ui-switch__label">Show</span>
       {SWITCH_ORDER.map((v) =>
         typeof v === 'string' ? (
           <button key={v} type="button" aria-pressed={on === v} className={cx(on === v && 'is-on')} onClick={() => pick(on === v ? 'health' : v)}>
@@ -2471,7 +2466,7 @@ export function HomeSwitch({ current, onPick }: { current: HomeLook | 'empty' | 
             type="button"
             aria-pressed={on === v.id}
             // Onboarding isn't a way to switch brands: set apart after a rule
-            className={cx(on === v.id && 'is-on', v.id === 'onboarding' && 'ui-switch__apart')}
+            className={cx(on === v.id && 'is-on')}
             onClick={() => {
               // pressed again, Onboarding gives the full demo back on Health
               if (v.id === 'onboarding' && on === 'onboarding') return pick('health');
@@ -2487,18 +2482,7 @@ export function HomeSwitch({ current, onPick }: { current: HomeLook | 'empty' | 
           </button>
         ),
       )}
-      {/* the Spark team's view (19 Nov): Clients, then a client's page as Spark sees it; pressed again, the client's */}
-      <button
-        type="button"
-        aria-pressed={mode === 'view'}
-        className={cx(mode === 'view' && 'is-on')}
-        onClick={() => {
-          setMode(mode === 'view' ? 'admin' : 'view');
-          navigate(mode === 'view' ? '/' : '/clients');
-        }}
-      >
-        Spark team
-      </button>
+      {/* the Spark team's view is paused (19 Nov, late): its button is off the switch */}
     </div>
   );
 }

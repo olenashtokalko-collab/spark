@@ -5,6 +5,7 @@ import { Button, cx } from '../../components/ui/primitives';
 import { FileIcon, kindOf } from '../../components/domain';
 import { Mascot } from '../../components/ui/Mascot';
 import { useDrAi } from '../../components/ui/DrAi';
+import { useMode } from '../demo/HealthHead';
 import type { Attachment } from '../../data/types';
 
 interface Props {
@@ -44,6 +45,9 @@ export function Composer({ onSubmit, busy, placeholder: placeholderIn, autoFocus
   const who = drai ? 'Dr.AI' : 'Spark AI';
   const placeholder = placeholderIn ?? (drai ? 'Ask Dr.AI anything…' : 'Ask Spark anything…');
   const [value, setValue] = useState(initial);
+  // Spark team view (19 Nov, review): the chat is the client's, so Spark sees the box but can't write in it; a click
+  // says why (the shell's guard on data-client-only)
+  const viewOnly = useMode() === 'view';
   const [files, setFiles] = useState<Attachment[]>([]);
   const [focus, setFocus] = useState(false);
   const [drag, setDrag] = useState(false);
@@ -125,6 +129,7 @@ export function Composer({ onSubmit, busy, placeholder: placeholderIn, autoFocus
   return (
     <div
       className={cx('composer', `composer--${size}`, box && 'composer--box', className, focus && 'is-focus', rec && 'is-recording', (typing || files.length > 0) && 'is-typing', busy && 'is-busy', drag && 'is-drag')}
+      data-client-only={viewOnly || undefined}
       onDragOver={(e) => {
         if (!e.dataTransfer.types.includes('Files')) return;
         e.preventDefault();
@@ -175,6 +180,8 @@ export function Composer({ onSubmit, busy, placeholder: placeholderIn, autoFocus
             hidden={rec}
             ref={ref}
             rows={box ? 2 : 1}
+            readOnly={viewOnly}
+            tabIndex={viewOnly ? -1 : undefined}
             value={value}
             placeholder={placeholder}
             aria-label={`Message ${who}`}

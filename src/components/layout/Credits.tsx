@@ -160,7 +160,7 @@ export function CreditsCard({ left, total, onTopUp }: { left: number; total: num
       <span className="hl-cind__note">
         <b>Credits pay for chats and research.</b> Work from the Spark team is quoted in its proposals.
       </span>
-      <Button variant="primary" icon={Plus} onClick={onTopUp}>
+      <Button variant="primary" icon={Plus} onClick={onTopUp} data-client-only>
         Top up
       </Button>
     </>

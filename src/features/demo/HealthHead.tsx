@@ -52,7 +52,8 @@ const ROLE: Record<Role, { name: string; Icon: typeof Eye }> = {
   spark: { name: 'Spark team', Icon: Eye },
 };
 /** the tag for a role, every role tagged (18 Nov, review: "a tag for everyone"): Admin, Member, Spark */
-const tagOf = (mode: Mode, b: BrandItem) => ({ admin: 'Admin', spark: 'Spark', user: 'Member' })[roleOf(mode, b)];
+// no tag in Spark's view (19 Nov, review): there you're always Spark, so the head and lists say nothing of it
+const tagOf = (mode: Mode, b: BrandItem) => ({ admin: 'Admin', spark: undefined, user: 'Member' })[roleOf(mode, b)];
 const ROLE_HINT: Record<Role, string> = {
   admin: 'You manage this brand’s credits and team.',
   user: 'You see the analysis and reports, and send requests. An admin manages credits and the team.',
@@ -212,7 +213,8 @@ export function CompanySwitch({ brands, current, onPick, mode, meta, email, fixe
               >
                 <BrandMark b={b} size={24} glass />
                 <b className="hc-opt__name">{b.name}</b>
-                {tagOf(mode, b) && <span className={`hb-mode-sm is-${roleOf(mode, b)}`}>{tagOf(mode, b)}</span>}
+                {/* in Spark's view every client carries the same tag, so the list leaves it out (19 Nov); the head still says it */}
+                {mode !== 'view' && tagOf(mode, b) && <span className={`hb-mode-sm is-${roleOf(mode, b)}`}>{tagOf(mode, b)}</span>}
                 {b.id === cur.id && <Check className="hc-opt__check" size={18} strokeWidth={2} aria-hidden />}
               </button>
             ))}
@@ -367,7 +369,8 @@ export function SidebarBrands({ onPicked, names }: { onPicked?: () => void; name
         >
           <BrandMark b={b} size={22} glass />
           <span className="sb-brand__name">{names?.[b.id] ?? b.name}</span>
-          {tagOf(mode, b) && <span className={`hb-mode-sm is-${roleOf(mode, b)}`}>{tagOf(mode, b)}</span>}
+          {/* in Spark's view every client carries the same tag, so the list leaves it out (19 Nov); the head still says it */}
+                {mode !== 'view' && tagOf(mode, b) && <span className={`hb-mode-sm is-${roleOf(mode, b)}`}>{tagOf(mode, b)}</span>}
           {b.id === cur && <Check className="sb-brand__check" size={16} strokeWidth={2} aria-hidden />}
         </button>
       ))}

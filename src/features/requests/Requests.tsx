@@ -110,7 +110,7 @@ export function Requests() {
         <div className="rq-head__acts">
           {/* Ask Spark as on Home: the mascot pill; it opens the chat drawer over this page. */}
           {!drai && <AskButton className="rq-ask" size={22} onClick={() => setChatOpen(true)} />}
-          <Button size="sm" variant="primary" icon={Plus} className="rq-new" onClick={() => openRequest()}>
+          <Button size="sm" variant="primary" icon={Plus} className="rq-new" onClick={() => openRequest()} data-client-only>
             New request
           </Button>
         </div>

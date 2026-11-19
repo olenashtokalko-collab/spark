@@ -224,10 +224,10 @@ function ReviewPanel({ doc }: { doc: Doc }) {
       </ul>
       {me.org === 'client' && r.status === 'open' && (
         <div className="decision__btns">
-          <Button variant="primary" size="lg" onClick={approve}>
+          <Button variant="primary" size="lg" onClick={approve} data-client-only>
             Approve
           </Button>
-          <Button onClick={() => setChangesOpen(true)}>
+          <Button onClick={() => setChangesOpen(true)} data-client-only>
             Request changes
           </Button>
         </div>
